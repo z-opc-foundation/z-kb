@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.zifang</groupId>
+    <artifactId>z-kb-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <name>z-kb-parent</name>
+    <description>
+        z-kb — 自研产品级知识库系统，对标 LightRAG + BookStack/Mindoc + RAGFlow + Anything-LLM 的融合形态。
+        以 z-vector(向量库) + z-graph(图数据库) + z-util(工具集) 为基础设施，
+        提供 Markdown 文档管理、混合检索（向量+全文+图谱）、RAG 问答、工作台会话、版本快照、双向链接、知识图谱可视化等能力。
+        目标：达到可直接售卖的成熟度。
+    </description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>z-kb-api</module>
+        <module>z-kb-core</module>
+        <module>z-kb-vector</module>
+        <module>z-kb-graph</module>
+        <module>z-kb-storage</module>
+        <module>z-kb-protocol</module>
+        <module>z-kb-spring-boot-starter</module>
+        <module>z-kb-ingest</module>
+        <module>z-kb-modeling</module>
+        <module>z-kb-web</module>
+        <module>z-kb-bootstrap</module>
+    </modules>
+
+    <properties>
+        <!-- Java 17，与 z-graph 对齐。Spring Boot 2.7.18 在 javax.* 上仍可工作 -->
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Spring Boot 2.7.18：与 z-vector/z-graph 同系列，javax.* 兼容 -->
+        <spring-boot.version>2.7.18</spring-boot.version>
+
+        <!-- 自研依赖 -->
+        <z-vector.version>1.0.0-SNAPSHOT</z-vector.version>
+        <z-graph.version>1.0.0-SNAPSHOT</z-graph.version>
+        <z-util.version>1.0.9</z-util.version>
+
+        <!-- 第三方依赖 -->
+        <knife4j.version>4.5.0</knife4j.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <mysql.version>8.0.33</mysql.version>
+        <h2.version>2.2.224</h2.version>
+        <jsoup.version>1.18.1</jsoup.version>
+        <flexmark.version>0.64.8</flexmark.version>
+        <hanlp.version>1.8.6</hanlp.version>
+        <jackson.version>2.15.4</jackson.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <log4j2.version>2.22.1</log4j2.version>
+        <junit.version>5.10.2</junit.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- z-kb 内部模块 -->
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-vector</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-graph</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-storage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-ingest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-modeling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-kb-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- z-vector / z-graph 依赖 -->
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-vector-api</artifactId>
+                <version>${z-vector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-vector-core</artifactId>
+                <version>${z-vector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-vector-spring-boot-starter</artifactId>
+                <version>${z-vector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-graph-api</artifactId>
+                <version>${z-graph.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-graph-core</artifactId>
+                <version>${z-graph.version}</version>
+            </dependency>
+
+            <!-- z-util 工具集 -->
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-util-core</artifactId>
+                <version>${z-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-util-jdbc</artifactId>
+                <version>${z-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-util-http</artifactId>
+                <version>${z-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-util-ch</artifactId>
+                <version>${z-util.version}</version>
+            </dependency>
+
+            <!-- Knife4j API 文档 -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- MyBatis-Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- 数据库驱动 -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+
+            <!-- Markdown / HTML 解析 -->
+            <dependency>
+                <groupId>com.vladsch.flexmark</groupId>
+                <artifactId>flexmark-all</artifactId>
+                <version>${flexmark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+            </dependency>
+
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.zifang</groupId>
+        <artifactId>z-kb-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>z-kb-core</artifactId>
+    <packaging>jar</packaging>
+    <name>z-kb-core</name>
+    <description>
+        z-kb 核心引擎:
+        - parser: Markdown 解析 (frontmatter / wikilink / 标题 / 代码块 / 表格)
+        - chunker: 标题感知 + Token 感知智能分块
+        - extractor: 基于规则 + 共现窗口的实体关系抽取
+        - embedding: Embedding 接口 + TF-IDF 本地实现 + HTTP 远程实现
+        - search: BM25 全文检索
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-kb-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-ch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-http</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.github.yuku123</groupId>
+                    <artifactId>z-util-proxy</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

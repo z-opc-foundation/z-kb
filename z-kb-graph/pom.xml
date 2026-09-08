@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.zifang</groupId>
+        <artifactId>z-kb-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>z-kb-graph</artifactId>
+    <packaging>jar</packaging>
+    <name>z-kb-graph</name>
+    <description>
+        z-kb 图谱适配 — 封装 z-graph，提供 KnowledgeGraphStore 和 GraphRAG 查询。
+        将 Entity/Relation 映射到 z-graph 的 Node/Edge。
+        支持：实体-关系三元组存储、多跳遍历、子图查询、版本快照。
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-kb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-graph-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-graph-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

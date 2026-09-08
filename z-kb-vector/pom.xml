@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.zifang</groupId>
+        <artifactId>z-kb-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>z-kb-vector</artifactId>
+    <packaging>jar</packaging>
+    <name>z-kb-vector</name>
+    <description>
+        z-kb 向量检索适配 — 封装 z-vector，提供 ChunkVectorStore。
+        将 Chunk 对象（id + vector + payload + workspace）映射到 z-vector 的 VectorPoint。
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-kb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-vector-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-vector-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
