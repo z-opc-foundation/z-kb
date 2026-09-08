@@ -10,6 +10,12 @@ const api = axios.create({
   timeout: 30000,
 })
 
+/** 慢请求实例（建模/大批量 ingest 用），放宽到 5 分钟 */
+const slowApi = axios.create({
+  baseURL: '/api/kb',
+  timeout: 300000,
+})
+
 const DEFAULT_WORKSPACE = 'default'
 
 export const DocAPI = {
@@ -89,28 +95,30 @@ export const IngestAPI = {
   listSources: (): Promise<{ sources: Array<{ sourceId: string; type: string; label: string; enabled: boolean }>; supportedTypes: Array<{ name: string; label: string }> }> =>
     api.get('/ingest/sources').then(r => r.data),
 
+  // 大批量接入可能耗时较长（数千文档），用慢请求实例避免超时
   run: (sourceId: string, config: Record<string, any>) =>
-    api.post(`/ingest/run?sourceId=${sourceId}`, config).then(r => r.data),
+    slowApi.post(`/ingest/run?sourceId=${sourceId}`, config).then(r => r.data),
 
   submit: (requests: any[]) =>
-    api.post('/ingest/submit', requests).then(r => r.data),
+    slowApi.post('/ingest/submit', requests).then(r => r.data),
 
   webhook: (payload: { title: string; content: string; workspace?: string; metadata?: Record<string, any> }) =>
     api.post('/ingest/webhook', payload).then(r => r.data),
 
   flushWebhook: () =>
-    api.post('/ingest/webhook/flush').then(r => r.data),
+    slowApi.post('/ingest/webhook/flush').then(r => r.data),
 
   stats: () =>
     api.get('/ingest/stats').then(r => r.data),
 }
 
 export const ModelingAPI = {
+  // 拆解工作台（小抄生成可能耗时 1-3 分钟，用慢请求实例避免超时）
   decompose: (workspace: string) =>
-    api.get(`/modeling/decompose?workspace=${workspace}`).then(r => r.data),
+    slowApi.get(`/modeling/decompose?workspace=${workspace}`).then(r => r.data),
 
   cheatsheet: (workspace: string) =>
-    api.get(`/modeling/cheatsheet?workspace=${workspace}`).then(r => r.data),
+    slowApi.get(`/modeling/cheatsheet?workspace=${workspace}`).then(r => r.data),
 }
 
 export { DEFAULT_WORKSPACE }
