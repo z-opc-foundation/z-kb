@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -46,6 +50,13 @@ public class JsonFileDocumentRepository implements DocumentRepository {
     private final Path storePath;
     private final ObjectMapper mapper;
     private final ReentrantLock writeLock = new ReentrantLock();
+    private final AtomicBoolean dirty = new AtomicBoolean(false);
+
+    /**
+     * 单线程池 — 避免每次 save 都新建线程把 OS 线程数撑爆。
+     * 每 200ms 检查一次 dirty 标记，如有变更就同步落盘。
+     */
+    private final ScheduledExecutorService persistExecutor;
 
     public JsonFileDocumentRepository() {
         this(DEFAULT_PATH);
@@ -83,6 +94,15 @@ public class JsonFileDocumentRepository implements DocumentRepository {
             defaultWs.setDescription("默认工作台");
             workspaces.put(defaultWs.getId(), defaultWs);
         }
+        // 单线程池，定期扫描 dirty 标记并落盘（合并写）
+        this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "zkb-doc-persist");
+            t.setDaemon(true);
+            return t;
+        });
+        this.persistExecutor.scheduleWithFixedDelay(() -> {
+            if (dirty.compareAndSet(true, false)) persist();
+        }, 200, 200, TimeUnit.MILLISECONDS);
     }
 
     // ==================== Document ====================
@@ -284,12 +304,12 @@ public class JsonFileDocumentRepository implements DocumentRepository {
 
     // ==================== 持久化 ====================
 
+    private void markDirty() {
+        dirty.set(true);
+    }
+
     private void persistAsync() {
-        // 简单同步落盘（writeLock 防并发）。高并发场景可换异步 + 合并写
-        Thread t = new Thread(this::persist);
-        t.setDaemon(true);
-        t.setName("zkb-persist");
-        t.start();
+        markDirty();
     }
 
     private void persist() {

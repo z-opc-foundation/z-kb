@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -45,6 +48,15 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
     /** workspace → GraphData */
     private final ConcurrentHashMap<String, GraphData> workspaces = new ConcurrentHashMap<>();
 
+    /** workspace → dirty flag（被修改过待落盘） */
+    private final ConcurrentHashMap<String, Boolean> dirty = new ConcurrentHashMap<>();
+
+    /**
+     * 单一持久化线程池 — 避免每条 entity 都新建线程把 OS 线程数撑爆。
+     * 1 个常驻线程 + 合并写：每 200ms 检查 dirty workspace，做一次落盘。
+     */
+    private final ScheduledExecutorService persistExecutor;
+
     public JsonFileKnowledgeGraphStore() {
         this(DEFAULT_DIR);
     }
@@ -68,6 +80,13 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         } catch (IOException e) {
             log.error("图谱存储初始化失败：{}", e.getMessage());
         }
+        // 单线程池，定期扫描 dirty workspace 并落盘
+        this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "zkb-graph-persist");
+            t.setDaemon(true);
+            return t;
+        });
+        this.persistExecutor.scheduleWithFixedDelay(this::persistDirty, 200, 200, TimeUnit.MILLISECONDS);
     }
 
     /** 加载所有 workspace 文件到内存 */
@@ -95,21 +114,31 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         return workspaces.computeIfAbsent(workspace, k -> new GraphData(k));
     }
 
-    /** 异步落盘单个 workspace */
-    private void persistAsync(String workspace) {
-        GraphData data = workspaces.get(workspace);
-        if (data == null) return;
-        Thread t = new Thread(() -> persist(workspace, data));
-        t.setDaemon(true);
-        t.setName("zkb-graph-persist-" + workspace);
-        t.start();
+    /** 标记 workspace 为脏（待落盘），由后台线程定期刷盘 */
+    private void markDirty(String workspace) {
+        if (workspace != null) dirty.put(workspace, Boolean.TRUE);
+    }
+
+    /** 后台线程周期调用：扫描所有 dirty workspace，落盘后清标 */
+    private void persistDirty() {
+        for (String ws : new ArrayList<>(dirty.keySet())) {
+            if (!dirty.remove(ws)) continue;
+            GraphData data = workspaces.get(ws);
+            if (data != null) persist(ws, data);
+        }
     }
 
     private void persist(String workspace, GraphData data) {
         writeLock.lock();
         try {
+            // 拷贝快照，避免在序列化时其他线程修改 entities/relations 触发 CME
+            GraphData snapshot = new GraphData(data.workspace);
+            snapshot.nextEntityId = data.nextEntityId;
+            snapshot.nextRelationId = data.nextRelationId;
+            snapshot.entities = new LinkedHashMap<>(data.entities);
+            snapshot.relations = new ArrayList<>(data.relations);
+            String json = mapper.writeValueAsString(snapshot);
             Path file = baseDir.resolve(safeName(workspace) + ".json");
-            String json = mapper.writeValueAsString(data);
             Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
             Files.writeString(tmp, json, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
@@ -134,14 +163,22 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         entity.setId(String.valueOf(id));
         // 用 canonicalName 去重
         data.entities.put(entity.getCanonicalName(), entity);
-        persistAsync(entity.getWorkspace());
+        markDirty(entity.getWorkspace());
         return entity;
     }
 
     @Override
     public synchronized List<Entity> upsertEntities(List<Entity> entities) {
         if (entities == null) return Collections.emptyList();
-        for (Entity e : entities) upsertEntity(e);
+        if (entities.isEmpty()) return entities;
+        String ws = entities.get(0).getWorkspace();
+        GraphData data = dataFor(ws);
+        for (Entity e : entities) {
+            long id = data.nextEntityId++;
+            e.setId(String.valueOf(id));
+            data.entities.put(e.getCanonicalName(), e);
+        }
+        markDirty(ws);
         return entities;
     }
 
@@ -211,14 +248,21 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         GraphData data = dataFor(relation.getWorkspace());
         relation.setId(String.valueOf(data.nextRelationId++));
         data.relations.add(relation);
-        persistAsync(relation.getWorkspace());
+        markDirty(relation.getWorkspace());
         return relation;
     }
 
     @Override
     public synchronized List<Relation> upsertRelations(List<Relation> relations) {
         if (relations == null) return Collections.emptyList();
-        for (Relation r : relations) upsertRelation(r);
+        if (relations.isEmpty()) return relations;
+        String ws = relations.get(0).getWorkspace();
+        GraphData data = dataFor(ws);
+        for (Relation r : relations) {
+            r.setId(String.valueOf(data.nextRelationId++));
+            data.relations.add(r);
+        }
+        markDirty(ws);
         return relations;
     }
 
@@ -315,7 +359,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         if (removed == null) return false;
         // 联动删边
         data.relations.removeIf(r -> entityName.equals(r.getSourceEntityName()) || entityName.equals(r.getTargetEntityName()));
-        persistAsync(workspace);
+        markDirty(workspace);
         return true;
     }
 
@@ -339,7 +383,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         });
         int after = data.entities.size() + data.relations.size();
         int removed = before - after;
-        if (removed > 0) persistAsync(workspace);
+        if (removed > 0) markDirty(workspace);
         return removed;
     }
 
@@ -359,7 +403,8 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
 
     @Override
     public void close() {
-        // 同步落盘所有 workspace
+        // 停止后台线程，最后一次全量同步落盘
+        if (persistExecutor != null) persistExecutor.shutdown();
         for (Map.Entry<String, GraphData> e : workspaces.entrySet()) {
             persist(e.getKey(), e.getValue());
         }

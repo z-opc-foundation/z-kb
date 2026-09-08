@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -70,6 +71,69 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         this.graphStore = graphStore;
         this.documentRepository = documentRepository;
         this.bm25Searcher = bm25Searcher;
+        // 启动时自动重建索引（向量 + BM25），让持久化的 chunk 数据可被搜索
+        try {
+            rebuildIndicesFromStorage();
+        } catch (Exception e) {
+            log.warn("启动重建索引失败：{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 从持久化存储重建向量 + BM25 索引。
+     * 这样重启后已索引的文档仍然可被搜索到，避免每次都要重新 ingest。
+     */
+    private void rebuildIndicesFromStorage() {
+        log.info("启动时重建索引（从持久化存储加载）...");
+        long start = System.currentTimeMillis();
+        int totalDocs = 0;
+        int totalChunks = 0;
+
+        for (Workspace ws : documentRepository.listWorkspaces()) {
+            String workspaceName = ws.getName();
+            List<Document> docs = documentRepository.listByWorkspace(workspaceName, 0, Integer.MAX_VALUE);
+            if (docs == null || docs.isEmpty()) continue;
+
+            // 收集该 workspace 所有 chunk
+            List<Chunk> allChunks = new ArrayList<>();
+            for (Document d : docs) {
+                List<Chunk> chunks = documentRepository.findChunksByDocument(workspaceName, d.getId());
+                if (chunks != null) allChunks.addAll(chunks);
+            }
+            if (allChunks.isEmpty()) continue;
+
+            // 重新计算 embeddings（向量存储在内存）
+            if (embeddingProvider instanceof TfIdfEmbeddingProvider) {
+                TfIdfEmbeddingProvider tfidf = (TfIdfEmbeddingProvider) embeddingProvider;
+                List<String> trainingCorpus = new ArrayList<>();
+                for (Chunk c : allChunks) {
+                    if (c.getContent() != null) trainingCorpus.add(c.getContent());
+                }
+                if (!trainingCorpus.isEmpty()) tfidf.trainIdf(trainingCorpus);
+            }
+            List<float[]> embeddings = embeddingProvider.embedBatch(
+                    allChunks.stream().map(c -> c.getContent() != null ? c.getContent() : "").collect(Collectors.toList())
+            );
+            for (int i = 0; i < allChunks.size() && i < embeddings.size(); i++) {
+                allChunks.get(i).setEmbedding(embeddings.get(i));
+            }
+
+            // 重建向量集合
+            String collection = workspaceName + "_" + VECTOR_COLLECTION;
+            if (!vectorStore.hasCollection(workspaceName, VECTOR_COLLECTION)) {
+                vectorStore.createCollection(workspaceName, VECTOR_COLLECTION, embeddingProvider.dimension());
+            }
+            vectorStore.upsert(workspaceName, VECTOR_COLLECTION, allChunks);
+
+            // 重建 BM25 索引
+            bm25Searcher.addChunks(allChunks);
+
+            totalDocs += docs.size();
+            totalChunks += allChunks.size();
+            log.info("工作台 {} 重建索引完成：docs={}, chunks={}", workspaceName, docs.size(), allChunks.size());
+        }
+        long elapsed = System.currentTimeMillis() - start;
+        log.info("启动重建索引完成：总 docs={}, chunks={}, 耗时 {}ms", totalDocs, totalChunks, elapsed);
     }
 
     // ==================== 文档管理 ====================
@@ -90,6 +154,28 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         if (request.getTags() != null && !request.getTags().isEmpty()) {
             doc.setTags(request.getTags());
         }
+
+        // ============ 去重逻辑：如果同 path 已存在，先清理旧版本 ============
+        // 用 path + workspace 作为幂等键，避免重复 ingest 时数据翻倍
+        boolean isOverwrite = request.isOverwrite();
+        Document oldDoc = null;
+        if (isOverwrite && doc.getPath() != null && !doc.getPath().isEmpty()) {
+            oldDoc = documentRepository.findByPath(workspace, doc.getPath());
+        }
+        if (oldDoc != null) {
+            // 复用旧 ID，保证下游 chunks/entities/relations 与之前 ID 一致
+            doc.setId(oldDoc.getId());
+            // 清理旧 chunks（同时也会从 vector store 移除）
+            documentRepository.deleteChunksByDocument(workspace, oldDoc.getId());
+            // 清理旧文档关联的 entities / relations
+            try {
+                graphStore.deleteByDocument(workspace, oldDoc.getId());
+            } catch (Exception ignore) {
+                // 旧 graph store 可能不支持 deleteByDocument
+            }
+            log.info("文档路径 {} 已存在（id={}），将覆盖重建", doc.getPath(), oldDoc.getId());
+        }
+
         try {
             doc.setStatus(DocumentStatus.PARSING);
             // 1. 解析（如果有 content 但没有 body）
@@ -154,10 +240,8 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
             // 6. 持久化（Repository）
             documentRepository.save(doc);
             documentRepository.saveChunks(chunks);
-            documentRepository.deleteChunksByDocument(workspace, doc.getId());
-            documentRepository.saveChunks(chunks);
 
-            // 7. 向量入库
+            // 7. 向量入库（先删同 docId 的旧向量，避免重复）
             String collection = workspace + "_" + VECTOR_COLLECTION;
             if (!vectorStore.hasCollection(workspace, VECTOR_COLLECTION)) {
                 vectorStore.createCollection(workspace, VECTOR_COLLECTION, embeddingProvider.dimension());
@@ -302,7 +386,19 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
 
     @Override
     public List<Workspace> listWorkspaces() {
-        return documentRepository.listWorkspaces();
+        List<Workspace> list = documentRepository.listWorkspaces();
+        // 实时填充每个工作台的统计计数（避免列表显示陈旧数据）
+        for (Workspace ws : list) {
+            try {
+                ws.setDocumentCount(documentRepository.countByWorkspace(ws.getName()));
+                Map<String, Long> graphStats = graphStore.stats(ws.getName());
+                ws.setEntityCount(graphStats.getOrDefault("nodes", 0L));
+                ws.setRelationCount(graphStats.getOrDefault("edges", 0L));
+            } catch (Exception ignore) {
+                // 单个工作台统计失败不影响整体
+            }
+        }
+        return list;
     }
 
     @Override
