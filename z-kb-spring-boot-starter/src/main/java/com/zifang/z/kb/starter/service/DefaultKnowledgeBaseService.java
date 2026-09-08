@@ -382,6 +382,30 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         stats.setEmbeddingCount(totalChunks);
         stats.setEmbeddingProvider(embeddingProvider.providerName());
         stats.setGeneratedAtMs(System.currentTimeMillis());
+
+        // 实体类型分布（按实体 type 聚合）
+        Map<String, Long> entityTypeDist = new LinkedHashMap<>();
+        try {
+            // 用 listAllEntities 一次拉全量，比 listEntitiesByType 循环更快
+            java.util.List<com.zifang.z.kb.api.Entity> allEnts = graphStore.listAllEntities(workspace, 10000);
+            if (allEnts != null) {
+                for (com.zifang.z.kb.api.Entity e : allEnts) {
+                    String t = e.getType() == null ? "UNKNOWN" : e.getType().name();
+                    entityTypeDist.merge(t, 1L, Long::sum);
+                }
+            }
+        } catch (Throwable ignore) {
+            // 旧 graph store 可能未实现 listAllEntities，回退到 listEntitiesByType 循环
+            try {
+                for (com.zifang.z.kb.api.EntityType t : com.zifang.z.kb.api.EntityType.values()) {
+                    java.util.List<com.zifang.z.kb.api.Entity> ents = graphStore.listEntitiesByType(workspace, t, 10000);
+                    if (ents != null && !ents.isEmpty()) {
+                        entityTypeDist.put(t.name(), (long) ents.size());
+                    }
+                }
+            } catch (Throwable ignore2) {}
+        }
+        stats.setEntityTypeDistribution(entityTypeDist);
         return stats;
     }
 

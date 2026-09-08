@@ -51,6 +51,8 @@ public class LocalDirSource implements DataSource {
         }
         String workspace = (String) config.getOrDefault("workspace", "default");
         boolean recursive = Boolean.TRUE.equals(config.getOrDefault("recursive", true));
+        int limit = (int) config.getOrDefault("limit", 100);
+        log.info("LocalDirSource [{}] 扫描目录 {} recursive={}, limit={}", sourceId, dirPath, recursive, limit);
 
         Path root = Paths.get(dirPath);
         if (!Files.isDirectory(root)) {
@@ -58,26 +60,33 @@ public class LocalDirSource implements DataSource {
         }
 
         List<IngestRequest> result = new ArrayList<>();
-        if (recursive) {
-            try (var stream = Files.walk(root)) {
-                stream.filter(Files::isRegularFile)
+        java.util.stream.Stream<Path> stream = recursive ? null : null;
+        try {
+            if (recursive) {
+                var walkStream = Files.walk(root);
+                stream = walkStream;
+                walkStream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".md") || p.toString().endsWith(".markdown"))
                         .filter(p -> {
                             String name = p.getFileName().toString();
                             return !name.startsWith(".");
                         })
                         .filter(p -> !isInHiddenDir(root, p))
+                        .limit(limit)
                         .forEach(p -> result.add(toRequest(p, root, workspace)));
-            }
-        } else {
-            try (var stream = Files.list(root)) {
-                stream.filter(Files::isRegularFile)
+            } else {
+                var listStream = Files.list(root);
+                stream = listStream;
+                listStream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".md"))
+                        .limit(limit)
                         .forEach(p -> result.add(toRequest(p, root, workspace)));
             }
+        } finally {
+            if (stream != null) stream.close();
         }
 
-        log.info("LocalDirSource [{}] 扫描 {} 个 Markdown 文件", sourceId, result.size());
+        log.info("LocalDirSource [{}] 扫描 {} 个 Markdown 文件（limit={}）", sourceId, result.size(), limit);
         return result;
     }
 
