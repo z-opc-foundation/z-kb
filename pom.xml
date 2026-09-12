@@ -5,25 +5,45 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zifang</groupId>
-    <artifactId>z-kb-parent</artifactId>
+    <groupId>io.github.yuku123</groupId>
+    <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 
-    <name>z-kb-parent</name>
+    <name>z-kb</name>
     <description>
         z-kb — 自研产品级知识库系统，对标 LightRAG + BookStack/Mindoc + RAGFlow + Anything-LLM 的融合形态。
         以 z-vector(向量库) + z-graph(图数据库) + z-util(工具集) 为基础设施，
         提供 Markdown 文档管理、混合检索（向量+全文+图谱）、RAG 问答、工作台会话、版本快照、双向链接、知识图谱可视化等能力。
-        目标：达到可直接售卖的成熟度。
-    </description>
-
+        目标：达到可直接售卖的成熟度。    </description>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <id>yuku123</id>
+            <name>yuku123</name>
+            <email>1340947819@qq.com</email>
+            <organization>z-team</organization>
+            <organizationUrl>https://github.com/yuku123</organizationUrl>
+            <timezone>+08:00</timezone>
+            <roles>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
+        <tag>HEAD</tag>
+    </scm>
+
 
     <modules>
         <module>z-kb-api</module>
@@ -63,6 +83,7 @@
         <flexmark.version>0.64.8</flexmark.version>
         <hanlp.version>1.8.6</hanlp.version>
         <jackson.version>2.15.4</jackson.version>
+        <jackson-databind.version>2.15.4</jackson-databind.version>
         <slf4j.version>2.0.13</slf4j.version>
         <log4j2.version>2.22.1</log4j2.version>
         <junit.version>5.10.2</junit.version>
@@ -81,79 +102,79 @@
 
             <!-- z-kb 内部模块 -->
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-vector</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-graph</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-storage</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-ingest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-modeling</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- z-vector / z-graph 依赖 -->
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-vector-api</artifactId>
                 <version>${z-vector.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-vector-core</artifactId>
                 <version>${z-vector.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-vector-spring-boot-starter</artifactId>
                 <version>${z-vector.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-graph-api</artifactId>
                 <version>${z-graph.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-graph-core</artifactId>
                 <version>${z-graph.version}</version>
             </dependency>
@@ -262,4 +283,98 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>central</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+                <central.gpg.skip>false</central.gpg.skip>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </repository>
+                <snapshotRepository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.1.4</version>
+                        <configuration><skip>true</skip></configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                            <failOnWarnings>false</failOnWarnings>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <configuration>
+                            <skip>${central.gpg.skip}</skip>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                                <arg>--no-tty</arg>
+                            </gpgArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <tokenAuth>true</tokenAuth>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>uploaded</waitUntil>
+                            <waitMaxTime>1800</waitMaxTime>
+                            <waitPollingInterval>10</waitPollingInterval>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
+

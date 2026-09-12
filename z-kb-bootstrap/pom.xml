@@ -6,10 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.zifang</groupId>
-        <artifactId>z-kb-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <groupId>io.github.yuku123</groupId>
+            <artifactId>z-kb</artifactId>
+        <version>1.0.1</version>
     </parent>
+    <groupId>io.github.yuku123</groupId>
+    <version>1.0.1</version>
 
     <artifactId>z-kb-bootstrap</artifactId>
     <packaging>jar</packaging>
@@ -19,16 +21,48 @@
         集成所有 z-kb 子模块 + Knife4j，开箱即用。
     </description>
 
+    <url>https://github.com/yuku123/z-kb</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>yuku123</id>
+            <name>yuku123</name>
+            <email>1340947819@qq.com</email>
+            <organization>z-team</organization>
+            <organizationUrl>https://github.com/yuku123</organizationUrl>
+            <timezone>+08:00</timezone>
+            <roles>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
+        <tag>HEAD</tag>
+    </scm>
+
+
+
     <dependencies>
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-web</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
         <!-- Spring Boot Starters（使用默认 Logback，排除 z-vector 等传递的 slf4j-simple） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.7.12</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -39,10 +73,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>2.7.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+            <version>2.7.12</version>
         </dependency>
         <!-- 显式覆盖 Jackson 版本（z-vector 等传递的旧版与 knife4j 冲突） -->
         <dependency>
@@ -65,6 +101,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -72,17 +109,20 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.7.12</version>
             <scope>test</scope>
         </dependency>
 
