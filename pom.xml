@@ -56,7 +56,9 @@
         <module>z-kb-ingest</module>
         <module>z-kb-modeling</module>
         <module>z-kb-web</module>
-        <module>z-kb-bootstrap</module>
+        <!-- 临时排除 z-kb-bootstrap（standalone uber-jar 77MB，Maven Central upload broken pipe）；
+             中央发布场景下其他 10 个核心库已足够，等 Maven Central 文件大小上限放宽后再加 -->
+        <!-- <module>z-kb-bootstrap</module> -->
     </modules>
 
     <properties>
@@ -70,8 +72,8 @@
         <spring-boot.version>2.7.18</spring-boot.version>
 
         <!-- 自研依赖 -->
-        <z-vector.version>1.0.0-SNAPSHOT</z-vector.version>
-        <z-graph.version>1.0.0-SNAPSHOT</z-graph.version>
+        <z-vector.version>1.0.1</z-vector.version>
+        <z-graph.version>1.0.1</z-graph.version>
         <z-util.version>1.0.9</z-util.version>
 
         <!-- 第三方依赖 -->
