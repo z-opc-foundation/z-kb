@@ -1,0 +1,48 @@
+package com.zifang.z.***REMOVED***.web.controller;
+
+import com.zifang.z.***REMOVED***.api.***REMOVED***Statistics;
+import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
+import com.zifang.z.***REMOVED***.api.Workspace;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 工作台 REST API。
+ */
+@Api(tags = "工作台")
+@RestController
+@RequestMapping("/api/***REMOVED***/workspaces")
+public class WorkspaceController {
+
+    @Resource
+    private KnowledgeBaseService ***REMOVED***Service;
+
+    @ApiOperation("创建工作台")
+    @PostMapping
+    public Workspace create(@RequestBody Map<String, String> body) {
+        return ***REMOVED***Service.createWorkspace(body.get("name"), body.get("description"));
+    }
+
+    @ApiOperation("按名称查询工作台")
+    @GetMapping("/{name}")
+    public Workspace get(@PathVariable String name) {
+        return ***REMOVED***Service.getWorkspace(name);
+    }
+
+    @ApiOperation("列出所有工作台")
+    @GetMapping
+    public List<Workspace> list() {
+        return ***REMOVED***Service.listWorkspaces();
+    }
+
+    @ApiOperation("工作台综合统计")
+    @GetMapping("/{name}/statistics")
+    public ***REMOVED***Statistics statistics(@PathVariable String name) {
+        return ***REMOVED***Service.statistics(name);
+    }
+}
