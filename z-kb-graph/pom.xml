@@ -61,12 +61,12 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-graph-api</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-graph-core</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
 
         <dependency>
