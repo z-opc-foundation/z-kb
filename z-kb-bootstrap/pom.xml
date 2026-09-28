@@ -55,7 +55,6 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-web</artifactId>
-            <version>1.0.1</version>
         </dependency>
 
         <!-- Spring Boot Starters（使用默认 Logback，排除 z-vector 等传递的 slf4j-simple） -->

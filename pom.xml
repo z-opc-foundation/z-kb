@@ -100,9 +100,12 @@
         <log4j2.version>2.22.1</log4j2.version>
         <!-- MySQL 驱动 8.0.33，地板 8.4.0（8.4 换了 driver 行为，不在迁移这一刀里顺手做）。 -->
         <mysql.version>8.0.33</mysql.version>
-        <!-- z-vector 1.0.1：fleet 那格已经是 1.0.4。本仓相对 fleet 漂着（z-vector 1.0.1 / z-graph 1.0.7），
-             抬号要按本仓回归单独判 ⇒ 迁移先把 1.0.1 原样钉住，判据是"与本仓基线逐坐标对得上"。 -->
-        <z-vector.version>1.0.1</z-vector.version>
+        <!-- z-vector 抬到 fleet 那一格（1.0.4），本仓原来的 1.0.1 是**发坏的**：中央上
+             io.github.yuku123:z-vector:1.0.1 那个根 pom 带着 <parent>com.zifang:z-opc:1.0.0-SNAPSHOT
+             （相对路径 ../pom.xml），而那件只在开发机的 ~/.m2 里存在、中央永远没有 ⇒
+             干净机器解析 z-vector-api:1.0.1 必挂（z-kb 的 repo1-only 复跑就挂在这里）。
+             1.0.3/1.0.4 的根 pom parent=0、无 com.zifang 痕迹（现读中央 pom 核过），是可用的最低号。
+             这里连属性带 3 条 DM 条目一起删：抬到 1.0.4 之后值就等于 fleet 下发的那格，父链供。 -->
 
         <!-- ===== 父链不供的格（preflight 第 2 节"必须自己留着"）===== -->
         <h2.version>2.2.224</h2.version>
@@ -184,24 +187,10 @@
             <!-- ===== 刻意与父链不同值的格：只能写成**直接** DM 条目 =====
                  （import 进来的 BOM 顶不过继承来的直接 DM，README 步骤 5） -->
 
-            <!-- z-vector 1.0.1 vs fleet 1.0.4（本仓相对 fleet 漂着，抬号按本仓回归单独判）。
-                 z-graph / z-util 反过来删掉了：fleet 面值 1.0.7 / 1.0.13 与本仓逐字节相同，
+            <!-- z-vector 的 3 条 DM 条目已删：本仓从 1.0.1 抬到 fleet 下发的 1.0.4（1.0.1 在中央是发坏的，
+                 见上面 properties 里那段注释），值与父链相同 ⇒ 不需要本地覆盖。
+                 z-graph / z-util 反过来早就删掉了：fleet 面值 1.0.7 / 1.0.13 与本仓逐字节相同，
                  z-graph-protocol、z-util-proxy 这些"本仓没逐条钉"的传递坐标也能由 fleet 供。 -->
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-vector-api</artifactId>
-                <version>${z-vector.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-vector-core</artifactId>
-                <version>${z-vector.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-vector-spring-boot-starter</artifactId>
-                <version>${z-vector.version}</version>
-            </dependency>
 
             <!-- Jackson 整族 2.15.4（地板 jackson-bom 2.18.6）。迁移前本仓是**分裂**的：
                  只有 databind 走 ${jackson.version}=2.15.4，annotations/core/datatype-* 跟着

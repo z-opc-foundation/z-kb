@@ -55,7 +55,6 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-api</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <!-- Jackson：语雀/Notion/Confluence 等 API 的 JSON 解析 -->

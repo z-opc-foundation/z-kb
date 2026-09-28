@@ -55,17 +55,18 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-api</artifactId>
-            <version>1.0.3</version>
         </dependency>
+        <!-- z-vector-api / z-vector-core 不写版本：本仓原来在这里钉**字面 1.0.1**，而中央上
+             io.github.yuku123:z-vector:1.0.1 那个根 pom 带着只存在于作者机器的
+             <parent>com.zifang:z-opc:1.0.0-SNAPSHOT ⇒ repo1-only 复跑读不动这件（Central 不可覆盖，永远修不好）。
+             改吃 fleet 下发的 1.0.4（那一版根 pom 自包含），版本单一真源回到根 pom。 -->
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-vector-api</artifactId>
-            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-vector-core</artifactId>
-            <version>1.0.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>

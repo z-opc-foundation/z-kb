@@ -59,7 +59,6 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-api</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <!-- z-util 1.0.13：本仓的 z-util.version 键已删（fleet 面值逐字节相同），版本由仓根

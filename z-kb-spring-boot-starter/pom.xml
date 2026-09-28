@@ -56,22 +56,18 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-core</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-vector</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-graph</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-storage</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <dependency>
