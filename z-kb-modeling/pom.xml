@@ -55,12 +55,10 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-***REMOVED***-api</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-***REMOVED***-core</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <dependency>
