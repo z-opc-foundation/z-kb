@@ -74,7 +74,7 @@
         <!-- 自研依赖 -->
         <z-vector.version>1.0.1</z-vector.version>
         <z-graph.version>1.0.7</z-graph.version>
-        <z-util.version>1.0.9</z-util.version>
+        <z-util.version>1.0.13</z-util.version>
 
         <!-- 第三方依赖 -->
         <knife4j.version>4.5.0</knife4j.version>
