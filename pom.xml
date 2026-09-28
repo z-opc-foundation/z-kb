@@ -21,7 +21,7 @@
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <name>z-kb</name>
     <description>
