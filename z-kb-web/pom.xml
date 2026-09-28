@@ -63,7 +63,6 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-spring-boot-starter</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
