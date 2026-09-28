@@ -5,6 +5,19 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 消费入口统一走 z-boot-parent（1.0.19 起全组织口径）：继承第三方地板 z-boot-dependencies
+         （156 条）+ 兄弟仓权威 z-boot-fleet（163 条）+ Java 8 的 pluginManagement。
+         迁移前这里**没有** <parent>（根 pom 自包含，16 个版本键自己摊），所以本仓的"换台机器能不能构建"
+         一直靠 ~/.m2 的巧合；对外发布的件是靠 raw pom 原样发出去的（中央上 z-kb:1.0.3 的 <parent> 计数 0），
+         加了三条 parent 之后必须由本仓自己 flatten 才能保住那个形状（见下面 flatten 那段）。
+         relativePath 必须留空：parent 不在磁盘上，在 repo1。 -->
+    <parent>
+        <groupId>io.github.yuku123</groupId>
+        <artifactId>z-boot-parent</artifactId>
+        <version>1.0.19</version>
+        <relativePath/>
+    </parent>
+
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
@@ -62,46 +75,61 @@
     </modules>
 
     <properties>
-        <!-- Java 1.8，与 z-opc 主仓及 z-boot 各 starter 对齐。 -->
+        <!-- 版本口径由 parent 下发。下面删掉的 7 格是现算的（parent_preflight 第 2 节"同值可删"）：
+             java.version=1.8 / mybatis-plus.version=3.5.7 / spring-boot.version=2.7.18 /
+             z-graph.version=1.0.7 / z-util.version=1.0.13 与父链面值逐字节相同，
+             maven.compiler.source/target=1.8 与 project.build.sourceEncoding=UTF-8 由父链供
+             （父链那侧写的是 "8"，javac 里 8 与 1.8 同义；本仓 compiler 的 <source> 仍用 java.version）。
+             ⚠ java.version 这一格虽然与父链同值，但**留着**：下面 pluginManagement 里
+             maven-compiler-plugin 的 <source>/<target> 用的就是它，删键=当场悬空（同 z-rpc 的 compile.version）。 -->
         <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Spring Boot 2.7.18：与 z-vector/z-graph 同系列，javax.* 兼容 -->
-        <spring-boot.version>2.7.18</spring-boot.version>
-
-        <!-- 自研依赖 -->
-        <z-vector.version>1.0.1</z-vector.version>
-        <z-graph.version>1.0.7</z-graph.version>
-        <z-util.version>1.0.13</z-util.version>
-
-        <!-- 第三方依赖 -->
-        <knife4j.version>4.5.0</knife4j.version>
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
-        <mysql.version>8.0.33</mysql.version>
-        <h2.version>2.2.224</h2.version>
-        <jsoup.version>1.18.1</jsoup.version>
-        <hanlp.version>1.8.6</hanlp.version>
+        <!-- ===== 刻意与地板/fleet 不同的格（preflight 第 2 节报的 5 格，删掉就是悄悄换实现）=====
+             这五格必须同时写成**直接** <dependencyManagement> 条目：`import` 进来的 BOM 顶不过
+             从 parent 继承来的直接 DM（z-cache 试点实测：只留 log4j-bom 那条 import，4 件 log4j 仍漂到地板的 2.25.4）。 -->
+        <!-- Jackson：本仓口径 2.15.4，地板 2.18.6（jackson-bom import）。抬号是另一个决定，见 README/待裁。 -->
         <jackson.version>2.15.4</jackson.version>
         <jackson-databind.version>2.15.4</jackson-databind.version>
-        <slf4j.version>2.0.13</slf4j.version>
+        <!-- Knife4j 4.5.0（openapi2 starter）：地板那格是 z-team 用的 3.0.3 + knife4j-core 4.1.0。
+             这一格的**配套**（springfox 2.10.5 / classgraph 4.1.7 / mapstruct 1.3.1 / javassist 3.25.0-GA）
+             也必须一起钉，否则地板的 springfox 3.0.0 会套到 4.5.0 的 openapi2 starter 上 —— 地板自己
+             写着"knife4j 4.x 的 openapi2 starter 带的是 springfox 2.10.5"。那三支配套在本仓 DM 里写**字面量**
+             （不新开版本键：它们是"4.5.0 这一格"的后果，不是一格独立的口径）。 -->
+        <knife4j.version>4.5.0</knife4j.version>
+        <!-- log4j2 2.22.1（本仓 core/graph 直接依赖的就是这一版），地板 2.25.4。 -->
         <log4j2.version>2.22.1</log4j2.version>
+        <!-- MySQL 驱动 8.0.33，地板 8.4.0（8.4 换了 driver 行为，不在迁移这一刀里顺手做）。 -->
+        <mysql.version>8.0.33</mysql.version>
+        <!-- z-vector 1.0.1：fleet 那格已经是 1.0.4。本仓相对 fleet 漂着（z-vector 1.0.1 / z-graph 1.0.7），
+             抬号要按本仓回归单独判 ⇒ 迁移先把 1.0.1 原样钉住，判据是"与本仓基线逐坐标对得上"。 -->
+        <z-vector.version>1.0.1</z-vector.version>
+
+        <!-- ===== 父链不供的格（preflight 第 2 节"必须自己留着"）===== -->
+        <h2.version>2.2.224</h2.version>
+        <jsoup.version>1.18.1</jsoup.version>
+        <slf4j.version>2.0.13</slf4j.version>
         <junit.version>5.10.2</junit.version>
+        <hanlp.version>1.8.6</hanlp.version><!-- 定义但仓内零引用，本次不动（清理另案） -->
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+            <!-- Spring Boot BOM 的 import 删掉：z-boot-dependencies 已经 import 了同一个
+                 org.springframework.boot:spring-boot-dependencies:2.7.18（本仓迁移前那格面值也是 2.7.18），
+                 重复 import 只是 dm 打架的来源。子模块里那些字面 <version>2.7.12</version> 的直接依赖
+                 **不动**：字面版本优先级高于任何 DM，它们今天解析成什么、迁移后还是什么。 -->
 
-            <!-- z-kb 内部模块 -->
+            <!-- ===== 本仓自家 11 个 reactor 坐标钉 ${project.version} =====
+                 不是装饰：继承来的 fleet 把 io.github.yuku123:z-kb-* 钉在 repo1 上已发布的 **1.0.3**，
+                 而"继承来的直接 DM 会改写传递依赖的版本" ⇒ 不钉这格，仓内构建（以及将来任何 fat jar）
+                 可能被旧发布件的字节码反向污染。z-kb 这一格（根 pom 本身）fleet 不管，一并钉上把
+                 "自家 reactor"这件事写成一处可读的清单。 -->
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-kb</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-api</artifactId>
@@ -153,7 +181,12 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- z-vector / z-graph 依赖 -->
+            <!-- ===== 刻意与父链不同值的格：只能写成**直接** DM 条目 =====
+                 （import 进来的 BOM 顶不过继承来的直接 DM，README 步骤 5） -->
+
+            <!-- z-vector 1.0.1 vs fleet 1.0.4（本仓相对 fleet 漂着，抬号按本仓回归单独判）。
+                 z-graph / z-util 反过来删掉了：fleet 面值 1.0.7 / 1.0.13 与本仓逐字节相同，
+                 z-graph-protocol、z-util-proxy 这些"本仓没逐条钉"的传递坐标也能由 fleet 供。 -->
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-vector-api</artifactId>
@@ -169,112 +202,157 @@
                 <artifactId>z-vector-spring-boot-starter</artifactId>
                 <version>${z-vector.version}</version>
             </dependency>
+
+            <!-- Jackson 整族 2.15.4（地板 jackson-bom 2.18.6）。迁移前本仓是**分裂**的：
+                 只有 databind 走 ${jackson.version}=2.15.4，annotations/core/datatype-* 跟着
+                 spring-boot 的 jackson-bom 走 2.13.5（databind 2.15.4 + core 2.13.5 就是地板注释里
+                 那种 NoSuchFieldError 形状）。这里按"本仓声明的那一格"把整族一次钉住，
+                 既不让地板 2.18.6 静默接管，也不再留 2.13.5 那半截。整族抬到地板口径是另一个决定 → 待裁。 -->
             <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-graph-api</artifactId>
-                <version>${z-graph.version}</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-graph-core</artifactId>
-                <version>${z-graph.version}</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
-            <!-- z-util 工具集 -->
+            <!-- log4j2 2.22.1（地板把 api/core/jul/slf4j-impl 四条**直接**钉在 2.25.4）。
+                 本仓 tree 里只有 log4j-api 这一格是传递进来的（log4j-core / log4j-slf4j2-impl 在
+                 z-kb-vector / z-kb-core 里被显式 exclusion 掉了），所以只按坐标钉 api 一条 —— 量出来的，
+                 不是照抄 z-cache 那四条。 -->
             <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-core</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-aop</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-dsl</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-math</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-ml</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-parser-json</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-jdbc</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-http</artifactId>
-                <version>${z-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-util-ch</artifactId>
-                <version>${z-util.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
             </dependency>
 
-            <!-- Knife4j API 文档 -->
+            <!-- MySQL 8.0.33（地板 8.4.0）。z-kb-storage 那条直接依赖写的是字面 ${mysql.version}，
+                 这条 DM 条目管的是任何传递位置，缺了就会被抬成 8.4.0。 -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <!-- Knife4j 4.5.0 这一格 + 它的配套一支（地板的 knife4j-core=4.1.0、springfox=3.0.0
+                 是给 z-team 的 openapi3/springfox-3 口径准备的，套到本仓的 openapi2 4.5.0 上就是错配）。
+                 springfox-swagger-common / knife4j-openapi2-ui / spring-plugin-* 地板不管，
+                 它们跟着上面的 starter 一起解析，不重复钉。 -->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
-
-            <!-- MyBatis-Plus -->
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-core</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-spi</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-core</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-schema</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-common</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-spring-web</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-spring-webmvc</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-bean-validators</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>4.1.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.3.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.25.0-GA</version>
             </dependency>
 
-            <!-- 数据库驱动 -->
+            <!-- mybatis-plus 3.5.7 与地板同值 ⇒ 那条 boot-starter 的 DM 条目删了（由地板供）。
+                 但 mybatis-spring 必须留着：地板钉的是 2.0.6，而 mybatis-plus-boot-starter 3.5.7
+                 自带、本仓基线跑的是 2.1.2 —— 继承来的 DM 会把这个**降档**打到传递位置，
+                 这不是本次迁移要顺手做的事（要不要由地板统一 → 待裁）。 -->
             <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>2.1.2</version>
+            </dependency>
+
+            <!-- ===== 父链完全不供的格，原样留着 ===== -->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
-
-            <!-- Markdown / HTML 解析 -->
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-            </dependency>
-
-            <!-- Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
-            <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
-            <!-- Testing -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
@@ -303,6 +381,47 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <!-- 发布形状（README 第 7 步）。z-boot-parent 那条 flatten 是 <inherited>false</inherited>
+                 （z-boot-parent/pom.xml:257-264，它自己用 resolveCiFriendliesOnly），**不下发**给消费仓，
+                 所以加了 <parent> 之后必须本仓自己把 pom 扁平掉。
+                 判据是"与本仓中央那一版逐字对得上"，实测（repo1 ranged GET）：
+                   io.github.yuku123:z-kb:1.0.3 的中央 pom `<parent>` 计数 = 0（自包含 raw pom）
+                   io.github.yuku123:z-kb-core:1.0.3 的中央 pom `<parent>` 计数 = 1（指向 z-kb:1.0.3）
+                 即本仓对外一直是"自包含/仓内闭环"的形状，不是那种刻意带 parent 链的扁平 pom
+                 （z-skill 那种）⇒ 按 z-cache 的口径补 flatten `oss`，且**常开**。
+                 常开（不挂 central profile）：挂 profile 时 `mvn install` 不带 -P central，
+                 装进本地仓的每支 pom 都还带着 z-boot-parent:1.0.19 ⇒ 本机消费者读到的就是废 pom。
+                 版本钉 1.5.0：门禁机 250（Maven 3.6.0）实测只有 1.5.0 rc=0，1.6.0/1.7.2 报
+                 "requires Maven version 3.6.3"。 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>oss</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
