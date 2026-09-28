@@ -145,7 +145,7 @@ public class NotionSource implements DataSource {
         }
         JsonNode props = page.path("properties");
         if (props.fields() != null && props.fields().hasNext()) {
-            var first = props.fields().next();
+            Map.Entry<String, JsonNode> first = props.fields().next();
             JsonNode v = first.getValue();
             if (v.path("type").asText().equals("title")) {
                 return v.path("title").get(0).path("text").path("content").asText("Untitled");

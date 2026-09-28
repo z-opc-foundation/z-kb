@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * TF-IDF Embedding 提供者 — 离线自包含实现。
@@ -169,9 +169,12 @@ public class TfIdfEmbeddingProvider implements EmbeddingProvider {
             return HanLpTokenizer.tokenize(text);
         } catch (Throwable t) {
             // fallback: 按非 word 字符切
-            return WORD_PATTERN.matcher(text).results()
-                    .map(m -> m.group().toLowerCase(Locale.ROOT))
-                    .collect(Collectors.toList());
+            List<String> tokens = new ArrayList<>();
+            Matcher m = WORD_PATTERN.matcher(text);
+            while (m.find()) {
+                tokens.add(m.group().toLowerCase(Locale.ROOT));
+            }
+            return tokens;
         }
     }
 

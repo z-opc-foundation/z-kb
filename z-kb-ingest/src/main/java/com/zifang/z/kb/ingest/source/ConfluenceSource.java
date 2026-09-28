@@ -63,9 +63,9 @@ public class ConfluenceSource implements DataSource {
         headers.put("Authorization", "Basic " + auth);
         headers.put("Accept", "application/json");
 
-        String encodedSpace = URLEncoder.encode(spaceKey, StandardCharsets.UTF_8);
+        String encodedSpace = URLEncoder.encode(spaceKey, "UTF-8");
         String cql = String.format("space=%s+AND+type=page", encodedSpace);
-        String url = baseUrl + "/rest/api/content/search?cql=" + URLEncoder.encode(cql, StandardCharsets.UTF_8) + "&limit=" + limit + "&expand=body.storage";
+        String url = baseUrl + "/rest/api/content/search?cql=" + URLEncoder.encode(cql, "UTF-8") + "&limit=" + limit + "&expand=body.storage";
 
         HttpHelper.Response resp = HttpHelper.get(url, headers);
         if (!resp.is2xx()) {

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -159,7 +160,7 @@ public class HybridSearcher {
                                             ? e.getSourceDocumentIds().get(0) : null)
                                     .score(e.getImportance())
                                     .source("graph")
-                                    .matchedEntities(new ArrayList<>(List.of(e.getCanonicalName())))
+                                    .matchedEntities(new ArrayList<>(Collections.singletonList(e.getCanonicalName())))
                                     .build();
                             hitMap.put(cid, hit);
                         }

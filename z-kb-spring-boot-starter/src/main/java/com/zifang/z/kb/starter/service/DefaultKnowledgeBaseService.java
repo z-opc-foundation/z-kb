@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -306,7 +307,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
                     .filter(p -> p.toString().endsWith(".md"))
                     .forEach(p -> {
                         try {
-                            String content = Files.readString(p);
+                            String content = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
                             Document doc = parser.parseIntoDocument(content, workspace, null);
                             doc.setPath(workspace + ":" + p.toString());
                             IndexRequest req = new IndexRequest();

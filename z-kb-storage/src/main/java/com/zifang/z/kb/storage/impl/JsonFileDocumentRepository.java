@@ -322,7 +322,8 @@ public class JsonFileDocumentRepository implements DocumentRepository {
             dump.put("workspaces", workspaces);
             String json = mapper.writeValueAsString(dump);
             Path tmp = storePath.resolveSibling(storePath.getFileName() + ".tmp");
-            Files.writeString(tmp, json, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(tmp, json.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             Files.move(tmp, storePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             log.error("持久化失败：{}", e.getMessage());

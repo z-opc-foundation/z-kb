@@ -93,7 +93,7 @@ public class UrlSource implements DataSource {
                 .build();
 
         log.info("UrlSource [{}] 抓取 {} chars from {}", sourceId, markdown.length(), url);
-        return List.of(req);
+        return Collections.singletonList(req);
     }
 
     private String extractTitle(String html) {

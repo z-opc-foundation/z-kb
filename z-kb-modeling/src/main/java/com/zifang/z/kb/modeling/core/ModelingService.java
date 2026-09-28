@@ -3,6 +3,7 @@ package com.zifang.z.***REMOVED***.modeling.core;
 import com.zifang.z.***REMOVED***.api.Chunk;
 import com.zifang.z.***REMOVED***.api.Document;
 import com.zifang.z.***REMOVED***.api.Entity;
+import com.zifang.z.***REMOVED***.api.GraphQueryResult;
 import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
 import com.zifang.z.***REMOVED***.api.Relation;
 import com.zifang.z.***REMOVED***.modeling.extractor.CausalChainExtractor;
@@ -74,7 +75,7 @@ public class ModelingService {
             List<String> entNames = new ArrayList<>();
             for (Entity e : allEntities) entNames.add(e.getCanonicalName());
             if (!entNames.isEmpty()) {
-                var sg = ***REMOVED***Service.getSubgraph(workspace, entNames, 1);
+                GraphQueryResult sg = ***REMOVED***Service.getSubgraph(workspace, entNames, 1);
                 if (sg != null && sg.getEdges() != null) allRelations.addAll(sg.getEdges());
             }
         } catch (Exception e) {

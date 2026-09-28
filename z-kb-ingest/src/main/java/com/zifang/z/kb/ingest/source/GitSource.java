@@ -90,7 +90,7 @@ public class GitSource implements DataSource {
                 if (!path.isEmpty() && !nodePath.startsWith(path)) continue;
 
                 String rawUrl = String.format("%s/repos/%s/%s/contents/%s?ref=%s", base, owner, repo,
-                        URLEncoder.encode(nodePath, StandardCharsets.UTF_8), ref);
+                        URLEncoder.encode(nodePath, "UTF-8"), ref);
                 HttpHelper.Response fileResp = HttpHelper.get(rawUrl, headers);
                 if (!fileResp.is2xx()) continue;
                 JsonNode f = mapper.readTree(fileResp.body);

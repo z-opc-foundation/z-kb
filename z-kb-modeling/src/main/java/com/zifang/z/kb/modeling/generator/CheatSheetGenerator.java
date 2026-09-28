@@ -99,7 +99,7 @@ public class CheatSheetGenerator {
     private String renderNamedItems(java.util.Map<String, String> map) {
         if (map == null || map.isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        for (var e : map.entrySet()) {
+        for (java.util.Map.Entry<String, String> e : map.entrySet()) {
             sb.append("- **").append(e.getKey()).append("**");
             if (e.getValue() != null && !e.getValue().isEmpty()) {
                 sb.append(": ").append(e.getValue());
@@ -112,7 +112,7 @@ public class CheatSheetGenerator {
     private String renderTechStack(java.util.Map<String, java.util.List<String>> techStack) {
         if (techStack == null || techStack.isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        for (var e : techStack.entrySet()) {
+        for (java.util.Map.Entry<String, java.util.List<String>> e : techStack.entrySet()) {
             sb.append("- **").append(e.getKey()).append("**: ");
             if (e.getValue() != null) sb.append(String.join("、", e.getValue()));
             sb.append("\n");
