@@ -62,10 +62,11 @@
             <version>1.0.3</version>
         </dependency>
 
+        <!-- z-util 1.0.13：本仓的 z-util.version 键已删（fleet 面值逐字节相同），版本由仓根
+             DM/父链下发。下面那条 log4j-slf4j2-impl 的 exclusion 保留 —— 它是实现选择，不是版本。 -->
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-util-core</artifactId>
-            <version>${z-util.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
