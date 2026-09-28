@@ -140,7 +140,8 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
             String json = mapper.writeValueAsString(snapshot);
             Path file = baseDir.resolve(safeName(workspace) + ".json");
             Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
-            Files.writeString(tmp, json, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(tmp, json.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             log.error("图谱持久化失败 workspace={} : {}", workspace, e.getMessage());

@@ -23,7 +23,7 @@ public class IngestAutoConfiguration {
         DataSourceRegistry registry = new DataSourceRegistry();
         registry.installDefaults();
         if (beans != null) {
-            for (var s : beans) registry.register(s);
+            for (com.zifang.z.kb.ingest.api.DataSource s : beans) registry.register(s);
         }
         log.info("DataSourceRegistry 初始化完成，内置 9 种数据源");
         return registry;

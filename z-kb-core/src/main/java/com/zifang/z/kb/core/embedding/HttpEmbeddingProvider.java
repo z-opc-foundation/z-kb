@@ -6,16 +6,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zifang.z.kb.api.EmbeddingProvider;
 import com.zifang.z.kb.api.KBException;
+import com.zifang.util.http.client.HttpExecutionResult;
+import com.zifang.util.http.client.HttpExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * HTTP Embedding Provider — 通过 HTTP 调用远程 Embedding 服务。
@@ -41,7 +41,7 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
     private final String model;
     private final String apiKey;
     private final int dimension;
-    private final HttpClient httpClient;
+    private final HttpExecutor httpExecutor;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public HttpEmbeddingProvider(String endpoint, String model, String apiKey, int dimension) {
@@ -49,15 +49,15 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
         this.model = model;
         this.apiKey = apiKey;
         this.dimension = dimension;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+        // 共享客户端：connect 10s / read 60s / write 10s，与原 HttpClient.newBuilder()
+        // .connectTimeout(10s) + 请求 timeout 60s 的预算一致。
+        this.httpExecutor = HttpExecutor.getDefault();
     }
 
     @Override
     public float[] embed(String text) {
         try {
-            List<float[]> batch = callRemote(List.of(text));
+            List<float[]> batch = callRemote(Collections.singletonList(text));
             return batch.get(0);
         } catch (Exception e) {
             throw new KBException("HTTP embedding failed: " + e.getMessage(), e);
@@ -91,19 +91,18 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
             body.set("input", arr);
         }
 
-        HttpRequest req = HttpRequest.newBuilder(URI.create(endpoint))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
-                .timeout(Duration.ofSeconds(60))
-                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
-                .build();
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + apiKey);
 
-        HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
-        if (resp.statusCode() / 100 != 2) {
-            throw new KBException("HTTP " + resp.statusCode() + ": " + resp.body());
+        HttpExecutionResult resp = httpExecutor.executeByMethodUrl(
+                "POST", endpoint, headers, mapper.writeValueAsString(body));
+        if (resp.getStatus() / 100 != 2) {
+            throw new KBException("HTTP " + resp.getStatus() + ": "
+                    + (resp.getBody() != null ? resp.getBody() : resp.getError()));
         }
 
-        JsonNode root = mapper.readTree(resp.body());
+        JsonNode root = mapper.readTree(resp.getBody());
         JsonNode data = root.path("data");
         List<float[]> result = new ArrayList<>(data.size());
         // 按 index 排序

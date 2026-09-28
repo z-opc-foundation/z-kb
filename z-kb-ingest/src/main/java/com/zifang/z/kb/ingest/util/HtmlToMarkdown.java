@@ -72,7 +72,7 @@ public final class HtmlToMarkdown {
         s = s.replace("&apos;", "'");
         s = s.replace("&nbsp;", " ");
         Matcher m = HTML_ENTITIES.matcher(s);
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String token = m.group(1);
             if (token.startsWith("#")) {

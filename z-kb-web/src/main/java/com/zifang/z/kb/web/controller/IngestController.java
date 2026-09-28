@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据接入控制器 — 暴露多渠道接入能力。
@@ -54,7 +55,7 @@ public class IngestController {
                     m.put("name", t.name());
                     m.put("label", t.getLabel());
                     return m;
-                }).toList());
+                }).collect(Collectors.toList()));
         return out;
     }
 
@@ -92,7 +93,10 @@ public class IngestController {
         if (!ok) {
             throw new KBException("webhook 校验失败");
         }
-        return Map.of("accepted", true, "pending", webhookSource.pending());
+        Map<String, Object> resp = new LinkedHashMap<>();
+        resp.put("accepted", true);
+        resp.put("pending", webhookSource.pending());
+        return resp;
     }
 
     @ApiOperation("拉取 webhook 缓冲并入库")

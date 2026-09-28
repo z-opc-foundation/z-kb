@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,13 +33,13 @@ public class EntityExtractor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityExtractor.class);
 
-    private static final Set<String> TECH_KEYWORDS = new LinkedHashSet<>(List.of(
+    private static final Set<String> TECH_KEYWORDS = new LinkedHashSet<>(Arrays.asList(
             "数据库", "框架", "平台", "系统", "服务", "引擎", "协议",
             "算法", "模型", "库", "工具", "中间件", "网关", "代理",
             "集群", "节点", "索引", "事务", "查询", "存储", "缓存"
     ));
 
-    private static final Set<String> TOOL_DICT = new LinkedHashSet<>(List.of(
+    private static final Set<String> TOOL_DICT = new LinkedHashSet<>(Arrays.asList(
             "InfluxDB", "TimescaleDB", "TDengine", "Prometheus", "Grafana",
             "Elasticsearch", "Lucene", "Solr", "OpenSearch",
             "MySQL", "PostgreSQL", "MongoDB", "Redis", "Memcached", "KeyDB",
@@ -58,7 +59,7 @@ public class EntityExtractor {
             "Zookeeper", "RocketMQ", "Seata", "Sentinel"
     ));
 
-    private static final Set<String> DB_DICT = new LinkedHashSet<>(List.of(
+    private static final Set<String> DB_DICT = new LinkedHashSet<>(Arrays.asList(
             "MySQL", "PostgreSQL", "MongoDB", "Redis", "Memcached",
             "Elasticsearch", "InfluxDB", "TimescaleDB", "TDengine",
             "ClickHouse", "Doris", "StarRocks", "TiDB", "OceanBase",

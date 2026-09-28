@@ -8,7 +8,7 @@
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <name>z-kb</name>
     <description>
@@ -62,10 +62,10 @@
     </modules>
 
     <properties>
-        <!-- Java 17，与 z-graph 对齐。Spring Boot 2.7.18 在 javax.* 上仍可工作 -->
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <!-- Java 1.8，与 z-opc 主仓及 z-boot 各 starter 对齐。 -->
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Spring Boot 2.7.18：与 z-vector/z-graph 同系列，javax.* 兼容 -->
@@ -73,7 +73,7 @@
 
         <!-- 自研依赖 -->
         <z-vector.version>1.0.1</z-vector.version>
-        <z-graph.version>1.0.5</z-graph.version>
+        <z-graph.version>1.0.7</z-graph.version>
         <z-util.version>1.0.9</z-util.version>
 
         <!-- 第三方依赖 -->
@@ -82,7 +82,6 @@
         <mysql.version>8.0.33</mysql.version>
         <h2.version>2.2.224</h2.version>
         <jsoup.version>1.18.1</jsoup.version>
-        <flexmark.version>0.64.8</flexmark.version>
         <hanlp.version>1.8.6</hanlp.version>
         <jackson.version>2.15.4</jackson.version>
         <jackson-databind.version>2.15.4</jackson-databind.version>
@@ -230,11 +229,6 @@
             </dependency>
 
             <!-- Markdown / HTML 解析 -->
-            <dependency>
-                <groupId>com.vladsch.flexmark</groupId>
-                <artifactId>flexmark-all</artifactId>
-                <version>${flexmark.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>

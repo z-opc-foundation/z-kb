@@ -18,14 +18,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import com.zifang.util.http.client.HttpExecutionResult;
+import com.zifang.util.http.client.HttpExecutor;
+
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,7 +41,7 @@ public class DefaultChatService implements ChatService {
     private final KnowledgeBaseService kbService;
     private final SearchService searchService;
     private final KBProperties.Chat config;
-    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+    private final HttpExecutor httpExecutor = HttpExecutor.getDefault();
     private final ObjectMapper mapper = new ObjectMapper();
     private final java.util.Map<String, ChatSession> sessions = new ConcurrentHashMap<>();
 
@@ -150,17 +150,17 @@ public class DefaultChatService implements ChatService {
         body.set("messages", messages);
         body.put("temperature", request.getTemperature());
 
-        HttpRequest httpReq = HttpRequest.newBuilder(URI.create(config.getEndpoint()))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + (config.getApiKey() != null ? config.getApiKey() : ""))
-                .timeout(Duration.ofSeconds(60))
-                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
-                .build();
-        HttpResponse<String> resp = httpClient.send(httpReq, HttpResponse.BodyHandlers.ofString());
-        if (resp.statusCode() / 100 != 2) {
-            throw new RuntimeException("LLM HTTP " + resp.statusCode() + ": " + resp.body());
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + (config.getApiKey() != null ? config.getApiKey() : ""));
+
+        HttpExecutionResult resp = httpExecutor.executeByMethodUrl(
+                "POST", config.getEndpoint(), headers, mapper.writeValueAsString(body));
+        if (resp.getStatus() / 100 != 2) {
+            throw new RuntimeException("LLM HTTP " + resp.getStatus() + ": "
+                    + (resp.getBody() != null ? resp.getBody() : resp.getError()));
         }
-        JsonNode root = mapper.readTree(resp.body());
+        JsonNode root = mapper.readTree(resp.getBody());
         JsonNode choices = root.path("choices");
         if (choices.isArray() && choices.size() > 0) {
             return choices.get(0).path("message").path("content").asText();

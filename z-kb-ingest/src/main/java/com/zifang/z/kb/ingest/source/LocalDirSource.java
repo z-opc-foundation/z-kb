@@ -63,7 +63,7 @@ public class LocalDirSource implements DataSource {
         java.util.stream.Stream<Path> stream = recursive ? null : null;
         try {
             if (recursive) {
-                var walkStream = Files.walk(root);
+                java.util.stream.Stream<Path> walkStream = Files.walk(root);
                 stream = walkStream;
                 walkStream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".md") || p.toString().endsWith(".markdown"))
@@ -75,7 +75,7 @@ public class LocalDirSource implements DataSource {
                         .limit(limit)
                         .forEach(p -> result.add(toRequest(p, root, workspace)));
             } else {
-                var listStream = Files.list(root);
+                java.util.stream.Stream<Path> listStream = Files.list(root);
                 stream = listStream;
                 listStream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".md"))

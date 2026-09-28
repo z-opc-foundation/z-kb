@@ -58,7 +58,7 @@ public class ProductDecomposer {
         // 2) 按章节分类抽取
         Map<String, List<String>> sections = splitSections(documents);
 
-        for (var e : SECTION_HINTS.entrySet()) {
+        for (Map.Entry<String, String[]> e : SECTION_HINTS.entrySet()) {
             String field = e.getKey();
             List<String> hits = matchSections(sections, e.getValue());
             switch (field) {
@@ -135,7 +135,7 @@ public class ProductDecomposer {
 
     private List<String> matchSections(Map<String, List<String>> sections, String[] hints) {
         List<String> out = new ArrayList<>();
-        for (var entry : sections.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : sections.entrySet()) {
             String heading = entry.getKey().toLowerCase();
             boolean match = false;
             for (String hint : hints) {
