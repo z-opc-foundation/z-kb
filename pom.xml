@@ -239,11 +239,21 @@
             </dependency>
 
             <!-- MySQL 8.0.33（地板 8.4.0）。z-kb-storage 那条直接依赖写的是字面 ${mysql.version}，
-                 这条 DM 条目管的是任何传递位置，缺了就会被抬成 8.4.0。 -->
+                 这条 DM 条目管的是任何传递位置，缺了就会被抬成 8.4.0。
+                 ⚠ exclusion 是照抄 spring-boot-dependencies 自己那条受管项的：它对本坐标排掉了
+                 protobuf-java，而迁移删掉 Boot 的 BOM import 会连带删掉那条形体 —— 只写版本的
+                 直接条目是整条替换，实测 protobuf-java:3.25.5 会从 mysql 底下冒进树（基线里不在）。
+                 同 z-mist / z-qa 的写法。 -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.protobuf</groupId>
+                        <artifactId>protobuf-java</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Knife4j 4.5.0 这一格 + 它的配套一支（地板的 knife4j-core=4.1.0、springfox=3.0.0
