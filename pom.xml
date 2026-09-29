@@ -21,7 +21,7 @@
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <name>z-kb</name>
     <description>
@@ -75,15 +75,14 @@
     </modules>
 
     <properties>
-        <!-- 版本口径由 parent 下发。下面删掉的 7 格是现算的（parent_preflight 第 2 节"同值可删"）：
+        <!-- 版本口径由 parent 下发。下面删掉的 8 格是现算的（parent_preflight 第 2 节"同值可删"）：
              java.version=1.8 / mybatis-plus.version=3.5.7 / spring-boot.version=2.7.18 /
              z-graph.version=1.0.7 / z-util.version=1.0.13 与父链面值逐字节相同，
              maven.compiler.source/target=1.8 与 project.build.sourceEncoding=UTF-8 由父链供
-             （父链那侧写的是 "8"，javac 里 8 与 1.8 同义；本仓 compiler 的 <source> 仍用 java.version）。
-             ⚠ java.version 这一格虽然与父链同值，但**留着**：下面 pluginManagement 里
-             maven-compiler-plugin 的 <source>/<target> 用的就是它，删键=当场悬空（同 z-rpc 的 compile.version）。 -->
-        <java.version>1.8</java.version>
-
+             （父链那侧写的是 "8"，javac 里 8 与 1.8 同义）。
+             java.version 这次一起删掉：上一轮它因为是本仓 pluginManagement 里 compiler 的 <source>
+             引用点才"留着"（同 z-rpc 的 compile.version），那个 pluginManagement 块已经整块删了
+             （见下面 build 的注释），引用点没了，键就是纯重复。 -->
         <!-- ===== 刻意与地板/fleet 不同的格（preflight 第 2 节报的 5 格，删掉就是悄悄换实现）=====
              这五格必须同时写成**直接** <dependencyManagement> 条目：`import` 进来的 BOM 顶不过
              从 parent 继承来的直接 DM（z-cache 试点实测：只留 log4j-bom 那条 import，4 件 log4j 仍漂到地板的 2.25.4）。 -->
@@ -362,25 +361,10 @@
     </dependencyManagement>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
+        <!-- 迁移前这里摊着 maven-compiler-plugin 3.13.0（source/target=${java.version}）和
+             maven-surefire-plugin 3.2.5 两条 pluginManagement：两件父链都供（3.11.0 / 2.22.2，
+             且 parent 的 compiler 配置已经下发 source=8/target=8/encoding=UTF-8/-parameters），
+             按"父链供的不留第二把尺"整块删掉。实测删后 javac 进参仍是 8、BUILD SUCCESS。 -->
         <plugins>
             <!-- 发布形状（README 第 7 步）。z-boot-parent 那条 flatten 是 <inherited>false</inherited>
                  （z-boot-parent/pom.xml:257-264，它自己用 resolveCiFriendliesOnly），**不下发**给消费仓，
