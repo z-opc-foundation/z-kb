@@ -223,10 +223,10 @@ MIT，见根 [`LICENSE`](LICENSE)；根 POM `<licenses>` 同声明。
 
 本项目文档统一收口在 `_doc/` 下（实测 `find _doc -mindepth 1` 仅 1 个文件）:
 
-- [`_doc/001_arch/`](_doc/001_arch/) — 目前为空目录（暂无架构文档）
-- [`_doc/002_deploy/`](_doc/002_deploy/) — 目前为空目录（暂无部署文档）
+- `_doc/001_arch/` — 目前为空目录（暂无架构文档）
+- `_doc/002_deploy/` — 目前为空目录（暂无部署文档）
 - [`_doc/003_script/`](_doc/003_script/) — 运维脚本:
   - [`deploy_maven_center.sh`](_doc/003_script/deploy_maven_center.sh) — Maven Central 一键发布 / 校验 / GPG 初始化
-- [`_doc/004_skill/`](_doc/004_skill/) — 目前为空目录（暂无 skill）
+- `_doc/004_skill/` — 目前为空目录（暂无 skill）
 
 _Maintained by the z-opc-foundation organization._
