@@ -57,7 +57,8 @@
             <artifactId>z-kb-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starters（使用默认 Logback，排除 z-vector 等传递的 slf4j-simple） -->
+        <!-- Spring Boot Starters（默认 Logback；slf4j-simple transitive 防御性排除留着——
+             源仓（z-vector 等）已清洁，本格未来可摘） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -96,14 +97,6 @@
             <version>2.15.4</version>
         </dependency>
 
-        <!-- 显式声明 slf4j-simple 为 provided，避免与 logback 冲突 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- 数据库驱动（provided：按需引入） -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -125,11 +118,9 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
-        </dependency>
+        <!-- 原显式 slf4j-api 1.7.36 直条目已删（2026-10-02）：版本字面值与根 pom DM 的
+             ${slf4j.version}=2.0.13 冲突且无 main 引用——z-kb-web 与 spring-boot-starter 的
+             传递 slf4j-api 已经够了，直条目是噪声。 -->
     </dependencies>
 
     <build>
@@ -140,12 +131,8 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.zifang.z.kb.bootstrap.ZKbBootstrapApplication</mainClass>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-simple</artifactId>
-                        </exclude>
-                    </excludes>
+                    <!-- 原 <excludes>slf4j-simple</excludes> 已删（2026-10-02）：上面 provided
+                         声明同时没了，fat jar 没有任何东西要再显式排除；留着是误以为有 binding 要滤。 -->
                 </configuration>
                 <executions>
                     <execution>
