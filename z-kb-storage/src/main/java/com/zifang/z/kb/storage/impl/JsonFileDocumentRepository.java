@@ -139,7 +139,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
         if (map == null) return Collections.emptyList();
         List<Document> all = new ArrayList<>(map.values());
         all.sort(Comparator.comparing(Document::getUpdatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
-        return paginate(all, offset, limit);
+        return Pagination.slice(all, offset, limit);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
             if (tags.stream().anyMatch(t -> d.getTags().contains(t))) all.add(d);
         }
         all.sort(Comparator.comparing(Document::getUpdatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
-        return paginate(all, offset, limit);
+        return Pagination.slice(all, offset, limit);
     }
 
     @Override
@@ -376,12 +376,5 @@ public class JsonFileDocumentRepository implements DocumentRepository {
         long total = 0;
         for (ConcurrentHashMap<String, Chunk> m : chunks.values()) total += m.size();
         return total;
-    }
-
-    private <T> List<T> paginate(List<T> list, int offset, int limit) {
-        if (offset >= list.size()) return Collections.emptyList();
-        int from = Math.max(0, offset);
-        int to = Math.min(list.size(), from + Math.max(1, limit));
-        return list.subList(from, to);
     }
 }
