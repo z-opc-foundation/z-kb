@@ -1,0 +1,21 @@
+# z-kb 要抽检的类：逐行 `<artifactId>:<该仓 sources.jar 内的路径>`
+# 路径以线上已发布件为准（用 unzip -l <sources.jar> 核对过），不是按源码树推的。
+#
+# 这 14 项对应 z-kb-protocol 的全部源码。它当初是 0 源文件的空壳模块，
+# 于是线上发布件永远没有 sources.jar / javadoc.jar —— 而 verify_central.sh
+# 只看构件可达性，那次的长期报红正是被这份清单挡住的。
+# 详见 _doc/003_script/verify-central-note.md。
+z-kb-protocol:com/zifang/z/kb/protocol/package-info.java
+z-kb-protocol:com/zifang/z/kb/protocol/request/CreateSessionRequest.java
+z-kb-protocol:com/zifang/z/kb/protocol/request/SessionChatRequest.java
+z-kb-protocol:com/zifang/z/kb/protocol/request/ImportMarkdownRequest.java
+z-kb-protocol:com/zifang/z/kb/protocol/request/CreateWorkspaceRequest.java
+z-kb-protocol:com/zifang/z/kb/protocol/request/WebhookPayload.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/ErrorResponse.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/CountResponse.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/DataSourceSummary.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/SourceTypeSummary.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/ListSourcesResponse.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/IngestItemSummary.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/IngestSummary.java
+z-kb-protocol:com/zifang/z/kb/protocol/response/WebhookAck.java
