@@ -58,6 +58,12 @@ wikilink）→ `Chunker` 分块 → `EmbeddingProvider` 向量化并写 `ChunkVe
 注意：`z-kb-storage` 的 POM 虽声明了 MyBatis-Plus / mysql-connector-j / H2，但仓内**没有** JDBC 版
 `DocumentRepository` 实现；生产接 MySQL 需按该类注释自行注册覆盖 Bean。
 
+**图谱文件名怎么来的**：`JsonFileKnowledgeGraphStore` 是一工作台一份 JSON，文件名是 workspace 名的
+**可逆转义**（合法字符原样保留，其余编成 `~` + 两位大写 hex），所以中文、含 `.` / `:` / 空格的工作台名
+都各自落到不同文件——旧实现是把非法字符一律压成同一个下划线，`默认空间` 与 `生产环境` 会算出同一个文件名
+并互相覆盖，重启后其中一个工作台的图谱整体消失且不报错。现在编码是单射，且本来就能当文件名的
+workspace（`team_a` 这类）编码后一字不变，存量文件继续原地读写、无需迁移。
+
 ---
 
 ## 🏗️ 项目结构
