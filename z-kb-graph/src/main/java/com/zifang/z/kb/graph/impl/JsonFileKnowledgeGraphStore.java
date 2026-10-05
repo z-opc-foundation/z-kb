@@ -138,7 +138,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
             snapshot.entities = new LinkedHashMap<>(data.entities);
             snapshot.relations = new ArrayList<>(data.relations);
             String json = mapper.writeValueAsString(snapshot);
-            Path file = baseDir.resolve(safeName(workspace) + ".json");
+            Path file = baseDir.resolve(fileStem(workspace) + ".json");
             Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
             Files.write(tmp, json.getBytes(java.nio.charset.StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -150,8 +150,67 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         }
     }
 
-    private static String safeName(String s) {
-        return s.replaceAll("[^a-zA-Z0-9_-]", "_");
+    /**
+     * workspace → 文件名主干，<b>一一映射且可逆</b>。
+     *
+     * <p>旧实现是 {@code s.replaceAll("[^a-zA-Z0-9_-]", "_")}：把每一个非法字符
+     * <b>压成同一个下划线</b>，于是 {@code 默认空间} 与 {@code 生产环境}（同长度中文字）
+     * 算出完全一样的文件名，{@code a.b} 与 {@code a:b} 也是。两个工作台互相覆盖，
+     * 重启后其中一个的图谱<b>整体消失且没有任何报错</b>——{@code load()} 只是少加载一个文件，
+     * 加载本身全程成功。</p>
+     *
+     * <p>改法是<b>转义</b>而不是替换：合法字符原样保留，非法字符编成 {@code ~} + 两位大写 hex。
+     * 因为 hex 字符都在保留集里、且每个 {@code ~} 后面固定取两位，所以这个编码是<b>单射</b>
+     * ——不同 workspace 永远算出不同文件名，不需要额外加哈希去撞运气。</p>
+     *
+     * <p><b>向后兼容</b>：像 {@code team_a} 这种本来就是合法文件名的 workspace，
+     * 编码后一字不变，继续读写原来的文件，不需要迁移。</p>
+     */
+    private static String fileStem(String workspace) {
+        String encoded = escapeForFileName(workspace);
+        if (encoded.length() <= MAX_FILE_STEM) {
+            return encoded;
+        }
+        // 编码后还超长（典型是几十字的中文工作台名），换成一个定长名字。
+        // 标记用 '#'——它不在保留集里、会被自己编成 ~23，因此这个结果不会与
+        // 任何"普通名字的编码结果"相撞（普通名字要想变成 ~23 开头的四字符，
+        // 它的原文必须以 # 开头，而那种名字不可能超长到走这条分支）。
+        return escapeForFileName("#" + sha256Hex(workspace));
+    }
+
+    /** 文件名主干的长度上限；留足 ".json" 与文件系统上限的余量。 */
+    private static final int MAX_FILE_STEM = 120;
+
+    private static String escapeForFileName(String s) {
+        StringBuilder sb = new StringBuilder(s.length() + 8);
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            boolean safe = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9') || c == '_' || c == '-';
+            if (safe) {
+                sb.append(c);
+            } else {
+                sb.append('~');
+                sb.append(Character.toUpperCase(Character.forDigit((c >> 4) & 0xF, 16)));
+                sb.append(Character.toUpperCase(Character.forDigit(c & 0xF, 16)));
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String sha256Hex(String s) {
+        try {
+            byte[] d = java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(s.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder(d.length * 2);
+            for (byte b : d) {
+                sb.append(Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16)));
+                sb.append(Character.toUpperCase(Character.forDigit(b & 0xF, 16)));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 不可用", e);
+        }
     }
 
     // ==================== Entity ====================
