@@ -4,13 +4,14 @@ import com.zifang.z.kb.api.Document;
 import com.zifang.z.kb.api.ImportResult;
 import com.zifang.z.kb.api.IndexRequest;
 import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.protocol.request.ImportMarkdownRequest;
+import com.zifang.z.kb.protocol.response.CountResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 文档管理 REST API。
@@ -37,14 +38,9 @@ public class DocumentController {
 
     @ApiOperation("导入 Markdown 文本")
     @PostMapping("/markdown")
-    public ImportResult importMarkdown(@RequestBody Map<String, Object> body) {
-        String workspace = (String) body.getOrDefault("workspace", "default");
-        String title = (String) body.get("title");
-        String content = (String) body.get("content");
-        @SuppressWarnings("unchecked")
-        List<String> tags = (List<String>) body.get("tags");
-        String author = (String) body.get("author");
-        return kbService.importMarkdown(workspace, title, content, tags, author);
+    public ImportResult importMarkdown(@RequestBody ImportMarkdownRequest body) {
+        return kbService.importMarkdown(body.getWorkspace(), body.getTitle(), body.getContent(),
+                body.getTags(), body.getAuthor());
     }
 
     @ApiOperation("查询文档")
@@ -84,8 +80,7 @@ public class DocumentController {
 
     @ApiOperation("统计")
     @GetMapping("/{workspace}/count")
-    public Map<String, Object> count(@PathVariable String workspace) {
-        long c = kbService.countDocuments(workspace);
-        return java.util.Collections.singletonMap("count", c);
+    public CountResponse count(@PathVariable String workspace) {
+        return new CountResponse(kbService.countDocuments(workspace));
     }
 }

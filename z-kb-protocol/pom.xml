@@ -8,10 +8,10 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.7</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
 
     <artifactId>z-kb-protocol</artifactId>
     <packaging>jar</packaging>
@@ -60,6 +60,15 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind.version}</version>
+        </dependency>
+
+        <!-- 契约注解。provided：编译期要，运行时由 z-kb-web 的 knife4j 提供，
+             不传递给下游，避免给消费者白带一个注解包 -->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

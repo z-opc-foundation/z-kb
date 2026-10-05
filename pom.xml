@@ -21,7 +21,7 @@
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
 
     <name>z-kb</name>
     <description>
@@ -111,6 +111,9 @@
         <jsoup.version>1.18.1</jsoup.version>
         <slf4j.version>2.0.13</slf4j.version>
         <junit.version>5.10.2</junit.version>
+        <!-- swagger-annotations 1.6.6：z-kb-protocol 的 OpenAPI 契约注解（provided 口径）。
+             与 z-kb-web 经 knife4j-openapi2 1.6.6 解析到的版本对齐，避免两处不同版本共存。 -->
+        <swagger-annotations.version>1.6.6</swagger-annotations.version>
         <hanlp.version>1.8.6</hanlp.version><!-- 定义但仓内零引用，本次不动（清理另案） -->
     </properties>
 
@@ -484,6 +487,9 @@
                         <version>3.2.7</version>
                         <configuration>
                             <skip>${central.gpg.skip}</skip>
+                            <!-- 显式钉签名密钥：不钉时 gpg 靠默认选择，
+                                 换机器/换 GNUPGHOME 就可能签出不被 Central 认的 key -->
+                            <keyname>E3DCF6F856759D910C084A5FA403FCCFD7EF5DA6</keyname>
                             <gpgArguments>
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>

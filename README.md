@@ -15,9 +15,9 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 | 字段 | 值 |
 |------|-----|
 | **仓库** | `z-kb` |
-| **Maven 坐标** | `io.github.yuku123:z-kb:1.0.5`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
+| **Maven 坐标** | `io.github.yuku123:z-kb:1.0.7`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
 | **父项目** | `io.github.yuku123:z-boot-parent:1.0.21`（`<relativePath/>` 留空）；父链 = 地板 `z-boot-dependencies:1.0.20` + 兄弟权威表 `z-boot-fleet:1.0.1` |
-| **Maven Central** | 已发布（repo1 实测 200）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标均有 `1.0.5`；`z-kb-bootstrap` 中央只有 `1.0.1`（`1.0.5` 实测 404） |
+| **Maven Central** | 最新 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标；10 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1` |
 | **默认端口** | `8889`（`z-kb-bootstrap/src/main/resources/application.yml`，context-path `/`）；starter 嵌入时随宿主应用端口 |
 | **运行口径** | Java 8 · Spring Boot 2.7.18（父链下发；部分模块 POM 仍字面钉 spring-boot-* `2.7.12`） |
 | **最近更新** | 2026-09-30 |
@@ -71,7 +71,7 @@ z-kb/
 ├── z-kb-vector/                 # z-vector 适配：ZVectorChunkVectorStore + ChunkVectorStoreAutoConfiguration
 ├── z-kb-graph/                  # 图谱存储：JsonFileKnowledgeGraphStore（默认）+ ZGraphKnowledgeGraphStore
 ├── z-kb-storage/                # 文档仓库：JsonFile（默认）/ InMemory + 自动装配
-├── z-kb-protocol/               # 预留模块：只有 pom，无任何源文件（发布的 jar 里没有 class）
+├── z-kb-protocol/               # 协议层：REST 请求/响应 DTO + OpenAPI 契约注解（1.0.7 起有源码）
 ├── z-kb-ingest/                 # 9 种数据源 + IngestPipeline + HtmlToMarkdown
 ├── z-kb-modeling/               # 工作台 → 产品模型 → 小抄
 ├── z-kb-spring-boot-starter/    # KBAutoConfiguration + KBProperties（前缀 zkb.*）+ Default{Chat,Search,KnowledgeBase}Service
@@ -120,7 +120,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb-spring-boot-starter</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 

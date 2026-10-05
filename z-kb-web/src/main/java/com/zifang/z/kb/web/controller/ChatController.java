@@ -4,13 +4,14 @@ import com.zifang.z.kb.api.ChatRequest;
 import com.zifang.z.kb.api.ChatResponse;
 import com.zifang.z.kb.api.ChatService;
 import com.zifang.z.kb.api.ChatSession;
+import com.zifang.z.kb.protocol.request.CreateSessionRequest;
+import com.zifang.z.kb.protocol.request.SessionChatRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * RAG 问答 REST API。
@@ -32,11 +33,8 @@ public class ChatController {
 
     @ApiOperation("创建会话")
     @PostMapping("/sessions")
-    public ChatSession createSession(@RequestBody Map<String, Object> body) {
-        String workspace = (String) body.getOrDefault("workspace", "default");
-        String userId = (String) body.get("userId");
-        String title = (String) body.get("title");
-        return chatService.createSession(workspace, userId, title);
+    public ChatSession createSession(@RequestBody CreateSessionRequest body) {
+        return chatService.createSession(body.getWorkspace(), body.getUserId(), body.getTitle());
     }
 
     @ApiOperation("获取会话")
@@ -61,7 +59,7 @@ public class ChatController {
 
     @ApiOperation("在会话内提问")
     @PostMapping("/sessions/{id}/chat")
-    public ChatResponse chatInSession(@PathVariable String id, @RequestBody Map<String, String> body) {
-        return chatService.chatInSession(id, body.get("question"));
+    public ChatResponse chatInSession(@PathVariable String id, @RequestBody SessionChatRequest body) {
+        return chatService.chatInSession(id, body.getQuestion());
     }
 }
