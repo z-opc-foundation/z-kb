@@ -28,7 +28,7 @@ export const menuItems = [
     { key: '/z-***REMOVED***/chat', label: '对话', icon: <MessageOutlined /> },
 ]
 
-export const routeTable = [
+export const routes = [
     { path: '/z-***REMOVED***/home', Component: HomePage },
     { path: '/z-***REMOVED***/dashboard', Component: with***REMOVED***Workspace(Dashboard) },
     { path: '/z-***REMOVED***/documents', Component: with***REMOVED***Workspace(Documents) },
