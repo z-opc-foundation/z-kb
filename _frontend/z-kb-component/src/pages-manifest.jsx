@@ -28,7 +28,7 @@ export const menuItems = [
     { key: '/z-kb/chat', label: '对话', icon: <MessageOutlined /> },
 ]
 
-export const routeTable = [
+export const routes = [
     { path: '/z-kb/home', Component: HomePage },
     { path: '/z-kb/dashboard', Component: withKbWorkspace(Dashboard) },
     { path: '/z-kb/documents', Component: withKbWorkspace(Documents) },
