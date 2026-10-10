@@ -13,6 +13,7 @@ import ChatPage from './kb/pages/ChatPage'
 export {withKbWorkspace, useKbWorkspace} from './kb/workspaceHook'
 export {DocAPI, SearchAPI, GraphAPI, WorkspaceAPI} from './kb/services/api'
 import HomePage from './pages/HomePage'
+import ZkbApp from './pages/ZkbApp.jsx'
 
 /** 菜单 + 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。 */
 export const appMeta = { title: 'z-kb 知识库', short: 'z-kb' }
@@ -37,6 +38,7 @@ export const routes = [
     { path: '/z-kb/search', Component: withKbWorkspace(SearchPage) },
     { path: '/z-kb/graph', Component: withKbWorkspace(GraphPage) },
     { path: '/z-kb/chat', Component: withKbWorkspace(ChatPage) },
+    { path: '/z-kb/:rest*', Component: ZkbApp },
 ]
 
 export { default as HomePage } from './pages/HomePage'
