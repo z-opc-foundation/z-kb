@@ -1,12 +1,4 @@
-import {
-    DashboardOutlined,
-    FileTextOutlined,
-    CloudUploadOutlined,
-    ApartmentOutlined,
-    SearchOutlined,
-    PartitionOutlined,
-    MessageOutlined,
-} from '@ant-design/icons'
+import { ApartmentOutlined, CloudUploadOutlined, DashboardOutlined, FileTextOutlined, HomeOutlined, MessageOutlined, PartitionOutlined, SearchOutlined } from '@ant-design/icons'
 import './kb/styles.css'
 import {withKbWorkspace} from './kb/workspaceHook'
 import Dashboard from './kb/pages/Dashboard'
@@ -17,25 +9,35 @@ import SearchPage from './kb/pages/SearchPage'
 import GraphPage from './kb/pages/GraphPage'
 import ChatPage from './kb/pages/ChatPage'
 
-export const menuItems = [
-    {key: '/dashboard', icon: <DashboardOutlined/>, label: '总览'},
-    {key: '/documents', icon: <FileTextOutlined/>, label: '文档'},
-    {key: '/ingest', icon: <CloudUploadOutlined/>, label: '数据接入'},
-    {key: '/modeling', icon: <ApartmentOutlined/>, label: '建模'},
-    {key: '/search', icon: <SearchOutlined/>, label: '检索'},
-    {key: '/graph', icon: <PartitionOutlined/>, label: '图谱'},
-    {key: '/chat', icon: <MessageOutlined/>, label: '对话'},
-]
 
-const routeTable = [
-    {path: 'dashboard', Component: withKbWorkspace(Dashboard)},
-    {path: 'documents', Component: withKbWorkspace(Documents)},
-    {path: 'ingest', Component: withKbWorkspace(DataSources)},
-    {path: 'modeling', Component: withKbWorkspace(ModelingPage)},
-    {path: 'search', Component: withKbWorkspace(SearchPage)},
-    {path: 'graph', Component: withKbWorkspace(GraphPage)},
-    {path: 'chat', Component: withKbWorkspace(ChatPage)},
-]
-export {routeTable}
 export {withKbWorkspace, useKbWorkspace} from './kb/workspaceHook'
 export {DocAPI, SearchAPI, GraphAPI, WorkspaceAPI} from './kb/services/api'
+import HomePage from './pages/HomePage'
+
+/** 菜单 + 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。 */
+export const appMeta = { title: 'z-kb 知识库', short: 'z-kb' }
+
+export const menuItems = [
+    { key: '/z-kb/home', label: '首页', icon: <HomeOutlined /> },
+    { key: '/z-kb/dashboard', label: '总览', icon: <DashboardOutlined /> },
+    { key: '/z-kb/documents', label: '文档', icon: <FileTextOutlined /> },
+    { key: '/z-kb/ingest', label: '数据接入', icon: <CloudUploadOutlined /> },
+    { key: '/z-kb/modeling', label: '建模', icon: <ApartmentOutlined /> },
+    { key: '/z-kb/search', label: '检索', icon: <SearchOutlined /> },
+    { key: '/z-kb/graph', label: '图谱', icon: <PartitionOutlined /> },
+    { key: '/z-kb/chat', label: '对话', icon: <MessageOutlined /> },
+]
+
+export const routeTable = [
+    { path: '/z-kb/home', Component: HomePage },
+    { path: '/z-kb/dashboard', Component: withKbWorkspace(Dashboard) },
+    { path: '/z-kb/documents', Component: withKbWorkspace(Documents) },
+    { path: '/z-kb/ingest', Component: withKbWorkspace(DataSources) },
+    { path: '/z-kb/modeling', Component: withKbWorkspace(ModelingPage) },
+    { path: '/z-kb/search', Component: withKbWorkspace(SearchPage) },
+    { path: '/z-kb/graph', Component: withKbWorkspace(GraphPage) },
+    { path: '/z-kb/chat', Component: withKbWorkspace(ChatPage) },
+]
+
+export { default as HomePage } from './pages/HomePage'
+export { default as LoginPage } from './pages/LoginPage'
