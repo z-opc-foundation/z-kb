@@ -74,15 +74,10 @@
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- Jackson — JsonFileKnowledgeGraphStore 序列化 -->
+        <!-- JsonFileKnowledgeGraphStore 走 z-util JsonUtil，不再要 Jackson -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-parser-json</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
