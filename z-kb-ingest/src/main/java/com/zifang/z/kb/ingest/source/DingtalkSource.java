@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -26,7 +26,6 @@ public class DingtalkSource implements DataSource {
     private static final String TOKEN_URL = "https://oapi.dingtalk.com/gettoken";
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public DingtalkSource(String sourceId) {
         this.sourceId = sourceId;
@@ -54,7 +53,7 @@ public class DingtalkSource implements DataSource {
         String tokenUrl = TOKEN_URL + "?appkey=" + appKey + "&appsecret=" + appSecret;
         HttpHelper.Response tokenResp = HttpHelper.get(tokenUrl);
         if (!tokenResp.is2xx()) throw new RuntimeException("钉钉 token 获取失败");
-        JsonNode tokenRoot = mapper.readTree(tokenResp.body);
+        JsonCursor tokenRoot = JsonCursor.of(JsonUtil.parse(tokenResp.body));
         String token = tokenRoot.path("access_token").asText();
 
         Map<String, Object> meta = new LinkedHashMap<>();

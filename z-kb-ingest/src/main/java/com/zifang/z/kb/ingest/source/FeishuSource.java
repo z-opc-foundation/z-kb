@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -29,7 +29,6 @@ public class FeishuSource implements DataSource {
     private static final String NODES_URL = "https://open.feishu.cn/open-apis/wiki/v2/spaces/%s/nodes";
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public FeishuSource(String sourceId) {
         this.sourceId = sourceId;
@@ -62,7 +61,7 @@ public class FeishuSource implements DataSource {
         String authBody = String.format("{\"app_id\":\"%s\",\"app_secret\":\"%s\"}", appId, appSecret);
         HttpHelper.Response authResp = HttpHelper.postJson(AUTH_URL, authBody, headers);
         if (!authResp.is2xx()) throw new RuntimeException("飞书鉴权失败: " + authResp.status);
-        JsonNode authRoot = mapper.readTree(authResp.body);
+        JsonCursor authRoot = JsonCursor.of(JsonUtil.parse(authResp.body));
         String token = authRoot.path("tenant_access_token").asText();
         if (token.isEmpty()) throw new RuntimeException("飞书未返回 tenant_access_token: " + authResp.body);
 
@@ -71,18 +70,18 @@ public class FeishuSource implements DataSource {
         auth.put("Authorization", "Bearer " + token);
         HttpHelper.Response listResp = HttpHelper.get(String.format(NODES_URL, spaceId), auth);
         if (!listResp.is2xx()) throw new RuntimeException("飞书节点列表失败: " + listResp.status);
-        JsonNode listRoot = mapper.readTree(listResp.body);
-        JsonNode items = listRoot.path("data").path("items");
+        JsonCursor listRoot = JsonCursor.of(JsonUtil.parse(listResp.body));
+        JsonCursor items = listRoot.path("data").path("items");
         List<IngestRequest> out = new ArrayList<>();
         if (items.isArray()) {
-            for (JsonNode item : items) {
+            for (JsonCursor item : items.elements()) {
                 String objToken = item.path("obj_token").asText();
-                String title = item.path("title").asText("Untitled");
+                String title = textOr(item, "title", "Untitled");
                 String nodeUrl = String.format("https://open.feishu.cn/open-apis/wiki/v2/spaces/%s/nodes/%s", spaceId, objToken);
                 HttpHelper.Response docResp = HttpHelper.get(nodeUrl, auth);
                 if (!docResp.is2xx()) continue;
-                JsonNode docRoot = mapper.readTree(docResp.body);
-                String content = docRoot.path("data").path("node").path("obj_create_time").asText("") + "\n\n"
+                JsonCursor docRoot = JsonCursor.of(JsonUtil.parse(docResp.body));
+                String content = textOr(docRoot.path("data").path("node"), "obj_create_time", "") + "\n\n"
                         + "(详细内容见飞书页面)";
 
                 Map<String, Object> meta = new LinkedHashMap<>();
@@ -105,5 +104,11 @@ public class FeishuSource implements DataSource {
         }
         log.info("FeishuSource [{}] 从 {} 拉取 {} 个文档", sourceId, spaceId, out.size());
         return out;
+    }
+
+    /** JsonCursor 没有 asText(default) 重载: 缺失 / JSON null 回退默认值. */
+    private static String textOr(JsonCursor node, String field, String def) {
+        JsonCursor v = node.path(field);
+        return v.isMissing() || v.isNull() ? def : v.asText();
     }
 }

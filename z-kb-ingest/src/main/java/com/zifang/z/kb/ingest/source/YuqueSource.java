@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -33,7 +33,6 @@ public class YuqueSource implements DataSource {
     private static final String BASE = "https://www.yuque.com/api/v2";
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public YuqueSource(String sourceId) {
         this.sourceId = sourceId;
@@ -70,17 +69,17 @@ public class YuqueSource implements DataSource {
             throw new RuntimeException("语雀文档列表拉取失败: HTTP " + listResp.status + " - " + listResp.body);
         }
 
-        JsonNode root = mapper.readTree(listResp.body);
-        JsonNode docs = root.get("data");
+        JsonCursor root = JsonCursor.of(JsonUtil.parse(listResp.body));
+        JsonCursor docs = root.path("data");
         List<IngestRequest> result = new ArrayList<>();
 
-        if (docs != null && docs.isArray()) {
-            for (JsonNode doc : docs) {
+        if (docs.isArray()) {
+            for (JsonCursor doc : docs.elements()) {
                 try {
                     String slug = doc.path("slug").asText();
                     String title = doc.path("title").asText();
-                    long docId = doc.path("id").asLong();
-                    String status = doc.path("status").asText("published");
+                    long docId = doc.path("id").asLong(0L);
+                    String status = textOr(doc, "status", "published");
                     if (!"published".equals(status)) {
                         log.debug("跳过未发布文档: {} ({})", title, slug);
                         continue;
@@ -94,11 +93,11 @@ public class YuqueSource implements DataSource {
                         continue;
                     }
 
-                    JsonNode docRoot = mapper.readTree(docResp.body);
-                    JsonNode data = docRoot.path("data");
-                    String body = data.path("body").asText("");
+                    JsonCursor docRoot = JsonCursor.of(JsonUtil.parse(docResp.body));
+                    JsonCursor data = docRoot.path("data");
+                    String body = textOr(data, "body", "");
                     String wordCount = String.valueOf(data.path("word_count").asInt(0));
-                    String author = data.path("user").path("name").asText("");
+                    String author = textOr(data.path("user"), "name", "");
 
                     Map<String, Object> meta = new LinkedHashMap<>();
                     meta.put("yuqueId", docId);
@@ -106,8 +105,8 @@ public class YuqueSource implements DataSource {
                     meta.put("namespace", namespace);
                     meta.put("source", "yuque");
                     meta.put("wordCount", wordCount);
-                    meta.put("description", data.path("description").asText(""));
-                    meta.put("updatedAt", data.path("updated_at").asText(""));
+                    meta.put("description", textOr(data, "description", ""));
+                    meta.put("updatedAt", textOr(data, "updated_at", ""));
 
                     IngestRequest req = IngestRequest.builder()
                             .id("yuque:" + namespace + ":" + slug)
@@ -132,5 +131,11 @@ public class YuqueSource implements DataSource {
 
         log.info("YuqueSource [{}] 从 {} 拉取 {} 篇文档", sourceId, namespace, result.size());
         return result;
+    }
+
+    /** JsonCursor 没有 asText(default) 重载: 缺失 / JSON null 回退默认值. */
+    private static String textOr(JsonCursor node, String field, String def) {
+        JsonCursor v = node.path(field);
+        return v.isMissing() || v.isNull() ? def : v.asText();
     }
 }

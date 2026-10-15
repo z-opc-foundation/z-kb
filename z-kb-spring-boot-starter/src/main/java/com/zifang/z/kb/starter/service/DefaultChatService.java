@@ -11,10 +11,8 @@ import com.zifang.z.kb.api.SearchResult;
 import com.zifang.z.kb.api.SearchService;
 import com.zifang.z.kb.api.KnowledgeBaseService;
 import com.zifang.z.kb.starter.config.KBProperties;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +40,6 @@ public class DefaultChatService implements ChatService {
     private final SearchService searchService;
     private final KBProperties.Chat config;
     private final HttpExecutor httpExecutor = HttpExecutor.getDefault();
-    private final ObjectMapper mapper = new ObjectMapper();
     private final java.util.Map<String, ChatSession> sessions = new ConcurrentHashMap<>();
 
     public DefaultChatService(KnowledgeBaseService kbService, SearchService searchService, KBProperties.Chat config) {
@@ -136,18 +133,18 @@ public class DefaultChatService implements ChatService {
         user.append("\n问题：").append(request.getQuestion()).append("\n\n");
         user.append("请基于参考资料回答，并在引用处标注 [数字]。");
 
-        ObjectNode body = mapper.createObjectNode();
+        Map<String, Object> body = new LinkedHashMap<>();
         body.put("model", config.getModel());
-        ArrayNode messages = mapper.createArrayNode();
-        ObjectNode sysMsg = mapper.createObjectNode();
+        List<Object> messages = new ArrayList<>();
+        Map<String, Object> sysMsg = new LinkedHashMap<>();
         sysMsg.put("role", "system");
         sysMsg.put("content", request.getSystemPrompt() != null ? request.getSystemPrompt() : config.getSystemPrompt());
         messages.add(sysMsg);
-        ObjectNode userMsg = mapper.createObjectNode();
+        Map<String, Object> userMsg = new LinkedHashMap<>();
         userMsg.put("role", "user");
         userMsg.put("content", user.toString());
         messages.add(userMsg);
-        body.set("messages", messages);
+        body.put("messages", messages);
         body.put("temperature", request.getTemperature());
 
         Map<String, String> headers = new LinkedHashMap<>();
@@ -155,15 +152,15 @@ public class DefaultChatService implements ChatService {
         headers.put("Authorization", "Bearer " + (config.getApiKey() != null ? config.getApiKey() : ""));
 
         HttpExecutionResult resp = httpExecutor.executeByMethodUrl(
-                "POST", config.getEndpoint(), headers, mapper.writeValueAsString(body));
+                "POST", config.getEndpoint(), headers, JsonUtil.toJson(body));
         if (resp.getStatus() / 100 != 2) {
             throw new RuntimeException("LLM HTTP " + resp.getStatus() + ": "
                     + (resp.getBody() != null ? resp.getBody() : resp.getError()));
         }
-        JsonNode root = mapper.readTree(resp.getBody());
-        JsonNode choices = root.path("choices");
+        JsonCursor root = JsonCursor.of(JsonUtil.parse(resp.getBody()));
+        JsonCursor choices = root.path("choices");
         if (choices.isArray() && choices.size() > 0) {
-            return choices.get(0).path("message").path("content").asText();
+            return choices.at(0).path("message").path("content").asText();
         }
         return extractiveAnswer(request, sr);
     }

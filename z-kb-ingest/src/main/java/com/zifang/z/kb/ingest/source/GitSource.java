@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -36,7 +36,6 @@ public class GitSource implements DataSource {
     private static final Logger log = LoggerFactory.getLogger(GitSource.class);
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public GitSource(String sourceId) {
         this.sourceId = sourceId;
@@ -79,11 +78,11 @@ public class GitSource implements DataSource {
         if (!resp.is2xx()) {
             throw new RuntimeException("Git tree 拉取失败 HTTP " + resp.status);
         }
-        JsonNode treeRoot = mapper.readTree(resp.body);
-        JsonNode tree = treeRoot.path("tree");
+        JsonCursor treeRoot = JsonCursor.of(JsonUtil.parse(resp.body));
+        JsonCursor tree = treeRoot.path("tree");
         List<IngestRequest> out = new ArrayList<>();
         if (tree.isArray()) {
-            for (JsonNode node : tree) {
+            for (JsonCursor node : tree.elements()) {
                 if (!"blob".equals(node.path("type").asText())) continue;
                 String nodePath = node.path("path").asText();
                 if (!nodePath.endsWith(".md") && !nodePath.endsWith(".markdown")) continue;
@@ -93,8 +92,8 @@ public class GitSource implements DataSource {
                         URLEncoder.encode(nodePath, "UTF-8"), ref);
                 HttpHelper.Response fileResp = HttpHelper.get(rawUrl, headers);
                 if (!fileResp.is2xx()) continue;
-                JsonNode f = mapper.readTree(fileResp.body);
-                String contentB64 = f.path("content").asText("");
+                JsonCursor f = JsonCursor.of(JsonUtil.parse(fileResp.body));
+                String contentB64 = textOr(f, "content", "");
                 String md = new String(Base64.getDecoder().decode(contentB64.replaceAll("\\s+", "")),
                         StandardCharsets.UTF_8);
 
@@ -132,5 +131,11 @@ public class GitSource implements DataSource {
             case "gitee":  return "https://gitee.com/api/v5";
             default:        return "https://api.github.com";
         }
+    }
+
+    /** JsonCursor 没有 asText(default) 重载: 缺失 / JSON null 回退默认值. */
+    private static String textOr(JsonCursor node, String field, String def) {
+        JsonCursor v = node.path(field);
+        return v.isMissing() || v.isNull() ? def : v.asText();
     }
 }

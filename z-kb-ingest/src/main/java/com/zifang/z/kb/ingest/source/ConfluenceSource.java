@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -30,7 +30,6 @@ public class ConfluenceSource implements DataSource {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceSource.class);
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public ConfluenceSource(String sourceId) {
         this.sourceId = sourceId;
@@ -72,16 +71,16 @@ public class ConfluenceSource implements DataSource {
             throw new RuntimeException("Confluence 搜索失败 HTTP " + resp.status + ": " + resp.body);
         }
 
-        JsonNode root = mapper.readTree(resp.body);
-        JsonNode results = root.path("results");
+        JsonCursor root = JsonCursor.of(JsonUtil.parse(resp.body));
+        JsonCursor results = root.path("results");
         List<IngestRequest> out = new ArrayList<>();
         if (results.isArray()) {
-            for (JsonNode p : results) {
+            for (JsonCursor p : results.elements()) {
                 String id = p.path("id").asText();
-                String title = p.path("title").asText("Untitled");
-                String html = p.path("body").path("storage").path("value").asText("");
+                String title = textOr(p, "title", "Untitled");
+                String html = textOr(p.path("body").path("storage"), "value", "");
                 String markdown = HtmlToMarkdown.convert(html);
-                String pageUrl = baseUrl + p.path("_links").path("webui").asText("");
+                String pageUrl = baseUrl + textOr(p.path("_links"), "webui", "");
 
                 Map<String, Object> meta = new LinkedHashMap<>();
                 meta.put("confluenceId", id);
@@ -104,5 +103,11 @@ public class ConfluenceSource implements DataSource {
         }
         log.info("ConfluenceSource [{}] 从 {} 拉取 {} 个页面", sourceId, spaceKey, out.size());
         return out;
+    }
+
+    /** JsonCursor 没有 asText(default) 重载: 缺失 / JSON null 回退默认值. */
+    private static String textOr(JsonCursor node, String field, String def) {
+        JsonCursor v = node.path(field);
+        return v.isMissing() || v.isNull() ? def : v.asText();
     }
 }

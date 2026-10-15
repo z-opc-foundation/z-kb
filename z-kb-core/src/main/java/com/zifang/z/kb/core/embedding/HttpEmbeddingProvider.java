@@ -1,9 +1,7 @@
 package com.zifang.z.kb.core.embedding;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.api.EmbeddingProvider;
 import com.zifang.z.kb.api.KBException;
 import com.zifang.util.http.client.HttpExecutionResult;
@@ -42,7 +40,6 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
     private final String apiKey;
     private final int dimension;
     private final HttpExecutor httpExecutor;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public HttpEmbeddingProvider(String endpoint, String model, String apiKey, int dimension) {
         this.endpoint = endpoint;
@@ -81,14 +78,12 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
     public String providerName() { return "http:" + model; }
 
     private List<float[]> callRemote(List<String> texts) throws Exception {
-        ObjectNode body = mapper.createObjectNode();
+        Map<String, Object> body = new LinkedHashMap<>();
         body.put("model", model);
         if (texts.size() == 1) {
             body.put("input", texts.get(0));
         } else {
-            ArrayNode arr = mapper.createArrayNode();
-            for (String t : texts) arr.add(t);
-            body.set("input", arr);
+            body.put("input", new ArrayList<Object>(texts));
         }
 
         Map<String, String> headers = new LinkedHashMap<>();
@@ -96,19 +91,19 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
         headers.put("Authorization", "Bearer " + apiKey);
 
         HttpExecutionResult resp = httpExecutor.executeByMethodUrl(
-                "POST", endpoint, headers, mapper.writeValueAsString(body));
+                "POST", endpoint, headers, JsonUtil.toJson(body));
         if (resp.getStatus() / 100 != 2) {
             throw new KBException("HTTP " + resp.getStatus() + ": "
                     + (resp.getBody() != null ? resp.getBody() : resp.getError()));
         }
 
-        JsonNode root = mapper.readTree(resp.getBody());
-        JsonNode data = root.path("data");
+        JsonCursor root = JsonCursor.of(JsonUtil.parse(resp.getBody()));
+        JsonCursor data = root.path("data");
         List<float[]> result = new ArrayList<>(data.size());
         // 按 index 排序
         java.util.TreeMap<Integer, float[]> ordered = new java.util.TreeMap<>();
-        for (JsonNode item : data) {
-            int idx = item.path("index").asInt();
+        for (JsonCursor item : data.elements()) {
+            int idx = item.path("index").asInt(0);
             float[] vec = parseVector(item.path("embedding"));
             ordered.put(idx, vec);
         }
@@ -116,13 +111,13 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
         return result;
     }
 
-    private float[] parseVector(JsonNode array) {
+    private float[] parseVector(JsonCursor array) {
         if (!array.isArray()) {
             throw new KBException("Invalid embedding response: not an array");
         }
         float[] result = new float[array.size()];
         for (int i = 0; i < array.size(); i++) {
-            result[i] = (float) array.get(i).asDouble();
+            result[i] = (float) array.at(i).asDouble(0D);
         }
         return result;
     }

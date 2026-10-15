@@ -1,7 +1,7 @@
 package com.zifang.z.kb.ingest.source;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonCursor;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
 import com.zifang.z.kb.ingest.api.IngestRequest;
@@ -27,7 +27,6 @@ public class NotionSource implements DataSource {
     private static final String BASE = "https://api.notion.com/v1";
 
     private final String sourceId;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public NotionSource(String sourceId) {
         this.sourceId = sourceId;
@@ -68,10 +67,10 @@ public class NotionSource implements DataSource {
             if (!dbResp.is2xx()) {
                 throw new RuntimeException("Notion 数据库查询失败: " + dbResp.status);
             }
-            JsonNode root = mapper.readTree(dbResp.body);
-            JsonNode results = root.path("results");
+            JsonCursor root = JsonCursor.of(JsonUtil.parse(dbResp.body));
+            JsonCursor results = root.path("results");
             if (results.isArray()) {
-                for (JsonNode r : results) {
+                for (JsonCursor r : results.elements()) {
                     pageIds.add(r.path("id").asText());
                 }
             }
@@ -95,7 +94,7 @@ public class NotionSource implements DataSource {
     private IngestRequest fetchPage(String pageId, Map<String, String> headers, String workspace) throws Exception {
         HttpHelper.Response pageResp = HttpHelper.get(BASE + "/pages/" + pageId, headers);
         if (!pageResp.is2xx()) throw new RuntimeException("page " + pageId + " HTTP " + pageResp.status);
-        JsonNode pageRoot = mapper.readTree(pageResp.body);
+        JsonCursor pageRoot = JsonCursor.of(JsonUtil.parse(pageResp.body));
         String title = extractTitle(pageRoot);
 
         // 抓 block
@@ -105,14 +104,15 @@ public class NotionSource implements DataSource {
             String url = BASE + "/blocks/" + pageId + "/children?page_size=100" + (cursor != null ? "&start_cursor=" + cursor : "");
             HttpHelper.Response blockResp = HttpHelper.get(url, headers);
             if (!blockResp.is2xx()) break;
-            JsonNode blockRoot = mapper.readTree(blockResp.body);
-            JsonNode results = blockRoot.path("results");
+            JsonCursor blockRoot = JsonCursor.of(JsonUtil.parse(blockResp.body));
+            JsonCursor results = blockRoot.path("results");
             if (results.isArray()) {
-                for (JsonNode block : results) {
+                for (JsonCursor block : results.elements()) {
                     renderBlock(block, content, headers, 0);
                 }
             }
-            cursor = blockRoot.path("next_cursor").isNull() ? null : blockRoot.path("next_cursor").asText(null);
+            JsonCursor nextCursor = blockRoot.path("next_cursor");
+            cursor = nextCursor.isMissing() || nextCursor.isNull() ? null : nextCursor.asText();
             if (blockRoot.path("has_more").asBoolean(false)) {
                 // continue
             } else {
@@ -138,26 +138,25 @@ public class NotionSource implements DataSource {
                 .build();
     }
 
-    private String extractTitle(JsonNode page) {
-        JsonNode titleNode = page.path("properties").path("title");
+    private String extractTitle(JsonCursor page) {
+        JsonCursor titleNode = page.path("properties").path("title");
         if (titleNode.isArray() && titleNode.size() > 0) {
-            return titleNode.get(0).path("text").path("content").asText("Untitled");
+            return textOr(titleNode.at(0).path("text"), "content", "Untitled");
         }
-        JsonNode props = page.path("properties");
-        if (props.fields() != null && props.fields().hasNext()) {
-            Map.Entry<String, JsonNode> first = props.fields().next();
-            JsonNode v = first.getValue();
+        JsonCursor props = page.path("properties");
+        for (String field : props.fieldNames()) {
+            JsonCursor v = props.path(field);
             if (v.path("type").asText().equals("title")) {
-                return v.path("title").get(0).path("text").path("content").asText("Untitled");
+                return textOr(v.path("title").at(0).path("text"), "content", "Untitled");
             }
         }
         return "Untitled";
     }
 
-    private void renderBlock(JsonNode block, StringBuilder out, Map<String, String> headers, int depth) {
-        String type = block.path("type").asText("");
+    private void renderBlock(JsonCursor block, StringBuilder out, Map<String, String> headers, int depth) {
+        String type = textOr(block, "type", "");
         if (type.isEmpty()) return;
-        JsonNode t = block.path(type);
+        JsonCursor t = block.path(type);
 
         switch (type) {
             case "heading_1":
@@ -179,14 +178,14 @@ public class NotionSource implements DataSource {
                 out.append("1. ").append(plainText(t.path("rich_text"))).append("\n");
                 break;
             case "code":
-                out.append("\n```").append(t.path("language").asText("")).append("\n")
+                out.append("\n```").append(textOr(t, "language", "")).append("\n")
                         .append(plainText(t.path("rich_text"))).append("\n```\n");
                 break;
             case "quote":
                 out.append("> ").append(plainText(t.path("rich_text"))).append("\n\n");
                 break;
             case "to_do":
-                out.append(t.path("checked").asBoolean() ? "- [x] " : "- [ ] ")
+                out.append(t.path("checked").asBoolean(false) ? "- [x] " : "- [ ] ")
                         .append(plainText(t.path("rich_text"))).append("\n");
                 break;
             case "divider":
@@ -201,9 +200,9 @@ public class NotionSource implements DataSource {
             try {
                 HttpHelper.Response resp = HttpHelper.get(BASE + "/blocks/" + block.path("id").asText() + "/children", headers);
                 if (resp.is2xx()) {
-                    JsonNode children = mapper.readTree(resp.body).path("results");
+                    JsonCursor children = JsonCursor.of(JsonUtil.parse(resp.body)).path("results");
                     if (children.isArray()) {
-                        for (JsonNode c : children) {
+                        for (JsonCursor c : children.elements()) {
                             renderBlock(c, out, headers, depth + 1);
                         }
                     }
@@ -214,12 +213,18 @@ public class NotionSource implements DataSource {
         }
     }
 
-    private String plainText(JsonNode richText) {
+    private String plainText(JsonCursor richText) {
         if (richText == null || !richText.isArray()) return "";
         StringBuilder sb = new StringBuilder();
-        for (JsonNode rt : richText) {
-            sb.append(rt.path("plain_text").asText(""));
+        for (JsonCursor rt : richText.elements()) {
+            sb.append(textOr(rt, "plain_text", ""));
         }
         return sb.toString();
+    }
+
+    /** JsonCursor 没有 asText(default) 重载: 缺失 / JSON null 回退默认值. */
+    private static String textOr(JsonCursor node, String field, String def) {
+        JsonCursor v = node.path(field);
+        return v.isMissing() || v.isNull() ? def : v.asText();
     }
 }
