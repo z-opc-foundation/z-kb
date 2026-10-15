@@ -1,8 +1,7 @@
 package com.zifang.z.kb.storage.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.zifang.util.json.JsonUtil;
+import com.zifang.util.json.define.TypeReference;
 import com.zifang.z.kb.api.Chunk;
 import com.zifang.z.kb.api.Document;
 import com.zifang.z.kb.api.DocumentRepository;
@@ -48,7 +47,6 @@ public class JsonFileDocumentRepository implements DocumentRepository {
     private final ConcurrentHashMap<String, Workspace> workspaces = new ConcurrentHashMap<>();
 
     private final Path storePath;
-    private final ObjectMapper mapper;
     private final ReentrantLock writeLock = new ReentrantLock();
     private final AtomicBoolean dirty = new AtomicBoolean(false);
 
@@ -64,16 +62,6 @@ public class JsonFileDocumentRepository implements DocumentRepository {
 
     public JsonFileDocumentRepository(String pathStr) {
         this.storePath = Paths.get(pathStr);
-        this.mapper = new ObjectMapper()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // 如果 classpath 里有 jsr310 模块则启用（支持 Instant）
-        try {
-            Class<?> moduleClass = Class.forName("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule");
-            Object module = moduleClass.getDeclaredConstructor().newInstance();
-            mapper.registerModule((com.fasterxml.jackson.databind.Module) module);
-        } catch (Throwable t) {
-            // Instant 会序列化为 epoch-long — 启动能跑即可
-        }
         try {
             if (Files.exists(storePath)) {
                 load();
@@ -320,7 +308,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
             dump.put("docs", docs);
             dump.put("chunks", chunks);
             dump.put("workspaces", workspaces);
-            String json = mapper.writeValueAsString(dump);
+            String json = JsonUtil.toJson(dump);
             Path tmp = storePath.resolveSibling(storePath.getFileName() + ".tmp");
             Files.write(tmp, json.getBytes(java.nio.charset.StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -334,7 +322,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
 
     @SuppressWarnings("unchecked")
     private void load() throws IOException {
-        // 用 TypeReference 让 Jackson 正确还原 Document/Chunk/Workspace 泛型
+        // 用 TypeReference 正确还原 Document/Chunk/Workspace 泛型
         TypeReference<Map<String, Map<String, Document>>> docType =
                 new TypeReference<Map<String, Map<String, Document>>>() {};
         TypeReference<Map<String, Map<String, Chunk>>> chunkType =
@@ -342,18 +330,20 @@ public class JsonFileDocumentRepository implements DocumentRepository {
         TypeReference<Map<String, Workspace>> wsType =
                 new TypeReference<Map<String, Workspace>>() {};
 
-        Map<String, Object> dump = mapper.readValue(Files.readAllBytes(storePath), new TypeReference<Map<String, Object>>() {});
+        String text = new String(Files.readAllBytes(storePath), java.nio.charset.StandardCharsets.UTF_8);
+        // JsonUtil 没有 convertValue，先落成 plain Map 再对子树做一次 toJson/fromJson 绑定
+        Map<String, Object> dump = (Map<String, Object>) JsonUtil.toPlainValue(JsonUtil.parse(text));
 
         if (dump.containsKey("docs")) {
-            Map<String, Map<String, Document>> d = mapper.convertValue(dump.get("docs"), docType);
+            Map<String, Map<String, Document>> d = JsonUtil.fromJson(JsonUtil.toJson(dump.get("docs")), docType);
             d.forEach((ws, m) -> docs.put(ws, new ConcurrentHashMap<>(m)));
         }
         if (dump.containsKey("chunks")) {
-            Map<String, Map<String, Chunk>> c = mapper.convertValue(dump.get("chunks"), chunkType);
+            Map<String, Map<String, Chunk>> c = JsonUtil.fromJson(JsonUtil.toJson(dump.get("chunks")), chunkType);
             c.forEach((ws, m) -> chunks.put(ws, new ConcurrentHashMap<>(m)));
         }
         if (dump.containsKey("workspaces")) {
-            Map<String, Workspace> w = mapper.convertValue(dump.get("workspaces"), wsType);
+            Map<String, Workspace> w = JsonUtil.fromJson(JsonUtil.toJson(dump.get("workspaces")), wsType);
             workspaces.putAll(w);
         }
         // 重建 pathIndex

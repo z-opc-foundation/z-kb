@@ -189,27 +189,28 @@
             <!-- ===== 刻意与父链不同值的格：只能写成**直接** DM 条目 =====
                  （import 进来的 BOM 顶不过继承来的直接 DM，README 步骤 5） -->
 
-            <!-- z-util 抬到 1.2.1（去 Jackson 那版）：仓内 4 个数据源 + Chat/Embedding 服务改用
+            <!-- z-util 抬到 1.2.2（去 Jackson 那版）：仓内 4 个数据源 + Chat/Embedding 服务 + z-kb-graph/z-kb-storage
+                 两个 JSON 文件存储改用
                  JsonUtil / JsonCursor 解析各家 API 响应，不再依赖 ObjectMapper。
                  继承来的 z-boot-fleet DM 把它压在 1.0.22（实测 dependency:tree），
                  而 parse / toPlainValue / JsonCursor 是 1.2.x 才有的 API。
-                 ⚠ dsl-kernel 必须同笔钉：parser-json 1.2.1 的 pom 依赖 dsl-kernel 1.2.1，
+                 ⚠ dsl-kernel 必须同笔钉：parser-json 1.2.2 的 pom 依赖 dsl-kernel 1.2.2，
                  而 DM 对**传递依赖**同样生效，只钉 parser-json 会被 fleet 压回 1.0.22
                  造成运行期版本裂开。 -->
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-core</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.2</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-parser-json</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.2</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-dsl-kernel</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.2</version>
             </dependency>
 
             <!-- z-vector 的 3 条 DM 条目已删：本仓从 1.0.1 抬到 fleet 下发的 1.0.4（1.0.1 在中央是发坏的，

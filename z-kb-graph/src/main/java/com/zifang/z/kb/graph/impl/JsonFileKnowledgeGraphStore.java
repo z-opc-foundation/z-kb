@@ -1,14 +1,12 @@
 package com.zifang.z.kb.graph.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.zifang.z.kb.api.Entity;
 import com.zifang.z.kb.api.EntityType;
 import com.zifang.z.kb.api.GraphQueryResult;
 import com.zifang.z.kb.api.KnowledgeGraphStore;
 import com.zifang.z.kb.api.Relation;
 import org.slf4j.Logger;
+import com.zifang.util.json.JsonUtil;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -42,7 +40,6 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
     private static final String DEFAULT_DIR = System.getProperty("user.home") + "/.zkb/graph";
 
     private final Path baseDir;
-    private final ObjectMapper mapper;
     private final ReentrantLock writeLock = new ReentrantLock();
 
     /** workspace → GraphData */
@@ -63,16 +60,6 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
 
     public JsonFileKnowledgeGraphStore(String dirPath) {
         this.baseDir = Paths.get(dirPath);
-        this.mapper = new ObjectMapper();
-        // 优先尝试加载 jsr310 模块（支持 Instant）
-        try {
-            Class<?> moduleClass = Class.forName("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule");
-            Object module = moduleClass.getDeclaredConstructor().newInstance();
-            mapper.registerModule((com.fasterxml.jackson.databind.Module) module);
-            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        } catch (Throwable t) {
-            // Instant 序列化为 epoch-long 也可工作
-        }
         try {
             Files.createDirectories(baseDir);
             int loaded = load();
@@ -96,7 +83,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(baseDir, "*.json")) {
             for (Path p : stream) {
                 try {
-                    GraphData data = mapper.readValue(Files.readAllBytes(p), GraphData.class);
+                    GraphData data = JsonUtil.fromJson(new String(Files.readAllBytes(p), java.nio.charset.StandardCharsets.UTF_8), GraphData.class);
                     if (data.workspace != null) {
                         workspaces.put(data.workspace, data);
                         count++;
@@ -137,7 +124,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
             snapshot.nextRelationId = data.nextRelationId;
             snapshot.entities = new LinkedHashMap<>(data.entities);
             snapshot.relations = new ArrayList<>(data.relations);
-            String json = mapper.writeValueAsString(snapshot);
+            String json = JsonUtil.toJson(snapshot);
             Path file = baseDir.resolve(fileStem(workspace) + ".json");
             Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
             Files.write(tmp, json.getBytes(java.nio.charset.StandardCharsets.UTF_8),

@@ -99,11 +99,10 @@
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- Jackson — JsonFileDocumentRepository 需要 -->
+        <!-- JsonFileDocumentRepository 走 z-util JsonUtil，不再要 Jackson -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-parser-json</artifactId>
         </dependency>
     </dependencies>
 </project>
