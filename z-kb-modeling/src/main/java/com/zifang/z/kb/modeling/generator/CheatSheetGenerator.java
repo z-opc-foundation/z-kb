@@ -1,6 +1,6 @@
 package com.zifang.z.***REMOVED***.modeling.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.***REMOVED***.modeling.model.CheatSheet;
 import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
 
@@ -39,8 +39,6 @@ import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
  */
 public class CheatSheetGenerator {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     public CheatSheet generate(ProductModel model) {
         CheatSheet cs = new CheatSheet();
         cs.setProductName(model.getProductName());
@@ -60,8 +58,9 @@ public class CheatSheetGenerator {
 
         cs.setMarkdown(sb.toString());
         try {
-            cs.setProductModelJson(mapper.writeValueAsString(model));
-        } catch (Exception e) {
+            cs.setProductModelJson(JsonUtil.toJson(model));
+        } catch (RuntimeException e) {
+            // JsonUtil 抛的是非受检异常，写坏的产品模型不能让整张小抄生成失败。
             cs.setProductModelJson("{}");
         }
         return cs;
