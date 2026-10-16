@@ -62,6 +62,13 @@
             <version>${jackson-databind.version}</version>
         </dependency>
 
+        <!-- 响应 DTO 的序列化控制走 z-util 的注解（@JsonSerialize(nonNull=true) 等），
+             与 /api/kb/ingest/* 由 controller 显式 toJson 的那条路径对齐 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-parser-json</artifactId>
+        </dependency>
+
         <!-- 契约注解。provided：编译期要，运行时由 z-kb-web 的 knife4j 提供，
              不传递给下游，避免给消费者白带一个注解包 -->
         <dependency>

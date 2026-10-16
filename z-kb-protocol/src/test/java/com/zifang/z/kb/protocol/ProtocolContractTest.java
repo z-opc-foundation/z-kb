@@ -1,6 +1,7 @@
 package com.zifang.z.kb.protocol;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.protocol.request.CreateSessionRequest;
 import com.zifang.z.kb.protocol.request.ImportMarkdownRequest;
 import com.zifang.z.kb.protocol.request.SessionChatRequest;
@@ -47,6 +48,16 @@ class ProtocolContractTest {
         Set<String> keys = new TreeSet<>();
         mapper.readTree(mapper.writeValueAsString(value)).fieldNames().forEachRemaining(keys::add);
         return keys;
+    }
+
+    /**
+     * 汇总类 DTO 的键集合走 JsonUtil 取 —— 这才是 {@code /api/kb/ingest/*} 的实际出站路径
+     * （controller 显式 toJson）。拿 ObjectMapper 去量它量的就不是线上那条路了：
+     * IngestItemSummary.error 的"null 时不输出"由 z-util 的 {@code @JsonSerialize(nonNull)}
+     * 决定，Jackson 那侧已经不再有这个语义。
+     */
+    private Set<String> topLevelKeysViaJsonUtil(Object value) {
+        return new TreeSet<>(JsonUtil.parseToMap(JsonUtil.toJson(value)).keySet());
     }
 
     // ───────────────────────── 请求侧 ─────────────────────────
@@ -157,18 +168,18 @@ class ProtocolContractTest {
 
     @Test
     @DisplayName("IngestSummary：键集合 = 8 个顶层计数/明细键")
-    void ingestSummaryKeys() throws Exception {
+    void ingestSummaryKeys() {
         assertEquals(set("count", "success", "failed", "skipped",
                         "totalChunks", "totalEntities", "totalRelations", "items"),
-                topLevelKeys(new IngestSummary()));
+                topLevelKeysViaJsonUtil(new IngestSummary()));
     }
 
     @Test
     @DisplayName("IngestItemSummary：键集合 = 7 个固定键 + error（error 可缺省）")
-    void ingestItemSummaryKeys() throws Exception {
+    void ingestItemSummaryKeys() {
         assertEquals(set("requestId", "documentId", "status", "elapsedMillis",
                         "chunkCount", "entityCount", "relationCount"),
-                topLevelKeys(new IngestItemSummary()));
+                topLevelKeysViaJsonUtil(new IngestItemSummary()));
     }
 
     // ───────────── 本次重构最容易悄悄改掉线格式的那一条 ─────────────
@@ -182,22 +193,26 @@ class ProtocolContractTest {
         // 模拟 controller 里的旧行为：成功项 error 为 null
         assertEquals(null, item.getError());
 
-        String json = mapper.writeValueAsString(item);
-        assertFalse(mapper.readTree(json).has("error"),
+        String json = JsonUtil.toJson(item);
+        assertFalse(JsonUtil.parseToMap(json).containsKey("error"),
                 "成功项的 JSON 里不得凭空多出 \"error\":null —— 那会给每个成功项加一个键，属契约变更");
+        // 同类的其他 null 字段必须保留：逐字段 nonNull，不是整类 nonNull
+        assertTrue(JsonUtil.parseToMap(json).containsKey("documentId"),
+                "documentId 的 null 不该被一起吞掉：" + json);
 
         // 失败项则必须带 error
         item.setStatus("FAILED");
         item.setError("拉取超时");
-        assertTrue(mapper.readTree(mapper.writeValueAsString(item)).has("error"));
+        assertTrue(JsonUtil.parseToMap(JsonUtil.toJson(item)).containsKey("error"));
     }
 
     @Test
     @DisplayName("IngestSummary.items 为空时输出空数组而非 null")
-    void ingestSummaryEmptyItems() throws Exception {
+    void ingestSummaryEmptyItems() {
         IngestSummary s = new IngestSummary();
         s.setCount(0);
-        assertTrue(mapper.readTree(mapper.writeValueAsString(s)).get("items").isArray());
+        assertTrue(JsonUtil.toJson(s).contains("\"items\":[]"),
+                "空明细要输出空数组而不是 null 或整个键消失：" + JsonUtil.toJson(s));
     }
 
     private static Set<String> set(String... items) {

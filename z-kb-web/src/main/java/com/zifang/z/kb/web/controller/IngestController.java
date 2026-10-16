@@ -15,11 +15,14 @@ import com.zifang.z.kb.protocol.response.IngestSummary;
 import com.zifang.z.kb.protocol.response.ListSourcesResponse;
 import com.zifang.z.kb.protocol.response.SourceTypeSummary;
 import com.zifang.z.kb.protocol.response.WebhookAck;
+import com.zifang.util.json.JsonUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -65,19 +68,21 @@ public class IngestController {
 
     @ApiOperation("按 sourceId 触发一次拉取 + 入库")
     @PostMapping("/run")
-    public IngestSummary run(@RequestParam String sourceId,
-                              @RequestBody(required = false) Map<String, Object> config) {
+    public void run(@RequestParam String sourceId,
+                    @RequestBody(required = false) Map<String, Object> config,
+                    HttpServletResponse resp) throws IOException {
         if (config == null) config = new LinkedHashMap<>();
-        return summarize(pipeline.ingest(sourceId, config));
+        writeSummary(resp, summarize(pipeline.ingest(sourceId, config)));
     }
 
     @ApiOperation("提交一组已构造好的 IngestRequest")
     @PostMapping("/submit")
-    public IngestSummary submit(@RequestBody List<IngestRequest> requests) {
+    public void submit(@RequestBody List<IngestRequest> requests,
+                       HttpServletResponse resp) throws IOException {
         if (requests == null || requests.isEmpty()) {
             throw new KBException("请求列表为空");
         }
-        return summarize(pipeline.ingestBatch(requests));
+        writeSummary(resp, summarize(pipeline.ingestBatch(requests)));
     }
 
     @ApiOperation("通用 webhook 入口 — 接收 Markdown 文档")
@@ -98,8 +103,23 @@ public class IngestController {
 
     @ApiOperation("拉取 webhook 缓冲并入库")
     @PostMapping("/webhook/flush")
-    public IngestSummary flushWebhook() {
-        return summarize(pipeline.ingest(webhookSource.getSourceId(), new HashMap<>()));
+    public void flushWebhook(HttpServletResponse resp) throws IOException {
+        writeSummary(resp, summarize(pipeline.ingest(webhookSource.getSourceId(), new HashMap<>())));
+    }
+
+    /**
+     * 汇总响应由 controller 显式序列化。
+     *
+     * <p>原本靠 MVC 转换器 + DTO 上的类级 {@code @JsonInclude(NON_NULL)}；注解清零后
+     * 改走 JsonUtil，逐字段的去留由 {@code IngestItemSummary.error} 上的
+     * {@code @JsonSerialize(nonNull = true)} 单独决定 —— 不能用 toJsonExcludingNulls，
+     * 那会把 documentId 等字段的 null 也一起吞掉。
+     */
+    private void writeSummary(HttpServletResponse resp, IngestSummary summary) throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write(JsonUtil.toJson(summary));
+        resp.getWriter().flush();
     }
 
     @ApiOperation("查看累计统计")

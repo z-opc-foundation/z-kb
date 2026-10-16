@@ -1,6 +1,6 @@
 package com.zifang.z.kb.protocol.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.zifang.util.json.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -35,11 +35,14 @@ public class IngestItemSummary {
     /**
      * 失败原因。
      *
-     * <p>刻意 {@code NON_NULL}：改造前这里是 {@code if (r.getError() != null) m.put("error", ...)}，
-     * 成功项的 JSON 里**没有** {@code error} 这个键。Jackson 默认会为 null 字段输出
+     * <p>刻意逐字段丢弃 null：改造前这里是 {@code if (r.getError() != null) m.put("error", ...)}，
+     * 成功项的 JSON 里**没有** {@code error} 这个键。默认会为 null 字段输出
      * {@code "error": null}，那会给每个成功项凭空加一个键，属于对外契约变更。
+     *
+     * <p>同类的 documentId 等字段该保留 null 就保留 —— 所以不能用类级 nonNull，
+     * 只能是这一个字段自己声明。
      */
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonSerialize(nonNull = true)
     @ApiModelProperty("失败原因；成功时不返回该字段")
     private String error;
 

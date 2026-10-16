@@ -194,23 +194,25 @@
                  JsonUtil / JsonCursor 解析各家 API 响应，不再依赖 ObjectMapper。
                  继承来的 z-boot-fleet DM 把它压在 1.0.22（实测 dependency:tree），
                  而 parse / toPlainValue / JsonCursor 是 1.2.x 才有的 API。
+                 1.2.6 起 parser-json 另带 @JsonSerialize(nonNull=true) —— z-kb 的 IngestItemSummary
+                 靠它逐字段丢掉空的 error 键, 从而摘掉 Jackson 的 @JsonInclude(NON_NULL)。
                  ⚠ dsl-kernel 必须同笔钉：parser-json 1.2.2 的 pom 依赖 dsl-kernel 1.2.2，
                  而 DM 对**传递依赖**同样生效，只钉 parser-json 会被 fleet 压回 1.0.22
                  造成运行期版本裂开。 -->
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-core</artifactId>
-                <version>1.2.2</version>
+                <version>1.2.6</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-parser-json</artifactId>
-                <version>1.2.2</version>
+                <version>1.2.6</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-util-dsl-kernel</artifactId>
-                <version>1.2.2</version>
+                <version>1.2.6</version>
             </dependency>
 
             <!-- z-vector 的 3 条 DM 条目已删：本仓从 1.0.1 抬到 fleet 下发的 1.0.4（1.0.1 在中央是发坏的，
