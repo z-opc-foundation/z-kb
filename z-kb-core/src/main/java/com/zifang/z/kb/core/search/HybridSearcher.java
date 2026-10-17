@@ -56,6 +56,8 @@ public class HybridSearcher {
 
     public SearchResult search(SearchQuery q) {
         long start = System.currentTimeMillis();
+        // 局部列表而非字段：本类是被多线程共享的单例，挂字段会跨请求串味
+        List<String> degraded = new ArrayList<>();
         SearchResult result = new SearchResult();
         result.setQuery(q.getQuery());
         result.setMode(q.getMode());
@@ -63,7 +65,7 @@ public class HybridSearcher {
         // 1. 向量召回
         List<SearchHit> vectorHits = new ArrayList<>();
         if (q.getMode() == SearchMode.VECTOR || q.getMode() == SearchMode.HYBRID || q.getMode() == SearchMode.FUSION) {
-            vectorHits = vectorSearch(q);
+            vectorHits = vectorSearch(q, degraded);
         }
 
         // 2. 关键词召回
@@ -76,7 +78,7 @@ public class HybridSearcher {
         List<SearchHit> graphHits = new ArrayList<>();
         List<Entity> matchedEntities = new ArrayList<>();
         if (q.getMode() == SearchMode.GRAPH || q.getMode() == SearchMode.FUSION) {
-            graphHits = graphSearch(q, matchedEntities);
+            graphHits = graphSearch(q, matchedEntities, degraded);
         }
 
         // 4. 融合
@@ -105,11 +107,14 @@ public class HybridSearcher {
         result.getStats().put("vector", vectorHits.size());
         result.getStats().put("keyword", keywordHits.size());
         result.getStats().put("graph", graphHits.size());
+        if (!degraded.isEmpty()) {
+            result.getStats().put("degradedRoutes", degraded.size());
+        }
         result.setElapsedMillis(System.currentTimeMillis() - start);
         return result;
     }
 
-    private List<SearchHit> vectorSearch(SearchQuery q) {
+    private List<SearchHit> vectorSearch(SearchQuery q, List<String> degraded) {
         if (vectorStore == null || embeddingProvider == null) return new ArrayList<>();
         try {
             // 确保 collection 存在
@@ -132,12 +137,15 @@ public class HybridSearcher {
             }
             return hits;
         } catch (Exception e) {
+            // 不能只 warn 后返回空: 空结果会被下游当成「确实没召回到」，
+            // 向量库故障会伪装成召回率下降。记进 stats 让调用方能区分两者。
+            degraded.add("vector: " + e.getMessage());
             log.warn("Vector search failed: {}", e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    private List<SearchHit> graphSearch(SearchQuery q, List<Entity> matchedEntities) {
+    private List<SearchHit> graphSearch(SearchQuery q, List<Entity> matchedEntities, List<String> degraded) {
         if (graphStore == null) return new ArrayList<>();
         try {
             // 必须先抽实体再逐个匹配：searchEntities 是 canonicalName.contains(keyword),
@@ -175,6 +183,7 @@ public class HybridSearcher {
             }
             return new ArrayList<>(hitMap.values());
         } catch (Exception e) {
+            degraded.add("graph: " + e.getMessage());
             log.warn("Graph search failed: {}", e.getMessage());
             return new ArrayList<>();
         }
