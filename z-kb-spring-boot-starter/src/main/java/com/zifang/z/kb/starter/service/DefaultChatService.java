@@ -65,21 +65,32 @@ public class DefaultChatService implements ChatService {
         response.setRelatedEntities(sr.getMatchedEntities());
 
         // 2. 生成回答
+        // 三种降级必须区分开：未配置 / 调用失败 / 未启用 LLM 的抽取式回答。
+        // 压成一个 "extractive" 会让「faithfulness 掉了」这类指标无法归因 ——
+        // 可能是模型答差、超时、还是压根没配模型。
         String answer;
-        String model = "extractive";
+        String model;
+        LlmResult llm = null;
         if (config.getEndpoint() != null && !config.getEndpoint().isEmpty()) {
             try {
-                answer = callLlm(request, sr);
+                llm = callLlm(request, sr);
+                answer = llm.content;
                 model = config.getModel() != null ? config.getModel() : "http-llm";
             } catch (Exception e) {
                 log.warn("LLM call failed, fallback to extractive: {}", e.getMessage());
                 answer = extractiveAnswer(request, sr);
+                model = "extractive-llm-failed";
             }
         } else {
             answer = extractiveAnswer(request, sr);
+            model = "extractive-not-configured";
         }
         response.setAnswer(answer);
         response.setModel(model);
+        if (llm != null) {
+            response.setPromptTokens(llm.promptTokens);
+            response.setCompletionTokens(llm.completionTokens);
+        }
         response.setElapsedMillis(System.currentTimeMillis() - start);
 
         // 3. 持久化会话消息
@@ -121,7 +132,20 @@ public class DefaultChatService implements ChatService {
         return sb.toString();
     }
 
-    private String callLlm(ChatRequest request, SearchResult sr) throws Exception {
+    /** LLM 返回正文 + token 用量。usage 之前被整个丢掉，成本与上下文占用无从统计 */
+    private static final class LlmResult {
+        final String content;
+        final long promptTokens;
+        final long completionTokens;
+
+        LlmResult(String content, long promptTokens, long completionTokens) {
+            this.content = content;
+            this.promptTokens = promptTokens;
+            this.completionTokens = completionTokens;
+        }
+    }
+
+    private LlmResult callLlm(ChatRequest request, SearchResult sr) throws Exception {
         // 拼装 prompt
         StringBuilder user = new StringBuilder();
         user.append("参考资料：\n\n");
@@ -159,10 +183,14 @@ public class DefaultChatService implements ChatService {
         }
         JsonCursor root = JsonCursor.of(JsonUtil.parse(resp.getBody()));
         JsonCursor choices = root.path("choices");
+        JsonCursor usage = root.path("usage");
+        long promptTokens = usage.path("prompt_tokens").asLong(0);
+        long completionTokens = usage.path("completion_tokens").asLong(0);
         if (choices.isArray() && choices.size() > 0) {
-            return choices.at(0).path("message").path("content").asText();
+            return new LlmResult(choices.at(0).path("message").path("content").asText(),
+                    promptTokens, completionTokens);
         }
-        return extractiveAnswer(request, sr);
+        return new LlmResult(extractiveAnswer(request, sr), promptTokens, completionTokens);
     }
 
     @Override
