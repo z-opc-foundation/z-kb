@@ -71,13 +71,13 @@ public class TfIdfEmbeddingProvider implements EmbeddingProvider {
 
     @Override
     public float[] embed(String text) {
-        return embedInternal(text, true);
+        return embedInternal(text);
     }
 
     @Override
     public List<float[]> embedBatch(List<String> texts) {
         List<float[]> result = new ArrayList<>(texts.size());
-        for (String t : texts) result.add(embedInternal(t, true));
+        for (String t : texts) result.add(embedInternal(t));
         return result;
     }
 
@@ -114,15 +114,37 @@ public class TfIdfEmbeddingProvider implements EmbeddingProvider {
         totalDocs++;
     }
 
-    private float[] embedInternal(String text, boolean updateStats) {
+    /**
+     * 统计快照 — 评测需要冻结语料状态才能复现结果。
+     *
+     * <p>TF-IDF 的 IDF 分量依赖全库 DF，因此「同一段文本在不同语料状态下 embed 出的向量不同」。
+     * 评测跑两遍若中间发生过 ingest，两遍结果就不可比。跑评测前 snapshot、跑完 restore 即可锁定。
+     */
+    public Map<String, Integer> snapshotCorpusState() {
+        return new HashMap<>(df);
+    }
+
+    public int corpusSize() {
+        return totalDocs;
+    }
+
+    public void restoreCorpusState(Map<String, Integer> snapshot, int docs) {
+        df.clear();
+        if (snapshot != null) df.putAll(snapshot);
+        totalDocs = docs;
+    }
+
+    /**
+     * embed 必须是纯函数：语料状态只能由 {@link #trainIdf} 推进。
+     *
+     * <p>曾经 embed 在首次调用时自训练（用被 embed 的文本当语料），后果是一次查询就会
+     * 抬高全库 DF，之后所有文档向量与查询向量不在同一 IDF 空间，检索结果不可复现。
+     */
+    private float[] embedInternal(String text) {
         if (text == null || text.isEmpty()) {
             return new float[dimension];
         }
         List<String> terms = tokenize(text);
-        if (updateStats && totalDocs == 0) {
-            // 第一次使用，自训练（用单文档近似）
-            trainOneDoc(text);
-        }
 
         Map<Integer, Float> vec = new HashMap<>();
         // term frequency

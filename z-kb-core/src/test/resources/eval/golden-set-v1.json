@@ -1,0 +1,79 @@
+{
+  "datasetVersion": "v1",
+  "knowledgeVersion": "kb-corpus-2026-10-18",
+  "cases": [
+    {
+      "caseId": "mysql-001",
+      "question": "MySQL 联合索引为什么从第二列开始查询就失效了",
+      "expectedDocIds": ["doc-mysql"],
+      "groundTruth": "联合索引遵循最左前缀原则，只能从最左列开始匹配；从第二列开始会退化为全表扫描。",
+      "sourceType": "expert_basic",
+      "topic": "mysql",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "mysql-002",
+      "question": "什么是覆盖索引，为什么它能避免回表",
+      "expectedDocIds": ["doc-mysql"],
+      "groundTruth": "覆盖索引指索引已包含查询所需的全部列，可以在索引树上完成查询而无需回聚簇索引取整行数据。",
+      "sourceType": "expert_basic",
+      "topic": "mysql",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "mysql-003",
+      "question": "varchar 列和数字比较为什么会让索引失效",
+      "expectedDocIds": ["doc-mysql"],
+      "groundTruth": "会发生隐式类型转换，等价于对列加了 CAST，索引因此无法使用。",
+      "sourceType": "expert_boundary",
+      "topic": "mysql",
+      "difficulty": "困难"
+    },
+    {
+      "caseId": "k8s-001",
+      "question": "liveness 探针和 readiness 探针失败后的行为有什么区别",
+      "expectedDocIds": ["doc-k8s"],
+      "groundTruth": "liveness 失败会重启容器，readiness 失败只把 Pod 从 Service Endpoints 摘除。混淆两者会打死启动慢的服务。",
+      "sourceType": "expert_basic",
+      "topic": "k8s",
+      "difficulty": "中等"
+    },
+    {
+      "caseId": "k8s-002",
+      "question": "滚动更新时 maxSurge 和 maxUnavailable 能不能同时为零",
+      "expectedDocIds": ["doc-k8s"],
+      "groundTruth": "不能，同时为 0 时更新无法推进。maxSurge 控制多起的 Pod 数，maxUnavailable 控制可少的 Pod 数。",
+      "sourceType": "expert_boundary",
+      "topic": "k8s",
+      "difficulty": "中等"
+    },
+    {
+      "caseId": "nacos-001",
+      "question": "Nacos 的临时实例和持久实例有什么区别",
+      "expectedDocIds": ["doc-nacos"],
+      "groundTruth": "临时实例依赖心跳续约，超时即摘除；持久实例写入元数据存储。Nacos 2.x 的临时实例不再走 CP 持久化路径。",
+      "sourceType": "expert_basic",
+      "topic": "nacos",
+      "difficulty": "中等"
+    },
+    {
+      "caseId": "nacos-002",
+      "question": "Nacos 配置灰度发布是怎么做的",
+      "expectedDocIds": ["doc-nacos"],
+      "groundTruth": "发布时指定 beta 标识，让指定 IP 的客户端先拿到灰度配置，确认无误后再全量发布。",
+      "sourceType": "expert_basic",
+      "topic": "nacos",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "unanswerable-001",
+      "question": "请介绍一下 ZBrush 的雕刻工作流",
+      "expectedDocIds": [],
+      "groundTruth": "知识库内无 ZBrush 相关内容，应当明确拒答而不是编造。",
+      "isUnanswerable": true,
+      "sourceType": "expert_boundary",
+      "topic": "out-of-scope",
+      "difficulty": "简单"
+    }
+  ]
+}

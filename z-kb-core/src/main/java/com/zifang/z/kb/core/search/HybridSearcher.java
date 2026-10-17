@@ -39,8 +39,8 @@ public class HybridSearcher {
     private final EmbeddingProvider embeddingProvider;
     private final EntityExtractor entityExtractor;
 
-    /** 向量 Collection 名（所有 workspace 共用一个） */
-    private static final String VECTOR_COLLECTION = "kb_chunks";
+    /** 向量 Collection 名 — 必须与写入侧一致，取共享常量 */
+    private static final String VECTOR_COLLECTION = ChunkVectorStore.DEFAULT_CHUNK_COLLECTION;
 
     public HybridSearcher(ChunkVectorStore vectorStore,
                            KnowledgeGraphStore graphStore,
@@ -140,30 +140,36 @@ public class HybridSearcher {
     private List<SearchHit> graphSearch(SearchQuery q, List<Entity> matchedEntities) {
         if (graphStore == null) return new ArrayList<>();
         try {
-            // 从查询中抽取候选实体
-            List<Entity> entities = graphStore.searchEntities(q.getWorkspace(), q.getQuery(), 5);
-            if (entities.isEmpty()) return new ArrayList<>();
+            // 必须先抽实体再逐个匹配：searchEntities 是 canonicalName.contains(keyword),
+            // 直接把整句 query 当 keyword 传进去, 长句永远匹配不到任何实体名, 图谱路恒空。
+            List<String> candidates = queryEntityNames(q.getQuery());
+            if (candidates.isEmpty()) return new ArrayList<>();
 
-            matchedEntities.addAll(entities);
+            // 按 query 中出现的顺序去重, 并保持图谱召回的优先级顺序
+            Map<String, Entity> found = new LinkedHashMap<>();
+            for (String name : candidates) {
+                for (Entity e : graphStore.searchEntities(q.getWorkspace(), name, 5)) {
+                    found.putIfAbsent(e.getCanonicalName(), e);
+                }
+            }
+            if (found.isEmpty()) return new ArrayList<>();
 
-            // 取这些实体的 2 跳邻居 chunk
+            matchedEntities.addAll(found.values());
+
             Map<String, SearchHit> hitMap = new LinkedHashMap<>();
-            for (Entity e : entities) {
-                // 找该实体作为 source/target 的关系所关联的 chunk
-                // 这里简化为：返回这些实体的 sourceChunkIds 对应的命中
-                if (e.getSourceChunkIds() != null) {
-                    for (String cid : e.getSourceChunkIds()) {
-                        if (!hitMap.containsKey(cid)) {
-                            SearchHit hit = SearchHit.builder()
-                                    .chunkId(cid)
-                                    .documentId(e.getSourceDocumentIds() != null && !e.getSourceDocumentIds().isEmpty()
-                                            ? e.getSourceDocumentIds().get(0) : null)
-                                    .score(e.getImportance())
-                                    .source("graph")
-                                    .matchedEntities(new ArrayList<>(Collections.singletonList(e.getCanonicalName())))
-                                    .build();
-                            hitMap.put(cid, hit);
-                        }
+            for (Entity e : found.values()) {
+                if (e.getSourceChunkIds() == null) continue;
+                for (String cid : e.getSourceChunkIds()) {
+                    if (!hitMap.containsKey(cid)) {
+                        SearchHit hit = SearchHit.builder()
+                                .chunkId(cid)
+                                .documentId(e.getSourceDocumentIds() != null && !e.getSourceDocumentIds().isEmpty()
+                                        ? e.getSourceDocumentIds().get(0) : null)
+                                .score(e.getImportance())
+                                .source("graph")
+                                .matchedEntities(new ArrayList<>(Collections.singletonList(e.getCanonicalName())))
+                                .build();
+                        hitMap.put(cid, hit);
                     }
                 }
             }
@@ -172,6 +178,29 @@ public class HybridSearcher {
             log.warn("Graph search failed: {}", e.getMessage());
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * 从 query 抽候选实体名 — 把 query 包成临时 Chunk 复用 {@link EntityExtractor}。
+     *
+     * <p>词典命中项（MySQL / Kubernetes 等）质量最高，高频词兜底可能掺噪声，
+     * 但 searchEntities 本身是 contains 匹配，噪声只影响 limit 占用。
+     */
+    private List<String> queryEntityNames(String query) {
+        if (query == null || query.trim().isEmpty() || entityExtractor == null) {
+            return Collections.emptyList();
+        }
+        Chunk probe = new Chunk();
+        probe.setWorkspace("");
+        probe.setDocumentId("");
+        probe.setContent(query);
+        List<String> names = new ArrayList<>();
+        for (Entity e : entityExtractor.extract(probe)) {
+            if (e.getCanonicalName() != null && !e.getCanonicalName().trim().isEmpty()) {
+                names.add(e.getCanonicalName().trim());
+            }
+        }
+        return names;
     }
 
     /**
@@ -209,10 +238,10 @@ public class HybridSearcher {
     private List<WeightedHit> weightedList(List<SearchHit> hits, double weight) {
         List<WeightedHit> result = new ArrayList<>();
         for (SearchHit h : hits) {
-            // 对原始 score 做归一化（min-max）
             result.add(new WeightedHit(h, weight));
         }
-        // 按 score 降序
+        // 按 score 降序。无需归一化：RRF 只吃 rank 不吃 raw score，而 rank 由这一路的
+        // 相对顺序决定，向量路(cosine ∈[0,1]) 与 BM25 路(无上界)量纲不同不影响。
         result.sort((a, b) -> Double.compare(b.hit.getScore(), a.hit.getScore()));
         return result;
     }

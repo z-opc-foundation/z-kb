@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultKnowledgeBaseService.class);
-    private static final String VECTOR_COLLECTION = "chunks";
+    private static final String VECTOR_COLLECTION = ChunkVectorStore.DEFAULT_CHUNK_COLLECTION;
 
     private final MarkdownParser parser;
     private final Chunker chunker;
