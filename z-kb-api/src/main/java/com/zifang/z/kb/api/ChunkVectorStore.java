@@ -16,6 +16,12 @@ import java.util.Map;
  */
 public interface ChunkVectorStore {
 
+    /**
+     * chunk 向量 collection 名。写入侧与检索侧必须用同一个常量 —— 两边各写一份字面量时
+     * 会静默错开，表现为检索侧 {@code hasCollection} 恒 false、向量召回恒空而不报错。
+     */
+    String DEFAULT_CHUNK_COLLECTION = "chunks";
+
     /** 创建一个 collection（workspace + collectionName 维度隔离） */
     void createCollection(String workspace, String collectionName, int dimension);
 
