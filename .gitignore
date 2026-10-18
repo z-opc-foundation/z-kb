@@ -46,3 +46,6 @@
 # 前端 node_modules / dist
 _frontend/**/node_modules/
 _frontend/**/dist/
+
+# _eval 生成器的语料输出目录：内容已进 z-kb-core/src/test/resources，不入库
+eval*-out/
