@@ -3,6 +3,7 @@ package com.zifang.z.kb.starter.config;
 import com.zifang.z.kb.api.ChunkVectorStore;
 import com.zifang.z.kb.api.DocumentRepository;
 import com.zifang.z.kb.api.EmbeddingProvider;
+import com.zifang.z.kb.api.KbMetrics;
 import com.zifang.z.kb.api.KnowledgeBaseService;
 import com.zifang.z.kb.api.KnowledgeGraphStore;
 import com.zifang.z.kb.api.SearchService;
@@ -14,12 +15,14 @@ import com.zifang.z.kb.core.extractor.RelationExtractor;
 import com.zifang.z.kb.core.parser.MarkdownParser;
 import com.zifang.z.kb.core.search.Bm25Searcher;
 import com.zifang.z.kb.core.search.HybridSearcher;
+import com.zifang.z.kb.starter.metrics.MicrometerKbMetrics;
 import com.zifang.z.kb.starter.service.DefaultChatService;
 import com.zifang.z.kb.starter.service.DefaultKnowledgeBaseService;
 import com.zifang.z.kb.starter.service.DefaultSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,6 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * z-kb Spring Boot 自动装配 — 协调所有子模块的 Bean。
@@ -99,6 +103,30 @@ public class KBAutoConfiguration {
         return new TfIdfEmbeddingProvider(ep.getDimension());
     }
 
+    // ==================== Metrics ====================
+
+    /**
+     * 只有容器里真带 actuator（micrometer 在 classpath）才装配，否则整个 z-kb 都不产生指标，
+     * 但功能不受影响 —— 埋点不该成为接入前提。
+     */
+    // 必须放在嵌套类里：micrometer 是 optional 依赖，若把 @Bean 方法挂在 KBAutoConfiguration 上，
+    // 外层解析方法签名时会反射加载 MeterRegistry，下游没带 actuator 就整类加载失败。
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "io.micrometer.core.instrument.MeterRegistry")
+    static class MetricsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(KbMetrics.class)
+        KbMetrics kbMetrics(ObjectProvider<MeterRegistry> registryProvider) {
+            MeterRegistry registry = registryProvider.getIfAvailable();
+            if (registry == null) {
+                return null;
+            }
+            log.info("z-kb metrics enabled (registry: {})", registry.getClass().getSimpleName());
+            return new MicrometerKbMetrics(registry);
+        }
+    }
+
     // ==================== Search ====================
 
     @Bean
@@ -108,11 +136,12 @@ public class KBAutoConfiguration {
                                         Bm25Searcher bm25Searcher,
                                         EmbeddingProvider embeddingProvider,
                                         EntityExtractor entityExtractor,
-                                        ObjectProvider<DocumentRepository> documentRepositoryProvider) {
+                                        ObjectProvider<DocumentRepository> documentRepositoryProvider,
+                                        ObjectProvider<KbMetrics> metricsProvider) {
         HybridSearcher hybridSearcher = new HybridSearcher(
                 vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor,
                 documentRepositoryProvider.getIfAvailable());
-        return new DefaultSearchService(hybridSearcher);
+        return new DefaultSearchService(hybridSearcher, metricsProvider.getIfAvailable());
     }
 
     // ==================== Main KB Service ====================
@@ -127,10 +156,12 @@ public class KBAutoConfiguration {
                                                       ChunkVectorStore vectorStore,
                                                       KnowledgeGraphStore graphStore,
                                                       DocumentRepository documentRepository,
-                                                      Bm25Searcher bm25Searcher) {
+                                                      Bm25Searcher bm25Searcher,
+                                                      ObjectProvider<KbMetrics> metricsProvider) {
         DefaultKnowledgeBaseService svc = new DefaultKnowledgeBaseService(
                 parser, chunker, entityExtractor, relationExtractor,
-                embeddingProvider, vectorStore, graphStore, documentRepository, bm25Searcher);
+                embeddingProvider, vectorStore, graphStore, documentRepository, bm25Searcher,
+                metricsProvider.getIfAvailable());
         log.info("z-kb KnowledgeBaseService initialized");
         return svc;
     }
@@ -139,7 +170,9 @@ public class KBAutoConfiguration {
     @ConditionalOnMissingBean(DefaultChatService.class)
     public DefaultChatService chatService(KnowledgeBaseService kbService,
                                             SearchService searchService,
-                                            KBProperties props) {
-        return new DefaultChatService(kbService, searchService, props.getChat());
+                                            KBProperties props,
+                                            ObjectProvider<KbMetrics> metricsProvider) {
+        return new DefaultChatService(kbService, searchService, props.getChat(),
+                metricsProvider.getIfAvailable());
     }
 }

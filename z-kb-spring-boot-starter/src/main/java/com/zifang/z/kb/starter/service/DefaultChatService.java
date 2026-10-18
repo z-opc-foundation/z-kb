@@ -1,6 +1,7 @@
 package com.zifang.z.kb.starter.service;
 
 import com.zifang.z.kb.api.ChatMessage;
+import com.zifang.z.kb.api.KbMetrics;
 import com.zifang.z.kb.api.ChatRequest;
 import com.zifang.z.kb.api.ChatResponse;
 import com.zifang.z.kb.api.ChatService;
@@ -39,13 +40,21 @@ public class DefaultChatService implements ChatService {
     private final KnowledgeBaseService kbService;
     private final SearchService searchService;
     private final KBProperties.Chat config;
+    private final KbMetrics metrics;
     private final HttpExecutor httpExecutor = HttpExecutor.getDefault();
     private final java.util.Map<String, ChatSession> sessions = new ConcurrentHashMap<>();
 
     public DefaultChatService(KnowledgeBaseService kbService, SearchService searchService, KBProperties.Chat config) {
+        this(kbService, searchService, config, null);
+    }
+
+    /** @param metrics 可为 null：下游没带 actuator 时无埋点 */
+    public DefaultChatService(KnowledgeBaseService kbService, SearchService searchService,
+                              KBProperties.Chat config, KbMetrics metrics) {
         this.kbService = kbService;
         this.searchService = searchService;
         this.config = config;
+        this.metrics = metrics;
     }
 
     @Override
@@ -92,6 +101,10 @@ public class DefaultChatService implements ChatService {
             response.setCompletionTokens(llm.completionTokens);
         }
         response.setElapsedMillis(System.currentTimeMillis() - start);
+        if (metrics != null) {
+            metrics.recordChat(model, response.getPromptTokens(), response.getCompletionTokens(),
+                    response.getElapsedMillis());
+        }
 
         // 3. 持久化会话消息
         if (request.getSessionId() != null) {

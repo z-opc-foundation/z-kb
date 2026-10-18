@@ -3,6 +3,7 @@ package com.zifang.z.kb.starter.service;
 import com.zifang.z.kb.api.Chunk;
 import com.zifang.z.kb.api.ChunkVectorStore;
 import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.KbMetrics;
 import com.zifang.z.kb.api.DocumentRepository;
 import com.zifang.z.kb.api.DocumentStatus;
 import com.zifang.z.kb.api.Entity;
@@ -57,12 +58,23 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
     private final KnowledgeGraphStore graphStore;
     private final DocumentRepository documentRepository;
     private final Bm25Searcher bm25Searcher;
+    private final KbMetrics metrics;
 
     public DefaultKnowledgeBaseService(MarkdownParser parser, Chunker chunker,
                                          EntityExtractor entityExtractor, RelationExtractor relationExtractor,
                                          EmbeddingProvider embeddingProvider, ChunkVectorStore vectorStore,
                                          KnowledgeGraphStore graphStore, DocumentRepository documentRepository,
                                          Bm25Searcher bm25Searcher) {
+        this(parser, chunker, entityExtractor, relationExtractor, embeddingProvider, vectorStore,
+                graphStore, documentRepository, bm25Searcher, null);
+    }
+
+    /** @param metrics 可为 null：下游没带 actuator 时无埋点 */
+    public DefaultKnowledgeBaseService(MarkdownParser parser, Chunker chunker,
+                                         EntityExtractor entityExtractor, RelationExtractor relationExtractor,
+                                         EmbeddingProvider embeddingProvider, ChunkVectorStore vectorStore,
+                                         KnowledgeGraphStore graphStore, DocumentRepository documentRepository,
+                                         Bm25Searcher bm25Searcher, KbMetrics metrics) {
         this.parser = parser;
         this.chunker = chunker;
         this.entityExtractor = entityExtractor;
@@ -72,6 +84,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         this.graphStore = graphStore;
         this.documentRepository = documentRepository;
         this.bm25Searcher = bm25Searcher;
+        this.metrics = metrics;
         // 启动时自动重建索引（向量 + BM25），让持久化的 chunk 数据可被搜索
         try {
             rebuildIndicesFromStorage();
@@ -268,6 +281,9 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
             result.setRelationCount(docRelations.size());
             result.setSuccess(true);
             result.setElapsedMillis(System.currentTimeMillis() - start);
+            if (metrics != null) {
+                metrics.recordIngest(chunks.size(), result.getElapsedMillis());
+            }
         } catch (Exception e) {
             log.error("Index failed for document {}", doc.getId(), e);
             doc.setStatus(DocumentStatus.FAILED);
