@@ -88,15 +88,23 @@ public final class HanLpTokenizer {
         return c >= 0x4E00 && c <= 0x9FFF;
     }
 
-    /** 驼峰拆分：InfluxDB → [Influx, DB]; userId → [user, Id] */
+    /**
+     * 驼峰/缩写拆分：InfluxDB → [Influx, DB]; userId → [user, Id]; OPC → [OPC]。
+     *
+     * <p>切分点有两种：小写/数字之后接大写（user|Id），以及大写串之后接「大写+小写」
+     * （Influx|DB）。不能见到大写就切 —— 那样 OPC 会被拆成 o/p/c 三个单字母，
+     * 再被单字符过滤全丢掉，API、URL、SQL 这类缩写就永远搜不到。
+     */
     private static List<String> splitCamelCase(String s) {
         List<String> parts = new ArrayList<>();
         if (s.isEmpty()) return parts;
         StringBuilder current = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (i > 0 && Character.isUpperCase(c) && current.length() > 0) {
-                // 上一段结束
+            boolean boundary = i > 0 && current.length() > 0 && Character.isUpperCase(c)
+                    && (!Character.isUpperCase(s.charAt(i - 1))
+                        || (i + 1 < s.length() && Character.isLowerCase(s.charAt(i + 1))));
+            if (boundary) {
                 parts.add(current.toString());
                 current.setLength(0);
             }

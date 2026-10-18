@@ -22,6 +22,9 @@ public class DefaultSearchService implements SearchService {
         this(hybridSearcher, null);
     }
 
+    // 组件扫描装配，必须显式指定：埋点加入后本类有两个构造器，
+    // Spring 无从判断该用哪个（无参找不到，也不会自动挑参数最多的）
+    @org.springframework.beans.factory.annotation.Autowired
     public DefaultSearchService(HybridSearcher hybridSearcher, KbMetrics metrics) {
         this.hybridSearcher = hybridSearcher;
         this.metrics = metrics;

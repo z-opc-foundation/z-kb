@@ -141,7 +141,12 @@ public class Bm25Searcher {
         void addChunk(Chunk chunk) {
             int idx = chunks.size();
             chunks.add(chunk);
-            List<String> terms = HanLpTokenizer.tokenize(chunk.getContent());
+            // 标题一并入索引：Chunker 会把 markdown 的 H1 摘进 contextTitle，
+            // 只索引正文的话「按标题搜」一条都搜不到
+            String indexed = chunk.getContextTitle() == null || chunk.getContextTitle().isEmpty()
+                    ? chunk.getContent()
+                    : chunk.getContextTitle() + "\n" + chunk.getContent();
+            List<String> terms = HanLpTokenizer.tokenize(indexed);
             Map<String, Integer> tf = new HashMap<>();
             Set<String> seen = new HashSet<>();
             for (String t : terms) {

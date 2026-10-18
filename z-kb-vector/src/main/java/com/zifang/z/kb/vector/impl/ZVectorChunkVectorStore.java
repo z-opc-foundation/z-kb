@@ -88,6 +88,9 @@ public class ZVectorChunkVectorStore implements ChunkVectorStore {
         }
         if (!points.isEmpty()) {
             vectorStore.upsertBatch(fullName, points);
+            // 批量写入后必须重建 ANN 索引。实测（真实导入路径 A/B）：不重建时
+            // 点数统计正确（count=3），但 search 只返回最早写入的那 1 条；重建后回 3 条。
+            vectorStore.buildIndex(fullName);
         }
     }
 
@@ -114,9 +117,22 @@ public class ZVectorChunkVectorStore implements ChunkVectorStore {
         for (SearchResult r : results) {
             String documentId = r.getPayload() != null && r.getPayload().get("documentId") != null
                     ? r.getPayload().get("documentId").toString() : null;
-            matches.add(new VectorMatch(r.getVectorId(), documentId, r.getScore(), r.getPayload()));
+            matches.add(new VectorMatch(r.getVectorId(), documentId, toSimilarity(r.getScore()), r.getPayload()));
         }
         return matches;
+    }
+
+    /**
+     * z-vector 的 {@code SearchResult.score} 是<b>距离</b>（越小越近，COSINE 下为 {@code 1 - cos}），
+     * 而 z-kb 契约里 score 一律是「越大越近」——BM25 如此，RRF 与 topK 截断也依赖这个方向。
+     * 直接透传会让向量路排序整个反过来：最近的被排到末尾，{@code minScore} 阈值又恰好把
+     * 最相关的那些滤掉，只剩正交（距离 1.0）的噪声。
+     *
+     * <p>本类 {@link #createCollection} 固定用 {@link DistanceMetric#COSINE} 建集合，
+     * 故 {@code 1 - distance} 即余弦相似度，精确转换。
+     */
+    private static float toSimilarity(float distance) {
+        return 1f - distance;
     }
 
     @Override
