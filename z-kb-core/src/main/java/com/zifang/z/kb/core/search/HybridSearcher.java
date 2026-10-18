@@ -2,6 +2,7 @@ package com.zifang.z.kb.core.search;
 
 import com.zifang.z.kb.api.Chunk;
 import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.DocumentRepository;
 import com.zifang.z.kb.api.EmbeddingProvider;
 import com.zifang.z.kb.api.Entity;
 import com.zifang.z.kb.api.KnowledgeGraphStore;
@@ -38,6 +39,7 @@ public class HybridSearcher {
     private final Bm25Searcher bm25Searcher;
     private final EmbeddingProvider embeddingProvider;
     private final EntityExtractor entityExtractor;
+    private final DocumentRepository documentRepository;
 
     /** 向量 Collection 名 — 必须与写入侧一致，取共享常量 */
     private static final String VECTOR_COLLECTION = ChunkVectorStore.DEFAULT_CHUNK_COLLECTION;
@@ -47,11 +49,24 @@ public class HybridSearcher {
                            Bm25Searcher bm25Searcher,
                            EmbeddingProvider embeddingProvider,
                            EntityExtractor entityExtractor) {
+        this(vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor, null);
+    }
+
+    /**
+     * @param documentRepository 用于回填向量/图谱路的 hit 正文，可为 null（此时这些路的 hit 无正文）
+     */
+    public HybridSearcher(ChunkVectorStore vectorStore,
+                           KnowledgeGraphStore graphStore,
+                           Bm25Searcher bm25Searcher,
+                           EmbeddingProvider embeddingProvider,
+                           EntityExtractor entityExtractor,
+                           DocumentRepository documentRepository) {
         this.vectorStore = vectorStore;
         this.graphStore = graphStore;
         this.bm25Searcher = bm25Searcher;
         this.embeddingProvider = embeddingProvider;
         this.entityExtractor = entityExtractor;
+        this.documentRepository = documentRepository;
     }
 
     public SearchResult search(SearchQuery q) {
@@ -101,6 +116,10 @@ public class HybridSearcher {
         merged.sort(Comparator.comparingDouble(SearchHit::getScore).reversed());
         if (merged.size() > q.getTopK()) merged = merged.subList(0, q.getTopK());
 
+        if (q.isIncludeContent()) {
+            backfillContent(merged, q.getWorkspace());
+        }
+
         result.setHits(merged);
         result.setTotalHits(merged.size());
         result.setMatchedEntities(matchedEntities);
@@ -114,8 +133,27 @@ public class HybridSearcher {
         return result;
     }
 
-    private List<SearchHit> vectorSearch(SearchQuery q, List<String> degraded) {
-        if (vectorStore == null || embeddingProvider == null) return new ArrayList<>();
+    /**
+     * 用 chunk 仓库回填正文。向量路的召回不含正文（向量 payload 只存了 id/ordinal/workspace），
+     * 图谱路同理；这两路独占的命中若不回填，调用方拿到的就是一批空壳 hit。
+     */
+    private void backfillContent(List<SearchHit> hits, String workspace) {
+        if (documentRepository == null) return;
+        for (SearchHit hit : hits) {
+            if (hit.getContent() != null) continue;
+            try {
+                Chunk c = documentRepository.findChunkById(workspace, hit.getChunkId());
+                if (c == null) continue;
+                hit.setContent(c.getContent());
+                if (hit.getContextTitle() == null) hit.setContextTitle(c.getContextTitle());
+                if (hit.getHeadingPath() == null) hit.setHeadingPath(c.getHeadingPath());
+            } catch (Exception e) {
+                log.warn("回填 chunk 正文失败 {}: {}", hit.getChunkId(), e.getMessage());
+            }
+        }
+    }
+
+    private List<SearchHit> vectorSearch(SearchQuery q, List<String> degraded) {        if (vectorStore == null || embeddingProvider == null) return new ArrayList<>();
         try {
             // 确保 collection 存在
             if (!vectorStore.hasCollection(q.getWorkspace(), VECTOR_COLLECTION)) {
@@ -226,6 +264,16 @@ public class HybridSearcher {
                 scoreMap.merge(wh.hit.getChunkId(), rrfScore, Double::sum);
                 if (!hitMap.containsKey(wh.hit.getChunkId())) {
                     hitMap.put(wh.hit.getChunkId(), wh.hit);
+                } else {
+                    // 同一 chunk 被多路召回时，保留带正文的那份：向量路的 hit 从不携带正文
+                    // （payload 里没存 content），而融合按列表顺序先到先得，向量路在前，
+                    // 不做这一步则 FUSION/HYBRID 下大量命中正文为 null，RAG 会退化成空上下文问答。
+                    SearchHit kept = hitMap.get(wh.hit.getChunkId());
+                    if (kept.getContent() == null && wh.hit.getContent() != null) {
+                        kept.setContent(wh.hit.getContent());
+                        kept.setContextTitle(wh.hit.getContextTitle());
+                        kept.setHeadingPath(wh.hit.getHeadingPath());
+                    }
                 }
                 // 累加 sourceScores
                 Map<String, Double> ss = hitMap.get(wh.hit.getChunkId()).getSourceScores();

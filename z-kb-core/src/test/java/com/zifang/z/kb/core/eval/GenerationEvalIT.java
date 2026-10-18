@@ -114,6 +114,12 @@ class GenerationEvalIT {
                     arm.getAnswerRelevancy(), arm.getFaithfulness()));
         }
 
+        // 上下文为空时，「有检索臂反而更差」是评测装置的假象而非系统真实表现。
+        // 这里把它钉死：hit 必须带正文，否则下面的正确度对比不成立。
+        for (GenerationEvalReport.CaseScore s : with.getCases()) {
+            assertFalse(s.contextChunkIds.isEmpty(), s.caseId + " 检索上下文为空");
+        }
+
         assertTrue(with.getSampleSize() > 0, "有检索臂无样本");
         assertEquals(with.getSampleSize(), no.getSampleSize(), "两臂样本数不等，对照无效");
         // 无检索臂 faithfulness 恒不适用，不能参与比较

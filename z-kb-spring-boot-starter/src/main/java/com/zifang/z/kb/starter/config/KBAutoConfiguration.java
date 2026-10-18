@@ -19,6 +19,7 @@ import com.zifang.z.kb.starter.service.DefaultKnowledgeBaseService;
 import com.zifang.z.kb.starter.service.DefaultSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -78,8 +79,10 @@ public class KBAutoConfiguration {
                                           KnowledgeGraphStore graphStore,
                                           Bm25Searcher bm25Searcher,
                                           EmbeddingProvider embeddingProvider,
-                                          EntityExtractor entityExtractor) {
-        return new HybridSearcher(vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor);
+                                          EntityExtractor entityExtractor,
+                                        ObjectProvider<DocumentRepository> documentRepositoryProvider) {
+        return new HybridSearcher(vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor,
+                documentRepositoryProvider.getIfAvailable());
     }
 
     // ==================== Embedding ====================
@@ -104,9 +107,11 @@ public class KBAutoConfiguration {
                                         KnowledgeGraphStore graphStore,
                                         Bm25Searcher bm25Searcher,
                                         EmbeddingProvider embeddingProvider,
-                                        EntityExtractor entityExtractor) {
+                                        EntityExtractor entityExtractor,
+                                        ObjectProvider<DocumentRepository> documentRepositoryProvider) {
         HybridSearcher hybridSearcher = new HybridSearcher(
-                vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor);
+                vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor,
+                documentRepositoryProvider.getIfAvailable());
         return new DefaultSearchService(hybridSearcher);
     }
 
