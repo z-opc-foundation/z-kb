@@ -153,7 +153,8 @@ public class HybridSearcher {
         }
     }
 
-    private List<SearchHit> vectorSearch(SearchQuery q, List<String> degraded) {        if (vectorStore == null || embeddingProvider == null) return new ArrayList<>();
+    private List<SearchHit> vectorSearch(SearchQuery q, List<String> degraded) {
+        if (vectorStore == null || embeddingProvider == null) return new ArrayList<>();
         try {
             // 确保 collection 存在
             if (!vectorStore.hasCollection(q.getWorkspace(), VECTOR_COLLECTION)) {

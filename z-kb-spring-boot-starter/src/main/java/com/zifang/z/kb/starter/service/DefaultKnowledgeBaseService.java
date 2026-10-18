@@ -93,6 +93,72 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         }
     }
 
+    /** 全局（跨 workspace）收集 chunk 正文，作为 TF-IDF 的训练语料。
+     *
+     * <p>必须跨 workspace：{@code TfIdfEmbeddingProvider} 全进程只有一份 IDF 状态，
+     * 而查询时的 query 向量也出自这同一份状态。若按 workspace 分别训练，最后被训练的那个
+     * workspace 会独占 IDF，先前入库的 workspace 全部拿错状态去比对 —— 实测表现为
+     * VECTOR 路首位恒为错文档，而 KEYWORD 路正确（BM25 索引本身是按 workspace 隔离的）。
+     */
+    private List<String> collectAllChunkTexts() {
+        List<String> texts = new ArrayList<>();
+        for (Workspace ws : documentRepository.listWorkspaces()) {
+            for (Document d : documentRepository.listByWorkspace(ws.getName(), 0, Integer.MAX_VALUE)) {
+                List<Chunk> chunks = documentRepository.findChunksByDocument(ws.getName(), d.getId());
+                if (chunks == null) {
+                    continue;
+                }
+                for (Chunk c : chunks) {
+                    if (c.getContent() != null) {
+                        texts.add(c.getContent());
+                    }
+                }
+            }
+        }
+        return texts;
+    }
+
+    /**
+     * 用统一 IDF 状态重算并重写<b>所有</b> workspace 的向量索引。
+     *
+     * <p>IDF 随语料变化，而 chunk 的向量在入库那一刻就固化了。任何一次导入都会改变 IDF，
+     * 于是所有既有 chunk 的向量与新 IDF 不再匹配 —— 必须全量重算，向量索引才自洽。
+     * 代价是每次导入 O(全库 chunk 数)，与 {@link #rebuildIndicesFromStorage()} 同口径。
+     */
+    private void reembedAllWorkspaces() {
+        if (!(embeddingProvider instanceof TfIdfEmbeddingProvider)) {
+            return;
+        }
+        List<String> corpus = collectAllChunkTexts();
+        if (corpus.isEmpty()) {
+            return;
+        }
+        ((TfIdfEmbeddingProvider) embeddingProvider).trainIdf(corpus);
+        for (Workspace ws : documentRepository.listWorkspaces()) {
+            String name = ws.getName();
+            List<Chunk> allChunks = new ArrayList<>();
+            for (Document d : documentRepository.listByWorkspace(name, 0, Integer.MAX_VALUE)) {
+                List<Chunk> chunks = documentRepository.findChunksByDocument(name, d.getId());
+                if (chunks != null) {
+                    allChunks.addAll(chunks);
+                }
+            }
+            if (allChunks.isEmpty()) {
+                continue;
+            }
+            List<float[]> vectors = embeddingProvider.embedBatch(
+                    allChunks.stream().map(c -> c.getContent() != null ? c.getContent() : "")
+                            .collect(Collectors.toList()));
+            for (int i = 0; i < allChunks.size() && i < vectors.size(); i++) {
+                allChunks.get(i).setEmbedding(vectors.get(i));
+            }
+            if (!vectorStore.hasCollection(name, VECTOR_COLLECTION)) {
+                vectorStore.createCollection(name, VECTOR_COLLECTION, embeddingProvider.dimension());
+            }
+            vectorStore.upsert(name, VECTOR_COLLECTION, allChunks);
+        }
+    }
+
     /**
      * 从持久化存储重建向量 + BM25 索引。
      * 这样重启后已索引的文档仍然可被搜索到，避免每次都要重新 ingest。
@@ -102,6 +168,15 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         long start = System.currentTimeMillis();
         int totalDocs = 0;
         int totalChunks = 0;
+
+        // IDF 先按全库口径训练一次：若在下面的循环里逐 workspace 训练，最后一个 workspace
+        // 会独占 IDF 状态，前面 workspace 重建出的向量立刻作废
+        if (embeddingProvider instanceof TfIdfEmbeddingProvider) {
+            List<String> corpus = collectAllChunkTexts();
+            if (!corpus.isEmpty()) {
+                ((TfIdfEmbeddingProvider) embeddingProvider).trainIdf(corpus);
+            }
+        }
 
         for (Workspace ws : documentRepository.listWorkspaces()) {
             String workspaceName = ws.getName();
@@ -117,14 +192,6 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
             if (allChunks.isEmpty()) continue;
 
             // 重新计算 embeddings（向量存储在内存）
-            if (embeddingProvider instanceof TfIdfEmbeddingProvider) {
-                TfIdfEmbeddingProvider tfidf = (TfIdfEmbeddingProvider) embeddingProvider;
-                List<String> trainingCorpus = new ArrayList<>();
-                for (Chunk c : allChunks) {
-                    if (c.getContent() != null) trainingCorpus.add(c.getContent());
-                }
-                if (!trainingCorpus.isEmpty()) tfidf.trainIdf(trainingCorpus);
-            }
             List<float[]> embeddings = embeddingProvider.embedBatch(
                     allChunks.stream().map(c -> c.getContent() != null ? c.getContent() : "").collect(Collectors.toList())
             );
@@ -213,6 +280,11 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
             for (Chunk c : chunks) {
                 List<String> chunkWikilinks = wikilinkExtractor.extract(c.getContent());
                 c.setWikilinkTargets(chunkWikilinks);
+                // Chunker 只产出正文，标题留在 Document 上。不回填的话 BM25 索引不到标题，
+                // 「按文档标题搜」零命中，检索结果也显示不出出处
+                if (c.getContextTitle() == null || c.getContextTitle().isEmpty()) {
+                    c.setContextTitle(doc.getTitle());
+                }
             }
 
             // 4. 实体抽取
@@ -238,12 +310,11 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
             for (Chunk c : chunks) texts.add(c.getContent() != null ? c.getContent() : "");
             List<float[]> embeddings;
             if (embeddingProvider instanceof TfIdfEmbeddingProvider) {
-                // TF-IDF：先训练 IDF，再向量化
+                // TF-IDF：先训练 IDF，再向量化。训练语料取全库而非本篇 ——
+                // IDF 是全语料统计量，只拿本篇训练会让向量索引自相矛盾。
+                // 真正的重算在第 7 步统一做。
                 TfIdfEmbeddingProvider tfidf = (TfIdfEmbeddingProvider) embeddingProvider;
-                List<String> trainingCorpus = new ArrayList<>();
-                for (Chunk c : chunks) {
-                    if (c.getContent() != null) trainingCorpus.add(c.getContent());
-                }
+                List<String> trainingCorpus = collectAllChunkTexts();
                 if (!trainingCorpus.isEmpty()) tfidf.trainIdf(trainingCorpus);
             }
             embeddings = embeddingProvider.embedBatch(texts);
@@ -261,6 +332,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
                 vectorStore.createCollection(workspace, VECTOR_COLLECTION, embeddingProvider.dimension());
             }
             vectorStore.upsert(workspace, VECTOR_COLLECTION, chunks);
+            reembedAllWorkspaces();
 
             // 8. 全文索引（追加新文档的 chunks）
             bm25Searcher.addChunks(documentRepository.findChunksByDocument(workspace, doc.getId()));
