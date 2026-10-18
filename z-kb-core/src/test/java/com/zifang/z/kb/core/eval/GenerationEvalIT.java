@@ -61,7 +61,7 @@ class GenerationEvalIT {
         Chunker chunker = new Chunker();
         List<Chunk> all = new ArrayList<>();
         for (String key : docKeys) {
-            MarkdownParser.ParseResult parsed = parser.parse(readResource("/eval2/corpus-" + key + ".md"));
+            MarkdownParser.ParseResult parsed = parser.parse(readResource("/eval2/corpus/corpus-" + key + ".md"));
             Document doc = new Document();
             doc.setId("doc-" + key);
             doc.setTitle(parsed.title);
@@ -132,7 +132,7 @@ class GenerationEvalIT {
         for (EvalCase c : dataset.getCases()) {
             List<String> expanded = new ArrayList<>();
             for (String docId : c.getExpectedDocIds()) {
-                List<String> ids = byDoc.get(docId);
+                List<String> ids = byDoc.get("doc-" + docId);
                 if (ids != null) {
                     expanded.addAll(ids);
                 }
