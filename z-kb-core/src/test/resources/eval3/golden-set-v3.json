@@ -1,0 +1,354 @@
+{
+  "datasetVersion": "v3-longtail",
+  "knowledgeVersion": "corpus-v3",
+  "cases": [
+    {
+      "caseId": "order-timeout-fact-1",
+      "question": "Zorp 订单超时裁决规则对「超时后补偿单类型」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "order-timeout"
+      ],
+      "groundTruth": "超时后补偿单类型：COMP-4。补偿单在 8 秒内由对账服务反向补写。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "order-timeout",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "order-timeout-fact-2",
+      "question": "按Zorp 订单超时裁决规则的规定，裁决日志分区键应当取什么值？",
+      "expectedDocIds": [
+        "order-timeout"
+      ],
+      "groundTruth": "裁决日志分区键：order_no 前 8 位。按分区键散列到 16 个分区。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "order-timeout",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "order-timeout-fact-3",
+      "question": "我想确认一下Zorp 订单超时裁决规则里跟「快速通道阈值」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "order-timeout"
+      ],
+      "groundTruth": "快速通道阈值：41 秒。快速通道不触发二次确认。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "order-timeout",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "order-timeout-fact-4",
+      "question": "在Zorp 订单超时裁决规则里，默认超时阈值是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "order-timeout"
+      ],
+      "groundTruth": "默认超时阈值：137 秒。自订单进入待支付起算，低于 60 秒的走快速通道。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "order-timeout",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "order-timeout-boundary-1",
+      "question": "Zorp 的订单裁决服务 ordcut这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "order-timeout",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "quota-ladder-fact-1",
+      "question": "Zorp 配额阶梯与降级策略对「配额快照周期」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "quota-ladder"
+      ],
+      "groundTruth": "配额快照周期：每 53 秒。快照存于 qltd_snapshot 表。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "quota-ladder",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "quota-ladder-fact-2",
+      "question": "按Zorp 配额阶梯与降级策略的规定，临时提额单号前缀应当取什么值？",
+      "expectedDocIds": [
+        "quota-ladder"
+      ],
+      "groundTruth": "临时提额单号前缀：TMP-Q。单次提额上限为基线的 1.25 倍。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "quota-ladder",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "quota-ladder-fact-3",
+      "question": "我想确认一下Zorp 配额阶梯与降级策略里跟「第一级降级触发」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "quota-ladder"
+      ],
+      "groundTruth": "第一级降级触发：占用达 82%。第二级为 91%，第三级为 97%。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "quota-ladder",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "quota-ladder-fact-4",
+      "question": "在Zorp 配额阶梯与降级策略里，第三级降级后响应是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "quota-ladder"
+      ],
+      "groundTruth": "第三级降级后响应：只读。写接口统一返回 ERR-5031。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "quota-ladder",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "quota-ladder-boundary-1",
+      "question": "Zorp 的配额服务 qltd这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "quota-ladder",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "settle-ledger-fact-1",
+      "question": "Zorp 结算台账口径对「差异科目编码」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "settle-ledger"
+      ],
+      "groundTruth": "差异科目编码：GL-2077。计入管理费用而非营业成本。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "settle-ledger",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "settle-ledger-fact-2",
+      "question": "按Zorp 结算台账口径的规定，日切时间应当取什么值？",
+      "expectedDocIds": [
+        "settle-ledger"
+      ],
+      "groundTruth": "日切时间：凌晨 3 点 17 分。以东八区为准，跨日订单归入次日台账。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "settle-ledger",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "settle-ledger-fact-3",
+      "question": "我想确认一下Zorp 结算台账口径里跟「重算批次大小」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "settle-ledger"
+      ],
+      "groundTruth": "重算批次大小：500 笔。并发度固定为 3。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "settle-ledger",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "settle-ledger-fact-4",
+      "question": "在Zorp 结算台账口径里，对账文件落地目录是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "settle-ledger"
+      ],
+      "groundTruth": "对账文件落地目录：/settle/daily/GL。文件名后缀为 .dat。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "settle-ledger",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "settle-ledger-boundary-1",
+      "question": "Zorp 的结算服务 stlgr这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "settle-ledger",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "risk-rulebook-fact-1",
+      "question": "Zorp 风控规则手册对「名单同步周期」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "risk-rulebook"
+      ],
+      "groundTruth": "名单同步周期：每 6 分钟。名单存于 rsk_list 表。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "risk-rulebook",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "risk-rulebook-fact-2",
+      "question": "按Zorp 风控规则手册的规定，单笔拦截阈值应当取什么值？",
+      "expectedDocIds": [
+        "risk-rulebook"
+      ],
+      "groundTruth": "单笔拦截阈值：金额超过 27,400 元。命中后转人工复核。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "risk-rulebook",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "risk-rulebook-fact-3",
+      "question": "我想确认一下Zorp 风控规则手册里跟「设备指纹维度数」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "risk-rulebook"
+      ],
+      "groundTruth": "设备指纹维度数：13 个。含 canvas 噪声与字体度量。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "risk-rulebook",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "risk-rulebook-fact-4",
+      "question": "在Zorp 风控规则手册里，人工复核 SLA是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "risk-rulebook"
+      ],
+      "groundTruth": "人工复核 SLA：19 分钟。超时自动放行并记录例外。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "risk-rulebook",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "risk-rulebook-boundary-1",
+      "question": "Zorp 的风控引擎 rskd这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "risk-rulebook",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "deploy-gate-fact-1",
+      "question": "Zorp 发布闸门规范对「回滚判定指标」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "deploy-gate"
+      ],
+      "groundTruth": "回滚判定指标：错误率超过基线 1.8 倍。或 P99 上升超过 240ms。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "deploy-gate",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "deploy-gate-fact-2",
+      "question": "按Zorp 发布闸门规范的规定，强制人工确认环节应当取什么值？",
+      "expectedDocIds": [
+        "deploy-gate"
+      ],
+      "groundTruth": "强制人工确认环节：第 3 道闸。确认人须为非提交人。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "deploy-gate",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "deploy-gate-fact-3",
+      "question": "我想确认一下Zorp 发布闸门规范里跟「闸门豁免单前缀」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "deploy-gate"
+      ],
+      "groundTruth": "闸门豁免单前缀：EXEMPT-A。豁免有效期 72 小时。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "deploy-gate",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "deploy-gate-fact-4",
+      "question": "在Zorp 发布闸门规范里，发布窗口是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "deploy-gate"
+      ],
+      "groundTruth": "发布窗口：工作日 10 点至 16 点。周五不发布。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "deploy-gate",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "deploy-gate-boundary-1",
+      "question": "Zorp 的流水线 gatek这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "deploy-gate",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "oncall-rota-fact-1",
+      "question": "Zorp 值班与升级路径对「演练频率」这一项给出的是什么口径？",
+      "expectedDocIds": [
+        "oncall-rota"
+      ],
+      "groundTruth": "演练频率：每季度 1 次。演练由 SRE 组主导。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "oncall-rota",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "oncall-rota-fact-2",
+      "question": "按Zorp 值班与升级路径的规定，值班交接时间应当取什么值？",
+      "expectedDocIds": [
+        "oncall-rota"
+      ],
+      "groundTruth": "值班交接时间：每天 9 点 45 分。交接内容须含未闭环工单。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "oncall-rota",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "oncall-rota-fact-3",
+      "question": "我想确认一下Zorp 值班与升级路径里跟「P1 定义」有关的规定，具体是什么？",
+      "expectedDocIds": [
+        "oncall-rota"
+      ],
+      "groundTruth": "P1 定义：核心交易链路全断。复盘在 5 个工作日内完成。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "oncall-rota",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "oncall-rota-fact-4",
+      "question": "在Zorp 值班与升级路径里，一线响应时限是怎么定的？有什么附加约束吗？",
+      "expectedDocIds": [
+        "oncall-rota"
+      ],
+      "groundTruth": "一线响应时限：4 分钟。二线 12 分钟，三线 35 分钟。",
+      "isUnanswerable": false,
+      "sourceType": "longtail_private_fact",
+      "topic": "oncall-rota",
+      "difficulty": "简单"
+    },
+    {
+      "caseId": "oncall-rota-boundary-1",
+      "question": "Zorp 的值班系统 oncall这个系统，用什么编程语言写的？团队多少人？",
+      "expectedDocIds": [],
+      "groundTruth": "知识库中没有提到该系统的技术栈与团队规模。",
+      "isUnanswerable": true,
+      "sourceType": "longtail_boundary",
+      "topic": "oncall-rota",
+      "difficulty": "简单"
+    }
+  ]
+}
