@@ -3,6 +3,7 @@ package com.zifang.z.***REMOVED***.starter.config;
 import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
 import com.zifang.z.***REMOVED***.api.DocumentRepository;
 import com.zifang.z.***REMOVED***.api.EmbeddingProvider;
+import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
 import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
 import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
 import com.zifang.z.***REMOVED***.api.SearchService;
@@ -14,12 +15,14 @@ import com.zifang.z.***REMOVED***.core.extractor.RelationExtractor;
 import com.zifang.z.***REMOVED***.core.parser.MarkdownParser;
 import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
 import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.***REMOVED***.starter.metrics.Micrometer***REMOVED***Metrics;
 import com.zifang.z.***REMOVED***.starter.service.DefaultChatService;
 import com.zifang.z.***REMOVED***.starter.service.DefaultKnowledgeBaseService;
 import com.zifang.z.***REMOVED***.starter.service.DefaultSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,6 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * z-***REMOVED*** Spring Boot 自动装配 — 协调所有子模块的 Bean。
@@ -99,6 +103,30 @@ public class ***REMOVED***AutoConfiguration {
         return new TfIdfEmbeddingProvider(ep.getDimension());
     }
 
+    // ==================== Metrics ====================
+
+    /**
+     * 只有容器里真带 actuator（micrometer 在 classpath）才装配，否则整个 z-***REMOVED*** 都不产生指标，
+     * 但功能不受影响 —— 埋点不该成为接入前提。
+     */
+    // 必须放在嵌套类里：micrometer 是 optional 依赖，若把 @Bean 方法挂在 ***REMOVED***AutoConfiguration 上，
+    // 外层解析方法签名时会反射加载 MeterRegistry，下游没带 actuator 就整类加载失败。
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "io.micrometer.core.instrument.MeterRegistry")
+    static class MetricsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(***REMOVED***Metrics.class)
+        ***REMOVED***Metrics ***REMOVED***Metrics(ObjectProvider<MeterRegistry> registryProvider) {
+            MeterRegistry registry = registryProvider.getIfAvailable();
+            if (registry == null) {
+                return null;
+            }
+            log.info("z-***REMOVED*** metrics enabled (registry: {})", registry.getClass().getSimpleName());
+            return new Micrometer***REMOVED***Metrics(registry);
+        }
+    }
+
     // ==================== Search ====================
 
     @Bean
@@ -108,11 +136,12 @@ public class ***REMOVED***AutoConfiguration {
                                         Bm25Searcher bm25Searcher,
                                         EmbeddingProvider embeddingProvider,
                                         EntityExtractor entityExtractor,
-                                        ObjectProvider<DocumentRepository> documentRepositoryProvider) {
+                                        ObjectProvider<DocumentRepository> documentRepositoryProvider,
+                                        ObjectProvider<***REMOVED***Metrics> metricsProvider) {
         HybridSearcher hybridSearcher = new HybridSearcher(
                 vectorStore, graphStore, bm25Searcher, embeddingProvider, entityExtractor,
                 documentRepositoryProvider.getIfAvailable());
-        return new DefaultSearchService(hybridSearcher);
+        return new DefaultSearchService(hybridSearcher, metricsProvider.getIfAvailable());
     }
 
     // ==================== Main ***REMOVED*** Service ====================
@@ -127,10 +156,12 @@ public class ***REMOVED***AutoConfiguration {
                                                       ChunkVectorStore vectorStore,
                                                       KnowledgeGraphStore graphStore,
                                                       DocumentRepository documentRepository,
-                                                      Bm25Searcher bm25Searcher) {
+                                                      Bm25Searcher bm25Searcher,
+                                                      ObjectProvider<***REMOVED***Metrics> metricsProvider) {
         DefaultKnowledgeBaseService svc = new DefaultKnowledgeBaseService(
                 parser, chunker, entityExtractor, relationExtractor,
-                embeddingProvider, vectorStore, graphStore, documentRepository, bm25Searcher);
+                embeddingProvider, vectorStore, graphStore, documentRepository, bm25Searcher,
+                metricsProvider.getIfAvailable());
         log.info("z-***REMOVED*** KnowledgeBaseService initialized");
         return svc;
     }
@@ -139,7 +170,9 @@ public class ***REMOVED***AutoConfiguration {
     @ConditionalOnMissingBean(DefaultChatService.class)
     public DefaultChatService chatService(KnowledgeBaseService ***REMOVED***Service,
                                             SearchService searchService,
-                                            ***REMOVED***Properties props) {
-        return new DefaultChatService(***REMOVED***Service, searchService, props.getChat());
+                                            ***REMOVED***Properties props,
+                                            ObjectProvider<***REMOVED***Metrics> metricsProvider) {
+        return new DefaultChatService(***REMOVED***Service, searchService, props.getChat(),
+                metricsProvider.getIfAvailable());
     }
 }

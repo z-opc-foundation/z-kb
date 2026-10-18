@@ -1,6 +1,7 @@
 package com.zifang.z.***REMOVED***.starter.service;
 
 import com.zifang.z.***REMOVED***.api.ChatMessage;
+import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
 import com.zifang.z.***REMOVED***.api.ChatRequest;
 import com.zifang.z.***REMOVED***.api.ChatResponse;
 import com.zifang.z.***REMOVED***.api.ChatService;
@@ -39,13 +40,21 @@ public class DefaultChatService implements ChatService {
     private final KnowledgeBaseService ***REMOVED***Service;
     private final SearchService searchService;
     private final ***REMOVED***Properties.Chat config;
+    private final ***REMOVED***Metrics metrics;
     private final HttpExecutor httpExecutor = HttpExecutor.getDefault();
     private final java.util.Map<String, ChatSession> sessions = new ConcurrentHashMap<>();
 
     public DefaultChatService(KnowledgeBaseService ***REMOVED***Service, SearchService searchService, ***REMOVED***Properties.Chat config) {
+        this(***REMOVED***Service, searchService, config, null);
+    }
+
+    /** @param metrics 可为 null：下游没带 actuator 时无埋点 */
+    public DefaultChatService(KnowledgeBaseService ***REMOVED***Service, SearchService searchService,
+                              ***REMOVED***Properties.Chat config, ***REMOVED***Metrics metrics) {
         this.***REMOVED***Service = ***REMOVED***Service;
         this.searchService = searchService;
         this.config = config;
+        this.metrics = metrics;
     }
 
     @Override
@@ -92,6 +101,10 @@ public class DefaultChatService implements ChatService {
             response.setCompletionTokens(llm.completionTokens);
         }
         response.setElapsedMillis(System.currentTimeMillis() - start);
+        if (metrics != null) {
+            metrics.recordChat(model, response.getPromptTokens(), response.getCompletionTokens(),
+                    response.getElapsedMillis());
+        }
 
         // 3. 持久化会话消息
         if (request.getSessionId() != null) {
