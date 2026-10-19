@@ -4,7 +4,7 @@
 # 这 14 项对应 z-kb-protocol 的全部源码。它当初是 0 源文件的空壳模块，
 # 于是线上发布件永远没有 sources.jar / javadoc.jar —— 而 verify_central.sh
 # 只看构件可达性，那次的长期报红正是被这份清单挡住的。
-# 详见 _doc/003_script/verify-central-note.md。
+# 详见 _doc/006_release/01-verify-central-note.md。
 z-kb-protocol:com/zifang/z/kb/protocol/package-info.java
 z-kb-protocol:com/zifang/z/kb/protocol/request/CreateSessionRequest.java
 z-kb-protocol:com/zifang/z/kb/protocol/request/SessionChatRequest.java

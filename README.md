@@ -227,6 +227,7 @@ MIT，见根 [`LICENSE`](LICENSE)；根 POM `<licenses>` 同声明。
 
 ## 文档目录
 
+- [`_doc/006_release/`](_doc/006_release/) — 发布与中央仓文档（Central 缺件欠账与清账结论）
 本项目文档统一收口在 `_doc/` 下（实测 `find _doc -mindepth 1` 仅 1 个文件）:
 
 - `_doc/001_arch/` — 目前为空目录（暂无架构文档）
