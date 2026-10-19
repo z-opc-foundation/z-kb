@@ -16,7 +16,7 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 |------|-----|
 | **仓库** | `z-kb` |
 | **Maven 坐标** | `io.github.yuku123:z-kb:1.0.7`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.0.21`（`<relativePath/>` 留空）；父链 = 地板 `z-boot-dependencies:1.0.20` + 兄弟权威表 `z-boot-fleet:1.0.1` |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.1.0`（`<relativePath/>` 留空）；父链自带第三方地板与兄弟仓权威表（`z-boot-dependencies` / `z-boot-fleet` 两个文件夹随 2026-10-08 火车制拓扑退役） |
 | **Maven Central** | 最新 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标；10 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1` |
 | **默认端口** | `8889`（`z-kb-bootstrap/src/main/resources/application.yml`，context-path `/`）；starter 嵌入时随宿主应用端口 |
 | **运行口径** | Java 8 · Spring Boot 2.7.18（父链下发；部分模块 POM 仍字面钉 spring-boot-* `2.7.12`） |
@@ -70,7 +70,7 @@ workspace（`team_a` 这类）编码后一字不变，存量文件继续原地�
 
 ```
 z-kb/
-├── pom.xml                      # 聚合 POM：继承 z-boot-parent:1.0.21，自家 11 坐标 DM 钉 ${project.version}
+├── pom.xml                      # 聚合 POM：继承 z-boot-parent:1.1.0，自家 11 坐标 DM 钉 ${project.version}
 ├── z-kb-api/                    # SPI 接口 + 领域模型（ChatService / SearchService / KnowledgeBaseService /
 │                                #   EmbeddingProvider / ChunkVectorStore / KnowledgeGraphStore / DocumentRepository 等 30 个类）
 ├── z-kb-core/                   # 解析 / 分块 / 嵌入（TF-IDF、HTTP）/ BM25 + 混合检索 / 实体关系抽取
@@ -100,8 +100,8 @@ reactor 实际参与构建的是 10 个模块（`z-kb-bootstrap` 被注释排除
 | 层级 | 技术 |
 |------|------|
 | 语言 / 运行时 | Java 8（地板 `java.version=1.8`；1.0.3 起产物降到 class-file 52） |
-| 框架 | Spring Boot 2.7.18（经 `z-boot-dependencies:1.0.20` 地板；z-kb-vector/graph/storage/starter/web/bootstrap 的 POM 仍字面写 `2.7.12`） |
-| 兄弟仓依赖 | `z-vector-api/core`、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-fleet:1.0.1` 下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
+| 框架 | Spring Boot 2.7.18（经 `z-boot-parent` 自带的第三方地板；z-kb-vector/graph/storage/starter/web/bootstrap 的 POM 仍字面写 `2.7.12`） |
+| 兄弟仓依赖 | `z-vector-api/core`、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-parent` 的兄弟仓权威表下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
 | 本仓刻意覆盖 | Jackson 2.15.4（地板 2.18.6）、Knife4j 4.5.0 openapi2 + springfox 2.10.5（地板 3.0.3 口径）、log4j-api 2.22.1、mysql-connector-j 8.0.33、mybatis-spring 2.1.2 |
 | 其它父链不供 | H2 2.2.224、jsoup 1.18.1、slf4j 2.0.13、junit-jupiter 5.10.2（test）；`hanlp.version=1.8.6` 属性已定义但仓内零引用（`HanLpTokenizer` 是仓内正则/词典自实现，不依赖 HanLP 库） |
 | 前端 | React 18.3 + antd 5.21 + react-router 6 + echarts + Vite（TypeScript） |
@@ -117,8 +117,8 @@ reactor 实际参与构建的是 10 个模块（`z-kb-bootstrap` 被注释排除
 mvn clean install -DskipTests
 ```
 
-版本口径由 `z-boot-parent:1.0.21` → 地板 + fleet 供给，构建机需能解析
-`io.github.yuku123:z-boot-parent:1.0.21`（repo1 或本地仓）。
+版本口径由 `z-boot-parent:1.1.0` → 地板 + fleet 供给，构建机需能解析
+`io.github.yuku123:z-boot-parent:1.1.0`（repo1 或本地仓）。
 
 ### 嵌入宿主应用（Spring Boot Starter）
 
@@ -198,9 +198,37 @@ SearchPage / ChatPage / GraphPage / ModelingPage。
 mvn test
 ```
 
-如实说明：**全仓没有任何 `src/test` 目录**（`find . -path '*/src/test/*'` 为空），上面的命令实际不执行任何用例；
-旧 README 的"421 单元 / 87 集成测试 PASS"无对应代码，已删除。功能验证目前依赖启动后走
-Knife4j（`/doc.html`）与 `z-kb-frontend` 页面。
+测试代码是有的 —— **7 个模块共 15 个测试文件**（`find . -path '*/src/test/*' -name '*.java'` = 15）。
+根 POM 的 `<dependencies>` 给全仓供 `junit-jupiter` + `junit-vintage-engine`（test 作用域，子模块自动
+继承，子模块一律不再各自声明 junit），所以在根目录 `mvn test` 直接可跑。
+
+`mvn -o -B -ntp clean test` 实测（2026-10-20，全部 0 失败 / 0 错误 / 0 跳过）：
+
+| 模块 | 测试文件 | 实跑用例数 |
+|---|---|---|
+| `z-kb-protocol` | 1 | 18 |
+| `z-kb-web` | 1 | 14 |
+| `z-kb-core` | 7 | 13 |
+| `z-kb-storage` | 2 | 11 |
+| `z-kb-spring-boot-starter` | 2 | 7 |
+| `z-kb-graph` | 1 | 4 |
+| `z-kb-vector` | 1 | 1 |
+| **合计** | **15** | **68** |
+
+两点要说清：
+
+- 15 个文件里 13 个是测试类，另 2 个是测试替身（`z-kb-core` 的 `EvalSuite` / `InMemoryVectorStore`，
+  不含 `@Test`）。
+- `z-kb-core` 的 `GenerationEvalIT` 是 `*IT` 命名，**surefire 默认 include 不收它** ⇒ 上面那 68 条
+  **不含**它那 2 条。要跑得显式点名，且它整类被 `@EnabledIfEnvironmentVariable(EVAL_LLM_ENDPOINT)`
+  门控 —— 不配真 LLM 端点时是 skipped（实测 `Tests run: 1, Skipped: 1`）：
+
+```bash
+mvn -pl z-kb-core -am test -Dtest=GenerationEvalIT -DfailIfNoTests=false
+```
+
+旧 README 的"421 单元 / 87 集成测试 PASS"与盘上代码对不上，已删除。功能验证另有两条路：
+启动后走 Knife4j（`/doc.html`）与 `z-kb-frontend` 页面。
 
 ---
 
@@ -227,13 +255,12 @@ MIT，见根 [`LICENSE`](LICENSE)；根 POM `<licenses>` 同声明。
 
 ## 文档目录
 
-- [`_doc/006_release/`](_doc/006_release/) — 发布与中央仓文档（Central 缺件欠账与清账结论）
-本项目文档统一收口在 `_doc/` 下（实测 `find _doc -mindepth 1` 仅 1 个文件）:
+本项目文档统一收口在 `_doc/` 下（八类固定编号表，桶按需存在）:
 
-- `_doc/001_arch/` — 目前为空目录（暂无架构文档）
-- `_doc/002_deploy/` — 目前为空目录（暂无部署文档）
+- [`_doc/001_arch/`](_doc/001_arch/) — 架构、接口、DB schema、协议、路线图
+  - [`00-overview.md`](_doc/001_arch/00-overview.md) — 项目总览：模块架构、核心功能、对外集成、技术特点、目录结构
 - [`_doc/003_script/`](_doc/003_script/) — 运维脚本:
   - [`deploy_maven_center.sh`](_doc/003_script/deploy_maven_center.sh) — Maven Central 一键发布 / 校验 / GPG 初始化
-- `_doc/004_skill/` — 目前为空目录（暂无 skill）
+- [`_doc/006_release/`](_doc/006_release/) — 发布与中央仓文档（Central 缺件欠账与清账结论）
 
 _Maintained by the z-opc-foundation organization._
