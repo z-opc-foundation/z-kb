@@ -202,7 +202,14 @@ mvn test
 根 POM 的 `<dependencies>` 给全仓供 `junit-jupiter` + `junit-vintage-engine`（test 作用域，子模块自动
 继承，子模块一律不再各自声明 junit），所以在根目录 `mvn test` 直接可跑。
 
-`mvn -o -B -ntp clean test` 实测（2026-10-20，全部 0 失败 / 0 错误 / 0 跳过）：
+> **计数口径（读表前先看这句）**：上面的「15 个测试文件」和下面表格的「测试文件 / 实跑用例数」都是
+> **2026-10-20 的实测快照**，口径是 `find . -path '*/src/test/*' -name '*.java'`，
+> **排除本仓 README 自守卫测试 `ReadmeClaimsTest`** —— 该守卫在快照之后加入 `z-kb-core`（自带 3 个用例），
+> 所以表里的数说的是「守卫上线之前」的盘面，不是「此刻」的盘面。
+> 守卫本身（`z-kb-core/src/test/java/com/zifang/z/kb/core/ReadmeClaimsTest.java`）负责把本 README 里的
+> 定量主张（类数 / Controller 数 / 数据源数 / 模块数 / 版本号 / 端口）与源码对齐：README 改了就红。
+
+`mvn -o -B -ntp clean test` 实测（2026-10-20，全部 0 失败 / 0 错误 / 0 跳过；口径同上，排除自守卫）：
 
 | 模块 | 测试文件 | 实跑用例数 |
 |---|---|---|
