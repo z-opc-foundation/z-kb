@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Table, Tag, Typography, Spin, Space, Empty, Select, Button } from 'antd'
 import { ShareAltOutlined, ReloadOutlined } from '@ant-design/icons'
-import ReactECharts from 'echarts-for-react'
+import ReactECharts from '../echarts'
 import { GraphAPI } from '../services/api'
 import type { Entity } from '../types'
 
