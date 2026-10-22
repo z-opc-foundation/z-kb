@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Table, Tag, Typography, Spin, Space, Empty, Select, Button } from 'antd'
+import { Card, Tag, Typography, Space, Select, Button } from 'antd'
 import { ShareAltOutlined, ReloadOutlined } from '@ant-design/icons'
+import { ListTable, LoadingState } from '@yuku123/z-frontend-common/ui'
 import ReactECharts from '../echarts'
 import { GraphAPI } from '../services/api'
 import type { Entity } from '../types'
@@ -112,24 +113,31 @@ export default function GraphPage({ workspace }: Props) {
         <Button icon={<ReloadOutlined />} onClick={load}>刷新</Button>
       </Space>
 
-      {loading && <Spin size="large" />}
-
-      {!loading && filtered.length === 0 && <Empty description="暂无实体数据" />}
-
-      {!loading && filtered.length > 0 && (
+      {/* 页面级加载：骨架屏代替 antd Spin（基座 LoadingState，避免内容跳动 / CLS） */}
+      {loading ? (
+        <LoadingState variant="table" rows={4} />
+      ) : (
         <>
-          <Card title="🌐 图谱可视化" style={{ marginBottom: 16 }}>
-            <ReactECharts option={graphOption} style={{ height: 500 }} />
-          </Card>
-          <Card title="📋 实体列表">
-            <Table
-              dataSource={filtered}
-              columns={columns}
-              rowKey="canonicalName"
-              size="small"
-              pagination={{ pageSize: 20 }}
-            />
-          </Card>
+          {filtered.length > 0 && (
+            <Card title="🌐 图谱可视化" style={{ marginBottom: 16 }}>
+              <ReactECharts option={graphOption} style={{ height: 500 }} />
+            </Card>
+          )}
+          {/*
+            实体列表 —— 走基座 ListTable（lead 008 §2 强制规则 2/3/4 三件套）：
+            标准分页（DEFAULT_PAGINATION）+ 端侧过滤框 + EmptyState 空态。
+            空态原来是一块独立的 antd <Empty>，现在收进表内，与其它仓口径一致。
+          */}
+          <ListTable
+            rows={filtered}
+            columns={columns}
+            rowKey="canonicalName"
+            searchKeys={['canonicalName', 'type', 'displayName']}
+            searchPlaceholder="按实体名 / 类型过滤"
+            emptyTitle="暂无实体数据"
+            emptyDescription="当前工作台还没有抽取到任何实体，可先在「数据接入」里拉取文档。"
+            cardTitle="📋 实体列表"
+          />
         </>
       )}
     </div>

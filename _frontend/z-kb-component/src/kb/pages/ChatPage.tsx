@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
-  Card, Input, Button, Space, Typography, List, Tag, Spin,
-  Empty, message, Avatar, Modal, Form
+  Card, Input, Button, Space, Typography, List, Tag,
+  message, Avatar, Modal, Form
 } from 'antd'
 import {
   SendOutlined, MessageOutlined, UserOutlined, RobotOutlined,
   PlusOutlined, DeleteOutlined, BulbOutlined
 } from '@ant-design/icons'
+import { EmptyState, LoadingState } from '@yuku123/z-frontend-common/ui'
 import { ChatAPI } from '../services/api'
 import type { ChatSession, ChatMessage as Msg, ChatResponse } from '../types'
 
@@ -119,7 +120,7 @@ export default function ChatPage({ workspace }: Props) {
         <List
           size="small"
           dataSource={sessions}
-          locale={{ emptyText: <Empty description="暂无会话" /> }}
+          locale={{ emptyText: <EmptyState title="暂无会话" description="点右上角「新会话」开始一段对话。" size="sm" /> }}
           renderItem={(s) => {
             const active = currentSession && currentSession.id === s.id
             const itemStyle: React.CSSProperties = {
@@ -159,12 +160,10 @@ export default function ChatPage({ workspace }: Props) {
       >
         <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
           {messages.length === 0 && (
-            <Empty
-              description={
-                <span>
-                  <BulbOutlined /> {currentSession ? '开始与「' + sessionTitle + '」对话' : '开始提问（无会话时使用临时模式）'}
-                </span>
-              }
+            <EmptyState
+              icon={<BulbOutlined />}
+              title={currentSession ? `开始与「${sessionTitle}」对话` : '开始提问'}
+              description="无会话时使用临时模式，直接提问即可。"
             />
           )}
           {messages.map((m, idx) => {
@@ -206,8 +205,9 @@ export default function ChatPage({ workspace }: Props) {
             )
           })}
           {loading && (
-            <div style={{ textAlign: 'center', padding: 20 }}>
-              <Spin tip="思考中..." />
+            <div style={{ padding: 12 }}>
+              {/* 「思考中」提示：骨架屏代替 antd Spin（基座 LoadingState） */}
+              <LoadingState variant="list" rows={1} />
             </div>
           )}
           <div ref={messagesEndRef} />

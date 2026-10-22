@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import {
-  Card, Button, Space, Typography, Spin, Tag, Row, Col, Statistic,
-  Alert, List, Empty, Divider, message
+  Card, Button, Space, Typography, Tag, Row, Col, Statistic,
+  Alert, List, Divider, message
 } from 'antd'
 import {
   BulbOutlined, ThunderboltOutlined, CopyOutlined, DownloadOutlined,
   ApartmentOutlined, RobotOutlined, FireOutlined
 } from '@ant-design/icons'
+import { EmptyState, LoadingState } from '@yuku123/z-frontend-common/ui'
 import { ModelingAPI } from '../services/api'
 
 interface Props { workspace: string }
@@ -98,23 +99,20 @@ export default function ModelingPage({ workspace }: Props) {
       </Card>
 
       {loading && (
-        <Card style={{ textAlign: 'center', padding: 40 }}>
-          <Spin size="large" tip="正在拆解知识库…" />
+        <Card>
+          {/* 页面级加载：骨架屏代替 antd Spin（基座 LoadingState） */}
+          <LoadingState variant="detail" rows={4} />
         </Card>
       )}
 
       {!loading && !sheet && (
         <Card>
-          <Empty
-            description={
-              <span>
-                当前工作台「{workspace}」还没有生成过小抄，
-                点击右上角「生成产品小抄」即可。
-              </span>
-            }
-          >
-            <Button type="primary" onClick={generate} icon={<ThunderboltOutlined />}>立即生成</Button>
-          </Empty>
+          <EmptyState
+            title="还没有生成产品小抄"
+            description={`当前工作台「${workspace}」还没有生成过小抄，点击右上角「生成产品小抄」即可。`}
+            actionText="立即生成"
+            onAction={generate}
+          />
         </Card>
       )}
 

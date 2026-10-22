@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Card, Input, Select, Button, Space, Typography, Tag, Empty, Spin, Slider, Row, Col } from 'antd'
+import { Card, Input, Select, Button, Space, Typography, Tag, Slider, Row, Col } from 'antd'
 import { SearchOutlined, BulbOutlined } from '@ant-design/icons'
+import { EmptyState, LoadingState } from '@yuku123/z-frontend-common/ui'
 import { SearchAPI } from '../services/api'
 import type { SearchResult, SearchHit } from '../types'
 
@@ -95,7 +96,8 @@ export default function SearchPage({ workspace }: Props) {
         </Row>
       </Card>
 
-      {loading && <Spin size="large" />}
+      {/* 页面级加载：骨架屏代替 antd Spin（基座 LoadingState） */}
+      {loading && <LoadingState variant="detail" rows={4} />}
 
       {!loading && result && (
         <>
@@ -111,7 +113,9 @@ export default function SearchPage({ workspace }: Props) {
             </Space>
           </Card>
 
-          {result.hits.length === 0 && <Empty description="未找到相关内容" />}
+          {result.hits.length === 0 && (
+            <EmptyState title="未找到相关内容" description="换个关键词，或切换召回模式（向量 / 关键词 / 图谱）再试一次。" />
+          )}
 
           {result.hits.map((hit: SearchHit, idx: number) => (
             <div key={idx} className="search-hit">
@@ -148,7 +152,11 @@ export default function SearchPage({ workspace }: Props) {
 
       {!loading && !result && (
         <Card>
-          <Empty description={<span><BulbOutlined /> 输入关键词开始检索</span>} />
+          <EmptyState
+            icon={<BulbOutlined />}
+            title="输入关键词开始检索"
+            description="例如「InfluxDB 写入性能优化」，回车即搜。"
+          />
         </Card>
       )}
     </div>
