@@ -1,0 +1,82 @@
+# ============================================================
+# z-kb —— Deployment（工作负载）
+#
+# 【镜像 tag 为什么这样写】
+#   image: zopc/z-kb:local
+#   —— 裸 tag，**不带 Nexus 仓库前缀**。铁律：本集群 imagePullPolicy=Never，
+#      镜像只存在于两个节点的 containerd，不在任何 registry。k3s 不会去拉，
+#      它按 `image:` 字段的**字面引用**去节点本地 content store 里找。
+#      如果喂进 containerd 的 tag 带前缀（例如 nexus.internal/zopc/z-kb:local）
+#      而清单里写的是裸 tag（或反过来），本地查不到 ⇒ Pod 卡 ErrImageNeverPull。
+#      喂镜像的 tag 必须与这里的 `image:` 逐字一致，见 README §2。
+#   imagePullPolicy: Never —— 照抄线上。
+#
+# 【探针为什么选 tcpSocket】
+#   本域线上 replicas=0（手工 scale down，见下方 replicas 注释），
+#   ⇒ 没有任何 Pod 在跑，HTTP 端点无法实测。
+#   线上基线里本域原本的 readinessProbe 打的是 httpGet /actuator/health，
+#   但那条配置在 0 副本期间**从未被真正执行过**（没有 Pod ⇒ 探针结果不存在），
+#   也就是说「/actuator/health 返回 200」这件事在本域**没有实测证据**。
+#   保守起见只用 tcpSocket 探 8889：只证明端口在监听，不对应用健康语义做任何假设。
+#   等本域恢复副本后应实测 HTTP 端点再换回 httpGet。
+#
+# 【secret 从哪来】
+#   本域**无 secret**（基线导出里没有 secretKeyRef）。
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: z-kb-server
+  namespace: z-kb
+  labels:
+    app.kubernetes.io/name: z-kb-server
+    app.kubernetes.io/part-of: z-opc-foundation
+spec:
+  # 线上当前是 0 副本（基线导出 spec.replicas=0，2026-10-19 23:17 手工 scale down）。
+  # 照抄现状 ⇒ 集群可从代码复现；要拉起把这里改成 1 再 apply。
+  replicas: 0
+  # 保留 10 个历史版本 ⇒ `kubectl rollout undo deploy/z-kb-server -n z-kb` 可用。
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: z-kb-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: z-kb-server
+    spec:
+      containers:
+        - name: z-kb
+          image: zopc/z-kb:local
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8889
+              protocol: TCP
+          env:
+            # JVM 参数：与线上逐字一致。
+            # ANT_PATH_MATCHER 是 z-kb 侧必须的（Spring Boot 2.6+ 默认 PathPatternParser
+            # 会让旧式 /** 路径匹配失效），不能精简。
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx1024m -Dspring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER"
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 300m
+              memory: 1536Mi
+          # 探针只探「端口在监听」（本域 0 副本，HTTP 端点无法实测，理由见文件头）。
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: http
+            # 启动比就绪慢：JVM 起 + 加载索引，放宽到 120s 再开始判活。
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 6
