@@ -1,1 +1,1 @@
-export {menuItems, routes, withKbWorkspace, useKbWorkspace} from './pages-manifest.jsx'
+export {DocAPI, GraphAPI, HomePage, LoginPage, SearchAPI, WorkspaceAPI, appMeta, menuItems, routes, useKbWorkspace, withKbWorkspace} from './pages-manifest.jsx'
