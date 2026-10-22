@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Card, Table, Button, Select, Empty, Spin, Tag} from 'antd'
+import {Card, Table, Button, Select, Tag} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
+import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
 import {kbApi} from '../services/api'
 
 const PAGE_SIZE = 20
@@ -67,11 +68,15 @@ export default function DocumentListPage() {
             }
         >
             {error ? (
-                <div style={{color: '#ef4444', padding: 16}}>接口错误：{error}</div>
+                // 页面级错误：走共享基座 ErrorState（原因 + 重试入口），不用手写红字 div。
+                <ErrorState error={error} title="文档列表加载失败" onRetry={() => setReload(r => r + 1)} />
             ) : loading ? (
-                <div style={{textAlign: 'center', padding: 40}}><Spin/></div>
+                <LoadingState variant="table" rows={4} />
             ) : documents.length === 0 ? (
-                <Empty description={selectedWs ? `接口通了，${selectedWs} 下没有文档` : '请先选择工作空间'}/>
+                <EmptyState
+                    title="暂无文档"
+                    description={selectedWs ? `接口通了，${selectedWs} 下没有文档` : '请先选择工作空间'}
+                />
             ) : (
                 <Table
                     dataSource={documents}

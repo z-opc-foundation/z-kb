@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, Typography, Spin, Tag, Empty } from 'antd'
+import { Card, Row, Col, Typography, Tag } from 'antd'
 import { FileTextOutlined, BlockOutlined, ShareAltOutlined, ApartmentOutlined } from '@ant-design/icons'
+import { EmptyState, LoadingState } from '@yuku123/z-frontend-common/ui'
 import { WorkspaceAPI } from '../services/api'
 import type { KBStatistics } from '../types'
 
@@ -31,10 +32,11 @@ export default function Dashboard({ workspace }: Props) {
       .finally(() => setLoading(false))
   }, [workspace])
 
-  if (loading) return <Spin size="large" />
+  // 页面级加载：骨架屏代替 antd Spin（基座 LoadingState，避免内容跳动 / CLS）
+  if (loading) return <LoadingState variant="cards" rows={4} />
 
   if (!stats) {
-    return <Empty description={`工作台 ${workspace} 不存在或暂无数据`} />
+    return <EmptyState title="工作台不存在或暂无数据" description={`工作台「${workspace}」还没有统计信息，先在「数据接入」里拉取一批文档。`} />
   }
 
   const tagEntries = stats.tagCloud ? Object.entries(stats.tagCloud).sort((a, b) => (b[1] as number) - (a[1] as number)).slice(0, 30) : []
@@ -52,7 +54,9 @@ export default function Dashboard({ workspace }: Props) {
       <Row gutter={16}>
         <Col span={12}>
           <Card title="🏷️ 标签云" extra={stats.embeddingProvider && <Tag color="cyan">Embedding: {stats.embeddingProvider}</Tag>}>
-            {tagEntries.length === 0 ? <Empty /> : (
+            {tagEntries.length === 0 ? (
+              <EmptyState title="暂无标签" description="导入文档后这里会按出现次数显示标签云。" size="sm" />
+            ) : (
               <div style={{ lineHeight: 2 }}>
                 {tagEntries.map(([tag, count]) => (
                   <Tag key={tag as string} color="blue" style={{ marginBottom: 4 }}>
@@ -75,7 +79,7 @@ export default function Dashboard({ workspace }: Props) {
                     </Tag>
                   ))}
               </div>
-            ) : <Empty description="暂无图谱数据" />}
+            ) : <EmptyState title="暂无图谱数据" description="导入文档并完成图谱抽取后，这里会显示实体类型分布。" size="sm" />}
           </Card>
         </Col>
       </Row>

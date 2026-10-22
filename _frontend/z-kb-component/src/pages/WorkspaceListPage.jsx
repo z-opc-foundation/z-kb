@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Card, Table, Button, Empty, Spin} from 'antd'
+import {Card, Table, Button} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
+import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
 import {kbApi} from '../services/api'
 
 export default function WorkspaceListPage() {
@@ -29,16 +30,21 @@ export default function WorkspaceListPage() {
             extra={<Button icon={<ReloadOutlined/>} loading={loading} onClick={load}>刷新</Button>}
         >
             {error ? (
-                <div style={{color: '#ef4444', padding: 16}}>
-                    接口错误：{error}
-                    <div style={{fontSize: 12, color: '#94a3b8', marginTop: 8}}>
-                        确认 z-kb 后端已启动且 /api/kb/workspaces 可达
-                    </div>
-                </div>
+                // 页面级错误：走共享基座 ErrorState（就近显示原因 + 重试入口），
+                // 不用手写红字 div —— 全仓错误态口径统一。
+                <ErrorState
+                    error={error}
+                    title="工作空间列表加载失败"
+                    description="确认 z-kb 后端已启动且 /api/kb/workspaces 可达。"
+                    onRetry={load}
+                />
             ) : loading ? (
-                <div style={{textAlign: 'center', padding: 40}}><Spin/></div>
+                <LoadingState variant="table" rows={4} />
             ) : workspaces.length === 0 ? (
-                <Empty description="接口通了，但一个工作空间也没有"/>
+                <EmptyState
+                    title="还没有工作空间"
+                    description="接口通了，但一个工作空间也没有。先在「数据接入」里创建或拉取一个工作空间。"
+                />
             ) : (
                 <Table
                     dataSource={workspaces}

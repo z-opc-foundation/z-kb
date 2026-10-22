@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Card, Input, Button, Select, InputNumber, List, Empty, Spin, Tag, Alert, Space} from 'antd'
+import {Card, Input, Button, Select, InputNumber, List, Tag, Alert, Space} from 'antd'
 import {SearchOutlined} from '@ant-design/icons'
+import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
 import {kbApi} from '../services/api'
 
 const {TextArea} = Input
@@ -60,6 +61,23 @@ export default function SearchPage() {
     const entities = Array.isArray(result?.matched_entities) ? result.matched_entities : []
     const vectorBlind = ['FUSION', 'HYBRID', 'VECTOR'].includes(mode) && num(stats.vector) === 0
 
+    /**
+     * 错误态的「重试」：列表加载失败与检索失败共用一个 error state，
+     * 所以重试要把两条链路都重跑一遍 —— 只重跑检索的话，
+     * 工作空间列表的失败会一直挂着红条。
+     */
+    const retry = () => {
+        setError(null)
+        kbApi.listWorkspaces()
+            .then(data => {
+                const list = Array.isArray(data) ? data : []
+                setWorkspaces(list.map(w => ({label: w.name, value: w.name})))
+                if (list.length > 0) setWorkspace(list[0].name)
+            })
+            .catch(e => setError(e.message))
+        if (query.trim()) doSearch()
+    }
+
     return (
         <Card title="知识库检索">
             <div style={{display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap'}}>
@@ -89,10 +107,11 @@ export default function SearchPage() {
                 </Button>
             </div>
 
-            {error && <div style={{color: '#ef4444', marginBottom: 16}}>接口错误：{error}</div>}
+            {/* 页面级错误：走共享基座 ErrorState（原因 + 重试入口），不用手写红字 div。 */}
+            {error && <ErrorState error={error} title="检索失败" onRetry={retry} style={{marginBottom: 16}} />}
 
             {loading ? (
-                <div style={{textAlign: 'center', padding: 40}}><Spin/></div>
+                <LoadingState variant="list" rows={3} />
             ) : result ? (
                 <>
                     <div style={{marginBottom: 8, color: '#475569', fontSize: 13}}>
@@ -119,7 +138,10 @@ export default function SearchPage() {
                         />
                     )}
                     {hits.length === 0 ? (
-                        <Empty description={`接口通了，但「${result.query}」在该工作空间无召回（图谱实体 ${entities.length} 个）`}/>
+                        <EmptyState
+                            title="没有召回到内容"
+                            description={`接口通了，但「${result.query}」在该工作空间无召回（图谱实体 ${entities.length} 个）`}
+                        />
                     ) : (
                         <List
                             dataSource={hits}
@@ -168,7 +190,7 @@ export default function SearchPage() {
                     )}
                 </>
             ) : (
-                <Empty description="输入关键词开始搜索"/>
+                <EmptyState title="输入关键词开始搜索" description="例如「InfluxDB 写入性能优化」，回车即搜。" />
             )}
         </Card>
     )
