@@ -79,4 +79,16 @@ declare module '@yuku123/z-frontend-common/ui' {
     pageSizeOptions: string[]
     showTotal: (total: number) => string
   }
+
+  /**
+   * 组件文档页（lead 008 §7）：左 240px TOC + 右正文两栏 + 滚动联动。
+   * props 以基座源码 src/components/ui/ComponentDoc.jsx 为准。
+   */
+  export function ComponentDoc(props: {
+    markdown?: string
+    title?: string
+    className?: string
+    style?: CSSProperties
+    [key: string]: any
+  }): ReactElement
 }
