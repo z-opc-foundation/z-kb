@@ -43,14 +43,28 @@ public class KBDevProfileAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(KBDevProfileAutoConfiguration.class);
 
-    /** dev 回落：内存向量（重启不保留，但也不占磁盘、不需要可写目录）。 */
-    @Bean(destroyMethod = "close")
-    @ConditionalOnMissingBean(VectorStore.class)
-    public VectorStore devVectorStore() {
-        VectorStore store = new InMemoryVectorStore();
-        log.info("z-kb dev profile 生效：向量存储回落为 {}（内存向量，重启不保留）",
-                store.getClass().getName());
-        return store;
+    /** 宿主自带 z-vector 自动装配时的类名 —— 宿主有向量实现时，dev 回落不跟它抢。 */
+    static final String HOST_VECTOR_AUTO_CONFIG = "com.zifang.z.vector.starter.autoconfigure.ZVectorAutoConfiguration";
+
+    /**
+     * dev 回落：内存向量（重启不保留，但也不占磁盘、不需要可写目录）。
+     *
+     * <p>只在<b>宿主没有 z-vector 自动装配</b>时注册：宿主自带向量实现（z-vector 自动装配或宿主
+     * 内嵌面）时，dev 回落再插一个 {@code VectorStore} 会让同类型注入变成多候选
+     * （{@code NoUniqueBeanDefinitionException}），向量归属仍归宿主。
+     */
+    @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass(HOST_VECTOR_AUTO_CONFIG)
+    static class DevVectorStoreConfiguration {
+
+        @Bean(destroyMethod = "close")
+        @ConditionalOnMissingBean(VectorStore.class)
+        public VectorStore devVectorStore() {
+            VectorStore store = new InMemoryVectorStore();
+            log.info("z-kb dev profile 生效：向量存储回落为 {}（内存向量，重启不保留）",
+                    store.getClass().getName());
+            return store;
+        }
     }
 
     /** dev 回落：JSON 图谱（保留 1.0.x 的文件持久化口径，便于本地复现线上数据形状）。 */
