@@ -40,7 +40,7 @@ z-***REMOVED***/
 ├── z-***REMOVED***-web/                   # REST 层：7 个 Controller + SwaggerConfig（Knife4j / springfox），纯 jar
 ├── z-***REMOVED***-bootstrap/             # 独立启动器 Z***REMOVED***Application（端口 8889）。
 │                               #   已从根 POM <modules> 注释排除（standalone uber-jar 体积触发中央上传失败）
-├── z-***REMOVED***-frontend/              # 独立 npm 工程（React 18 + antd 5 + TS + Vite，pnpm workspace，非 Maven 模块）
+├── z-***REMOVED***-frontend/              # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）
 ├── _eval/                      # 语料生成脚本（gen_corpus.py / gen_corpus_longtail.py）
 └── _doc/                       # 文档目录：001_arch / 003_script / 006_release
 ```
