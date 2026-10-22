@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Card, Table, Button, Select, Tag} from 'antd'
+import {Button, Select, Space, Tag} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
-import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
+import {ErrorState, ListTable, LoadingState} from '@yuku123/z-frontend-common/ui'
 import {kbApi} from '../services/api'
 
 const PAGE_SIZE = 20
@@ -50,38 +50,28 @@ export default function DocumentListPage() {
     }, [selectedWs, page, reload])
 
     return (
-        <Card
-            title={`文档管理${total === null ? '' : `（${selectedWs} 共 ${total} 篇）`}`}
-            extra={
-                <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
-                    <Select
-                        value={selectedWs}
-                        onChange={ws => { setSelectedWs(ws); setPage(1) }}
-                        style={{width: 200}}
-                        placeholder="选择工作空间"
-                        options={workspaces.map(w => ({label: w.name, value: w.name}))}
-                    />
-                    <Button icon={<ReloadOutlined/>} loading={loading} onClick={() => setReload(r => r + 1)}>
-                        刷新
-                    </Button>
-                </div>
-            }
-        >
+        <div>
+            {/* 工作空间切换是**筛选条件**不是动作，留在表外；动作按钮（刷新）放 cardExtra。 */}
+            <Space style={{marginBottom: 12}}>
+                <Select
+                    value={selectedWs}
+                    onChange={ws => { setSelectedWs(ws); setPage(1) }}
+                    style={{width: 200}}
+                    placeholder="选择工作空间"
+                    options={workspaces.map(w => ({label: w.name, value: w.name}))}
+                />
+            </Space>
+
             {error ? (
                 // 页面级错误：走共享基座 ErrorState（原因 + 重试入口），不用手写红字 div。
                 <ErrorState error={error} title="文档列表加载失败" onRetry={() => setReload(r => r + 1)} />
             ) : loading ? (
                 <LoadingState variant="table" rows={4} />
-            ) : documents.length === 0 ? (
-                <EmptyState
-                    title="暂无文档"
-                    description={selectedWs ? `接口通了，${selectedWs} 下没有文档` : '请先选择工作空间'}
-                />
             ) : (
-                <Table
-                    dataSource={documents}
+                <ListTable
+                    cardTitle={`文档管理${total === null ? '' : `（${selectedWs} 共 ${total} 篇）`}`}
+                    rows={documents}
                     rowKey="id"
-                    size="small"
                     columns={[
                         {title: '标题', dataIndex: 'title', key: 'title'},
                         {title: '分类', dataIndex: 'category', key: 'category'},
@@ -94,6 +84,20 @@ export default function DocumentListPage() {
                         },
                         {title: '更新时间', dataIndex: 'updated_at', key: 'updated_at'},
                     ]}
+                    searchKeys="title,category,status"
+                    searchPlaceholder="按标题 / 分类 / 状态过滤"
+                    emptyTitle="暂无文档"
+                    emptyDescription={selectedWs ? `接口通了，${selectedWs} 下没有文档` : '请先选择工作空间'}
+                    cardExtra={
+                        <Button icon={<ReloadOutlined/>} loading={loading} onClick={() => setReload(r => r + 1)}>
+                            刷新
+                        </Button>
+                    }
+                    // 【服务端分页，不套客户端分页】这页的翻页是 offset/limit + total 的服务端分页
+                    // （kbApi.listDocuments(ws, offset, limit) + kbApi.getDocumentCount(ws)），
+                    // 换页必须重新请求后端 ⇒ 不能用基座那套客户端分页（DEFAULT_PAGINATION），
+                    // 所以把原来的 pagination 对象原样传给 ListTable。
+                    // searchKeys 的过滤只作用于**当前这一页**已取回的行。
                     pagination={{
                         current: page,
                         pageSize: PAGE_SIZE,
@@ -103,6 +107,6 @@ export default function DocumentListPage() {
                     }}
                 />
             )}
-        </Card>
+        </div>
     )
 }

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Card, Table, Button} from 'antd'
+import {Button} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
-import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
+import {ErrorState, ListTable, LoadingState} from '@yuku123/z-frontend-common/ui'
 import {kbApi} from '../services/api'
 
 export default function WorkspaceListPage() {
@@ -25,10 +25,7 @@ export default function WorkspaceListPage() {
     useEffect(() => { load() }, [])
 
     return (
-        <Card
-            title="知识库工作空间"
-            extra={<Button icon={<ReloadOutlined/>} loading={loading} onClick={load}>刷新</Button>}
-        >
+        <div>
             {error ? (
                 // 页面级错误：走共享基座 ErrorState（就近显示原因 + 重试入口），
                 // 不用手写红字 div —— 全仓错误态口径统一。
@@ -40,17 +37,11 @@ export default function WorkspaceListPage() {
                 />
             ) : loading ? (
                 <LoadingState variant="table" rows={4} />
-            ) : workspaces.length === 0 ? (
-                <EmptyState
-                    title="还没有工作空间"
-                    description="接口通了，但一个工作空间也没有。先在「数据接入」里创建或拉取一个工作空间。"
-                />
             ) : (
-                <Table
-                    dataSource={workspaces}
+                <ListTable
+                    cardTitle="知识库工作空间"
+                    rows={workspaces}
                     rowKey="id"
-                    size="small"
-                    pagination={false}
                     columns={[
                         {title: '名称', dataIndex: 'name', key: 'name'},
                         {title: '描述', dataIndex: 'description', key: 'description'},
@@ -65,8 +56,18 @@ export default function WorkspaceListPage() {
                         },
                         {title: '创建时间', dataIndex: 'created_at', key: 'created_at'},
                     ]}
+                    searchKeys="name,description"
+                    searchPlaceholder="按工作空间名 / 描述过滤"
+                    emptyTitle="还没有工作空间"
+                    emptyDescription="接口通了，但一个工作空间也没有。先在「数据接入」里创建或拉取一个工作空间。"
+                    // 【为什么不用 pagination={false}】工作空间是用户自己在「数据接入」里建的，
+                    // 条数随使用增长，不是「已知 ≤10 行且不变」的小数据集 ⇒ 不能按 §2 规则 2 豁免分页，
+                    // 改用基座的默认分页（DEFAULT_PAGINATION）。
+                    cardExtra={
+                        <Button icon={<ReloadOutlined/>} loading={loading} onClick={load}>刷新</Button>
+                    }
                 />
             )}
-        </Card>
+        </div>
     )
 }

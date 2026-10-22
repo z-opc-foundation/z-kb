@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
-  Card, Button, Table, Tag, Space, Typography, Form, Input, Select,
+  Card, Button, Tag, Space, Typography, Form, Input, Select,
   Modal, message, Tabs, Row, Col, Statistic, Alert
 } from 'antd'
 import {
@@ -9,6 +9,7 @@ import {
   GlobalOutlined, FileTextOutlined, GithubOutlined, DingtalkOutlined,
   WechatWorkOutlined, MessageOutlined, StopOutlined
 } from '@ant-design/icons'
+import { ListTable } from '@yuku123/z-frontend-common/ui'
 import { IngestAPI } from '../services/api'
 
 interface Props { workspace: string }
@@ -157,9 +158,26 @@ export default function DataSources({ workspace }: Props) {
           </Row>
         )}
 
-        <Card title="内置数据源（点击「接入」配置参数后触发拉取）">
-          <Table dataSource={sources} columns={columns} rowKey="sourceId" pagination={false} size="middle" />
-        </Card>
+        {/*
+          数据源渠道表 —— 走基座 ListTable（lead 008 §2 强制规则 2/3/4 三件套）：
+          标准分页 + 端侧过滤框 + EmptyState。
+          【为什么不给 pagination={false} 豁免】
+          表面看这是「内置渠道目录」——DataSourceRegistry.installDefaults() 只注册 9 个
+          固定渠道，行数确实 ≤10。但 IngestAutoConfiguration 还会把容器里所有
+          DataSource 类型的 Spring Bean 一并 registry.register()（自定义渠道入口），
+          所以这张表**行数会随部署增长**，不能按「≤10 且不变」豁免分页。
+        */}
+        <ListTable
+          cardTitle="内置数据源（点击「接入」配置参数后触发拉取）"
+          rows={sources}
+          columns={columns}
+          rowKey="sourceId"
+          searchKeys={['label', 'sourceId', 'type']}
+          searchPlaceholder="按渠道名 / Source ID 过滤"
+          emptyTitle="暂无可接入的数据源"
+          emptyDescription="后端没有注册任何数据源渠道，请检查 z-kb 的 ingest 模块是否装配。"
+          tableProps={{ size: 'middle' }}
+        />
 
         {lastResult && (
           <Card title={`最近一次接入结果（${lastResult.count} 个文档）`}>
@@ -169,11 +187,20 @@ export default function DataSources({ workspace }: Props) {
               <Col span={6}><Statistic title="跳过（重复）" value={lastResult.skipped} /></Col>
               <Col span={6}><Statistic title="Chunks" value={lastResult.totalChunks} /></Col>
             </Row>
-            <Table
-              dataSource={lastResult.items}
+            {/*
+              接入明细表 —— 同走基座 ListTable：标准分页 + 过滤框 + EmptyState。
+              行数 = 本次拉取处理的文档数，会随批量接入增长（原来只有 pageSize:10）。
+              cardProps 用 borderless 让内层卡片与外层「最近一次接入结果」卡片融成一块。
+            */}
+            <ListTable
+              cardTitle="接入明细"
+              rows={lastResult.items}
               rowKey="requestId"
-              size="small"
-              pagination={{ pageSize: 10 }}
+              searchKeys={['requestId', 'status', 'error']}
+              searchPlaceholder="按请求 ID / 状态过滤"
+              emptyTitle="本次接入没有明细"
+              emptyDescription="该次拉取没有产生任何文档处理记录。"
+              cardProps={{ variant: 'borderless', styles: { body: { padding: 0 } } }}
               columns={[
                 { title: '请求 ID', dataIndex: 'requestId', key: 'requestId', render: (s: string) => <code style={{ fontSize: 11 }}>{s.substring(0, 12)}…</code> },
                 { title: '状态', dataIndex: 'status', key: 'status',

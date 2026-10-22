@@ -114,7 +114,7 @@ z-kb/
 ├── z-kb-web/                    # REST 层：7 个 Controller + SwaggerConfig（Knife4j/springfox），纯 jar，不内置前端静态资源
 ├── z-kb-bootstrap/              # 独立启动器（ZKbBootstrapApplication，端口 8889）。已从 <modules> 注释排除：
 │                                #   standalone uber-jar 约 77MB 触发 Maven Central 上传 broken pipe；其 pom 仍停在 1.0.1
-├── z-kb-frontend/               # 独立 npm 工程（React 18 + antd 5 + TS + Vite，pnpm workspace，非 Maven 模块）
+├── z-kb-frontend/               # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）
 ├── _doc/                        # 文档目录（见文末）
 └── LICENSE                      # MIT
 ```
@@ -197,8 +197,8 @@ Knife4j 文档在 `http://localhost:8889/doc.html`，Actuator 暴露 `health,inf
 
 ```bash
 cd z-kb-frontend
-pnpm install
-pnpm dev        # Vite 监听 5173
+npm install
+npm run dev      # Vite 监听 5173
 ```
 
 注意：`vite.config.ts` 的 `/api` 代理目标是 `http://localhost:8080`，与后端默认端口 **8889 不一致**，

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import {
-  Card, Table, Button, Modal, Form, Input, Space, Typography,
+  Button, Modal, Form, Input, Space, Typography,
   Popconfirm, Tag, message, Spin, Upload, Tabs
 } from 'antd'
+import { ListTable } from '@yuku123/z-frontend-common/ui'
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, InboxOutlined } from '@ant-design/icons'
 import { DocAPI } from '../services/api'
 import type { Document } from '../types'
@@ -144,25 +145,38 @@ export default function Documents({ workspace }: Props) {
             key: 'list',
             label: '文档列表',
             children: (
-              <Card>
-                <Space style={{ marginBottom: 16 }}>
-                  <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
-                    新增文档
-                  </Button>
-                  <Upload beforeUpload={handleBatchImport} showUploadList={false} accept=".md">
-                    <Button icon={<InboxOutlined />} loading={importing}>批量导入 .md 文件</Button>
-                  </Upload>
-                  <Button onClick={load}>刷新</Button>
-                </Space>
-                <Table
-                  columns={columns}
-                  dataSource={docs}
-                  rowKey="id"
-                  loading={loading}
-                  pagination={{ pageSize: 20 }}
-                  size="middle"
-                />
-              </Card>
+              /*
+               * 文档列表 —— 走基座 ListTable（lead 008 §2 强制规则 2/3/4 三件套）：
+               *   规则 2 分页：DEFAULT_PAGINATION（pageSize + showSizeChanger + pageSizeOptions + showTotal）
+               *   规则 3 查询：Card extra 里的过滤框（端侧过滤标题 / 编码 / 作者 / 路径 / 标签）
+               *   规则 4 空态：EmptyState（带「新增文档」行动按钮），不是 antd 默认空图
+               * 原来的 <Card><Space>按钮</Space><Table pagination={{pageSize:20}}/></Card>
+               * 三件套全靠手写，现在收进基座，各仓只声明「按哪几个字段过滤 + 空态说什么」。
+               */
+              <ListTable
+                rows={docs}
+                columns={columns}
+                rowKey="id"
+                loading={loading}
+                searchKeys={['title', 'id', 'author', 'path', 'tags']}
+                searchPlaceholder="按标题 / 编码 / 作者 / 路径过滤"
+                emptyTitle="暂无文档"
+                emptyDescription="当前工作台还没有导入任何文档，点「新增文档」或批量导入 .md 开始。"
+                emptyActionText="新增文档"
+                emptyOnAction={() => setModalOpen(true)}
+                cardExtra={
+                  <Space>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
+                      新增文档
+                    </Button>
+                    <Upload beforeUpload={handleBatchImport} showUploadList={false} accept=".md">
+                      <Button icon={<InboxOutlined />} loading={importing}>批量导入 .md 文件</Button>
+                    </Upload>
+                    <Button onClick={load}>刷新</Button>
+                  </Space>
+                }
+                tableProps={{ size: 'middle' }}
+              />
             )
           }
         ]}
