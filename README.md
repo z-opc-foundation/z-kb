@@ -15,12 +15,12 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 | 字段 | 值 |
 |------|-----|
 | **仓库** | `z-kb` |
-| **Maven 坐标** | `io.github.yuku123:z-kb:1.0.7`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
+| **Maven 坐标** | `io.github.yuku123:z-kb:1.1.0`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
 | **父项目** | `io.github.yuku123:z-boot-parent:1.1.0`（`<relativePath/>` 留空）；父链自带第三方地板与兄弟仓权威表（`z-boot-dependencies` / `z-boot-fleet` 两个文件夹随 2026-10-08 火车制拓扑退役） |
-| **Maven Central** | 最新 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标；10 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1` |
+| **Maven Central** | 最新**已发布**仍是 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标；10 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1`。**`1.1.0`（2026-10-22）仓内版本号与公告已就位，但尚未发到中央** —— 发中央属「对外发布」的人工保留项，详见 [`_doc/006_release/02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md) |
 | **默认端口** | `8889`（`z-kb-bootstrap/src/main/resources/application.yml`，context-path `/`）；starter 嵌入时随宿主应用端口 |
 | **运行口径** | Java 8 · Spring Boot 2.7.18（父链下发；部分模块 POM 仍字面钉 spring-boot-* `2.7.12`） |
-| **最近更新** | 2026-09-30 |
+| **最近更新** | 2026-10-22 |
 
 ---
 
@@ -52,11 +52,40 @@ wikilink）→ `Chunker` 分块 → `EmbeddingProvider` 向量化并写 `ChunkVe
 | 接口 | 默认实现 | 备选 | 配置键 |
 |------|----------|------|--------|
 | `DocumentRepository` | `JsonFileDocumentRepository`（默认 `~/.zkb/zkb.json`） | `InMemoryDocumentRepository` | `zkb.storage.path` |
-| `ChunkVectorStore` | `ZVectorChunkVectorStore`（包装 z-vector `VectorStore`；`storage-type=in-memory` 时用 `InMemoryVectorStore`，`persistent` 反射加载 `PersistentVectorStore`，失败回退内存） | — | `zkb.vector.storage-type` / `data-dir` / `dimension` / `index-type` / `metric` |
-| `KnowledgeGraphStore` | `JsonFileKnowledgeGraphStore`（默认 `~/.zkb/graph`） | `ZGraphKnowledgeGraphStore`（包装 z-graph `GraphStore`，默认不装配，需自行注册 Bean 覆盖） | `zkb.graph.path` |
+| `ChunkVectorStore` | `ZVectorChunkVectorStore`（包装 z-vector `VectorStore`；`storage-type=persistent`（**1.1.0 起的默认**）反射加载 `PersistentVectorStore`（默认 `~/.zkb/vector`），**装不上就启动失败并给修复指引，不再静默回退内存**） | `storage-type=in-memory` ⇒ `InMemoryVectorStore` | `zkb.vector.storage-type` / `data-dir` / `dimension` / `index-type` / `metric` |
+| `KnowledgeGraphStore` | `ZGraphKnowledgeGraphStore`（**1.1.0 起的默认**，走 z-graph 引擎 `com.zifang.z.graph.core.InMemoryGraphStore`；**进程内图谱，重启不保留**） | `zkb.graph.engine=json` ⇒ `JsonFileKnowledgeGraphStore`（默认 `~/.zkb/graph`，重启不丢数据） | `zkb.graph.engine` / `zkb.graph.path` |
+
+三个后端的**本地状态目录**在 1.1.0 统一收敛到 `~/.zkb/`（`vector/` / `graph/` / `zkb.json`），
+且三个路径配置项都支持 `~` 展开（写 `~/data/zkb` 会被展开成 `/home/<用户>/data/zkb`，
+而不是在当前目录下造一个名叫「~」的目录）。
 
 注意：`z-kb-storage` 的 POM 虽声明了 MyBatis-Plus / mysql-connector-j / H2，但仓内**没有** JDBC 版
 `DocumentRepository` 实现；生产接 MySQL 需按该类注释自行注册覆盖 Bean。
+
+---
+
+## 🛑 1.1.0 破坏性变更公告（D1 拍板：默认值翻转显式发布，不搞静默切换）
+
+**引擎一行没改，改的是装配与文档**；变更点与「怎么显式回旧档」：
+
+| 项 | 旧默认（1.0.x） | 新默认（1.1.0） | 显式回旧档 |
+|---|---|---|---|
+| 向量存储 | `in-memory`（内存，重启丢） | `persistent` ⇒ `PersistentVectorStore`（落盘，重启不丢） | `zkb.vector.storage-type=in-memory` |
+| 持久化向量装不上时 | **静默回落**内存向量（服务照常起、数据悄悄不落盘） | **启动失败**，错误信息带修复指引 | 无（这正是本次要改的行为） |
+| 图谱存储 | `JsonFileKnowledgeGraphStore`（JSON 文件，重启不丢） | `ZGraphKnowledgeGraphStore`（z-graph 引擎，**进程内图谱，重启不保留**） | `zkb.graph.engine=json` |
+| 图谱引擎开关 | 无 | 新增 `zkb.graph.engine`（`zgraph` 默认 / `json`） | `zkb.graph.engine=json` |
+| 本地状态目录 | 向量 `./data/zvector`（相对 CWD）／图谱 `~/.zkb/graph`／文档 `~/.zkb/zkb.json` | 统一 `~/.zkb/`：`vector/`、`graph/`、`zkb.json` | `zkb.vector.data-dir` / `zkb.graph.path` / `zkb.storage.path`（均支持 `~` 展开） |
+| `dev` profile | 无专门口径 | **回落成 1.0.x 默认口径**：内存向量 + JSON 图谱（对齐 z-lc 的 dev H2 家族惯例） | — |
+
+**消费方（z-opc 等）升级三件事**：
+
+1. **确认 data-dir 可写** —— 向量默认落 `~/.zkb/vector`；容器里没有可写 HOME / 没挂卷 ⇒ 启动会失败
+   （失败要响是本次的立意）。显式指路：`zkb.vector.data-dir=/data/zkb/vector`。
+2. **图谱默认从「JSON 文件」变成「进程内 z-graph」⇒ 重启后图谱不保留**；要保留请显式
+   `zkb.graph.engine=json`（存量 JSON 文件原地继续读写，无需迁移）。
+3. **依赖树多了 `io.github.yuku123:z-vector-storage`**（`PersistentVectorStore` 所在坐标）⇒ fat jar 体积变化。
+
+完整公告与取证清单见 [`_doc/006_release/02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md)。
 
 **图谱文件名怎么来的**：`JsonFileKnowledgeGraphStore` 是一工作台一份 JSON，文件名是 workspace 名的
 **可逆转义**（合法字符原样保留，其余编成 `~` + 两位大写 hex），所以中文、含 `.` / `:` / 空格的工作台名
@@ -72,10 +101,11 @@ workspace（`team_a` 这类）编码后一字不变，存量文件继续原地�
 z-kb/
 ├── pom.xml                      # 聚合 POM：继承 z-boot-parent:1.1.0，自家 11 坐标 DM 钉 ${project.version}
 ├── z-kb-api/                    # SPI 接口 + 领域模型（ChatService / SearchService / KnowledgeBaseService /
-│                                #   EmbeddingProvider / ChunkVectorStore / KnowledgeGraphStore / DocumentRepository 等 30 个类）
+│                                #   EmbeddingProvider / ChunkVectorStore / KnowledgeGraphStore / DocumentRepository 等 31 个类）
 ├── z-kb-core/                   # 解析 / 分块 / 嵌入（TF-IDF、HTTP）/ BM25 + 混合检索 / 实体关系抽取
 ├── z-kb-vector/                 # z-vector 适配：ZVectorChunkVectorStore + ChunkVectorStoreAutoConfiguration
-├── z-kb-graph/                  # 图谱存储：JsonFileKnowledgeGraphStore（默认）+ ZGraphKnowledgeGraphStore
+│                                #   （1.1.0 起默认 persistent：PersistentVectorStore，装不上即启动失败）
+├── z-kb-graph/                  # 图谱存储：ZGraphKnowledgeGraphStore（1.1.0 默认，z-graph 引擎）+ JsonFileKnowledgeGraphStore
 ├── z-kb-storage/                # 文档仓库：JsonFile（默认）/ InMemory + 自动装配
 ├── z-kb-protocol/               # 协议层：REST 请求/响应 DTO + OpenAPI 契约注解（1.0.7 起有源码）
 ├── z-kb-ingest/                 # 9 种数据源 + IngestPipeline + HtmlToMarkdown
@@ -101,7 +131,7 @@ reactor 实际参与构建的是 10 个模块（`z-kb-bootstrap` 被注释排除
 |------|------|
 | 语言 / 运行时 | Java 8（地板 `java.version=1.8`；1.0.3 起产物降到 class-file 52） |
 | 框架 | Spring Boot 2.7.18（经 `z-boot-parent` 自带的第三方地板；z-kb-vector/graph/storage/starter/web/bootstrap 的 POM 仍字面写 `2.7.12`） |
-| 兄弟仓依赖 | `z-vector-api/core`、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-parent` 的兄弟仓权威表下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
+| 兄弟仓依赖 | `z-vector-api/core`、`z-vector-storage`（1.1.0 新增：`PersistentVectorStore` 所在坐标，父链 DM 不管这一格 ⇒ 本仓自己钉 1.0.5）、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-parent` 的兄弟仓权威表下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
 | 本仓刻意覆盖 | Jackson 2.15.4（地板 2.18.6）、Knife4j 4.5.0 openapi2 + springfox 2.10.5（地板 3.0.3 口径）、log4j-api 2.22.1、mysql-connector-j 8.0.33、mybatis-spring 2.1.2 |
 | 其它父链不供 | H2 2.2.224、jsoup 1.18.1、slf4j 2.0.13、junit-jupiter 5.10.2（test）；`hanlp.version=1.8.6` 属性已定义但仓内零引用（`HanLpTokenizer` 是仓内正则/词典自实现，不依赖 HanLP 库） |
 | 前端 | React 18.3 + antd 5.21 + react-router 6 + echarts + Vite（TypeScript） |
@@ -126,7 +156,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-kb-spring-boot-starter</artifactId>
-    <version>1.0.7</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -150,8 +180,9 @@ zkb:
 | 配置键 | 说明 |
 |--------|------|
 | `zkb.embedding.provider` / `endpoint` / `model` / `api-key` / `dimension` | `http` 时对接 OpenAI 兼容 embeddings 端点（如 Ollama） |
-| `zkb.vector.storage-type` / `data-dir` / `index-type` / `metric` | in-memory（默认）/ persistent；HNSW + COSINE 口径 |
-| `zkb.storage.path` / `zkb.graph.path` | JSON 文件持久化位置（默认 `~/.zkb/`） |
+| `zkb.vector.storage-type` / `data-dir` / `index-type` / `metric` | **persistent（1.1.0 默认，落 `PersistentVectorStore`）/ in-memory**；HNSW + COSINE 口径；`data-dir` 默认 `~/.zkb/vector`（支持 `~` 展开） |
+| `zkb.graph.engine` / `zkb.graph.path` | **zgraph（1.1.0 默认，走 z-graph 引擎）/ json**（JSON 文件持久化）；`path` 默认 `~/.zkb/graph` |
+| `zkb.storage.path` | 文档 JSON 位置（默认 `~/.zkb/zkb.json`，支持 `~` 展开） |
 
 **API Key 等凭据必须经环境变量注入**（Spring relaxed binding，如 `ZKB_CHAT_API_KEY`、
 `ZKB_EMBEDDING_API_KEY`），禁止写进 yml / jar / 镜像层。
@@ -198,18 +229,19 @@ SearchPage / ChatPage / GraphPage / ModelingPage。
 mvn test
 ```
 
-测试代码是有的 —— **7 个模块共 15 个测试文件**（`find . -path '*/src/test/*' -name '*.java'` = 15）。
+测试代码是有的 —— **7 个模块共 16 个测试文件**（`find . -path '*/src/test/*' -name '*.java'` = 17，
+含 README 自守卫 1 个）。
 根 POM 的 `<dependencies>` 给全仓供 `junit-jupiter` + `junit-vintage-engine`（test 作用域，子模块自动
 继承，子模块一律不再各自声明 junit），所以在根目录 `mvn test` 直接可跑。
 
-> **计数口径（读表前先看这句）**：上面的「15 个测试文件」和下面表格的「测试文件 / 实跑用例数」都是
-> **2026-10-20 的实测快照**，口径是 `find . -path '*/src/test/*' -name '*.java'`，
-> **排除本仓 README 自守卫测试 `ReadmeClaimsTest`** —— 该守卫在快照之后加入 `z-kb-core`（自带 3 个用例），
-> 所以表里的数说的是「守卫上线之前」的盘面，不是「此刻」的盘面。
+> **计数口径（读表前先看这句）**：上面的「16 个测试文件」和下面表格的「测试文件 / 实跑用例数」都是
+> **2026-10-22 的实测快照**，口径是 `find . -path '*/src/test/*' -name '*.java'`，
+> **排除本仓 README 自守卫测试 `ReadmeClaimsTest`** —— 该守卫在 `z-kb-core`（自带 3 个用例），
+> 所以表里的数说的是「守卫之外」的盘面。
 > 守卫本身（`z-kb-core/src/test/java/com/zifang/z/kb/core/ReadmeClaimsTest.java`）负责把本 README 里的
 > 定量主张（类数 / Controller 数 / 数据源数 / 模块数 / 版本号 / 端口）与源码对齐：README 改了就红。
 
-`mvn -o -B -ntp clean test` 实测（2026-10-20，全部 0 失败 / 0 错误 / 0 跳过；口径同上，排除自守卫）：
+`mvn -o -B -ntp clean test` 实测（2026-10-22，全部 0 失败 / 0 错误 / 0 跳过；口径同上，排除自守卫）：
 
 | 模块 | 测试文件 | 实跑用例数 |
 |---|---|---|
@@ -217,16 +249,18 @@ mvn test
 | `z-kb-web` | 1 | 14 |
 | `z-kb-core` | 7 | 13 |
 | `z-kb-storage` | 2 | 11 |
-| `z-kb-spring-boot-starter` | 2 | 7 |
+| `z-kb-spring-boot-starter` | 3 | 12 |
 | `z-kb-graph` | 1 | 4 |
 | `z-kb-vector` | 1 | 1 |
-| **合计** | **15** | **68** |
+| **合计** | **16** | **73** |
 
 两点要说清：
 
-- 15 个文件里 13 个是测试类，另 2 个是测试替身（`z-kb-core` 的 `EvalSuite` / `InMemoryVectorStore`，
+- 16 个文件里 14 个是测试类，另 2 个是测试替身（`z-kb-core` 的 `EvalSuite` / `InMemoryVectorStore`，
   不含 `@Test`）。
-- `z-kb-core` 的 `GenerationEvalIT` 是 `*IT` 命名，**surefire 默认 include 不收它** ⇒ 上面那 68 条
+- `z-kb-spring-boot-starter` 的第 3 个测试文件是 `KbAssemblyDefaultContractTest`（1.1.0 装配口径契约：
+  默认 persistent + z-graph、data-dir 不可写即启动失败、dev profile 回落对照）。
+- `z-kb-core` 的 `GenerationEvalIT` 是 `*IT` 命名，**surefire 默认 include 不收它** ⇒ 上面那 73 条
   **不含**它那 2 条。要跑得显式点名，且它整类被 `@EnabledIfEnvironmentVariable(EVAL_LLM_ENDPOINT)`
   门控 —— 不配真 LLM 端点时是 skipped（实测 `Tests run: 1, Skipped: 1`）：
 
@@ -269,5 +303,7 @@ MIT，见根 [`LICENSE`](LICENSE)；根 POM `<licenses>` 同声明。
 - [`_doc/003_script/`](_doc/003_script/) — 运维脚本:
   - [`deploy_maven_center.sh`](_doc/003_script/deploy_maven_center.sh) — Maven Central 一键发布 / 校验 / GPG 初始化
 - [`_doc/006_release/`](_doc/006_release/) — 发布与中央仓文档（Central 缺件欠账与清账结论）
+  - [`01-verify-central-note.md`](_doc/006_release/01-verify-central-note.md) — z-kb-protocol 空壳模块与 Central 缺件欠账（已还清）
+  - [`02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md) — **1.1.0 破坏性变更公告**：默认 persistent + 默认 z-graph + fail-fast、消费方升级说明与取证清单
 
 _Maintained by the z-opc-foundation organization._

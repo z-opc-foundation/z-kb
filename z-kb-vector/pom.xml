@@ -8,10 +8,10 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb</artifactId>
-        <version>1.0.7</version>
+        <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
-    <version>1.0.7</version>
+    <version>1.1.0</version>
 
     <artifactId>z-kb-vector</artifactId>
     <packaging>jar</packaging>
@@ -77,6 +77,14 @@
                     <artifactId>log4j-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- 1.1.0 起 zkb.vector.storage-type 默认 persistent ⇒ PersistentVectorStore 必须真的在
+             classpath 上，否则自动装配只能启动失败（fail-fast）。
+             PersistentVectorStore 落在 z-vector-storage 这个坐标里（不在 z-vector-core 里），
+             版本不写死：由父链 z-boot-fleet 的兄弟仓权威表下发（与 z-vector-api/core 同源）。 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-vector-storage</artifactId>
         </dependency>
 
         <dependency>

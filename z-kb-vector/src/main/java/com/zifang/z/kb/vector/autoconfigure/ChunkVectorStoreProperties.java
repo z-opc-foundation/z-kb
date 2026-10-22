@@ -4,12 +4,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * z-kb-vector 配置属性。
+ *
+ * <p><b>1.1.0 破坏性变更</b>：{@code storage-type} 的默认值由 {@code in-memory} 翻成
+ * {@code persistent}（向量默认落 {@code PersistentVectorStore}，重启不丢向量）。
+ * 要回到旧行为请显式配 {@code zkb.vector.storage-type=in-memory}。
  */
 @ConfigurationProperties(prefix = "zkb.vector")
 public class ChunkVectorStoreProperties {
 
-    private String storageType = "in-memory"; // in-memory / persistent
-    private String dataDir = "./data/zvector";
+    /** persistent（1.1.0 起的默认，落 PersistentVectorStore）/ in-memory（内存向量，重启不保留）。 */
+    private String storageType = "persistent";
+    /** 持久化向量目录；支持 {@code ~} 展开，默认 {@code ~/.zkb/vector}。 */
+    private String dataDir = "~/.zkb/vector";
     private int dimension = 512;
     private String indexType = "HNSW";
     private String metric = "COSINE";

@@ -1,1 +1,2 @@
 com.zifang.z.kb.starter.config.KBAutoConfiguration
+com.zifang.z.kb.starter.config.KBDevProfileAutoConfiguration
