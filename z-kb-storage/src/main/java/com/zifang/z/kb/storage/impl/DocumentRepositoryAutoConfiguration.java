@@ -1,6 +1,9 @@
 package com.zifang.z.***REMOVED***.storage.impl;
 
 import com.zifang.z.***REMOVED***.api.DocumentRepository;
+import com.zifang.z.***REMOVED***.api.***REMOVED***Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,9 +15,14 @@ import org.springframework.context.annotation.Configuration;
  *
  * <p>生产环境可自定义基于 MyBatis-Plus + MySQL 的 Repository，
  * 只需注册一个 DocumentRepository Bean 即可覆盖。
+ *
+ * <p><b>1.1.0</b>：路径约定化 —— {@code z***REMOVED***.storage.path} 支持 {@code ~} 展开，
+ * 默认 {@code ~/.z***REMOVED***/z***REMOVED***.json}（D3 拍板：文档仓库仍默认 JSON 持久化）。
  */
 @Configuration
 public class DocumentRepositoryAutoConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentRepositoryAutoConfiguration.class);
 
     /**
      * 默认 Bean — JSON 文件持久化（重启不丢数据）。
@@ -24,9 +32,11 @@ public class DocumentRepositoryAutoConfiguration {
     @ConditionalOnMissingBean(DocumentRepository.class)
     public DocumentRepository documentRepository(
             @Value("${z***REMOVED***.storage.path:#{null}}") String path) {
-        if (path == null || path.isEmpty()) {
-            return new JsonFileDocumentRepository();
-        }
-        return new JsonFileDocumentRepository(path);
+        String resolved = (path == null || path.trim().isEmpty())
+                ? ***REMOVED***Paths.documentFile() : ***REMOVED***Paths.expand(path);
+        DocumentRepository repository = new JsonFileDocumentRepository(resolved);
+        log.info("z-***REMOVED*** 文档仓库后端：{}（path={}）",
+                repository.getClass().getName(), resolved);
+        return repository;
     }
 }
