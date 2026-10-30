@@ -116,11 +116,14 @@
              而 z-boot-parent:1.1.0 的 DM 只管 z-vector-api / core / grpc-server / spring-boot-starter
              四条 —— 没有 storage 这一格 ⇒ 这里自己钉（与 z-vector 其余四条同源同版本 1.0.5）。 -->
         <z-vector-storage.version>1.0.5</z-vector-storage.version>
-        <!-- swagger-annotations **v3**（io.swagger.core.v3）：OpenAPI 契约注解的编译期坐标。
-             必须 ≥ 2.2.6 —— @Schema 的 requiredMode 用的是 Schema.RequiredMode 这个枚举，
-             2.2.6 才引入；钉 2.1.2（z-boot-parent 里 swagger.v3.version 那格的值）会直接编译失败。
-             2.2.8 与 z-opc 主壳里 OPENAPI_500_FIX 那条钉同号，避免宿主席位上两版共存。 -->
-        <swagger-annotations.version>2.2.8</swagger-annotations.version>
+        <!-- swagger-annotations **v3 的 jakarta 变体**：OpenAPI 契约注解的编译期坐标。
+             ① 必须 ≥ 2.2.6 —— @Schema 的 requiredMode 用的是 Schema.RequiredMode 这个枚举，
+                2.2.6 才引入；钉 2.1.2（z-boot-parent 里 swagger.v3.version 那格的值）会编译失败。
+             ② 必须是 **-jakarta** 变体：springdoc 2.6.0 依赖的就是 swagger-core-jakarta 那条线，
+                若这里写成非 jakarta 的 swagger-annotations，两套注解类会同包挂在 classpath 上
+                （实测录到 2.2.8 + 2.2.22-jakarta 并存），谁赢取决于顺序 —— 不赌这个。
+             2.2.22 与 springdoc 2.6.0 自带的 swagger-core-jakarta 同号。 -->
+        <swagger-annotations.version>2.2.22</swagger-annotations.version>
         <hanlp.version>1.8.6</hanlp.version><!-- 定义但仓内零引用，本次不动（清理另案） -->
     </properties>
 
@@ -306,7 +309,7 @@
                  万一将来有模块真要用 mapstruct，请重新按需声明 —— 别再以"springfox 配套"的名义挂在这里。 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
                 <version>${swagger-annotations.version}</version>
             </dependency>
 
@@ -345,7 +348,7 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-<dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId></dependency>
+<dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations-jakarta</artifactId></dependency>
     
         <dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId></dependency>
     

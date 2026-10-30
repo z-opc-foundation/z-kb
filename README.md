@@ -19,7 +19,7 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 | **父项目** | `io.github.yuku123:z-boot-parent:1.2.0`（`<relativePath/>` 留空）；父链自带第三方地板与兄弟仓权威表（`z-boot-dependencies` / `z-boot-fleet` 两个文件夹随 2026-10-08 火车制拓扑退役） |
 | **Maven Central** | 最新**已发布**仍是 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/web 共 11 支坐标；10 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1`。**`1.1.0`（2026-10-22）仓内版本号与公告已就位，但尚未发到中央** —— 发中央属「对外发布」的人工保留项，详见 [`_doc/006_release/02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md) |
 | **默认端口** | `8889`（`z-kb-bootstrap/src/main/resources/application.yml`，context-path `/`）；starter 嵌入时随宿主应用端口 |
-| **运行口径** | Java 17 · Spring Boot 3.3.13（父链下发；部分模块 POM 仍字面钉 spring-boot-* `2.7.12`） |
+| **运行口径** | Java 17（产物 class-file 61）· Spring Boot 3.3.13（父链下发；2026-10-30 起各模块 POM 的 `2.7.12` 字面量已全部清掉，版本一律由父链 DM 下发） |
 | **最近更新** | 2026-10-22 |
 
 ---
@@ -37,7 +37,7 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 | RAG 问答 | `DefaultChatService`：检索 + 引用返回；`zkb.chat.endpoint` 留空或 LLM 调用失败时回退抽取式回答；会话管理（createSession / chatInSession / getHistory） | z-kb-spring-boot-starter |
 | 知识建模 | `ModelingService.decompose` → `ProductModel` → `CheatSheet`（`ProductDecomposer` / `CausalChainExtractor` / `CheatSheetGenerator`） | z-kb-modeling |
 | 工作台隔离 | `Workspace` + 各服务按 workspace 分区；`listEntities` / `getNeighbors` / `getSubgraph` 图谱查询 | z-kb-api / starter |
-| REST API + 在线文档 | 7 个 Controller（见下文）+ Knife4j（springfox `DocumentationType.SWAGGER_2`） | z-kb-web |
+| REST API + 在线文档 | 7 个 Controller（见下文）+ springdoc 2.6.0 / OpenAPI 3（DTO 注解为 `@Schema` / `@Operation` / `@Tag`） | z-kb-web |
 
 ### 索引流水线（代码实测）
 
@@ -111,7 +111,7 @@ z-kb/
 ├── z-kb-ingest/                 # 9 种数据源 + IngestPipeline + HtmlToMarkdown
 ├── z-kb-modeling/               # 工作台 → 产品模型 → 小抄
 ├── z-kb-spring-boot-starter/    # KBAutoConfiguration + KBProperties（前缀 zkb.*）+ Default{Chat,Search,KnowledgeBase}Service
-├── z-kb-web/                    # REST 层：7 个 Controller + SwaggerConfig（Knife4j/springfox），纯 jar，不内置前端静态资源
+├── z-kb-web/                    # REST 层：7 个 Controller + SwaggerConfig（springdoc GroupedOpenApi），纯 jar，不内置前端静态资源
 ├── z-kb-bootstrap/              # 独立启动器（ZKbBootstrapApplication，端口 8889）。已从 <modules> 注释排除：
 │                                #   standalone uber-jar 约 77MB 触发 Maven Central 上传 broken pipe；其 pom 仍停在 1.0.1
 ├── z-kb-frontend/               # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）
@@ -129,10 +129,10 @@ reactor 实际参与构建的是 10 个模块（`z-kb-bootstrap` 被注释排除
 
 | 层级 | 技术 |
 |------|------|
-| 语言 / 运行时 | Java 17（地板 `java.version=17`；1.0.3 起产物降到 class-file 52） |
-| 框架 | Spring Boot 2.7.18（经 `z-boot-parent` 自带的第三方地板；z-kb-vector/graph/storage/starter/web/bootstrap 的 POM 仍字面写 `2.7.12`） |
+| 语言 / 运行时 | Java 17（地板 `java.version=17`；实测产物 class-file **61**，Java 8 时代的 52 已不再适用） |
+| 框架 | Spring Boot 3.3.13 + Spring Framework 6.1.21（经 `z-boot-parent:1.2.0` 下发；2026-10-30 起各模块 POM 不再字面写 `2.7.12`） |
 | 兄弟仓依赖 | `z-vector-api/core`、`z-vector-storage`（1.1.0 新增：`PersistentVectorStore` 所在坐标，父链 DM 不管这一格 ⇒ 本仓自己钉 1.0.5）、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-parent` 的兄弟仓权威表下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
-| 本仓刻意覆盖 | Jackson 2.15.4（地板 2.18.6）、Knife4j 4.5.0 openapi2 + springfox 2.10.5（地板 3.0.3 口径）、log4j-api 2.22.1、mysql-connector-j 8.0.33、mybatis-spring 2.1.2 |
+| 本仓刻意覆盖 | Jackson 2.15.4（地板 2.18.6）、`swagger-annotations-jakarta` 2.2.22（OpenAPI 契约注解；必须 ≥2.2.6，否则 `Schema.RequiredMode` 不存在）、log4j-api 2.22.1、mysql-connector-j 8.0.33、mybatis-spring 2.1.2 |
 | 其它父链不供 | H2 2.2.224、jsoup 1.18.1、slf4j 2.0.13、junit-jupiter 5.10.2（test）；`hanlp.version=1.8.6` 属性已定义但仓内零引用（`HanLpTokenizer` 是仓内正则/词典自实现，不依赖 HanLP 库） |
 | 前端 | React 18.3 + antd 5.21 + react-router 6 + echarts + Vite（TypeScript） |
 | 构建 | Maven + flatten-maven-plugin 1.5.0（`oss` 常开）；`central` profile 走 central-publishing-maven-plugin 0.7.0 + GPG + sources/javadoc |

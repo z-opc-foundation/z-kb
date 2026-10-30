@@ -73,11 +73,12 @@
             <artifactId>z-kb-modeling</artifactId>
         </dependency>
 
-        <!-- Swagger 注解（2026-10-30 起是 io.swagger.core.v3 的 @Schema/@Operation/@Tag）：
-             7 个 controller 直接用 ⇒ 编译期必须有。坐标与版本走根 DM（2.2.8），此处不再自钉 1.6.6。 -->
+        <!-- Swagger 注解（2026-10-30 起是 io.swagger.core.v3 的 @Schema/@Operation/@Tag，
+             **-jakarta 变体**，与 springdoc 2.6.0 自带的那条线同源）：7 个 controller 直接用
+             ⇒ 编译期必须有。坐标与版本走根 DM（2.2.22），此处不再自钉 1.6.6。 -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
         </dependency>
 
         <!-- 文档面运行时（SwaggerConfig 用）：**optional**。

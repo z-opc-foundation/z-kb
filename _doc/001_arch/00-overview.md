@@ -37,7 +37,7 @@ z-kb/
 ├── z-kb-ingest/                # 9 种 DataSource + IngestPipeline + HtmlToMarkdown
 ├── z-kb-modeling/              # 工作台 → 产品模型 → 小抄
 ├── z-kb-spring-boot-starter/   # KBAutoConfiguration + KBProperties（前缀 zkb.*）+ 三个 Default*Service
-├── z-kb-web/                   # REST 层：7 个 Controller + SwaggerConfig（Knife4j / springfox），纯 jar
+├── z-kb-web/                   # REST 层：7 个 Controller + SwaggerConfig（springdoc 2.6.0 / GroupedOpenApi），纯 jar
 ├── z-kb-bootstrap/             # 独立启动器 ZKbBootstrapApplication（端口 8889）。
 │                               #   已从根 POM <modules> 注释排除（standalone uber-jar 体积触发中央上传失败）
 ├── z-kb-frontend/              # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）
