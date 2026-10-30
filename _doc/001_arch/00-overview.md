@@ -37,7 +37,7 @@ z-***REMOVED***/
 ├── z-***REMOVED***-ingest/                # 9 种 DataSource + IngestPipeline + HtmlToMarkdown
 ├── z-***REMOVED***-modeling/              # 工作台 → 产品模型 → 小抄
 ├── z-***REMOVED***-spring-boot-starter/   # ***REMOVED***AutoConfiguration + ***REMOVED***Properties（前缀 z***REMOVED***.*）+ 三个 Default*Service
-├── z-***REMOVED***-web/                   # REST 层：7 个 Controller + SwaggerConfig（Knife4j / springfox），纯 jar
+├── z-***REMOVED***-web/                   # REST 层：7 个 Controller + SwaggerConfig（springdoc 2.6.0 / GroupedOpenApi），纯 jar
 ├── z-***REMOVED***-bootstrap/             # 独立启动器 Z***REMOVED***Application（端口 8889）。
 │                               #   已从根 POM <modules> 注释排除（standalone uber-jar 体积触发中央上传失败）
 ├── z-***REMOVED***-frontend/              # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）

@@ -75,7 +75,7 @@
              io.swagger.core.v3（@Schema/@Operation/@Tag），版本走根 DM 的 ${swagger-annotations.version}。 -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
             <version>${swagger-annotations.version}</version>
             <scope>provided</scope>
         </dependency>
