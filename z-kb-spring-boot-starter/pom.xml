@@ -15,7 +15,7 @@
 
     <artifactId>z-***REMOVED***-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED***-spring-boot-starter</name>
+    <name>z-***REMOVED*** :: spring-boot-starter</name>
     <description>
         z-***REMOVED*** Spring Boot 自动装配 — 通过 spring.factories 注册，
         提供 ***REMOVED***Properties 配置属性和 ***REMOVED*** AutoConfiguration。

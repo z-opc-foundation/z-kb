@@ -15,7 +15,7 @@
 
     <artifactId>z-***REMOVED***-api</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED***-api</name>
+    <name>z-***REMOVED*** :: api</name>
     <description>
         z-***REMOVED*** 公共 API 与数据模型。定义 Document/Chunk/Entity/Relation/SearchQuery 等核心契约。
         不依赖任何业务模块，可被 core/vector/graph/storage/web 等下游模块共享。

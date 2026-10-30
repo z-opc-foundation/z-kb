@@ -15,7 +15,7 @@
 
     <artifactId>z-***REMOVED***-core</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED***-core</name>
+    <name>z-***REMOVED*** :: core</name>
     <description>
         z-***REMOVED*** 核心引擎:
         - parser: Markdown 解析 (frontmatter / wikilink / 标题 / 代码块 / 表格)

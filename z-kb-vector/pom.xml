@@ -15,7 +15,7 @@
 
     <artifactId>z-***REMOVED***-vector</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED***-vector</name>
+    <name>z-***REMOVED*** :: vector</name>
     <description>
         z-***REMOVED*** 向量检索适配 — 封装 z-vector，提供 ChunkVectorStore。
         将 Chunk 对象（id + vector + payload + workspace）映射到 z-vector 的 VectorPoint。

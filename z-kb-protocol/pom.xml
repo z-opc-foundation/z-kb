@@ -15,7 +15,7 @@
 
     <artifactId>z-***REMOVED***-protocol</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED***-protocol</name>
+    <name>z-***REMOVED*** :: protocol</name>
     <description>
         z-***REMOVED*** 协议层 — OpenAPI 3.0 DTO 定义、Knife4j 接口契约、跨服务消息模型。
     </description>
