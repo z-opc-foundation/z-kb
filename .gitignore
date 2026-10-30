@@ -49,3 +49,9 @@ _frontend/**/dist/
 
 # _eval 生成器的语料输出目录：内容已进 z-kb-core/src/test/resources，不入库
 eval*-out/
+
+# ============ vite 构建旧产物（沙箱删除闸 ⇒ 只移不删，遗留带时间戳的兄弟目录） ============
+dist.stale-*/
+**/dist.stale-*/
+dist.bak-*/
+**/dist.bak-*/
