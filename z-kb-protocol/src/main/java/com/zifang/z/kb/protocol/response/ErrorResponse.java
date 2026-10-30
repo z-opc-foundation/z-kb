@@ -1,23 +1,22 @@
 package com.zifang.z.kb.protocol.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 统一错误信封 —— 由 {@code WebExceptionHandler} 产出。
  *
  * <p>三个字段在所有错误响应里都出现，前端可以无差别解构。
  */
-@ApiModel(description = "统一错误响应")
+@Schema(description = "统一错误响应")
 public class ErrorResponse {
 
-    @ApiModelProperty(value = "固定为 error", example = "error")
+    @Schema(description = "固定为 error", example = "error")
     private String status = "error";
 
-    @ApiModelProperty(value = "HTTP 语义错误码", example = "400")
+    @Schema(description = "HTTP 语义错误码", example = "400")
     private int code;
 
-    @ApiModelProperty(value = "错误详情")
+    @Schema(description = "错误详情")
     private String message;
 
     public ErrorResponse() {}

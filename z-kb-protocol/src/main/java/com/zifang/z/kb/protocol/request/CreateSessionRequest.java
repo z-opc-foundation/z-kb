@@ -1,21 +1,20 @@
 package com.zifang.z.kb.protocol.request;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 创建会话请求 —— {@code POST /api/kb/chat/sessions}。
  */
-@ApiModel(description = "创建会话请求")
+@Schema(description = "创建会话请求")
 public class CreateSessionRequest {
 
-    @ApiModelProperty(value = "工作台名", example = "default")
+    @Schema(description = "工作台名", example = "default")
     private String workspace = "default";
 
-    @ApiModelProperty(value = "用户标识；不传则视为匿名会话")
+    @Schema(description = "用户标识；不传则视为匿名会话")
     private String userId;
 
-    @ApiModelProperty(value = "会话标题")
+    @Schema(description = "会话标题")
     private String title;
 
     public String getWorkspace() { return workspace; }

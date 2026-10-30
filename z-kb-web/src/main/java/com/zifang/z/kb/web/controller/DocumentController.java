@@ -6,8 +6,8 @@ import com.zifang.z.kb.api.IndexRequest;
 import com.zifang.z.kb.api.KnowledgeBaseService;
 import com.zifang.z.kb.protocol.request.ImportMarkdownRequest;
 import com.zifang.z.kb.protocol.response.CountResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 文档管理 REST API。
  */
-@Api(tags = "文档管理")
+@Tag(name = "文档管理")
 @RestController
 @RequestMapping("/api/kb/documents")
 public class DocumentController {
@@ -24,38 +24,38 @@ public class DocumentController {
     @Resource
     private KnowledgeBaseService kbService;
 
-    @ApiOperation("索引单篇文档")
+    @Operation(summary = "索引单篇文档")
     @PostMapping
     public ImportResult index(@RequestBody IndexRequest request) {
         return kbService.indexDocument(request);
     }
 
-    @ApiOperation("批量索引")
+    @Operation(summary = "批量索引")
     @PostMapping("/batch")
     public List<ImportResult> indexBatch(@RequestBody List<IndexRequest> requests) {
         return kbService.indexBatch(requests);
     }
 
-    @ApiOperation("导入 Markdown 文本")
+    @Operation(summary = "导入 Markdown 文本")
     @PostMapping("/markdown")
     public ImportResult importMarkdown(@RequestBody ImportMarkdownRequest body) {
         return kbService.importMarkdown(body.getWorkspace(), body.getTitle(), body.getContent(),
                 body.getTags(), body.getAuthor());
     }
 
-    @ApiOperation("查询文档")
+    @Operation(summary = "查询文档")
     @GetMapping("/{workspace}/{id}")
     public Document get(@PathVariable String workspace, @PathVariable String id) {
         return kbService.getDocument(workspace, id);
     }
 
-    @ApiOperation("删除文档")
+    @Operation(summary = "删除文档")
     @DeleteMapping("/{workspace}/{id}")
     public boolean delete(@PathVariable String workspace, @PathVariable String id) {
         return kbService.deleteDocument(workspace, id);
     }
 
-    @ApiOperation("列出文档")
+    @Operation(summary = "列出文档")
     @GetMapping("/{workspace}")
     public List<Document> list(@PathVariable String workspace,
                                 @RequestParam(defaultValue = "0") int offset,
@@ -63,7 +63,7 @@ public class DocumentController {
         return kbService.listDocuments(workspace, offset, limit);
     }
 
-    @ApiOperation("按标签筛选")
+    @Operation(summary = "按标签筛选")
     @GetMapping("/{workspace}/by-tags")
     public List<Document> listByTags(@PathVariable String workspace,
                                        @RequestParam List<String> tags,
@@ -72,13 +72,13 @@ public class DocumentController {
         return kbService.listDocumentsByTags(workspace, tags, offset, limit);
     }
 
-    @ApiOperation("重建索引")
+    @Operation(summary = "重建索引")
     @PostMapping("/{workspace}/{id}/reindex")
     public ImportResult reindex(@PathVariable String workspace, @PathVariable String id) {
         return kbService.reindex(workspace, id);
     }
 
-    @ApiOperation("统计")
+    @Operation(summary = "统计")
     @GetMapping("/{workspace}/count")
     public CountResponse count(@PathVariable String workspace) {
         return new CountResponse(kbService.countDocuments(workspace));

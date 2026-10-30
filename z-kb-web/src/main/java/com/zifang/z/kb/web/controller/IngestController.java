@@ -1,5 +1,6 @@
 package com.zifang.z.kb.web.controller;
 
+import com.zifang.util.json.JsonUtil;
 import com.zifang.z.kb.api.KBException;
 import com.zifang.z.kb.ingest.api.DataSource;
 import com.zifang.z.kb.ingest.api.DataSourceType;
@@ -15,9 +16,8 @@ import com.zifang.z.kb.protocol.response.IngestSummary;
 import com.zifang.z.kb.protocol.response.ListSourcesResponse;
 import com.zifang.z.kb.protocol.response.SourceTypeSummary;
 import com.zifang.z.kb.protocol.response.WebhookAck;
-import com.zifang.util.json.JsonUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +30,7 @@ import java.util.*;
  *
  * <p>路径前缀：/api/kb/ingest
  */
-@Api(tags = "数据接入")
+@Tag(name = "数据接入")
 @RestController
 @RequestMapping("/api/kb/ingest")
 public class IngestController {
@@ -44,7 +44,7 @@ public class IngestController {
     @Autowired
     private WebhookSource webhookSource;
 
-    @ApiOperation("列出已注册的数据源")
+    @Operation(summary = "列出已注册的数据源")
     @GetMapping("/sources")
     public ListSourcesResponse listSources() {
         List<DataSourceSummary> list = new ArrayList<>();
@@ -66,7 +66,7 @@ public class IngestController {
         return out;
     }
 
-    @ApiOperation("按 sourceId 触发一次拉取 + 入库")
+    @Operation(summary = "按 sourceId 触发一次拉取 + 入库")
     @PostMapping("/run")
     public void run(@RequestParam String sourceId,
                     @RequestBody(required = false) Map<String, Object> config,
@@ -75,7 +75,7 @@ public class IngestController {
         writeSummary(resp, summarize(pipeline.ingest(sourceId, config)));
     }
 
-    @ApiOperation("提交一组已构造好的 IngestRequest")
+    @Operation(summary = "提交一组已构造好的 IngestRequest")
     @PostMapping("/submit")
     public void submit(@RequestBody List<IngestRequest> requests,
                        HttpServletResponse resp) throws IOException {
@@ -85,7 +85,7 @@ public class IngestController {
         writeSummary(resp, summarize(pipeline.ingestBatch(requests)));
     }
 
-    @ApiOperation("通用 webhook 入口 — 接收 Markdown 文档")
+    @Operation(summary = "通用 webhook 入口 — 接收 Markdown 文档")
     @PostMapping("/webhook")
     public WebhookAck webhook(@RequestHeader(value = "X-Signature", required = false) String signature,
                               @RequestHeader(value = "X-Secret", required = false) String secret,
@@ -101,7 +101,7 @@ public class IngestController {
         return new WebhookAck(true, webhookSource.pending());
     }
 
-    @ApiOperation("拉取 webhook 缓冲并入库")
+    @Operation(summary = "拉取 webhook 缓冲并入库")
     @PostMapping("/webhook/flush")
     public void flushWebhook(HttpServletResponse resp) throws IOException {
         writeSummary(resp, summarize(pipeline.ingest(webhookSource.getSourceId(), new HashMap<>())));
@@ -122,7 +122,7 @@ public class IngestController {
         resp.getWriter().flush();
     }
 
-    @ApiOperation("查看累计统计")
+    @Operation(summary = "查看累计统计")
     @GetMapping("/stats")
     public IngestPipeline.Stats stats() {
         return pipeline.stats();

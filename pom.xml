@@ -89,12 +89,11 @@
         <!-- Jackson：本仓口径 2.15.4，地板 2.18.6（jackson-bom import）。抬号是另一个决定，见 README/待裁。 -->
         <jackson.version>2.15.4</jackson.version>
         <jackson-databind.version>2.15.4</jackson-databind.version>
-        <!-- Knife4j 4.5.0（openapi2 starter）：地板那格是 z-team 用的 3.0.3 + knife4j-core 4.1.0。
-             这一格的**配套**（springfox 2.10.5 / classgraph 4.1.7 / mapstruct 1.3.1 / javassist 3.25.0-GA）
-             也必须一起钉，否则地板的 springfox 3.0.0 会套到 4.5.0 的 openapi2 starter 上 —— 地板自己
-             写着"knife4j 4.x 的 openapi2 starter 带的是 springfox 2.10.5"。那三支配套在本仓 DM 里写**字面量**
-             （不新开版本键：它们是"4.5.0 这一格"的后果，不是一格独立的口径）。 -->
-        <knife4j.version>4.5.0</knife4j.version>
+        <!-- 2026-10-30：knife4j-openapi2（springfox 2.10.5 那条线）整条摘除，文档面改走 springdoc
+             2.6.0（版本由 z-boot-parent 的 DM 下发，本仓不再自钉）。原因有两条，都不是"想换新"：
+             ① springfox 2.10.5 的类里引用 javax/servlet（springfox-spring-webmvc 实测 7 处），
+                SB3 容器只有 jakarta ⇒ SwaggerConfig 一旦被扫到就是 NoClassDefFoundError；
+             ② 本仓 DTO 注解已全量迁到 io.swagger.v3（@Schema/@Operation/@Tag），v1 注解包不再需要。 -->
         <!-- log4j2 2.22.1（本仓 core/graph 直接依赖的就是这一版），地板 2.25.4。 -->
         <log4j2.version>2.22.1</log4j2.version>
         <!-- MySQL 驱动 8.0.33，地板 8.4.0（8.4 换了 driver 行为，不在迁移这一刀里顺手做）。 -->
@@ -117,9 +116,11 @@
              而 z-boot-parent:1.1.0 的 DM 只管 z-vector-api / core / grpc-server / spring-boot-starter
              四条 —— 没有 storage 这一格 ⇒ 这里自己钉（与 z-vector 其余四条同源同版本 1.0.5）。 -->
         <z-vector-storage.version>1.0.5</z-vector-storage.version>
-        <!-- swagger-annotations 1.6.6：z-kb-protocol 的 OpenAPI 契约注解（provided 口径）。
-             与 z-kb-web 经 knife4j-openapi2 1.6.6 解析到的版本对齐，避免两处不同版本共存。 -->
-        <swagger-annotations.version>1.6.6</swagger-annotations.version>
+        <!-- swagger-annotations **v3**（io.swagger.core.v3）：OpenAPI 契约注解的编译期坐标。
+             必须 ≥ 2.2.6 —— @Schema 的 requiredMode 用的是 Schema.RequiredMode 这个枚举，
+             2.2.6 才引入；钉 2.1.2（z-boot-parent 里 swagger.v3.version 那格的值）会直接编译失败。
+             2.2.8 与 z-opc 主壳里 OPENAPI_500_FIX 那条钉同号，避免宿主席位上两版共存。 -->
+        <swagger-annotations.version>2.2.8</swagger-annotations.version>
         <hanlp.version>1.8.6</hanlp.version><!-- 定义但仓内零引用，本次不动（清理另案） -->
     </properties>
 
@@ -299,74 +300,14 @@
                 </exclusions>
             </dependency>
 
-            <!-- Knife4j 4.5.0 这一格 + 它的配套一支（地板的 knife4j-core=4.1.0、springfox=3.0.0
-                 是给 z-team 的 openapi3/springfox-3 口径准备的，套到本仓的 openapi2 4.5.0 上就是错配）。
-                 springfox-swagger-common / knife4j-openapi2-ui / spring-plugin-* 地板不管，
-                 它们跟着上面的 starter 一起解析，不重复钉。 -->
+            <!-- 2026-10-30：knife4j-openapi2（springfox 2.10.5）整条 DM 已删 —— 连同它的三支配套
+                 classgraph 4.1.7 / mapstruct 1.3.1.Final / javassist 3.25.0-GA（全仓 java 零 import，
+                 只是 springfox 的传递需要）。文档面改由 z-boot-parent DM 下发的 springdoc 2.6.0 提供。
+                 万一将来有模块真要用 mapstruct，请重新按需声明 —— 别再以"springfox 配套"的名义挂在这里。 -->
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-core</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spi</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-core</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-schema</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-common</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spring-web</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spring-webmvc</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-bean-validators</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.classgraph</groupId>
-                <artifactId>classgraph</artifactId>
-                <version>4.1.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>1.3.1.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>3.25.0-GA</version>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
             </dependency>
 
             <!-- mybatis-plus 3.5.7 与地板同值 ⇒ 那条 boot-starter 的 DM 条目删了（由地板供）。
@@ -404,7 +345,7 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-<dependency><groupId>io.swagger</groupId><artifactId>swagger-annotations</artifactId></dependency>
+<dependency><groupId>io.swagger.core.v3</groupId><artifactId>swagger-annotations</artifactId></dependency>
     
         <dependency><groupId>jakarta.annotation</groupId><artifactId>jakarta.annotation-api</artifactId></dependency>
     

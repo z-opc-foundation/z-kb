@@ -1,18 +1,17 @@
 package com.zifang.z.kb.protocol.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 支持的数据源类型摘要 —— 嵌在 {@link ListSourcesResponse#supportedTypes} 里。
  */
-@ApiModel(description = "支持的数据源类型摘要")
+@Schema(description = "支持的数据源类型摘要")
 public class SourceTypeSummary {
 
-    @ApiModelProperty(value = "类型枚举名", example = "WEB")
+    @Schema(description = "类型枚举名", example = "WEB")
     private String name;
 
-    @ApiModelProperty(value = "类型中文标签", example = "网页")
+    @Schema(description = "类型中文标签", example = "网页")
     private String label;
 
     public SourceTypeSummary() {}

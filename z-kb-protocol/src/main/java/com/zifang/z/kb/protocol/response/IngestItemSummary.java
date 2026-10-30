@@ -1,35 +1,33 @@
 package com.zifang.z.kb.protocol.response;
 
 import com.zifang.util.json.annotation.JsonSerialize;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 单条接入结果摘要 —— 嵌在 {@link IngestSummary#items} 里。
  */
-@ApiModel(description = "单条接入结果摘要")
+@Schema(description = "单条接入结果摘要")
 public class IngestItemSummary {
 
-    @ApiModelProperty(value = "请求标识", example = "r-001")
+    @Schema(description = "请求标识", example = "r-001")
     private String requestId;
 
-    @ApiModelProperty(value = "产出的文档 ID；未产出时为空")
+    @Schema(description = "产出的文档 ID；未产出时为空")
     private String documentId;
 
-    @ApiModelProperty(value = "处理状态枚举名", example = "SUCCESS",
-            allowableValues = "SUCCESS, FAILED, SKIPPED_DUPLICATE, INVALID")
+    @Schema(description = "处理状态枚举名", example = "SUCCESS", allowableValues = {"SUCCESS", "FAILED", "SKIPPED_DUPLICATE", "INVALID"})
     private String status;
 
-    @ApiModelProperty("耗时（毫秒）")
+    @Schema(description = "耗时（毫秒）")
     private long elapsedMillis;
 
-    @ApiModelProperty("产出分块数")
+    @Schema(description = "产出分块数")
     private int chunkCount;
 
-    @ApiModelProperty("产出实体数")
+    @Schema(description = "产出实体数")
     private int entityCount;
 
-    @ApiModelProperty("产出关系数")
+    @Schema(description = "产出关系数")
     private int relationCount;
 
     /**
@@ -43,7 +41,7 @@ public class IngestItemSummary {
      * 只能是这一个字段自己声明。
      */
     @JsonSerialize(nonNull = true)
-    @ApiModelProperty("失败原因；成功时不返回该字段")
+    @Schema(description = "失败原因；成功时不返回该字段")
     private String error;
 
     public String getRequestId() { return requestId; }

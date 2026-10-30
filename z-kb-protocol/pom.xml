@@ -69,10 +69,12 @@
             <artifactId>z-util-parser-json</artifactId>
         </dependency>
 
-        <!-- 契约注解。provided：编译期要，运行时由 z-kb-web 的 knife4j 提供，
-             不传递给下游，避免给消费者白带一个注解包 -->
+        <!-- 契约注解。provided：编译期要，运行时由 z-kb-web 的 springdoc/swagger-core 提供，
+             不传递给下游，避免给消费者白带一个注解包。
+             2026-10-30：坐标从 io.swagger（v1，@ApiModel/@ApiModelProperty）换到
+             io.swagger.core.v3（@Schema/@Operation/@Tag），版本走根 DM 的 ${swagger-annotations.version}。 -->
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger-annotations.version}</version>
             <scope>provided</scope>

@@ -1,15 +1,14 @@
 package com.zifang.z.kb.protocol.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 计数响应 —— {@code GET /api/kb/documents/{workspace}/count}。
  */
-@ApiModel(description = "计数响应")
+@Schema(description = "计数响应")
 public class CountResponse {
 
-    @ApiModelProperty(value = "条目数")
+    @Schema(description = "条目数")
     private long count;
 
     public CountResponse() {}

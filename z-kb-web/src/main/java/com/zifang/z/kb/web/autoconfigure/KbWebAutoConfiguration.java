@@ -20,11 +20,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
  *
  * <p><b>扫描范围只到 controller 包</b>，两个刻意的不扫描项：
  * <ul>
- *   <li>{@code web.config.SwaggerConfig} —— 它带 springfox 的 {@code Docket}。
- *       宿主（z-opc）自己已装 springfox 3.0.0 + knife4j 4.1.0（springdoc 那条线），
- *       再注册一份 Docket 只会两边文档面打架；且本 jar 的 springfox 依赖是 optional 的，
- *       宿主 classpath 上未必有 springfox 2.x ⇒ 扫它等于给宿主埋一颗类加载炸弹。
- *       需要 z-kb 自己的文档面时，宿主显式 {@code @Import(SwaggerConfig.class)} 即可。</li>
+ *   <li>{@code web.config.SwaggerConfig} —— 它带 springdoc 的 {@code GroupedOpenApi}。
+ *       宿主（z-opc）自己已装 springdoc 2.6.0 + knife4j-openapi3-jakarta 4.5.0，
+ *       再注册一份分组只会两边文档面打架；且本 jar 的 springdoc 依赖是 optional 的，
+ *       宿主 classpath 上未必有它 ⇒ 扫它等于给宿主埋一颗类加载炸弹。
+ *       需要 z-kb 自己的文档面时，宿主显式 {@code @Import(SwaggerConfig.class)} 即可
+ *       （该配置类自带 {@code @ConditionalOnMissingBean(OpenAPI.class)}，不会盖掉宿主的定义）。</li>
  *   <li>{@code web.exception.WebExceptionHandler} —— 它带 {@code @ExceptionHandler(Exception.class)}
  *       兜底，宿主的全局 advice 也在处理同一类异常，两个都注册会让「谁先接住异常」变成装配顺序问题。
  *       所以本类用 {@code @ConditionalOnMissingBean(annotation = ControllerAdvice.class)} 挂它：

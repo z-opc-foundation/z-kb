@@ -73,35 +73,35 @@
             <artifactId>z-kb-modeling</artifactId>
         </dependency>
 
-        <!-- Swagger 注解（@Api / @ApiOperation）：7 个 controller 直接用 ⇒ 消费方 classpath 上必须有它。
-             只带注解包（io.swagger:swagger-annotations 1.x），不带 springfox 本体。 -->
+        <!-- Swagger 注解（2026-10-30 起是 io.swagger.core.v3 的 @Schema/@Operation/@Tag）：
+             7 个 controller 直接用 ⇒ 编译期必须有。坐标与版本走根 DM（2.2.8），此处不再自钉 1.6.6。 -->
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.6</version>
         </dependency>
 
-        <!-- Knife4j / springfox（SwaggerConfig 用）：**optional**。
-             宿主 z-opc 自己已装 knife4j-spring-boot-starter 3.0.3 + knife4j-openapi3 4.1.0
-             （springfox 3.0.0 那条线）；本依赖若按普通传递依赖透传，会把 knife4j-core 4.5.0
-             与 spring-boot-starter-security 一起塞进宿主 ⇒ 同包不同版本的 knife4j-core 共存，
-             宿主文档面随时可能炸。改成 optional：z-kb-web 自己编译/单跑仍带 springfox，
-             宿主要文档面就自己装；自动装配也不扫 SwaggerConfig（见 KbWebAutoConfiguration）。 -->
+        <!-- 文档面运行时（SwaggerConfig 用）：**optional**。
+             2026-10-30 从 knife4j-openapi2（springfox 2.10.5）换成 springdoc 2.6.0 —— 老的
+             springfox 类里引用 javax/servlet，SB3 容器只有 jakarta，SwaggerConfig 一被扫到就
+             NoClassDefFoundError。仍保持 optional：宿主 z-opc 自带 springdoc + knife4j-openapi3-jakarta，
+             本 jar 不该把第二套文档面塞进宿主；z-kb-web 自己编译/单跑时它就在 classpath 上。
+             自动装配不扫 SwaggerConfig（见 KbWebAutoConfiguration），只在 standalone 生效。 -->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <optional>true</optional>
         </dependency>
 
+        <!-- 2026-10-30：三个 starter 的 2.7.12 字面量删掉。它们从来没真正生效过 —— 父链 DM
+             把 spring-web/webmvc 拉回 6.1.21，只有 starter 自己的 pom 还停在 2.7.12；
+             留着就是「声明与事实不一致」，DM 一改就会静默降级回 Spring 5。版本一律由父链下发。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>2.7.12</version>
         </dependency>
 
         <dependency>
@@ -113,7 +113,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.7.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
