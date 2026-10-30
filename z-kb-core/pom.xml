@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-core</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-core</name>
+    <name>z-kb :: core</name>
     <description>
         z-kb 核心引擎:
         - parser: Markdown 解析 (frontmatter / wikilink / 标题 / 代码块 / 表格)

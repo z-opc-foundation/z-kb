@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-vector</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-vector</name>
+    <name>z-kb :: vector</name>
     <description>
         z-kb 向量检索适配 — 封装 z-vector，提供 ChunkVectorStore。
         将 Chunk 对象（id + vector + payload + workspace）映射到 z-vector 的 VectorPoint。

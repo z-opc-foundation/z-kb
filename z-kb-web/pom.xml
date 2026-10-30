@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-web</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-web</name>
+    <name>z-kb :: web</name>
     <description>
         z-kb Web 层 — REST 控制器、Knife4j API 文档、跨域、统一异常处理。
         提供 /api/kb/* 接口：文档管理、检索、问答、图谱查询、会话管理。

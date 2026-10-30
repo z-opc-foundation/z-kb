@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-ingest</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-ingest</name>
+    <name>z-kb :: ingest</name>
     <description>
         z-kb 多渠道接入管道 — 把企业知识库（语雀/Notion/Confluence/飞书/钉钉/Git/本地目录/Webhook）的内容
         抽取为标准化的 Markdown 文档流，再交给知识库服务做解析/分块/索引。

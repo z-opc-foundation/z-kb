@@ -23,7 +23,7 @@
     <packaging>pom</packaging>
     <version>1.1.0</version>
 
-    <name>z-kb</name>
+    <name>z-kb :: root</name>
     <description>
         z-kb — 自研产品级知识库系统，对标 LightRAG + BookStack/Mindoc + RAGFlow + Anything-LLM 的融合形态。
         以 z-vector(向量库) + z-graph(图数据库) + z-util(工具集) 为基础设施，

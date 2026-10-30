@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-graph</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-graph</name>
+    <name>z-kb :: graph</name>
     <description>
         z-kb 图谱适配 — 封装 z-graph，提供 KnowledgeGraphStore 和 GraphRAG 查询。
         将 Entity/Relation 映射到 z-graph 的 Node/Edge。

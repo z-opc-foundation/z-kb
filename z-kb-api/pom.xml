@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-api</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-api</name>
+    <name>z-kb :: api</name>
     <description>
         z-kb 公共 API 与数据模型。定义 Document/Chunk/Entity/Relation/SearchQuery 等核心契约。
         不依赖任何业务模块，可被 core/vector/graph/storage/web 等下游模块共享。

@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-modeling</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-modeling</name>
+    <name>z-kb :: modeling</name>
     <description>
         z-kb 产品逻辑建模 — 对一个产品的设计文档进行拆解，产出可学习的逻辑因果链条（Cheat Sheet），
         让开发者/产品设计能快速 get 到产品是怎么工作的。

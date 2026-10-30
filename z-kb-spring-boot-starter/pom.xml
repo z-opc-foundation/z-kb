@@ -15,7 +15,7 @@
 
     <artifactId>z-kb-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
-    <name>z-kb-spring-boot-starter</name>
+    <name>z-kb :: spring-boot-starter</name>
     <description>
         z-kb Spring Boot 自动装配 — 通过 spring.factories 注册，
         提供 KBProperties 配置属性和 KB AutoConfiguration。
