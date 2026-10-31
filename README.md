@@ -230,7 +230,8 @@ z-kb 未提供的端点如实 404、页面按失败态展示，不做静默兜�
 调度配置 / 任务配置 / 租户 / 配额）、本体概览、本体建模、图谱工作台（@antv/g6 5）。
 其中 `src/services/ontology-graph.ts` 是服务层适配：参考仓的 NebulaGraph 代理契约（spaces / metadata / nGQL / STATS）
 改走 z-kb 的 `GET /api/kb/v1/graph/queryByKb`，由节点与边实时推 schema、计数与统计时间；页面、组件与导出类型字面不变，
-nGQL 实例查询显式返回不支持原因（z-kb 图谱引擎是本地规则图谱）。
+nGQL 实例查询显式返回不支持原因（z-kb 图谱引擎是本地规则图谱）。`services/ontology.ts` 的 `getOntologyDetail`
+同口径适配：z-kb 无租户级本体，由最近更新的知识库推导 `graphSpace`（无知识库视同未开通）。
 
 验证矩阵：`npm run typecheck`（`tsc -b`）、`npm test`（vitest，161 个测试文件 / 871 条用例）、
 `npm run build`、`npm run lint`（`--max-warnings 121`）。
