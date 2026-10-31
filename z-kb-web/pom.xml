@@ -72,6 +72,10 @@
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-kb-modeling</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-kb-resource</artifactId>
+        </dependency>
 
         <!-- Swagger 注解（2026-10-30 起是 io.swagger.core.v3 的 @Schema/@Operation/@Tag，
              **-jakarta 变体**，与 springdoc 2.6.0 自带的那条线同源）：7 个 controller 直接用
@@ -114,6 +118,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 资源域 v1 接口的集成测试：H2 真跑建表与 SQL（MySQL 兼容模式） -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

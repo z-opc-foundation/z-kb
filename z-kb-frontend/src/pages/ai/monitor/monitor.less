@@ -1,0 +1,224 @@
+/* 调用监控（演示数据） */
+
+.ai-monitor-stats {
+  margin-bottom: 16px;
+}
+
+.ai-monitor-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+.ai-monitor-trend-panel {
+  margin-bottom: 16px;
+}
+
+.ai-monitor-charts > .panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ai-monitor-charts > .panel .panel-body,
+.ai-monitor-charts > .panel .table-wrap,
+.ai-monitor-charts > .panel .ai-failure-list {
+  flex: 1;
+}
+
+/* ---------- 趋势 ---------- */
+
+.ai-monitor-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.trend-head .legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trend-head .lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.trend-head .swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.trend-head .swatch.ok {
+  background: #1f8bff;
+}
+
+.trend-head .swatch.fail {
+  background: #f0685f;
+}
+
+.trend-plot {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 2px 2px 0;
+  border-bottom: 1px solid var(--line);
+  background: repeating-linear-gradient(
+    to top,
+    #f1f6fc 0,
+    #f1f6fc 1px,
+    transparent 1px,
+    transparent 37px
+  );
+}
+
+.trend-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.trend-bars {
+  width: 100%;
+  max-width: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1px;
+}
+
+.trend-bars .seg {
+  display: block;
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.25s ease;
+}
+
+.trend-bars .seg.ok {
+  background: linear-gradient(180deg, #5eb3ff, #1f8bff);
+}
+
+.trend-bars .seg.fail {
+  background: #f0685f;
+}
+
+.trend-x {
+  margin-bottom: 7px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  white-space: nowrap;
+}
+
+/* ---------- 排行 ---------- */
+
+.ai-monitor-ranking tbody tr.rank-row {
+  cursor: pointer;
+}
+
+.ai-monitor-ranking tbody tr.rank-row.selected {
+  background: var(--primary-soft);
+}
+
+.ai-rank-rate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 104px;
+}
+
+.ai-rank-rate .progress {
+  flex: 1;
+  min-width: 52px;
+}
+
+.ai-rank-rate b {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 失败原因 ---------- */
+
+.ai-failure-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  overflow: auto;
+}
+
+/* 失败项少于排行行数时，让每行在卡片内均匀分布，避免底部整块留白 */
+.ai-monitor-charts > .panel .ai-failure-list {
+  justify-content: space-evenly;
+}
+
+.ai-failure-row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+}
+
+.ai-failure-row .fl-label {
+  flex: 0 0 118px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.ai-failure-row .progress {
+  flex: 1;
+  min-width: 40px;
+}
+
+.ai-failure-row .progress i {
+  background: linear-gradient(90deg, #f7a04b, #f0685f);
+}
+
+.ai-failure-row .fl-count {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 明细 ---------- */
+
+.ai-monitor .mono-sm.slow {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.ai-call-drawer {
+  --w: 640px;
+}
+
+@media (max-width: 1180px) {
+  .ai-monitor-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

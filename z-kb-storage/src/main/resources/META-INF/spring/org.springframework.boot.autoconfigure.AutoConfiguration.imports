@@ -1,1 +1,2 @@
 com.zifang.z.kb.storage.impl.DocumentRepositoryAutoConfiguration
+com.zifang.z.kb.storage.resource.KbResourcePersistenceAutoConfiguration

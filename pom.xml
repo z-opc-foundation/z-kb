@@ -68,6 +68,7 @@
         <module>z-kb-spring-boot-starter</module>
         <module>z-kb-ingest</module>
         <module>z-kb-modeling</module>
+        <module>z-kb-resource</module>
         <module>z-kb-web</module>
         <!-- 临时排除 z-kb-bootstrap（standalone uber-jar 77MB，Maven Central upload broken pipe）；
              中央发布场景下其他 10 个核心库已足够，等 Maven Central 文件大小上限放宽后再加 -->
@@ -188,6 +189,11 @@
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-kb-modeling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-kb-resource</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -314,13 +320,16 @@
             </dependency>
 
             <!-- mybatis-plus 3.5.7 与地板同值 ⇒ 那条 boot-starter 的 DM 条目删了（由地板供）。
-                 但 mybatis-spring 必须留着：地板钉的是 2.0.6，而 mybatis-plus-boot-starter 3.5.7
-                 自带、本仓基线跑的是 2.1.2 —— 继承来的 DM 会把这个**降档**打到传递位置，
-                 这不是本次迁移要顺手做的事（要不要由地板统一 → 待裁）。 -->
+                 但 mybatis-spring 必须留着：地板钉的是 2.0.6，会把这个**降档**打到传递位置。
+                 2026-10-31 修正：原钉 2.1.2 是 Spring 5 时代的口径，本仓已是 Spring 6.1，
+                 @MapperScan 注册的 MapperFactoryBean 在 2.1.2 下会抛
+                 「Invalid value type for attribute 'factoryBeanObjectType'」（该属性 3.0.3 起才是 Class）。
+                 取值 3.0.4：与 mybatis-plus-spring-boot3-starter 3.5.7 的 3.0.3 同一条维护线，
+                 且是本机离线仓已有二进制的那一版（3.0.3 只有 pom）。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-spring</artifactId>
-                <version>2.1.2</version>
+                <version>3.0.4</version>
             </dependency>
 
             <!-- ===== 父链完全不供的格，原样留着 ===== -->

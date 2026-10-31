@@ -1,0 +1,174 @@
+/* 租户管理：列表撑满内容区，分页固定在卡片底部 */
+.tenant-admin {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (min-width: 761px) {
+  /* 整屏页贴到底，去掉内容区底部留白，页面本身不滚 */
+  .content:has(.tenant-admin) {
+    padding-bottom: 0;
+  }
+
+  .tenant-admin {
+    height: calc(100vh - 78px - var(--app-footer-h));
+  }
+
+  .tenant-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+}
+
+.tenant-admin > .tenant-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tenant-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  background: #fcfdff;
+}
+
+.tenant-toolbar .input-icon .input {
+  width: 240px;
+  height: 30px;
+  font-size: 11px;
+  padding-left: 30px;
+}
+
+.tenant-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tenant-body > .table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.tenant-body > .empty {
+  padding: 56px 22px;
+}
+
+.tenant-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tenant-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-table .name-cell .nc {
+  min-width: 0;
+}
+
+.tenant-table .name-cell .nc b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: none;
+  font-size: 13px;
+}
+
+.tenant-table .name-cell .nc small {
+  font-size: 10.5px;
+}
+
+.tenant-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tenant-current {
+  font-weight: 500;
+}
+
+.tenant-status-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tenant-state {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tenant-state.on {
+  color: #087957;
+}
+
+.tenant-desc {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.tenant-table .row-actions {
+  gap: 4px;
+}
+
+.tenant-pager {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: #fcfdff;
+}
+
+.tenant-pager .note {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.tenant-page-gap {
+  min-width: 27px;
+  height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-2);
+  font-size: 11px;
+}
+
+@media (max-width: 1279px) {
+  .tenant-table .tenant-desc {
+    max-width: 240px;
+  }
+}

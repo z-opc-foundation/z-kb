@@ -1,0 +1,24 @@
+:root {
+  color: #262626;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  background: #f5f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.brain-page-fallback {
+  display: grid;
+  min-height: 200px;
+  place-items: center;
+}

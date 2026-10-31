@@ -1,0 +1,277 @@
+/* 技术指标（演示数据） */
+
+.ai-metrics-cards {
+  margin-bottom: 16px;
+}
+
+.ai-metrics-row {
+  margin-bottom: 16px;
+}
+
+.ai-metrics-row-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.ai-metrics-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ai-metrics-throughput > .panel-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------- 调用量分布 ---------- */
+
+.ai-metrics-plot {
+  flex: 1;
+  min-height: 220px;
+  display: flex;
+  align-items: stretch;
+  gap: 5px;
+  padding: 2px 2px 0;
+  border-bottom: 1px solid var(--line);
+  background: repeating-linear-gradient(
+    to top,
+    #f1f6fc 0,
+    #f1f6fc 1px,
+    transparent 1px,
+    transparent 37px
+  );
+}
+
+.ai-metrics-plot .col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-metrics-plot .bars {
+  flex: 1;
+  width: 100%;
+  max-width: 30px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ai-metrics-plot .bars i {
+  display: block;
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #5eb3ff, #1f8bff);
+  transition: height 0.25s ease;
+}
+
+.ai-metrics-plot .x {
+  margin-bottom: 7px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  white-space: nowrap;
+}
+
+/* ---------- 资源水位 ---------- */
+
+.ai-metrics-resources {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  flex: 1;
+}
+
+.res-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.res-row .res-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.res-row .res-head b {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.res-row small {
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+/* ---------- 延迟分位与链路 ---------- */
+
+.ai-metrics-latency {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.lat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.lat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lat-label {
+  flex: 0 0 78px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.lat-row .progress {
+  flex: 1;
+  min-width: 60px;
+}
+
+.lat-value {
+  flex: 0 0 auto;
+  min-width: 96px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lat-value small {
+  margin-left: 5px;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--muted-2);
+}
+
+.lat-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.lat-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ---------- SLO ---------- */
+
+.ai-metrics-slo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.slo-row {
+  display: grid;
+  grid-template-columns: 118px minmax(60px, 1fr) 128px;
+  align-items: center;
+  gap: 10px;
+}
+
+.slo-copy b {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slo-copy small {
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.slo-actual {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.slo-actual b {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- 表格 ---------- */
+
+.ai-metrics-table th,
+.ai-metrics-table td {
+  white-space: nowrap;
+}
+
+.ai-metrics-rate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 108px;
+}
+
+.ai-metrics-rate .progress {
+  flex: 1;
+  min-width: 52px;
+}
+
+.ai-metrics-rate b {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-metrics-table .ai-name-cell small {
+  max-width: 220px;
+}
+
+@media (max-width: 1180px) {
+  .ai-metrics-row-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid-2.ai-metrics-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .slo-row {
+    grid-template-columns: 96px minmax(50px, 1fr) 118px;
+  }
+}

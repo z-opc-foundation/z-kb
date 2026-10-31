@@ -1,0 +1,854 @@
+/**
+ * 本体图谱工作台样式。
+ * 标签栏 / 图谱画布 / 路径选择浮层（操作条、参数面板、候选路径面板、右键菜单）
+ * 自 galaxy-meta ontology.less 平移，配色对齐 fe 设计变量。
+ */
+
+.og-page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 图空间未就绪的引导态 */
+.og-page-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 56px 22px;
+  text-align: center;
+  color: var(--muted);
+
+  .ic {
+    color: #c4cdd6;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  p {
+    font-size: 12px;
+    max-width: 420px;
+  }
+}
+
+/* 工作区：标签栏 + 画布，撑满剩余视口 */
+.og-workspace {
+  flex: none;
+  height: calc(100vh - 248px);
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── 标签页栏 ─── */
+.og-tab-bar {
+  flex-shrink: 0;
+  height: 38px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+}
+
+.og-tab-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.og-tab-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 9px;
+  max-width: 150px;
+  min-width: 0;
+  border-radius: 5px 5px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: transparent;
+  user-select: none;
+
+  &:hover {
+    color: var(--ink);
+    background: rgba(31, 139, 255, 0.06);
+  }
+
+  &.active {
+    color: var(--primary-strong);
+    background: var(--surface);
+    border-color: var(--line);
+    font-weight: 550;
+    margin-bottom: -1px;
+    padding-bottom: 1px;
+  }
+
+  .og-tab-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 110px;
+    display: inline-block;
+  }
+
+  .og-tab-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    font-size: 9px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.15s;
+
+    &:hover {
+      background: rgba(15, 27, 45, 0.08);
+      color: var(--ink);
+    }
+  }
+}
+
+/* 标签栏右侧统计区 */
+.og-tab-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-left: 8px;
+  padding-right: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.og-stats-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--primary-soft);
+    color: var(--primary-strong);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &.is-spinning .ic {
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+/* ─── 图谱画布区 ─── */
+.og-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.og-chart-box {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  min-height: 320px;
+}
+
+/* 加载 / 失败 / 空态 */
+.og-canvas-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ─── 左上角工具条：范围提示 + 路径选择 + 视图重置 ─── */
+.og-topleft-bar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #a9cdf5;
+  box-shadow: 0 2px 10px rgba(31, 111, 235, 0.14);
+}
+
+/* 「全部对象」胶囊：点击退出路径选择模式 */
+.og-scope-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--primary-strong);
+  background: var(--primary-soft);
+  border: 1px solid #d3e8ff;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.16s, background 0.16s, border-color 0.16s;
+
+  &:hover {
+    background: #deeeff;
+    border-color: #aed3ff;
+  }
+
+  &:active {
+    background: #cfe4ff;
+  }
+}
+
+/* 胶囊按钮（路径选择 / 视图重置）：与范围胶囊同高同风格 */
+.og-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  color: var(--primary-strong);
+  background: var(--primary-soft);
+  border: 1px solid #d3e8ff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.16s;
+
+  .ic {
+    font-size: 11px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #deeeff;
+    border-color: #aed3ff;
+  }
+
+  &:active:not(:disabled) {
+    background: #cfe4ff;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+/* 路径选择按钮激活态：实心，提示当前处于路径选择模式 */
+.og-path-btn.og-path-btn-active,
+.og-path-btn.og-path-btn-active:hover {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary-strong);
+  box-shadow: 0 2px 6px rgba(31, 139, 255, 0.35);
+}
+
+/* ─── 路径搜索参数面板（右上角） ─── */
+.og-path-params-panel {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--primary-strong);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #a9cdf5;
+  box-shadow: 0 2px 10px rgba(31, 111, 235, 0.14);
+}
+
+.og-path-params-label {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* 紧凑数字输入：压到 18px 高融入胶囊 */
+.og-path-params-input {
+  width: 46px;
+  height: 18px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  text-align: center;
+  color: var(--ink);
+  border: 1px solid #d3e8ff;
+  background: #fff;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    display: none;
+  }
+
+  &:hover {
+    border-color: #aed3ff;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(31, 139, 255, 0.2);
+  }
+
+  &.is-warn,
+  &.is-warn:hover {
+    border-color: #fa8c16;
+    box-shadow: 0 0 0 1px rgba(250, 140, 22, 0.15);
+  }
+}
+
+/* ─── 路径选择模式操作提示条 ─── */
+.og-path-selection-bar {
+  position: absolute;
+  top: 42px;
+  left: 8px;
+  right: 8px;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #173a5e;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #a9cdf5;
+  box-shadow: 0 2px 10px rgba(31, 111, 235, 0.14);
+  user-select: none;
+}
+
+.og-path-selection-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  font-weight: 600;
+  color: #0b66c8;
+}
+
+.og-path-selection-chain {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 8px;
+  border-left: 1px dashed #a9cdf5;
+}
+
+.og-path-chain-empty {
+  color: #8aabd4;
+}
+
+.og-path-chain-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.og-path-chain-arrow {
+  color: var(--primary);
+}
+
+.og-path-chain-item {
+  display: inline-block;
+  max-width: 140px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1.4;
+
+  /* 节点：蓝色实心，可点击取消 */
+  &.is-node {
+    color: #fff;
+    background: var(--primary);
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+      text-decoration: line-through;
+    }
+  }
+
+  /* 关系：浅蓝描边 */
+  &.is-edge {
+    color: #0b66c8;
+    background: var(--primary-soft);
+    border: 1px solid #9cc9f7;
+  }
+
+  /* 末尾元素：加重描边，提示再次点击可回退 */
+  &.is-last {
+    box-shadow: 0 0 0 2px rgba(31, 139, 255, 0.35);
+  }
+}
+
+.og-path-selection-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.og-path-action-btn {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-family: inherit;
+  border-radius: 4px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) {
+    border-color: #b9cce1;
+    background: #fbfdff;
+    color: var(--primary-strong);
+  }
+
+  &:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+  }
+
+  /* 「查看详情」确认按钮：主色实心 */
+  &.is-confirm:not(:disabled) {
+    background: var(--primary);
+    border-color: var(--primary-strong);
+    color: #fff;
+
+    &:hover {
+      background: var(--primary-strong);
+      color: #fff;
+    }
+  }
+}
+
+/* ─── 候选路径浮动面板（右侧） ─── */
+.og-path-candidates-panel {
+  position: absolute;
+  top: 88px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 9;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #d3e8ff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(31, 111, 235, 0.14);
+  animation: og-cand-fade-in 0.18s ease-out;
+
+  &.is-collapsed {
+    bottom: auto;
+  }
+}
+
+@keyframes og-cand-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.og-path-candidates-panel-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 8px;
+  border-bottom: 1px dashed #e6edfa;
+  margin-bottom: 8px;
+
+  .og-path-candidates-panel-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0b66c8;
+    letter-spacing: 0.5px;
+  }
+}
+
+.og-path-candidates-panel.is-collapsed .og-path-candidates-panel-header {
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.og-path-candidates-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ◀ X/N ▶ 切换器 */
+.og-path-candidates-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+
+  .og-cand-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    font-size: 9px;
+    line-height: 1;
+    border: none;
+    border-radius: 4px;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover:not(:disabled) {
+      color: var(--primary-strong);
+      background: var(--primary-soft);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  }
+
+  .og-cand-count {
+    min-width: 26px;
+    font-size: 10px;
+    color: var(--primary-strong);
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+/* 收起/展开按钮 */
+.og-cand-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  transition: background 0.16s, color 0.16s;
+
+  &:hover {
+    color: var(--primary-strong);
+    background: var(--primary-soft);
+  }
+}
+
+/* 卡片列表：填满剩余高度并内部滚动 */
+.og-path-candidates-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d6e4ff;
+    border-radius: 2px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #adc6ff;
+  }
+}
+
+/* 单张候选路径卡片 */
+.og-path-candidate-card {
+  position: relative;
+  padding: 8px 10px 8px 12px;
+  margin-bottom: 8px;
+  background: transparent;
+  border: 1px solid #eaeef7;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.16s, border-color 0.16s;
+  user-select: none;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    background: rgba(31, 139, 255, 0.04);
+    border-color: #bfe0ff;
+  }
+
+  &.is-active {
+    background: rgba(31, 139, 255, 0.06);
+    border-color: #bfe0ff;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--primary);
+    }
+  }
+}
+
+.og-cand-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+
+  .og-cand-card-idx {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0b66c8;
+  }
+
+  .og-cand-card-hops {
+    height: 15px;
+    padding: 0 6px;
+    line-height: 15px;
+    font-size: 10px;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid #e1e6f0;
+    border-radius: 8px;
+  }
+}
+
+.og-path-candidate-card.is-active .og-cand-card-hops {
+  color: var(--primary-strong);
+  border-color: #bfe0ff;
+}
+
+/* 起终点行 */
+.og-cand-card-endpoints {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--ink);
+  overflow: hidden;
+
+  .og-cand-endpoint {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    color: var(--primary-strong);
+  }
+
+  .og-cand-arrow-text {
+    color: #adc6ff;
+    font-size: 11px;
+    flex: none;
+  }
+}
+
+/* 统计行：X 对象 · Y 关系 */
+.og-cand-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: var(--muted);
+
+  .og-cand-stat-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-strong);
+  }
+
+  .og-cand-stat-label {
+    font-size: 10px;
+    color: #8a97b0;
+  }
+
+  .og-cand-stat-sep {
+    color: #d6e4ff;
+    margin: 0 2px;
+  }
+}
+
+/* 缩略预览行 */
+.og-cand-card-summary {
+  padding: 4px 6px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted);
+  background: #f4f7fc;
+  border: 1px dashed #e1e6f0;
+  border-radius: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.og-path-candidate-card.is-active .og-cand-card-summary {
+  background: #fff;
+  border-color: #bfe0ff;
+  color: var(--primary-strong);
+}
+
+/* ─── 节点右键上下文菜单 ─── */
+.og-context-menu {
+  position: absolute;
+  z-index: 100;
+  min-width: 124px;
+  padding: 3px 0;
+  background: var(--surface);
+  border: 1px solid #d5ddea;
+  border-radius: 4px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 6px 20px rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+  animation: og-ctx-fade-in 0.14s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes og-ctx-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.og-context-menu-item {
+  position: relative;
+  padding: 5px 12px 5px 22px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0.1px;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #c4cdd6;
+    transform: translateY(-50%);
+    transition: background 0.16s ease, transform 0.16s ease;
+  }
+
+  &:hover {
+    background: var(--primary-soft);
+    color: var(--primary-strong);
+
+    &::before {
+      background: var(--primary-strong);
+      transform: translateY(-50%) scale(1.15);
+    }
+  }
+
+  &:active {
+    background: #deeeff;
+  }
+}
+
+/* ─── 标签页内容占位（logic-chain / fulldata-graph 建设中） ─── */
+.og-tab-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+
+  .ic {
+    color: #c4cdd6;
+  }
+}

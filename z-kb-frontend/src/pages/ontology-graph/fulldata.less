@@ -1,0 +1,716 @@
+/**
+ * 实例数据查询视图样式：自 galaxy-meta ontology-fulldata.less 平移，
+ * 配色对齐 fe 设计变量（--primary / --ink / --muted / --line 等）。
+ * 类名沿用 meta 的 lc-fd- 前缀，便于与源实现互相对照。
+ */
+
+/* ─── 对象分组配色板（8 色循环）：accent 为实色描边/文字色，soft 为浅色底 ─── */
+.lc-fd-c0 { --lc-accent: #1f8bff; --lc-soft: rgba(31, 139, 255, 0.09); }
+.lc-fd-c1 { --lc-accent: #11a675; --lc-soft: rgba(17, 166, 117, 0.09); }
+.lc-fd-c2 { --lc-accent: #e2a018; --lc-soft: rgba(226, 160, 24, 0.1); }
+.lc-fd-c3 { --lc-accent: #d8453e; --lc-soft: rgba(216, 69, 62, 0.08); }
+.lc-fd-c4 { --lc-accent: #7257e8; --lc-soft: rgba(114, 87, 232, 0.09); }
+.lc-fd-c5 { --lc-accent: #0e93a8; --lc-soft: rgba(14, 147, 168, 0.09); }
+.lc-fd-c6 { --lc-accent: #d84c9a; --lc-soft: rgba(216, 76, 154, 0.09); }
+.lc-fd-c7 { --lc-accent: #64748b; --lc-soft: rgba(100, 116, 139, 0.1); }
+
+/* ─── 视图容器 ─── */
+.lc-fd-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  overflow: hidden;
+}
+
+/* ─── 顶部链路流程图：对象块与关系块交替 ─── */
+.lc-fd-chain-flow {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lc-fd-chain-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 132px;
+  padding: 9px 12px 9px 26px;
+  border-radius: 9px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--lc-accent);
+  box-shadow: 0 1px 4px rgba(15, 27, 45, 0.05);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--lc-accent);
+    box-shadow: 0 3px 10px rgba(15, 27, 45, 0.1);
+    transform: translateY(-1px);
+  }
+
+  /* 已暂时失效：视觉弱化保留在链路图上，不参与查询与表格 */
+  &.is-disabled {
+    opacity: 0.48;
+    border-style: dashed;
+    cursor: default;
+    transform: none;
+
+    &:hover {
+      border-color: var(--line);
+      box-shadow: 0 1px 4px rgba(15, 27, 45, 0.05);
+    }
+  }
+}
+
+.lc-fd-chain-node-idx {
+  position: absolute;
+  top: 9px;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 9px;
+  line-height: 14px;
+  text-align: center;
+  color: #fff;
+  background: var(--lc-accent);
+}
+
+.lc-fd-chain-node-name {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.lc-fd-chain-node-code {
+  font-size: 10px;
+  color: var(--muted-2);
+}
+
+.lc-fd-chain-edge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 84px;
+  padding: 0 4px;
+
+  &.is-clickable {
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--surface-3);
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.48;
+
+    .lc-fd-chain-edge-line {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.lc-fd-edge-name-row {
+  position: relative;
+  padding: 0 20px;
+}
+
+.lc-fd-chain-edge-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-strong);
+}
+
+.lc-fd-chain-edge-line {
+  font-size: 11px;
+  color: var(--lc-accent, #8bb8e8);
+  letter-spacing: -1px;
+}
+
+.lc-fd-chain-edge-dir {
+  font-size: 10px;
+  color: var(--muted-2);
+}
+
+/* 对象块 / 关系块右上角的「已选 / 总属性数」徽标（绝对定位，不占 flex 位置） */
+.lc-fd-node-count {
+  position: absolute;
+  top: -4px;
+  right: 18px;
+  height: 15px;
+  padding: 0 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  line-height: 15px;
+  font-weight: 600;
+  color: var(--lc-accent);
+  background: var(--lc-soft);
+}
+
+/* 节点 / 关系上的「暂时失效 · 恢复」小圆按钮（点击截断冒泡） */
+.lc-fd-disable-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #98a8bc;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: var(--primary-strong);
+    background: var(--primary-soft);
+  }
+
+  /* 「暂时隐藏」动作：图标压一层删除线明示当前态 */
+  &.is-disable-action {
+    color: var(--muted-2);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      top: 50%;
+      height: 1.5px;
+      border-radius: 1px;
+      background: currentColor;
+      transform: rotate(-40deg);
+    }
+
+    &:hover {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+  }
+
+  /* 「恢复」动作 */
+  &.is-enable-action {
+    color: var(--green);
+    background: var(--green-soft);
+  }
+}
+
+/* ─── 链路图下内联展开的属性勾选面板 ─── */
+.lc-fd-panel-slot {
+  flex: none;
+  margin-top: 8px;
+}
+
+.lc-fd-prop-panel {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+  max-width: 620px;
+  box-shadow: 0 6px 20px rgba(15, 27, 45, 0.08);
+}
+
+.lc-fd-prop-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 7px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lc-fd-prop-title {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.lc-fd-prop-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.lc-fd-prop-action-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 5px;
+  border: none;
+  background: none;
+  border-radius: 5px;
+  font-size: 11px;
+  color: var(--primary-strong);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--primary-soft);
+  }
+}
+
+.lc-fd-prop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+}
+
+.lc-fd-prop-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  min-width: 0;
+
+  input[type='checkbox'] {
+    accent-color: var(--primary);
+    flex: 0 0 auto;
+  }
+}
+
+.lc-fd-prop-code {
+  font-weight: 550;
+  color: var(--ink-2);
+}
+
+.lc-fd-prop-name {
+  font-size: 10.5px;
+  color: var(--muted);
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lc-fd-prop-filter {
+  height: 24px;
+  width: 150px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--ink);
+  flex: 0 0 auto;
+
+  &::placeholder {
+    color: #a2afc0;
+  }
+
+  &:hover {
+    border-color: #bdcfe3;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(31, 139, 255, 0.11);
+  }
+}
+
+.lc-fd-prop-hide-divider {
+  border-top: 1px dashed var(--line);
+  margin: 8px 0 6px;
+}
+
+.lc-fd-prop-hide-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--ink-2);
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: var(--primary);
+  }
+}
+
+.lc-fd-prop-hide-tip {
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.lc-fd-cell-empty {
+  font-size: 11px;
+  color: var(--muted-2);
+  padding: 10px 0;
+}
+
+/* ─── 链路图与工具栏 / 表格之间的分隔线 ─── */
+.lc-fd-divider {
+  border-top: 1px solid var(--line);
+  margin: 10px 0 2px;
+  flex: none;
+}
+
+/* ─── 工具栏 ─── */
+.lc-fd-search-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 0;
+}
+
+.lc-fd-aggregate-select {
+  height: 25px;
+  width: 132px;
+  padding: 0 26px 0 8px;
+  font-size: 11px;
+
+  &:disabled {
+    background: var(--surface-3);
+    color: var(--muted-2);
+    cursor: not-allowed;
+  }
+}
+
+.lc-fd-ngql-btn.is-active {
+  color: var(--primary-strong);
+  background: var(--primary-soft);
+}
+
+.lc-fd-search-stat {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.lc-fd-limit-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.lc-fd-limit-input {
+  width: 88px;
+  height: 25px;
+  padding: 0 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--ink);
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &::placeholder {
+    color: #a2afc0;
+  }
+
+  &:hover {
+    border-color: #bdcfe3;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(31, 139, 255, 0.11);
+  }
+}
+
+.lc-fd-search-input-wrap {
+  display: inline-flex;
+  align-items: center;
+
+  .lc-fd-search-input {
+    width: 240px;
+    height: 27px;
+  }
+}
+
+/* ─── 查询语句面板（只读） ─── */
+.lc-fd-ngql-panel {
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.lc-fd-ngql-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.lc-fd-ngql-code {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f6f8fb;
+  border: 1px solid var(--line);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 180px;
+  overflow: auto;
+}
+
+/* ─── 表格容器（AG Grid 宿主，quartz 主题变量对齐 fe 设计体系）─── */
+.lc-fd-table-wrap.ag-theme-quartz {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  --ag-font-family: var(--font);
+  --ag-font-size: 11px;
+  --ag-border-color: var(--line);
+  --ag-row-border-color: var(--line);
+  --ag-header-background-color: #f7f9fc;
+  --ag-odd-row-background-color: transparent;
+  --ag-background-color: transparent;
+  --ag-row-hover-color: rgba(31, 139, 255, 0.05);
+  --ag-header-column-resize-handle-color: #d8e1ec;
+  --ag-alpine-active-color: var(--primary);
+  --ag-range-selection-border-color: var(--primary);
+  --ag-input-focus-border-color: var(--primary);
+  --ag-checkbox-checked-color: var(--primary);
+
+  .ag-root-wrapper {
+    border: none;
+  }
+
+  /* 列组头 / 叶子列头按对象配色着色（同对象同色，与链路头一致） */
+  .ag-header-group-cell[class*='lc-fd-c'] {
+    color: var(--lc-accent);
+    background: var(--lc-soft);
+  }
+
+  .ag-header-cell[class*='lc-fd-c'] {
+    .ag-header-cell-text {
+      color: var(--lc-accent);
+      font-weight: 600;
+    }
+  }
+
+  .ag-cell[class*='lc-fd-c'] {
+    color: #52627a;
+  }
+
+  /* 关系列组：灰蓝基调，区别于对象列组 */
+  .ag-header-group-cell.lc-fd-edge-col {
+    background: #f4f6fa;
+    color: #6b7c93;
+  }
+
+  .ag-header-cell.lc-fd-edge-col .ag-header-cell-text {
+    color: #6b7c93;
+    font-weight: 600;
+  }
+
+  .ag-cell.lc-fd-edge-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a9aad;
+    font-size: 10px;
+  }
+
+  /* 列头英文 code 后的淡色中文名 */
+  .lc-fd-col-cname {
+    font-size: 9.5px;
+    font-weight: 500;
+    color: #9fb0c3;
+    margin-left: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 空值单元格弱化，避免占位「-」与真实数据抢注意力 */
+  .ag-cell.lc-fd-cell-empty {
+    color: #b3bfce;
+  }
+}
+
+/* 列组头内容：对象名 + 过滤摘要（或关系名 + 两端指向小字） */
+.lc-fd-group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lc-fd-group-head-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+}
+
+.lc-fd-group-head-filter {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--muted-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 130px;
+}
+
+.lc-fd-edge-group-head {
+  cursor: default;
+}
+
+.lc-fd-edge-point-text {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: #8a9aad;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── 空态 / 加载态 ─── */
+.lc-fd-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+
+  .empty-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: var(--surface-3);
+    display: grid;
+    place-items: center;
+    color: #9aabc0;
+    margin-bottom: 12px;
+  }
+
+  b {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--ink-2);
+  }
+
+  p {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin: 5px 0 0;
+    max-width: 380px;
+  }
+}
+
+.lc-fd-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ─── 导出弹窗 ─── */
+.lc-fd-export-body {
+  font-size: 12px;
+  color: var(--ink-2);
+
+  p {
+    margin: 0 0 8px;
+  }
+}
+
+.lc-fd-export-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.lc-fd-export-stat {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.lc-fd-export-filename {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+
+  .input {
+    flex: 1;
+    height: 30px;
+  }
+}
+
+/* ─── 实例数据图谱视图 ─── */
+.lc-fd-graph-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.lc-fd-graph-tip {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  max-width: 80%;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(15, 27, 45, 0.08);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lc-fd-graph-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.lc-fd-graph-empty-title {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+
+.lc-fd-graph-empty-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  max-width: 380px;
+}
