@@ -68,6 +68,32 @@ class ***REMOVED***WebAutoConfigurationTest {
         assertTrue(resp.getStatusCode() == HttpStatus.OK || resp.getStatusCode() == HttpStatus.UNAUTHORIZED,
                 "/api/***REMOVED***/workspaces 期望 200/401，实际 " + resp.getStatusCode() + "（404 = 路由没注册）");
         assertTrue(resp.getStatusCode() != HttpStatus.NOT_FOUND, "/api/***REMOVED***/workspaces 是 404 ⇒ 装配没生效");
+
+        // 测试类路径带 H2 ⇒ 内嵌 DataSource 成立 ⇒ 资源域装配生效，v1 路由必须注册并返回 ***REMOVED***Result 信封
+        ResponseEntity<String> v1 = rest.getForEntity(
+                "http://localhost:" + port() + "/api/***REMOVED***/v1/knowledgeBase/queryDetailById?***REMOVED***Id=x", String.class);
+        System.out.println("READING-***REMOVED***WEB v1 with embedded H2 -> " + v1.getStatusCode() + " " + v1.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, v1.getStatusCode(), "v1 路由应已注册（未知 ***REMOVED***Id 走 404 信封）");
+        assertTrue(v1.getBody() != null && v1.getBody().contains("\"success\""),
+                "v1 路由应返回 ***REMOVED***Result 信封：" + v1.getBody());
+    }
+
+    @Test
+    @DisplayName("排除 DataSourceAutoConfiguration 后资源域整块不装配：v1 路由不注册、启动不受影响")
+    void v1RoutesRequireDataSource() {
+        boot("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration");
+        TestRestTemplate rest = new TestRestTemplate();
+
+        ResponseEntity<String> legacy = rest.getForEntity(
+                "http://localhost:" + port() + "/api/***REMOVED***/workspaces", String.class);
+        assertEquals(HttpStatus.OK, legacy.getStatusCode(), "既有 /api/***REMOVED***/* 不依赖 DataSource");
+
+        ResponseEntity<String> v1 = rest.getForEntity(
+                "http://localhost:" + port() + "/api/***REMOVED***/v1/knowledgeBase/queryDetailById?***REMOVED***Id=x", String.class);
+        System.out.println("READING-***REMOVED***WEB v1 without DataSource -> " + v1.getStatusCode() + " " + v1.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, v1.getStatusCode(), "无 DataSource 时 v1 路由不该注册");
+        assertTrue(v1.getBody() == null || !v1.getBody().contains("\"success\""),
+                "v1 路由未注册时不该出现 ***REMOVED***Result 信封：" + v1.getBody());
     }
 
     @Test
@@ -128,18 +154,20 @@ class ***REMOVED***WebAutoConfigurationTest {
         return out;
     }
 
-    private void boot() {
+    private void boot(String... extraProperties) {
+        List<String> props = new ArrayList<>(List.of(
+                "spring.main.banner-mode=off",
+                "server.port=0",
+                "spring.main.allow-bean-definition-overriding=true",
+                // 测试不落用户真实 home：向量走内存，图谱与文档仓库落临时目录
+                "z***REMOVED***.vector.storage-type=in-memory",
+                "z***REMOVED***.graph.engine=json",
+                "z***REMOVED***.graph.path=" + tempDir.resolve("graph").toString(),
+                "z***REMOVED***.storage.path=" + tempDir.resolve("z***REMOVED***.json").toString()));
+        props.addAll(List.of(extraProperties));
         ctx = new SpringApplicationBuilder(TestApp.class)
                 .web(WebApplicationType.SERVLET)
-                .properties(
-                        "spring.main.banner-mode=off",
-                        "server.port=0",
-                        "spring.main.allow-bean-definition-overriding=true",
-                        // 测试不落用户真实 home：向量走内存，图谱与文档仓库落临时目录
-                        "z***REMOVED***.vector.storage-type=in-memory",
-                        "z***REMOVED***.graph.engine=json",
-                        "z***REMOVED***.graph.path=" + tempDir.resolve("graph").toString(),
-                        "z***REMOVED***.storage.path=" + tempDir.resolve("z***REMOVED***.json").toString())
+                .properties(props.toArray(new String[0]))
                 .run();
     }
 

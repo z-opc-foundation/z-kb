@@ -1,0 +1,138 @@
+/* 配额管理：统计与明细一屏放下，明细区吃掉剩余高度 */
+.quota-admin {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (min-width: 761px) {
+  /* 整屏页贴到底，统计与明细在一屏内放下 */
+  .content:has(.quota-admin) {
+    padding-bottom: 0;
+  }
+
+  .quota-admin {
+    height: calc(100vh - 78px - var(--app-footer-h));
+  }
+}
+
+.quota-admin > .quota-stats {
+  flex: 0 0 auto;
+}
+
+.quota-admin > .quota-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.quota-panel > .panel-head {
+  flex: 0 0 auto;
+  align-items: flex-start;
+}
+
+.quota-panel > .panel-head .segmented {
+  flex: 0 0 auto;
+}
+
+.quota-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.quota-body > .table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.quota-body > .empty {
+  padding: 56px 22px;
+}
+
+.quota-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.quota-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quota-table .name-cell {
+  gap: 10px;
+}
+
+.quota-table .name-cell .nc {
+  min-width: 0;
+}
+
+.quota-table .name-cell .nc b {
+  display: block;
+  max-width: none;
+  font-size: 13px;
+}
+
+.quota-table .name-cell .nc small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.quota-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.quota-usage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.quota-usage .progress {
+  flex: 1;
+  min-width: 60px;
+}
+
+.quota-usage .mono-sm {
+  flex: 0 0 auto;
+  width: 42px;
+  text-align: right;
+}
+
+.quota-foot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  border-top: 1px solid var(--line);
+  background: #fcfdff;
+}
+
+.quota-foot .note {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: var(--muted);
+}

@@ -1,0 +1,819 @@
+/* ---------- 本体信息栏 ---------- */
+
+.ont-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.ont-info-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ont-info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.ont-info-copy {
+  min-width: 0;
+}
+
+.ont-info-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  b {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.ont-info-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.ont-info-desc {
+  font-size: 10.5px;
+  color: var(--muted-2);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ont-info-stats {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.ont-info-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+
+  .label {
+    font-size: 9.5px;
+    color: var(--muted-2);
+    letter-spacing: 0.03em;
+  }
+
+  .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+
+    small {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--muted-2);
+      margin-left: 2px;
+    }
+  }
+}
+
+.ont-info-actions {
+  flex: 0 0 auto;
+}
+
+/* ---------- 双层图谱画布 ---------- */
+
+.ont-canvas {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .panel-head {
+    padding-bottom: 10px;
+  }
+}
+
+.ont-canvas-head {
+  justify-content: space-between;
+}
+
+.ont-canvas-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ont-layer-switch {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.ont-layer-btn {
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  background: var(--surface-2);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.12s;
+
+  &.active {
+    background: #fff;
+    color: var(--primary-strong);
+    box-shadow: inset 0 -2px 0 var(--primary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.ont-instance-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.ont-canvas-body {
+  position: relative;
+  height: 606px;
+}
+
+.ont-canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+.ont-canvas-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  color: var(--muted-2);
+
+  b {
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+
+  span {
+    font-size: 10.5px;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+}
+
+.ont-canvas-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 9px 12px;
+  border-top: 1px solid var(--line);
+}
+
+.ont-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+}
+
+.ont-legend-tip {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+/* ---------- 表格 ---------- */
+
+.ont-table-state {
+  padding: 42px 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.ont-name-cell {
+  b {
+    display: block;
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+
+  small {
+    display: block;
+    font-size: 9px;
+    color: var(--muted-2);
+    margin-top: 1px;
+  }
+
+  .desc {
+    display: block;
+    font-size: 9.5px;
+    color: var(--muted-2);
+    margin-top: 3px;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.ont-binding {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* ---------- 详情弹窗 ---------- */
+
+.ont-detail-state {
+  padding: 30px 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.ont-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 14px;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 12px;
+
+  .note {
+    font-size: 9.5px;
+  }
+
+  b {
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+}
+
+.ont-detail-desc {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.ont-detail-sub {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink);
+  margin: 14px 0 8px;
+}
+
+/* ---------- 左类型面板 / 右图谱分栏 ---------- */
+
+.ov-split {
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.ont-types {
+  overflow: hidden;
+
+  .panel-head {
+    padding-bottom: 10px;
+  }
+}
+
+.ont-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.ont-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 29px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.12s;
+
+  &:hover {
+    color: var(--ink-2);
+    background: rgba(255, 255, 255, 0.65);
+  }
+
+  &.active {
+    background: #fff;
+    border-color: var(--line);
+    color: var(--primary-strong);
+    box-shadow: 0 1px 4px rgba(15, 27, 45, 0.06);
+  }
+
+  b {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--muted-2);
+    background: var(--surface-2);
+    border-radius: 9px;
+    padding: 1px 5px;
+  }
+
+  &.active b {
+    background: var(--primary-soft);
+    color: var(--primary-strong);
+  }
+}
+
+.ont-types-body {
+  max-height: 668px;
+  overflow: auto;
+}
+
+.ont-group-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+
+  span {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--muted-2);
+    font-size: 9px;
+  }
+}
+
+.ont-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: 0.12s;
+
+  &:hover {
+    background: var(--surface-2);
+  }
+
+  &.active {
+    background: var(--primary-soft);
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+
+  &.off {
+    opacity: 0.55;
+  }
+}
+
+.ont-row-check {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid #b7c4d6;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 0;
+  position: relative;
+  transition: 0.12s;
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary);
+  }
+
+  &.checked {
+    background: var(--primary);
+    border-color: var(--primary);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 4px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.ont-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.ont-type-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+
+  b {
+    font-size: 11.5px;
+    font-weight: 650;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ink);
+  }
+
+  small {
+    font-size: 9px;
+    color: var(--muted-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.ont-type-count {
+  font-size: 10px;
+  color: var(--muted);
+  flex: 0 0 auto;
+}
+
+.ont-type-detail {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted-2);
+  border-radius: 5px;
+  cursor: pointer;
+  flex: 0 0 auto;
+
+  &:hover {
+    background: var(--primary-soft);
+    color: var(--primary-strong);
+  }
+}
+
+.ont-tab-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 9px 12px;
+  border-top: 1px solid var(--line);
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--muted-2);
+  background: var(--surface-2);
+}
+
+/* ---------- 分组管理与归类 ---------- */
+
+.ont-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ont-cat-assign {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--primary-soft);
+}
+
+.ont-cat-chip {
+  height: 22px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.12s;
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary-strong);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    background: #fff;
+    color: var(--primary-strong);
+    box-shadow: inset 0 0 0 1px var(--primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.ont-cat-manage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ont-cat-create {
+  display: flex;
+  gap: 8px;
+
+  .input {
+    flex: 1;
+    height: 32px;
+  }
+}
+
+.ont-cat-error {
+  font-size: 10.5px;
+  color: var(--red);
+}
+
+.ont-cat-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ont-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .input {
+    flex: 1;
+    height: 28px;
+    min-width: 0;
+  }
+}
+
+.ont-cat-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ont-cat-count {
+  flex: 0 0 auto;
+  font-size: 10px;
+  color: var(--muted-2);
+}
+
+.ont-cat-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+/* ---------- 实例查询抽屉 ---------- */
+
+.ont-instance-drawer {
+  --w: min(560px, 38vw);
+}
+
+.ont-instance-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 4px 0 10px;
+
+  .select,
+  .input {
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .note {
+    margin-left: auto;
+  }
+}
+
+.ont-instance-empty {
+  padding: 18px 14px;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+
+  b {
+    display: block;
+    font-size: 12px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  span {
+    font-size: 10.5px;
+    color: var(--muted);
+  }
+}
+
+.ont-instance-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- 实例子图列表视图（画布区内图谱/列表切换） ---------- */
+
+.ont-subgraph-list {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  overflow-y: auto;
+  background: var(--surface);
+
+  .table-wrap {
+    max-height: none;
+  }
+}
+
+.ont-subgraph-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+}
+
+.ont-instance-drawer .table-wrap {
+  max-height: none;
+}
+
+@media (max-width: 1100px) {
+  .ov-split {
+    grid-template-columns: 1fr;
+  }
+
+  .ont-types-body {
+    max-height: 320px;
+  }
+
+  .ont-canvas-body {
+    height: 420px;
+  }
+
+  .ont-info-bar {
+    flex-wrap: wrap;
+  }
+
+  .ont-info-stats {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ---------- 空态与页面态 ---------- */
+
+.ont-page-state {
+  padding: 60px 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ont-empty {
+  padding: 64px 24px;
+  text-align: center;
+
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 18px;
+    line-height: 1.7;
+  }
+}
+
+.ont-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
