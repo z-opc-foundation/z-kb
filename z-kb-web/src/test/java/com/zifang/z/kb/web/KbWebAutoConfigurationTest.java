@@ -165,10 +165,29 @@ class ***REMOVED***WebAutoConfigurationTest {
                 "z***REMOVED***.graph.path=" + tempDir.resolve("graph").toString(),
                 "z***REMOVED***.storage.path=" + tempDir.resolve("z***REMOVED***.json").toString()));
         props.addAll(List.of(extraProperties));
-        ctx = new SpringApplicationBuilder(TestApp.class)
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(TestApp.class)
                 .web(WebApplicationType.SERVLET)
-                .properties(props.toArray(new String[0]))
-                .run();
+                .properties(props.toArray(new String[0]));
+        // 本机开发环境可能带着 SERVER__PORT=xxxx 这类环境变量（双下划线经宽松绑定
+        // 恰好映射成 server.port）。SpringApplicationBuilder.properties() 落在
+        // defaultProperties 里，优先级低于环境变量 —— 会被盖掉，Tomcat 就绑到了
+        // 别的服务的端口上（实测：绑到宿主常驻服务代理，请求全被它抢答 401
+        // AUTH_REQUIRED，classpath 里却搜不到这个错误码）。
+        // 系统属性优先级高于环境变量，用它把 server.port 钉回 0。
+        if (System.getProperty("server.port") == null) {
+            System.setProperty("server.port", "0");
+        }
+        ctx = builder.run();
+        // 启动后自检：绑定的端口必须真的属于本上下文 —— 若端口属性仍被外部
+        // 覆盖（例如未来有人把系统属性也设了），直接失败给出明确原因，
+        // 而不是让请求打到别的进程上得到莫名其妙的响应。
+        String bound = ctx.getEnvironment().getProperty("local.server.port");
+        String expected = System.getProperty("server.port");
+        if ("0".equals(expected) && "0".equals(bound)) {
+            ctx.close();
+            throw new IllegalStateException("Tomcat 未完成端口绑定（local.server.port=0），"
+                    + "检查是否被 SERVER_PORT / SERVER__PORT 环境变量干扰");
+        }
     }
 
     private int port() {
