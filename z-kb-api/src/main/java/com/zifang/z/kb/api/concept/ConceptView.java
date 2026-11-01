@@ -16,6 +16,13 @@ public class ConceptView {
     private String lastMaterialId;
     private String graphNodeId;
     private String evidence;
+    /**
+     * 公司级认知键（TASK-20261101-006）：命中 z-cognition 概念时回填。
+     *
+     * <p>为空的语义是「未消歧」—— 可能是认知域未开启（配置留空），也可能是
+     * 该词在认知域里没有对应概念。两种情况都不影响本库内的归一语义。</p>
+     */
+    private String cognitionKey;
 
     public String getConceptId() {
         return conceptId;
@@ -103,5 +110,13 @@ public class ConceptView {
 
     public void setEvidence(String evidence) {
         this.evidence = evidence;
+    }
+
+    public String getCognitionKey() {
+        return cognitionKey;
+    }
+
+    public void setCognitionKey(String cognitionKey) {
+        this.cognitionKey = cognitionKey;
     }
 }

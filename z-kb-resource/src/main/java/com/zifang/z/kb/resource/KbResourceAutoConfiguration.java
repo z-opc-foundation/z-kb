@@ -1,84 +1,85 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zifang.z.***REMOVED***.api.material.***REMOVED***MaterialParser;
-import com.zifang.z.***REMOVED***.api.material.***REMOVED***OriginalFileStore;
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryService;
-import com.zifang.z.***REMOVED***.api.material.MaterialRepoBrowseService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchService;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogService;
-import com.zifang.z.***REMOVED***.api.concept.ConceptService;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionService;
-import com.zifang.z.***REMOVED***.api.graph.GraphService;
-import com.zifang.z.***REMOVED***.api.overview.OverviewService;
-import com.zifang.z.***REMOVED***.api.overview.WikiPageCounter;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***PrincipalDirectory;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseConfigService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberAdminService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.retrieval.KnowledgeRetrievalService;
-import com.zifang.z.***REMOVED***.api.source.IngestService;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceService;
-import com.zifang.z.***REMOVED***.api.taskconfig.***REMOVED***TaskConfigService;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorService;
-import com.zifang.z.***REMOVED***.api.wiki.WikiService;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionEngine;
-import com.zifang.z.***REMOVED***.core.source.git.GitApiClient;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiClient;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueDocReader;
-import com.zifang.z.***REMOVED***.resource.compilation.CompilationStageRunner;
-import com.zifang.z.***REMOVED***.resource.compilation.DefaultCompilationBatchService;
-import com.zifang.z.***REMOVED***.resource.compilation.DefaultCompilationService;
-import com.zifang.z.***REMOVED***.resource.material.Default***REMOVED***MaterialParser;
-import com.zifang.z.***REMOVED***.resource.material.DefaultMaterialCategoryService;
-import com.zifang.z.***REMOVED***.resource.material.DefaultMaterialRepoBrowseService;
-import com.zifang.z.***REMOVED***.resource.material.DefaultMaterialService;
-import com.zifang.z.***REMOVED***.resource.material.Local***REMOVED***OriginalFileStore;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultAuditLogService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultConceptService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultExtractionService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultGraphService;
-import com.zifang.z.***REMOVED***.resource.ops.Default***REMOVED***TaskConfigService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultOverviewService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultTaskConfigService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultTaskMonitorService;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultWikiPageCounter;
-import com.zifang.z.***REMOVED***.resource.ops.DefaultWikiService;
-import com.zifang.z.***REMOVED***.resource.retrieval.DefaultKnowledgeRetrievalService;
-import com.zifang.z.***REMOVED***.resource.source.DefaultIngestService;
-import com.zifang.z.***REMOVED***.resource.source.DefaultKnowledgeBaseSourceService;
-import com.zifang.z.***REMOVED***.resource.source.DocIngestRunner;
-import com.zifang.z.***REMOVED***.resource.source.GitIngestConnector;
-import com.zifang.z.***REMOVED***.resource.source.IngestConnector;
-import com.zifang.z.***REMOVED***.resource.source.LocalIngestConnector;
-import com.zifang.z.***REMOVED***.resource.source.SourceTreeNodes;
-import com.zifang.z.***REMOVED***.resource.source.YuqueIngestConnector;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactVersionMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMentionMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ExtractionItemMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphEdgeMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphNodeMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialCategoryMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialVersionMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.ParsedDraftMapper;
-import com.zifang.z.***REMOVED***.storage.resource.***REMOVED***ResourcePersistenceAutoConfiguration;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.***REMOVED***AuditLogMapper;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseAclMapper;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseMapper;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileVersionMapper;
-import com.zifang.z.***REMOVED***.storage.taskconfig.mapper.TaskConfigMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiDocMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiPageMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiPageSourceMapper;
+import com.zifang.z.kb.api.material.KbMaterialParser;
+import com.zifang.z.kb.api.material.KbOriginalFileStore;
+import com.zifang.z.kb.api.material.MaterialCategoryService;
+import com.zifang.z.kb.api.material.MaterialRepoBrowseService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.compilation.CompilationBatchService;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.audit.AuditLogService;
+import com.zifang.z.kb.api.concept.ConceptService;
+import com.zifang.z.kb.api.extraction.ExtractionService;
+import com.zifang.z.kb.api.graph.GraphService;
+import com.zifang.z.kb.api.overview.OverviewService;
+import com.zifang.z.kb.api.overview.WikiPageCounter;
+import com.zifang.z.kb.api.resource.KbPrincipalDirectory;
+import com.zifang.z.kb.api.resource.KnowledgeBaseConfigService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberAdminService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.retrieval.KnowledgeRetrievalService;
+import com.zifang.z.kb.api.source.IngestService;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceService;
+import com.zifang.z.kb.api.taskconfig.KbTaskConfigService;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorService;
+import com.zifang.z.kb.api.wiki.WikiService;
+import com.zifang.z.kb.core.extraction.CognitionGateway;
+import com.zifang.z.kb.core.extraction.ExtractionEngine;
+import com.zifang.z.kb.core.source.git.GitApiClient;
+import com.zifang.z.kb.core.source.yuque.YuqueApiClient;
+import com.zifang.z.kb.core.source.yuque.YuqueDocReader;
+import com.zifang.z.kb.resource.compilation.CompilationStageRunner;
+import com.zifang.z.kb.resource.compilation.DefaultCompilationBatchService;
+import com.zifang.z.kb.resource.compilation.DefaultCompilationService;
+import com.zifang.z.kb.resource.material.DefaultKbMaterialParser;
+import com.zifang.z.kb.resource.material.DefaultMaterialCategoryService;
+import com.zifang.z.kb.resource.material.DefaultMaterialRepoBrowseService;
+import com.zifang.z.kb.resource.material.DefaultMaterialService;
+import com.zifang.z.kb.resource.material.LocalKbOriginalFileStore;
+import com.zifang.z.kb.resource.ops.DefaultAuditLogService;
+import com.zifang.z.kb.resource.ops.DefaultConceptService;
+import com.zifang.z.kb.resource.ops.DefaultExtractionService;
+import com.zifang.z.kb.resource.ops.DefaultGraphService;
+import com.zifang.z.kb.resource.ops.DefaultKbTaskConfigService;
+import com.zifang.z.kb.resource.ops.DefaultOverviewService;
+import com.zifang.z.kb.resource.ops.DefaultTaskConfigService;
+import com.zifang.z.kb.resource.ops.DefaultTaskMonitorService;
+import com.zifang.z.kb.resource.ops.DefaultWikiPageCounter;
+import com.zifang.z.kb.resource.ops.DefaultWikiService;
+import com.zifang.z.kb.resource.retrieval.DefaultKnowledgeRetrievalService;
+import com.zifang.z.kb.resource.source.DefaultIngestService;
+import com.zifang.z.kb.resource.source.DefaultKnowledgeBaseSourceService;
+import com.zifang.z.kb.resource.source.DocIngestRunner;
+import com.zifang.z.kb.resource.source.GitIngestConnector;
+import com.zifang.z.kb.resource.source.IngestConnector;
+import com.zifang.z.kb.resource.source.LocalIngestConnector;
+import com.zifang.z.kb.resource.source.SourceTreeNodes;
+import com.zifang.z.kb.resource.source.YuqueIngestConnector;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactMapper;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMentionMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ExtractionItemMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphEdgeMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
+import com.zifang.z.kb.storage.material.mapper.MaterialCategoryMapper;
+import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
+import com.zifang.z.kb.storage.material.mapper.MaterialVersionMapper;
+import com.zifang.z.kb.storage.material.mapper.ParsedDraftMapper;
+import com.zifang.z.kb.storage.resource.KbResourcePersistenceAutoConfiguration;
+import com.zifang.z.kb.storage.resource.mapper.KbAuditLogMapper;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseAclMapper;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseMapper;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileMapper;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileVersionMapper;
+import com.zifang.z.kb.storage.taskconfig.mapper.TaskConfigMapper;
+import com.zifang.z.kb.storage.wiki.mapper.WikiDocMapper;
+import com.zifang.z.kb.storage.wiki.mapper.WikiPageMapper;
+import com.zifang.z.kb.storage.wiki.mapper.WikiPageSourceMapper;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -94,38 +95,38 @@ import java.util.List;
 /**
  * 资源域装配：知识库生命周期、成员 ACL、配置版本与审计。
  *
- * <p>条件与 {@link ***REMOVED***ResourcePersistenceAutoConfiguration} 同口径（DataSource + 开关），
+ * <p>条件与 {@link KbResourcePersistenceAutoConfiguration} 同口径（DataSource + 开关），
  * 不写成 {@code @ConditionalOnBean(Mapper.class)}：Mapper 由同族的 {@code @MapperScan} 注册，
  * 注册时机晚于自动配置条件求值，按 Bean 判会恒不成立。</p>
  */
-@AutoConfiguration(after = ***REMOVED***ResourcePersistenceAutoConfiguration.class)
+@AutoConfiguration(after = KbResourcePersistenceAutoConfiguration.class)
 @ConditionalOnClass({DataSource.class, BaseMapper.class})
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnProperty(name = "***REMOVED***.resource.persistence.enabled", havingValue = "true",
+@ConditionalOnProperty(name = "kb.resource.persistence.enabled", havingValue = "true",
         matchIfMissing = true)
-public class ***REMOVED***ResourceAutoConfiguration {
+public class KbResourceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ***REMOVED***PrincipalDirectory ***REMOVED***PrincipalDirectory() {
-        return new Empty***REMOVED***PrincipalDirectory();
+    public KbPrincipalDirectory kbPrincipalDirectory() {
+        return new EmptyKbPrincipalDirectory();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ***REMOVED***AuditService ***REMOVED***AuditService(***REMOVED***AuditLogMapper auditLogMapper) {
-        return new ***REMOVED***AuditService(auditLogMapper);
+    public KbAuditService kbAuditService(KbAuditLogMapper auditLogMapper) {
+        return new KbAuditService(auditLogMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public KnowledgeBaseResourceService knowledgeBaseResourceService(
-            KnowledgeBaseMapper ***REMOVED***Mapper,
+            KnowledgeBaseMapper kbMapper,
             KnowledgeBaseAclMapper aclMapper,
             KnowledgeBaseProfileMapper profileMapper,
             KnowledgeBaseProfileVersionMapper versionMapper,
-            ***REMOVED***AuditService auditService) {
-        return new DefaultKnowledgeBaseResourceService(***REMOVED***Mapper, aclMapper, profileMapper,
+            KbAuditService auditService) {
+        return new DefaultKnowledgeBaseResourceService(kbMapper, aclMapper, profileMapper,
                 versionMapper, auditService);
     }
 
@@ -134,8 +135,8 @@ public class ***REMOVED***ResourceAutoConfiguration {
     public KnowledgeBaseMemberAdminService knowledgeBaseMemberAdminService(
             KnowledgeBaseResourceService resourceService,
             KnowledgeBaseAclMapper aclMapper,
-            ***REMOVED***PrincipalDirectory principalDirectory,
-            ***REMOVED***AuditService auditService) {
+            KbPrincipalDirectory principalDirectory,
+            KbAuditService auditService) {
         return new DefaultKnowledgeBaseMemberAdminService(resourceService, aclMapper,
                 principalDirectory, auditService);
     }
@@ -146,22 +147,22 @@ public class ***REMOVED***ResourceAutoConfiguration {
             KnowledgeBaseResourceService resourceService,
             KnowledgeBaseProfileMapper profileMapper,
             KnowledgeBaseProfileVersionMapper versionMapper,
-            ***REMOVED***AuditService auditService) {
+            KbAuditService auditService) {
         return new DefaultKnowledgeBaseConfigService(resourceService, profileMapper,
                 versionMapper, auditService);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ***REMOVED***OriginalFileStore ***REMOVED***OriginalFileStore(
-            @Value("${***REMOVED***.material.storage.root:}") String rootDir) {
-        return new Local***REMOVED***OriginalFileStore(rootDir);
+    public KbOriginalFileStore kbOriginalFileStore(
+            @Value("${kb.material.storage.root:}") String rootDir) {
+        return new LocalKbOriginalFileStore(rootDir);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ***REMOVED***MaterialParser default***REMOVED***MaterialParser() {
-        return new Default***REMOVED***MaterialParser();
+    public KbMaterialParser defaultKbMaterialParser() {
+        return new DefaultKbMaterialParser();
     }
 
     @Bean
@@ -172,8 +173,8 @@ public class ***REMOVED***ResourceAutoConfiguration {
             ParsedDraftMapper draftMapper,
             MaterialCategoryMapper categoryMapper,
             KnowledgeBaseResourceService resourceService,
-            ***REMOVED***OriginalFileStore fileStore,
-            List<***REMOVED***MaterialParser> parsers) {
+            KbOriginalFileStore fileStore,
+            List<KbMaterialParser> parsers) {
         return new DefaultMaterialService(materialMapper, versionMapper, draftMapper,
                 categoryMapper, resourceService, fileStore, parsers);
     }
@@ -191,7 +192,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @ConditionalOnMissingBean
     public MaterialRepoBrowseService materialRepoBrowseService(
             MaterialService materialService,
-            @Value("${***REMOVED***.material.repo.root:}") String repoRoot) {
+            @Value("${kb.material.repo.root:}") String repoRoot) {
         return new DefaultMaterialRepoBrowseService(materialService, repoRoot);
     }
 
@@ -200,6 +201,12 @@ public class ***REMOVED***ResourceAutoConfiguration {
     public ExtractionEngine extractionEngine() {
         return new ExtractionEngine();
     }
+
+    /**
+     * 认知域网关已移出本类，改由 {@link KbCognitionAutoConfiguration} 装配 ——
+     * {@code z-cognition-client} 是 optional 依赖，方法级 {@code @ConditionalOnClass}
+     * 挡不住宿主类加载期的类型解析，必须靠类级条件让整个配置类被跳过。
+     */
 
     @Bean
     @ConditionalOnMissingBean
@@ -210,10 +217,11 @@ public class ***REMOVED***ResourceAutoConfiguration {
                                                GraphNodeMapper graphNodeMapper,
                                                GraphEdgeMapper graphEdgeMapper,
                                                CompilationStageMapper compilationStageMapper,
-                                               MaterialService materialService) {
+                                               MaterialService materialService,
+                                               ObjectProvider<CognitionGateway> cognitionGateway) {
         return new DefaultExtractionService(extractionEngine, extractionItemMapper, conceptMapper,
                 conceptMentionMapper, graphNodeMapper, graphEdgeMapper, compilationStageMapper,
-                materialService);
+                materialService, cognitionGateway.getIfAvailable());
     }
 
     @Bean
@@ -269,7 +277,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
             CompilationService compilationService,
             MaterialService materialService,
             KnowledgeBaseResourceService resourceService,
-            ***REMOVED***PrincipalDirectory principalDirectory) {
+            KbPrincipalDirectory principalDirectory) {
         return new DefaultCompilationBatchService(compilationJobMapper, compilationStageMapper,
                 compilationService, materialService, resourceService, principalDirectory);
     }
@@ -279,14 +287,16 @@ public class ***REMOVED***ResourceAutoConfiguration {
     public KnowledgeRetrievalService knowledgeRetrievalService(
             KnowledgeBaseResourceService resourceService,
             RetrievalChunkMapper retrievalChunkMapper,
-            MaterialMapper materialMapper) {
+            MaterialMapper materialMapper,
+            GraphNodeMapper graphNodeMapper,
+            ConceptMentionMapper mentionMapper) {
         return new DefaultKnowledgeRetrievalService(resourceService, retrievalChunkMapper,
-                materialMapper);
+                materialMapper, graphNodeMapper, mentionMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public AuditLogService auditLogService(***REMOVED***AuditLogMapper auditLogMapper) {
+    public AuditLogService auditLogService(KbAuditLogMapper auditLogMapper) {
         return new DefaultAuditLogService(auditLogMapper);
     }
 
@@ -298,11 +308,11 @@ public class ***REMOVED***ResourceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ***REMOVED***TaskConfigService ***REMOVED***TaskConfigService(TaskConfigMapper taskConfigMapper,
+    public KbTaskConfigService kbTaskConfigService(TaskConfigMapper taskConfigMapper,
                                                    DefaultTaskConfigService tenantConfigService,
                                                    KnowledgeBaseResourceService resourceService,
-                                                   ***REMOVED***AuditService auditService) {
-        return new Default***REMOVED***TaskConfigService(taskConfigMapper, tenantConfigService,
+                                                   KbAuditService auditService) {
+        return new DefaultKbTaskConfigService(taskConfigMapper, tenantConfigService,
                 resourceService, auditService);
     }
 
@@ -353,9 +363,9 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public YuqueApiClient yuqueApiClient(
-            @Value("${***REMOVED***.source.yuque.base-url:}") String baseUrl,
-            @Value("${***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
-            @Value("${***REMOVED***.source.http.read-timeout-ms:10000}") int readTimeoutMs) {
+            @Value("${kb.source.yuque.base-url:}") String baseUrl,
+            @Value("${kb.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${kb.source.http.read-timeout-ms:10000}") int readTimeoutMs) {
         return new YuqueApiClient(baseUrl, connectTimeoutMs, readTimeoutMs);
     }
 
@@ -368,9 +378,9 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public GitApiClient gitApiClient(
-            @Value("${***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
-            @Value("${***REMOVED***.source.git.read-timeout-ms:20000}") int readTimeoutMs,
-            @Value("${***REMOVED***.source.git.allowed-hosts:}") String allowedHosts) {
+            @Value("${kb.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${kb.source.git.read-timeout-ms:20000}") int readTimeoutMs,
+            @Value("${kb.source.git.allowed-hosts:}") String allowedHosts) {
         return new GitApiClient(connectTimeoutMs, readTimeoutMs, allowedHosts);
     }
 
@@ -416,7 +426,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
     public KnowledgeBaseSourceService knowledgeBaseSourceService(
             KnowledgeBaseResourceService resourceService,
             KnowledgeBaseProfileMapper profileMapper,
-            ***REMOVED***AuditService auditService,
+            KbAuditService auditService,
             YuqueApiClient yuqueApiClient,
             GitApiClient gitApiClient) {
         return new DefaultKnowledgeBaseSourceService(resourceService, profileMapper, auditService,
@@ -427,7 +437,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @ConditionalOnMissingBean
     public IngestService ingestService(KnowledgeBaseSourceService sourceService,
                                        List<IngestConnector> connectors,
-                                       ***REMOVED***AuditService auditService) {
+                                       KbAuditService auditService) {
         return new DefaultIngestService(sourceService, connectors, auditService);
     }
 }

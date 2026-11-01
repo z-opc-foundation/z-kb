@@ -62,6 +62,19 @@
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-***REMOVED***-core</artifactId>
         </dependency>
+        <!-- z-cognition-client：认知域裸 SDK（零 Spring），用于 z-kb 萃取时向公司级语义真源
+             消歧。★ optional=true —— z-cognition-client 尚未发布到 Maven Central，
+             本仓是发中央的仓：若把它设成 compile 作用域，z-kb 的所有消费方在干净机器上
+             会解析不到 io.github.yuku123:z-cognition-client 而构建失败。optional 让依赖
+             只在本模块内可见，消费方拿到 z-kb-resource 时不会被迫传递这个坐标。
+             ⇒ 认知域关闭时（kb.cognition.base-url 不配）本模块的网关实现不会被装配，
+             行为与接入前逐字节一致。 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-cognition-client</artifactId>
+            <version>${z-cognition.version}</version>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-util-parser-json</artifactId>

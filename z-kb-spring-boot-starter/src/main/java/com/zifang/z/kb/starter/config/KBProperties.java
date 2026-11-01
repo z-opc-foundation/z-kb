@@ -24,6 +24,10 @@ public class ***REMOVED***Properties {
     @NestedConfigurationProperty
     private Chat chat = new Chat();
 
+    /** 认知域（公司级语义真源 z-cognition）配置 */
+    @NestedConfigurationProperty
+    private Cognition cognition = new Cognition();
+
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public Embedding getEmbedding() { return embedding; }
@@ -32,6 +36,31 @@ public class ***REMOVED***Properties {
     public void setChunker(Chunker chunker) { this.chunker = chunker; }
     public Chat getChat() { return chat; }
     public void setChat(Chat chat) { this.chat = chat; }
+    public Cognition getCognition() { return cognition; }
+    public void setCognition(Cognition cognition) { this.cognition = cognition; }
+
+    /**
+     * 认知域接入配置（TASK-20261101-006）。
+     *
+     * <p><b>baseUrl 留空 = 关闭</b>：全部走库内归一，行为与接入前逐字节一致。
+     * 开启后 z-kb 萃取出的术语会先送去公司级真源消歧，命中则挂上公司级认知键，
+     * 未命中则以 DRAFT 态回写登记（提议，不是生效）。</p>
+     */
+    public static class Cognition {
+        /** 认知服务根地址（含 context-path），例如 http://127.0.0.1:18091/cognition；留空 = 关闭 */
+        private String baseUrl;
+        /** 写操作（术语回写）用的 bearer token；留空 = 只读消歧可用 */
+        private String token;
+        /** 单次消歧请求超时（毫秒） */
+        private int timeoutMillis = 2000;
+
+        public String getBaseUrl() { return baseUrl; }
+        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+        public int getTimeoutMillis() { return timeoutMillis; }
+        public void setTimeoutMillis(int timeoutMillis) { this.timeoutMillis = timeoutMillis; }
+    }
 
     public static class Embedding {
         /** 嵌入提供者类型: tfidf / http */

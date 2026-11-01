@@ -8,6 +8,7 @@ public class ExtractionNodeDraft {
     private String nodeId;
     private String nodeType;
     private String name;
+    private String labels;
     private String materialId;
     private String evidenceJson;
 
@@ -25,6 +26,14 @@ public class ExtractionNodeDraft {
 
     public void setNodeType(String nodeType) {
         this.nodeType = nodeType;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
     }
 
     public String getName() {

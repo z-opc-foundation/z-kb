@@ -113,6 +113,7 @@ public class DefaultConceptService implements ConceptService {
         view.setLastMaterialId(concept.getLastMaterialId());
         view.setGraphNodeId("concept:" + concept.getConceptId());
         view.setEvidence(concept.getEvidenceJson());
+        view.setCognitionKey(concept.getCognitionKey());
         return view;
     }
 

@@ -144,6 +144,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- ==================== 认知域接入（TASK-20261101-006） ====================
+             z-kb-resource 里对 z-cognition-client 的依赖是 **optional**（那个坐标尚未发
+             Maven Central，optional 才能保证 z-kb 的消费方在干净机器上不被迫解析它）。
+             但 optional 不传递 ⇒ 启动器（真正的消费方）必须**显式**引这一件，
+             否则 cognition 网关的 RemoteCognitionGateway 实现类不在 classpath 上，
+             装配守卫 @ConditionalOnClass 会让认知域整体关闭（表现：配了
+             kb.cognition.base-url 也不生效）。
+             这里显式引入后：① 启动器具备认知域能力；② 其他消费方依旧零负担。 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-cognition-client</artifactId>
+            <version>${z-cognition.version}</version>
+        </dependency>
+
         <!-- 原显式 slf4j-api 1.7.36 直条目已删（2026-10-02）：版本字面值与根 pom DM 的
              ${slf4j.version}=2.0.13 冲突且无 main 引用——z-***REMOVED***-web 与 spring-boot-starter 的
              传递 slf4j-api 已经够了，直条目是噪声。 -->

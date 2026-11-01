@@ -175,6 +175,7 @@ public class DefaultGraphService implements GraphService {
             view.setName(node.getName());
             view.setMaterialId(node.getMaterialId());
             view.setEvidence(node.getEvidenceJson());
+            view.setLabels(node.getLabels());
             result.add(view);
         }
         return result;

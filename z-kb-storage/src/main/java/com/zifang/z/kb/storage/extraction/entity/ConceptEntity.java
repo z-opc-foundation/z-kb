@@ -19,6 +19,7 @@ public class ConceptEntity {
     private String ***REMOVED***Id;
     private String name;
     private String normalizedName;
+    private String cognitionKey;
     private String conceptType;
     private String status;
     private String definition;
@@ -84,6 +85,14 @@ public class ConceptEntity {
 
     public String getConceptType() {
         return conceptType;
+    }
+
+    public String getCognitionKey() {
+        return cognitionKey;
+    }
+
+    public void setCognitionKey(String cognitionKey) {
+        this.cognitionKey = cognitionKey;
     }
 
     public void setConceptType(String conceptType) {

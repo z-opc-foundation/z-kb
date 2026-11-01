@@ -107,6 +107,11 @@
              这里连属性带 3 条 DM 条目一起删：抬到 1.0.4 之后值就等于 fleet 下发的那格，父链供。 -->
 
         <!-- ===== 父链不供的格（preflight 第 2 节"必须自己留着"）===== -->
+        <!-- z-cognition-client 1.0.0：认知域裸 SDK（零 Spring）。z-kb 萃取时用它向公司级
+             语义真源消歧（TASK-20261101-006）。⚠️ 该坐标尚未发布到 Maven Central —— 本仓是
+             发中央的仓，所以 z-kb-resource 里的依赖声明是 optional，消费方不会被拖断链；
+             待 z-cognition 发中央后可去掉 optional 并把这一格交给 fleet DM 统管。 -->
+        <z-cognition.version>1.0.0</z-cognition.version>
         <h2.version>2.2.224</h2.version>
         <jsoup.version>1.18.1</jsoup.version>
         <slf4j.version>2.0.13</slf4j.version>

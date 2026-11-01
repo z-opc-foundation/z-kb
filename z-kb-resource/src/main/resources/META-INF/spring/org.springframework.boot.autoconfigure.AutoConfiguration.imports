@@ -1,2 +1,3 @@
-com.zifang.z.***REMOVED***.resource.***REMOVED***ResourceAutoConfiguration
-com.zifang.z.***REMOVED***.resource.evaluation.***REMOVED***EvaluationAutoConfiguration
+com.zifang.z.kb.resource.KbCognitionAutoConfiguration
+com.zifang.z.kb.resource.KbResourceAutoConfiguration
+com.zifang.z.kb.resource.evaluation.KbEvaluationAutoConfiguration

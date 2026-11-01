@@ -21,6 +21,7 @@ public class GraphNodeEntity {
     private String nodeType;
     private String conceptId;
     private String name;
+    private String labels;
     private String materialId;
     private String evidenceJson;
     private Integer isDeleted;
@@ -91,6 +92,14 @@ public class GraphNodeEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
     }
 
     public String getMaterialId() {

@@ -24,7 +24,7 @@ public final class ConceptNames {
     }
 
     /** 计算字符串的 SHA-256 十六进制摘要。 */
-    static String sha256Hex(String value) {
+    public static String sha256Hex(String value) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] bytes = digest.digest(value.getBytes(StandardCharsets.UTF_8));

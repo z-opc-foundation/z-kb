@@ -1,34 +1,35 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionCountView;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionInput;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionItemView;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionMaterialView;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionService;
-import com.zifang.z.***REMOVED***.api.material.MaterialCompileSource;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.core.extraction.ConceptCandidate;
-import com.zifang.z.***REMOVED***.core.extraction.ConceptNames;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionEdgeDraft;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionEngine;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionItemDraft;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionNodeDraft;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionResult;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationStageEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ConceptEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ConceptMentionEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ExtractionItemEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphEdgeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphNodeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMentionMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ExtractionItemMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphEdgeMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphNodeMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.extraction.ExtractionCountView;
+import com.zifang.z.kb.api.extraction.ExtractionInput;
+import com.zifang.z.kb.api.extraction.ExtractionItemView;
+import com.zifang.z.kb.api.extraction.ExtractionMaterialView;
+import com.zifang.z.kb.api.extraction.ExtractionService;
+import com.zifang.z.kb.api.material.MaterialCompileSource;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.core.extraction.CognitionGateway;
+import com.zifang.z.kb.core.extraction.ConceptCandidate;
+import com.zifang.z.kb.core.extraction.ConceptNames;
+import com.zifang.z.kb.core.extraction.ExtractionEdgeDraft;
+import com.zifang.z.kb.core.extraction.ExtractionEngine;
+import com.zifang.z.kb.core.extraction.ExtractionItemDraft;
+import com.zifang.z.kb.core.extraction.ExtractionNodeDraft;
+import com.zifang.z.kb.core.extraction.ExtractionResult;
+import com.zifang.z.kb.storage.compilation.entity.CompilationStageEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.storage.extraction.entity.ConceptEntity;
+import com.zifang.z.kb.storage.extraction.entity.ConceptMentionEntity;
+import com.zifang.z.kb.storage.extraction.entity.ExtractionItemEntity;
+import com.zifang.z.kb.storage.extraction.entity.GraphEdgeEntity;
+import com.zifang.z.kb.storage.extraction.entity.GraphNodeEntity;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMentionMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ExtractionItemMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphEdgeMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -68,6 +69,9 @@ public class DefaultExtractionService implements ExtractionService {
 
     private final MaterialService materialService;
 
+    /** 认知域网关；为 null 表示未开启（全部走库内归一，行为与接入前一致）。 */
+    private final CognitionGateway cognitionGateway;
+
     public DefaultExtractionService(ExtractionEngine engine,
                                     ExtractionItemMapper itemMapper,
                                     ConceptMapper conceptMapper,
@@ -76,6 +80,19 @@ public class DefaultExtractionService implements ExtractionService {
                                     GraphEdgeMapper edgeMapper,
                                     CompilationStageMapper stageMapper,
                                     MaterialService materialService) {
+        this(engine, itemMapper, conceptMapper, mentionMapper, nodeMapper, edgeMapper,
+                stageMapper, materialService, null);
+    }
+
+    public DefaultExtractionService(ExtractionEngine engine,
+                                    ExtractionItemMapper itemMapper,
+                                    ConceptMapper conceptMapper,
+                                    ConceptMentionMapper mentionMapper,
+                                    GraphNodeMapper nodeMapper,
+                                    GraphEdgeMapper edgeMapper,
+                                    CompilationStageMapper stageMapper,
+                                    MaterialService materialService,
+                                    CognitionGateway cognitionGateway) {
         this.engine = engine;
         this.itemMapper = itemMapper;
         this.conceptMapper = conceptMapper;
@@ -84,12 +101,13 @@ public class DefaultExtractionService implements ExtractionService {
         this.edgeMapper = edgeMapper;
         this.stageMapper = stageMapper;
         this.materialService = materialService;
+        this.cognitionGateway = cognitionGateway;
     }
 
     @Override
-    public ExtractionMaterialView queryByMaterial(String materialId, ***REMOVED***Caller caller) {
+    public ExtractionMaterialView queryByMaterial(String materialId, KbCaller caller) {
         if (materialId == null || materialId.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("MATERIAL_PARAM_INVALID", "物料参数不合法");
+            throw new KBException("MATERIAL_PARAM_INVALID", "物料参数不合法");
         }
         MaterialCompileSource source = materialService.loadCompileSource(materialId.trim(), null,
                 caller);
@@ -134,29 +152,32 @@ public class DefaultExtractionService implements ExtractionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ExtractionCountView extract(ExtractionInput input, ***REMOVED***Caller caller) {
-        if (input == null || !hasText(input.get***REMOVED***Id()) || !hasText(input.getMaterialId())
+    public ExtractionCountView extract(ExtractionInput input, KbCaller caller) {
+        if (input == null || !hasText(input.getKbId()) || !hasText(input.getMaterialId())
                 || !hasText(input.getMaterialVersionId())) {
-            throw new ***REMOVED***Exception("MATERIAL_PARAM_INVALID", "物料参数不合法");
+            throw new KBException("MATERIAL_PARAM_INVALID", "物料参数不合法");
         }
         String tenant = caller.getTenantCode();
-        String ***REMOVED***Id = input.get***REMOVED***Id();
+        String kbId = input.getKbId();
         String materialId = input.getMaterialId();
         String versionId = input.getMaterialVersionId();
         Instant now = Instant.now();
 
         ExtractionResult result = engine.extract(input);
-        Set<String> touched = removePrevious(tenant, ***REMOVED***Id, materialId, versionId);
-        Map<String, String> conceptIdByName = applyConcepts(input, result.getConcepts(), caller,
-                touched, now);
-        applyConceptModel(result, conceptIdByName);
+        Set<String> touched = removePrevious(tenant, kbId, materialId, versionId);
+        Map<String, ConceptCandidate> merged = mergeByNormalizedName(result.getConcepts());
+        Map<String, String> cognitionKeys = resolveCognitionKeys(merged);
+        Map<String, String> conceptIdByName = applyConcepts(input, merged, result.getConcepts(),
+                cognitionKeys, caller, touched, now);
+        applyConceptModel(result, conceptIdByName, cognitionKeys);
+        proposeNewTerms(input, merged, cognitionKeys);
 
         for (ExtractionItemDraft draft : result.getItems()) {
             ExtractionItemEntity entity = new ExtractionItemEntity();
             entity.setId(UUID.randomUUID().toString());
             entity.setItemId(draft.getItemId());
             entity.setTenantCode(tenant);
-            entity.set***REMOVED***Id(***REMOVED***Id);
+            entity.setKbId(kbId);
             entity.setMaterialId(materialId);
             entity.setMaterialVersionId(versionId);
             entity.setItemType(draft.getItemType());
@@ -172,19 +193,20 @@ public class DefaultExtractionService implements ExtractionService {
             itemMapper.insert(entity);
         }
 
-        String spaceKey = ExtractionEngine.graphSpaceKey(***REMOVED***Id);
+        String spaceKey = ExtractionEngine.graphSpaceKey(kbId);
         for (ExtractionNodeDraft draft : result.getNodes()) {
             GraphNodeEntity entity = new GraphNodeEntity();
             entity.setId(UUID.randomUUID().toString());
             entity.setNodeId(draft.getNodeId());
             entity.setTenantCode(tenant);
-            entity.set***REMOVED***Id(***REMOVED***Id);
+            entity.setKbId(kbId);
             entity.setGraphSpaceKey(spaceKey);
             entity.setNodeType(draft.getNodeType());
             if (ExtractionEngine.NODE_CONCEPT.equals(draft.getNodeType())) {
                 entity.setConceptId(conceptIdByName.get(draft.getName().trim()));
             }
             entity.setName(draft.getName());
+            entity.setLabels(draft.getLabels());
             entity.setMaterialId(materialId);
             entity.setEvidenceJson(draft.getEvidenceJson());
             entity.setIsDeleted(0);
@@ -199,7 +221,7 @@ public class DefaultExtractionService implements ExtractionService {
             entity.setId(UUID.randomUUID().toString());
             entity.setEdgeId(draft.getEdgeId());
             entity.setTenantCode(tenant);
-            entity.set***REMOVED***Id(***REMOVED***Id);
+            entity.setKbId(kbId);
             entity.setGraphSpaceKey(spaceKey);
             entity.setEdgeType(draft.getEdgeType());
             entity.setSourceNodeId(draft.getSourceNodeId());
@@ -232,7 +254,7 @@ public class DefaultExtractionService implements ExtractionService {
     }
 
     /** 清除同一物料版本旧的萃取条目、提及与图谱，返回受影响的概念标识供重算计数。 */
-    private Set<String> removePrevious(String tenant, String ***REMOVED***Id, String materialId,
+    private Set<String> removePrevious(String tenant, String kbId, String materialId,
                                        String versionId) {
         Set<String> touched = new LinkedHashSet<>();
         QueryWrapper<ConceptMentionEntity> mentionQuery = new QueryWrapper<ConceptMentionEntity>()
@@ -259,24 +281,31 @@ public class DefaultExtractionService implements ExtractionService {
 
     /** 按归一化名称新增或复用概念并写入提及，返回概念名称到概念标识的映射。 */
     private Map<String, String> applyConcepts(ExtractionInput input,
+                                              Map<String, ConceptCandidate> merged,
                                               List<ConceptCandidate> candidates,
-                                              ***REMOVED***Caller caller, Set<String> touched,
+                                              Map<String, String> cognitionKeys,
+                                              KbCaller caller, Set<String> touched,
                                               Instant now) {
         Map<String, String> conceptIdByName = new LinkedHashMap<>();
         String tenant = caller.getTenantCode();
-        String ***REMOVED***Id = input.get***REMOVED***Id();
-        for (Map.Entry<String, ConceptCandidate> entry
-                : mergeByNormalizedName(candidates).entrySet()) {
+        String kbId = input.getKbId();
+
+        for (Map.Entry<String, ConceptCandidate> entry : merged.entrySet()) {
             ConceptCandidate candidate = entry.getValue();
-            ConceptEntity concept = findByNormalizedName(tenant, ***REMOVED***Id, entry.getKey());
+            String cognitionKey = cognitionKeys.get(entry.getKey());
+            if (hasText(cognitionKey)) {
+                candidate.setCognitionKey(cognitionKey);
+            }
+            ConceptEntity concept = findByNormalizedName(tenant, kbId, entry.getKey());
             if (concept == null) {
                 concept = new ConceptEntity();
                 concept.setId(UUID.randomUUID().toString());
-                concept.setConceptId(ConceptNames.conceptIdOf(tenant, ***REMOVED***Id, entry.getKey()));
+                concept.setConceptId(ConceptNames.conceptIdOf(tenant, kbId, entry.getKey()));
                 concept.setTenantCode(tenant);
-                concept.set***REMOVED***Id(***REMOVED***Id);
+                concept.setKbId(kbId);
                 concept.setName(truncate(candidate.getName().trim(), MAX_NAME_CHARS));
                 concept.setNormalizedName(entry.getKey());
+                concept.setCognitionKey(cognitionKey);
                 concept.setConceptType("TERM");
                 concept.setStatus("EMERGING");
                 concept.setDefinition(truncate(candidate.getDefinition(), MAX_DEFINITION_CHARS));
@@ -300,6 +329,10 @@ public class DefaultExtractionService implements ExtractionService {
                 if (!hasText(concept.getFirstMaterialId())) {
                     concept.setFirstMaterialId(input.getMaterialId());
                 }
+                // 认知键只补不覆盖：已被别的物料消歧过的键不能被后来的弱命中改写
+                if (!hasText(concept.getCognitionKey()) && hasText(cognitionKey)) {
+                    concept.setCognitionKey(cognitionKey);
+                }
                 concept.setLastMaterialId(input.getMaterialId());
                 concept.setUpdateBy(caller.getActorId());
                 concept.setUpdateTime(now);
@@ -318,7 +351,7 @@ public class DefaultExtractionService implements ExtractionService {
             mention.setId(UUID.randomUUID().toString());
             mention.setMentionId(UUID.randomUUID().toString());
             mention.setTenantCode(tenant);
-            mention.set***REMOVED***Id(***REMOVED***Id);
+            mention.setKbId(kbId);
             mention.setConceptId(concept.getConceptId());
             mention.setMaterialId(input.getMaterialId());
             mention.setMaterialVersionId(input.getMaterialVersionId());
@@ -336,19 +369,77 @@ public class DefaultExtractionService implements ExtractionService {
             mention.setUpdateTime(now);
             mentionMapper.insert(mention);
         }
-        refreshCounters(tenant, ***REMOVED***Id, new ArrayList<>(touched), now);
+        refreshCounters(tenant, kbId, new ArrayList<>(touched), now);
         return conceptIdByName;
     }
 
+    /**
+     * 认知域消歧：把候选概念名交给公司级真源，返回「归一化名 → 公司级认知键」。
+     *
+     * <p>未开启（resolver 为 null）或降级（认知域不可达）时返回空表 ⇒ 全部走库内归一，
+     * 行为与接入前完全一致。</p>
+     */
+    private Map<String, String> resolveCognitionKeys(Map<String, ConceptCandidate> merged) {
+        Map<String, String> keys = new LinkedHashMap<>();
+        if (cognitionGateway == null || merged.isEmpty()) {
+            return keys;
+        }
+        List<String> names = new ArrayList<>();
+        for (Map.Entry<String, ConceptCandidate> entry : merged.entrySet()) {
+            names.add(entry.getValue().getName());
+        }
+        Map<String, String> hit = cognitionGateway.resolveAll(names);
+        for (Map.Entry<String, String> entry : hit.entrySet()) {
+            String normalized = ConceptNames.normalize(entry.getKey());
+            if (normalized.isEmpty()) {
+                continue;
+            }
+            keys.put(normalized, entry.getValue());
+        }
+        return keys;
+    }
+
+    /**
+     * 新词回写：把「萃取到但公司级真源没有」的词以 DRAFT 态提议进 z-cognition。
+     *
+     * <p>只提议**没挂上认知键**的词；已消歧的词本身就是公司级真源里的东西，
+     * 再提议一遍是噪音。</p>
+     */
+    private void proposeNewTerms(ExtractionInput input, Map<String, ConceptCandidate> merged,
+                                 Map<String, String> cognitionKeys) {
+        // 降级时「未命中」是假的（没问成 != 真没有）=> 降级期间一律不回写，
+        // 否则认知域一挂就会把全库概念当新词灌进公司级资产。
+        if (cognitionGateway == null || cognitionGateway.isDegraded() || merged.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, ConceptCandidate> entry : merged.entrySet()) {
+            ConceptCandidate candidate = entry.getValue();
+            if (candidate == null || !hasText(candidate.getName())) {
+                continue;
+            }
+            if (cognitionKeys.containsKey(entry.getKey())) {
+                continue;
+            }
+            cognitionGateway.proposeTerm(candidate.getName(), candidate.getDefinition(),
+                    input.getKbId(), input.getMaterialVersionId(), chunkIdOf(input, candidate));
+        }
+    }
+
+    /** 取候选所在检索块的标识；取不到时退回序号（ordinal）作为定位串。 */
+    private static String chunkIdOf(ExtractionInput input, ConceptCandidate candidate) {
+        Integer ordinal = candidate.getChunkOrdinal();
+        return ordinal == null ? "0" : String.valueOf(ordinal);
+    }
+
     /** 依据现有提及重算概念的提及次数与来源物料数，物料数达 2 个及以上标记为已确认。 */
-    private void refreshCounters(String tenant, String ***REMOVED***Id, List<String> conceptIds,
+    private void refreshCounters(String tenant, String kbId, List<String> conceptIds,
                                  Instant now) {
         if (conceptIds.isEmpty()) {
             return;
         }
         QueryWrapper<ConceptMentionEntity> query = new QueryWrapper<ConceptMentionEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .in("concept_id", conceptIds);
         Map<String, Integer> mentionCounts = new HashMap<>();
@@ -362,7 +453,7 @@ public class DefaultExtractionService implements ExtractionService {
                     .add(mention.getMaterialId());
         }
         for (String conceptId : conceptIds) {
-            ConceptEntity concept = findByConceptId(tenant, ***REMOVED***Id, conceptId);
+            ConceptEntity concept = findByConceptId(tenant, kbId, conceptId);
             if (concept == null) {
                 continue;
             }
@@ -377,8 +468,12 @@ public class DefaultExtractionService implements ExtractionService {
 
     /**
      * 把概念节点的每物料投影改为库级概念标识，并重算边的稳定标识。
+     *
+     * <p>TASK-20261101-006：同时给节点打上 {@code Cog:{key}} 标签 —— 该标签表示
+     * 「这个概念已挂上公司级认知真源」，图谱前端据此展示真源徽标。</p>
      */
-    private void applyConceptModel(ExtractionResult result, Map<String, String> conceptIdByName) {
+    private void applyConceptModel(ExtractionResult result, Map<String, String> conceptIdByName,
+                                   Map<String, String> cognitionKeyByName) {
         if (conceptIdByName.isEmpty()) {
             return;
         }
@@ -387,8 +482,8 @@ public class DefaultExtractionService implements ExtractionService {
             if (!ExtractionEngine.NODE_CONCEPT.equals(node.getNodeType())) {
                 continue;
             }
-            String conceptId = conceptIdByName.get(node.getName() == null
-                    ? null : node.getName().trim());
+            String name = node.getName() == null ? null : node.getName().trim();
+            String conceptId = conceptIdByName.get(name);
             if (!hasText(conceptId)) {
                 continue;
             }
@@ -396,6 +491,10 @@ public class DefaultExtractionService implements ExtractionService {
             String newNodeId = "concept:" + conceptId;
             node.setNodeId(newNodeId);
             nodeIdMapping.put(oldNodeId, newNodeId);
+            String cognitionKey = cognitionKeyByName.get(ConceptNames.normalize(name));
+            if (hasText(cognitionKey)) {
+                node.setLabels("Cog:" + cognitionKey);
+            }
         }
 
         Map<String, ExtractionEdgeDraft> edges = new LinkedHashMap<>();
@@ -502,7 +601,7 @@ public class DefaultExtractionService implements ExtractionService {
                 continue;
             }
             ConceptEntity concept = cache.computeIfAbsent(mention.getConceptId(),
-                    id -> findByConceptId(tenant, mention.get***REMOVED***Id(), id));
+                    id -> findByConceptId(tenant, mention.getKbId(), id));
             if (concept == null) {
                 continue;
             }
@@ -524,20 +623,20 @@ public class DefaultExtractionService implements ExtractionService {
         view.setConceptStatus(link.status);
     }
 
-    private ConceptEntity findByNormalizedName(String tenant, String ***REMOVED***Id, String normalizedName) {
+    private ConceptEntity findByNormalizedName(String tenant, String kbId, String normalizedName) {
         QueryWrapper<ConceptEntity> query = new QueryWrapper<ConceptEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("normalized_name", normalizedName)
                 .eq("is_deleted", 0)
                 .last("LIMIT 1");
         return conceptMapper.selectOne(query);
     }
 
-    private ConceptEntity findByConceptId(String tenant, String ***REMOVED***Id, String conceptId) {
+    private ConceptEntity findByConceptId(String tenant, String kbId, String conceptId) {
         QueryWrapper<ConceptEntity> query = new QueryWrapper<ConceptEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("concept_id", conceptId)
                 .eq("is_deleted", 0)
                 .last("LIMIT 1");

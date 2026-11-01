@@ -10,6 +10,7 @@ public class ConceptCandidate {
     private String extractionItemId;
     private Integer chunkOrdinal;
     private Integer occurrenceCount;
+    private String cognitionKey;
     private String evidenceJson;
 
     public String getName() {
@@ -50,6 +51,14 @@ public class ConceptCandidate {
 
     public void setOccurrenceCount(Integer occurrenceCount) {
         this.occurrenceCount = occurrenceCount;
+    }
+
+    public String getCognitionKey() {
+        return cognitionKey;
+    }
+
+    public void setCognitionKey(String cognitionKey) {
+        this.cognitionKey = cognitionKey;
     }
 
     public String getEvidenceJson() {
