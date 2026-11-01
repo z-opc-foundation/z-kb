@@ -400,6 +400,8 @@ MIT，见根 [`LICENSE`](LICENSE)；根 POM `<licenses>` 同声明。
   - [`00-overview.md`](_doc/001_arch/00-overview.md) — 项目总览：模块架构、核心功能、对外集成、技术特点、目录结构
 - [`_doc/003_script/`](_doc/003_script/) — 运维脚本:
   - [`deploy_maven_center.sh`](_doc/003_script/deploy_maven_center.sh) — Maven Central 一键发布 / 校验 / GPG 初始化
+- [`_doc/005_testing/`](_doc/005_testing/) — 测试与评估：
+  - [`001_全链路实测评估-2026-11-01.md`](_doc/005_testing/001_全链路实测评估-2026-11-01.md) — 全链路实测评估（2026-11-01）。
 - [`_doc/006_release/`](_doc/006_release/) — 发布与中央仓文档（Central 缺件欠账与清账结论）
   - [`01-verify-central-note.md`](_doc/006_release/01-verify-central-note.md) — z-***REMOVED***-protocol 空壳模块与 Central 缺件欠账（已还清）
   - [`02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md) — **1.1.0 破坏性变更公告**：默认 persistent + 默认 z-graph + fail-fast、消费方升级说明与取证清单
