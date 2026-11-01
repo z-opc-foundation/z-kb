@@ -4,7 +4,7 @@ import { toast } from '@/utils/toast';
 
 export type SourceCategory = 'DOC_PLATFORM' | 'CODE_REPO' | 'FILE_SHARE' | 'DATABASE';
 
-export type SourceProvider = 'YUQUE' | 'GIT' | 'OSS' | 'SMB' | 'JDBC';
+export type SourceProvider = 'YUQUE' | 'GIT' | 'OSS' | 'SMB' | 'JDBC' | 'LOCAL';
 
 export interface KnowledgeBaseSourceRecord {
   sourceId: string;

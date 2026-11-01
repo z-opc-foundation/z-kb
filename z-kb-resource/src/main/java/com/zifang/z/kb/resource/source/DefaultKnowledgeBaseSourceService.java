@@ -26,6 +26,7 @@ import com.zifang.z.***REMOVED***.core.source.git.GitApiClient;
 import com.zifang.z.***REMOVED***.core.source.git.GitApiException;
 import com.zifang.z.***REMOVED***.core.source.git.GitAuth;
 import com.zifang.z.***REMOVED***.core.source.git.GitRepoUrl;
+import com.zifang.z.***REMOVED***.api.source.LocalDirScanner;
 import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiClient;
 import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiException;
 import com.zifang.z.***REMOVED***.core.source.yuque.YuqueBook;
@@ -36,6 +37,10 @@ import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileEn
 import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -440,6 +445,11 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
             }
             return CREDENTIAL_NONE;
         }
+        // 本地接入源是本机路径，没有任何远端服务可认证 —— 强制免凭据，
+        // 免得让人填一个根本不存在的密钥。
+        if (provider == KnowledgeBaseSourceProvider.LOCAL) {
+            return CREDENTIAL_NONE;
+        }
         if (CREDENTIAL_NONE.equals(type) || CREDENTIAL_TOKEN.equals(type)
                 || CREDENTIAL_BASIC.equals(type)) {
             return type;
@@ -509,7 +519,37 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
         if (provider == KnowledgeBaseSourceProvider.GIT) {
             return probeGit(entry, start);
         }
+        if (provider == KnowledgeBaseSourceProvider.LOCAL) {
+            return probeLocal(entry, start);
+        }
         return result(false, "该供应商暂不支持连通性测试", start);
+    }
+
+    /**
+     * 本地目录探测：目录在、能读，就算连通。
+     *
+     * <p>顺带报出扫到多少篇 Markdown —— 人配完接入源第一件事就是想确认「它到底
+     * 看到了什么」，只回一句「连接成功」等于让人自己去猜。</p>
+     */
+    private KnowledgeBaseSourceTestView probeLocal(SourcePolicyJson.Entry entry, long start) {
+        String dir = scopeText(entry, "path");
+        if (!hasText(dir)) {
+            return result(false, "缺少目录路径", start);
+        }
+        Path root = Paths.get(dir).toAbsolutePath().normalize();
+        if (!Files.isDirectory(root)) {
+            return result(false, "目录不存在或不是目录：" + dir, start);
+        }
+        if (!Files.isReadable(root)) {
+            return result(false, "目录不可读：" + dir, start);
+        }
+        try {
+            List<LocalDirScanner.LocalDoc> docs = LocalDirScanner.scan(root, true,
+                    LocalDirScanner.DEFAULT_LIMIT);
+            return result(true, "连接成功（扫到 " + docs.size() + " 篇 Markdown）", start);
+        } catch (IOException e) {
+            return result(false, "扫描目录失败：" + e.getMessage(), start);
+        }
     }
 
     /** 语雀探测发一次 GET /user：能拿到用户即连通，凭据问题按异常消息如实返回。 */

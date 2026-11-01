@@ -52,6 +52,7 @@ import com.zifang.z.***REMOVED***.resource.source.DefaultKnowledgeBaseSourceServ
 import com.zifang.z.***REMOVED***.resource.source.DocIngestRunner;
 import com.zifang.z.***REMOVED***.resource.source.GitIngestConnector;
 import com.zifang.z.***REMOVED***.resource.source.IngestConnector;
+import com.zifang.z.***REMOVED***.resource.source.LocalIngestConnector;
 import com.zifang.z.***REMOVED***.resource.source.SourceTreeNodes;
 import com.zifang.z.***REMOVED***.resource.source.YuqueIngestConnector;
 import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
@@ -401,6 +402,13 @@ public class ***REMOVED***ResourceAutoConfiguration {
                                                  MaterialService materialService,
                                                  SourceTreeNodes sourceTreeNodes) {
         return new GitIngestConnector(gitApiClient, materialService, sourceTreeNodes);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public LocalIngestConnector localIngestConnector(DocIngestRunner docIngestRunner,
+                                                     SourceTreeNodes sourceTreeNodes) {
+        return new LocalIngestConnector(docIngestRunner, sourceTreeNodes);
     }
 
     @Bean

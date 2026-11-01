@@ -116,13 +116,34 @@ const PROVIDER_META: Record<SourceProvider, ProviderMeta> = {
     credential: 'BASIC',
     secretHint: '数据库访问密码',
   },
+  LOCAL: {
+    label: '本地目录',
+    category: 'FILE_SHARE',
+    icon: 'folder',
+    scopeFields: [
+      {
+        key: 'path',
+        label: '目录路径',
+        placeholder: '/Users/me/Documents/notes',
+        required: true,
+      },
+      {
+        key: 'recursive',
+        label: '递归子目录',
+        placeholder: 'true（默认递归）',
+      },
+    ],
+    credential: 'NONE',
+    secretHint: '本地目录不需要凭据',
+    defaultScope: { recursive: 'true' },
+  },
 };
 
-const PROVIDER_ORDER: SourceProvider[] = ['YUQUE', 'GIT', 'OSS', 'SMB', 'JDBC'];
+const PROVIDER_ORDER: SourceProvider[] = ['YUQUE', 'GIT', 'LOCAL', 'OSS', 'SMB', 'JDBC'];
 
-const PROBE_SUPPORTED: SourceProvider[] = ['YUQUE', 'GIT'];
+const PROBE_SUPPORTED: SourceProvider[] = ['YUQUE', 'GIT', 'LOCAL'];
 
-const SYNC_SUPPORTED: SourceProvider[] = ['YUQUE', 'GIT'];
+const SYNC_SUPPORTED: SourceProvider[] = ['YUQUE', 'GIT', 'LOCAL'];
 
 const CREDENTIAL_OPTIONS: { value: string; label: string }[] = [
   { value: 'NONE', label: '无凭据' },
@@ -1105,20 +1126,33 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
                     />
                   </div>
                 ) : null}
-                <div className="field">
-                  <label>{editorMeta.secretHint}</label>
-                  <input
-                    className="input"
-                    type="password"
-                    autoComplete="new-password"
-                    value={editing.draft.secret}
-                    placeholder={
-                      editing.draft.hasSecret ? '已配置，留空继续沿用' : '填写后保存即生效'
-                    }
-                    onChange={(event) => patchEditor({ secret: event.target.value })}
-                  />
-                  <span className="help">只写不读：保存后仅回显「已配置」，不回传明文</span>
-                </div>
+                {/*
+                  免凭据的供应商（本地目录）不该出现密钥输入框。
+                  后端对 LOCAL 强制 credentialType=NONE，前端也得一致 ——
+                  否则界面要人填一个根本不存在的密钥，看着像坏了。
+                */}
+                {editing.draft.credentialType === 'NONE' ? (
+                  <div className="field">
+                    <label>{editorMeta.secretHint}</label>
+                    <span className="help">本地目录是本机路径，不需要任何凭据。</span>
+                  </div>
+                ) : (
+                  <div className="field">
+                    <label>{editorMeta.secretHint}</label>
+                    <input
+                      className="input"
+                      type="password"
+                      autoComplete="new-password"
+                      value={editing.draft.secret}
+                      placeholder={
+                        editing.draft.hasSecret ? '已配置，留空继续沿用' : '填写后保存即生效'
+                      }
+                      onChange={(event) => patchEditor({ secret: event.target.value })}
+                    />
+                    <span className="help">只写不读：保存后仅回显「已配置」，不回传明文</span>
+                  </div>
+                )}
+                {editing.draft.credentialType === 'NONE' ? null : (
                 <div className="field">
                   <label>凭据引用（可选）</label>
                   <input
@@ -1129,6 +1163,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
                   />
                   <span className="help">不填明文时按引用名读取</span>
                 </div>
+                )}
               </div>
 
               <div className="row mt-16">

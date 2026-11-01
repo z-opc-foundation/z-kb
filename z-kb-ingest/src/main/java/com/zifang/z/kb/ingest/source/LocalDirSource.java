@@ -1,5 +1,6 @@
 package com.zifang.z.***REMOVED***.ingest.source;
 
+import com.zifang.z.***REMOVED***.api.source.LocalDirScanner;
 import com.zifang.z.***REMOVED***.ingest.api.DataSource;
 import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
 import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
@@ -7,10 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 本地目录数据源 — 扫描目录下所有 .md 文件并产出 IngestRequest。
@@ -18,10 +21,16 @@ import java.util.stream.Collectors;
  * <p>支持：
  * <ul>
  *   <li>递归扫描子目录</li>
- *   <li>跳过 _开头的隐藏目录（Obsidian 习惯）</li>
+ *   <li>跳过工具产物目录（排除清单与桌面端 note 同源）</li>
  *   <li>按 frontmatter 的 workspace 字段路由工作台</li>
  *   <li>幂等 ID 来自文件路径 hash</li>
  * </ul>
+ *
+ * <p><b>扫描口径不在本类。</b>本仓有两条路径都会扫本地目录：本管道层与接入源层
+ * （{@code LocalIngestConnector}）。两者常指向同一批文件夹（桌面端 note 的工作区），
+ * 各写一份就会漂移 —— 一边排除了 {@code .worktrees}、另一边没排除，同一篇笔记就在
+ * 两处各存一份。所以扫描与排除清单都实现在 {@link LocalDirScanner}，这里只做
+ * 「管道协议 ↔ 扫描结果」的翻译。
  */
 public class LocalDirSource implements DataSource {
 
@@ -51,89 +60,33 @@ public class LocalDirSource implements DataSource {
         }
         String workspace = (String) config.getOrDefault("workspace", "default");
         boolean recursive = Boolean.TRUE.equals(config.getOrDefault("recursive", true));
-        int limit = (int) config.getOrDefault("limit", 100);
+        int limit = (int) config.getOrDefault("limit", LocalDirScanner.DEFAULT_LIMIT);
         log.info("LocalDirSource [{}] 扫描目录 {} recursive={}, limit={}", sourceId, dirPath, recursive, limit);
 
         Path root = Paths.get(dirPath);
-        if (!Files.isDirectory(root)) {
-            throw new IOException("目录不存在或不是目录: " + dirPath);
-        }
+        List<LocalDirScanner.LocalDoc> docs = LocalDirScanner.scan(root, recursive, limit);
+        log.info("LocalDirSource [{}] 扫描 {} 个 Markdown 文件（limit={}）", sourceId, docs.size(), limit);
 
         List<IngestRequest> result = new ArrayList<>();
-        java.util.stream.Stream<Path> stream = recursive ? null : null;
-        try {
-            if (recursive) {
-                java.util.stream.Stream<Path> walkStream = Files.walk(root);
-                stream = walkStream;
-                walkStream.filter(Files::isRegularFile)
-                        .filter(p -> p.toString().endsWith(".md") || p.toString().endsWith(".markdown"))
-                        .filter(p -> {
-                            String name = p.getFileName().toString();
-                            return !name.startsWith(".");
-                        })
-                        .filter(p -> !isInHiddenDir(root, p))
-                        .limit(limit)
-                        .forEach(p -> result.add(toRequest(p, root, workspace)));
-            } else {
-                java.util.stream.Stream<Path> listStream = Files.list(root);
-                stream = listStream;
-                listStream.filter(Files::isRegularFile)
-                        .filter(p -> p.toString().endsWith(".md"))
-                        .limit(limit)
-                        .forEach(p -> result.add(toRequest(p, root, workspace)));
-            }
-        } finally {
-            if (stream != null) stream.close();
-        }
-
-        log.info("LocalDirSource [{}] 扫描 {} 个 Markdown 文件（limit={}）", sourceId, result.size(), limit);
-        return result;
-    }
-
-    private boolean isInHiddenDir(Path root, Path file) {
-        Path rel = root.relativize(file);
-        for (Path part : rel) {
-            if (part.toString().startsWith(".") || part.toString().startsWith("_")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private IngestRequest toRequest(Path file, Path root, String defaultWorkspace) {
-        try {
-            String content = new String(Files.readAllBytes(file), java.nio.charset.StandardCharsets.UTF_8);
-            String path = root.relativize(file).toString();
-            String title = inferTitle(content, file.getFileName().toString());
-
+        for (LocalDirScanner.LocalDoc doc : docs) {
             Map<String, Object> meta = new LinkedHashMap<>();
-            meta.put("absolutePath", file.toAbsolutePath().toString());
-            meta.put("size", Files.size(file));
+            meta.put("absolutePath", doc.getAbsolutePath());
+            meta.put("size", doc.getSize());
+            meta.put("version", doc.getVersion());
 
-            return IngestRequest.builder()
-                    .id("local:" + path)
+            result.add(IngestRequest.builder()
+                    .id("local:" + doc.getRelativePath())
                     .sourceType(DataSourceType.LOCAL_DIR)
                     .sourceId(sourceId)
-                    .content(content)
+                    .content(doc.getContent())
                     .contentType("text/markdown")
-                    .workspace(defaultWorkspace)
-                    .title(title)
-                    .path(path)
-                    .sourceUrl("file://" + file.toAbsolutePath())
+                    .workspace(workspace)
+                    .title(doc.getTitle())
+                    .path(doc.getRelativePath())
+                    .sourceUrl("file://" + doc.getAbsolutePath())
                     .metadata(meta)
-                    .build();
-        } catch (IOException e) {
-            throw new RuntimeException("读取文件失败: " + file, e);
+                    .build());
         }
-    }
-
-    private String inferTitle(String content, String filename) {
-        for (String line : content.split("\n")) {
-            String trimmed = line.trim();
-            if (trimmed.startsWith("# ")) {
-                return trimmed.substring(2).trim();
-            }
-        }
-        return filename.replaceAll("\\.(md|markdown)$", "");
+        return result;
     }
 }

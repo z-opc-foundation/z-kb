@@ -229,4 +229,36 @@ describe('SourceConfigPanel', () => {
     expect(screen.queryByRole('button', { name: /保存变更/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /编辑/ })).not.toBeInTheDocument();
   });
+
+  it('本地目录接入源免凭据：不显示密钥输入框，保存时也不带 secret', async () => {
+    saveMock.mockResolvedValue([]);
+    renderPanel();
+
+    fireEvent.click(await screen.findByRole('button', { name: /新增接入源/ }));
+    fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'LOCAL' } });
+    fireEvent.change(screen.getByPlaceholderText('如 产品文档库'), {
+      target: { value: '我的笔记目录' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('/Users/me/Documents/notes'), {
+      target: { value: '/Users/me/notes' },
+    });
+
+    // 免凭据的供应商不该出现密钥框 —— 界面要人填一个根本不存在的密钥，看着像坏了
+    expect(screen.queryByPlaceholderText('填写后保存即生效')).not.toBeInTheDocument();
+    expect(screen.getByText('本地目录不需要凭据')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /加入列表/ }));
+    fireEvent.click(screen.getByRole('button', { name: /保存变更/ }));
+
+    await waitFor(() => expect(saveMock).toHaveBeenCalledTimes(1));
+    const [, sources] = saveMock.mock.calls[0];
+    expect(sources[1]).toMatchObject({
+      provider: 'LOCAL',
+      category: 'FILE_SHARE',
+      name: '我的笔记目录',
+      credentialType: 'NONE',
+      secret: undefined,
+      scope: { path: '/Users/me/notes' },
+    });
+  });
 });

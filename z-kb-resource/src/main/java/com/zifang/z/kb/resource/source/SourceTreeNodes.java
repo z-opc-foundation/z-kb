@@ -67,4 +67,23 @@ public class SourceTreeNodes {
                 "SOURCE_REPO:" + source.getSourceId() + ":" + repoScope, ext, caller);
         return info.getCategoryId();
     }
+
+    /**
+     * 确保来源下的本地目录节点存在：一个目录一个节点，返回节点分类标识。
+     *
+     * <p>目录路径同时写进 ext 与 bindKey：路径变了就是另一个目录，绑定标识跟着变，
+     * 旧目录下的物料不会被误认成新目录的。
+     */
+    public String ensureLocalDirNode(String ***REMOVED***Id, String sourceCategoryId,
+            KnowledgeBaseSourceAccess source, String dirPath, ***REMOVED***Caller caller) {
+        Map<String, Object> ext = new LinkedHashMap<>();
+        ext.put("sourceId", source.getSourceId());
+        ext.put("provider", source.getProvider());
+        ext.put("namespace", dirPath);
+        ext.put("dir", dirPath);
+        MaterialCategoryNode info = categoryService.ensureBoundNode(***REMOVED***Id, sourceCategoryId,
+                MaterialCategoryService.NODE_SOURCE_LOCAL_DIR, dirPath,
+                "SOURCE_LOCAL_DIR:" + source.getSourceId() + ":" + dirPath, ext, caller);
+        return info.getCategoryId();
+    }
 }

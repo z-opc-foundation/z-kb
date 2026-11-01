@@ -118,7 +118,8 @@ z-***REMOVED***/
 │                                #   任务与观测契约（OverviewService / AuditLogService / TaskConfigService / ***REMOVED***TaskConfigService /
 │                                #   TaskMonitorService）/ Wiki 域契约（WikiService 等）与 Wiki 计数 SPI（WikiPageCounter）/
 │                                #   评测域契约（EvaluationService 与数据集 / 运行 / 指标 / 坏例 / 可信证据视图）/
-│                                #   接入源域契约（KnowledgeBaseSourceService / IngestService 与来源视图 / 同步回执）等 217 个类）
+│                                #   接入源域契约（KnowledgeBaseSourceService / IngestService 与来源视图 / 同步回执）/
+│                                #   本地目录扫描口径（LocalDirScanner 与排除清单 LocalDirScanPolicy）等 219 个类）
 ├── z-***REMOVED***-core/                   # 解析 / 分块 / 嵌入（TF-IDF、HTTP）/ BM25 + 混合检索 / 实体关系抽取
 ├── z-***REMOVED***-vector/                 # z-vector 适配：ZVectorChunkVectorStore + ChunkVectorStoreAutoConfiguration
 │                                #   （1.1.0 起默认 persistent：PersistentVectorStore，装不上即启动失败）

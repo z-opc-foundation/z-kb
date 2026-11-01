@@ -23,6 +23,15 @@ public interface MaterialCategoryService {
     /** 来源下的代码项目节点（一个仓库一个），ext 绑定 sourceId / repo / branch。 */
     String NODE_SOURCE_REPO = "SOURCE_REPO";
 
+    /**
+     * 来源下的本地目录节点（一个目录一个），ext 绑定 sourceId / dir。
+     *
+     * <p>与 {@link #NODE_SOURCE_REPO} 同构：接入源本身可能只有一个，但本地目录
+     * 接入源天然对应一个物理路径，单独一层节点方便在资料树上直接看到「这个库
+     * 吸的是哪个文件夹」。
+     */
+    String NODE_SOURCE_LOCAL_DIR = "SOURCE_LOCAL_DIR";
+
     /** 返回知识库的分类树（根节点列表，子节点挂在 children 上）。 */
     List<MaterialCategoryNode> tree(String ***REMOVED***Id, ***REMOVED***Caller caller);
 
