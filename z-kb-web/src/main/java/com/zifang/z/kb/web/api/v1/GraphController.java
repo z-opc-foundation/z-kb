@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 本地规则图谱 REST API（路径与语义对齐参考实现）。
  */
 @Tag(name = "本地规则图谱")
-@RestController
+@RestController("***REMOVED***GraphV1Controller")
 @RequestMapping("/api/***REMOVED***/v1/graph")
 public class GraphController {
 

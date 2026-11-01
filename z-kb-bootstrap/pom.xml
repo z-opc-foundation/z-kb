@@ -8,10 +8,10 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
             <artifactId>z-***REMOVED***</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <artifactId>z-***REMOVED***-bootstrap</artifactId>
     <packaging>jar</packaging>
@@ -55,6 +55,36 @@
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-***REMOVED***-web</artifactId>
+        </dependency>
+
+        <!-- ==================== 日志面（2026-11-01 补） ====================
+             为什么必须显式补：父链 z-boot-parent:1.2.0 的 DM 把
+             `spring-boot-starter-logging` 的子依赖**整条排除**（`*:*`，
+             家族统一走 log4j2），而本仓只声明了 `log4j-api`（没有 provider）⇒
+             容器里 **SLF4J 无任何 provider** ⇒ 启动日志被吞成
+             `SLF4J(W): No SLF4J providers were found.`，
+             连 debug 模式的 CONDITIONS EVALUATION REPORT 都打不出来（实测）。
+             宿主 z-opc 的做法是直接钉 `log4j-slf4j2-impl`（唯一 provider）；
+             本仓同口径。
+             ⚠ 三件（api / core / slf4j2-impl）必须**同版** —— 根 pom 的
+             `log4j2.version` 是 2.22.1，但本机离线仓里 slf4j2-impl 没有 2.22.1
+             （只有 2.20.0 / 2.23.1 / 2.25.4 / 2.25.5 / 2.26.1）⇒ 这里显式钉
+             **2.25.4**（父链地板版本，本地齐），并在下面把 `log4j-api` 一并抬到同版，
+             免得 api 2.22.1 与 core 2.25.4 跨小版本混装。 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.25.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.25.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.25.4</version>
         </dependency>
 
         <!-- Spring Boot Starters（默认 Logback；slf4j-simple transitive 防御性排除留着——

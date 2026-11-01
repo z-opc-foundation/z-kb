@@ -17,6 +17,18 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  # ==================== 数据源（2026-11-01 补） ====================
+  # standalone 原来**没有**任何 datasource 配置 ⇒ 容器里没有 DataSource ⇒
+  # 资源域整块（生命周期 / 成员 ACL / 配置版本 / 物料 / 编译 / 评测 / Wiki /
+  # 接入源 / 审计）自动装配条件（@ConditionalOnBean(DataSource.class)）恒不成立 ⇒
+  # 资源域 v1 的 18 个 Controller 全部不注册。
+  # 这里给一份 H2 文件库（MySQL 兼容模式，与仓内集成测试同口径）：
+  # 持久化到 ~/.z***REMOVED***/h2，重启不丢；想换成真 MySQL 只需覆盖 spring.datasource.* 四项。
+  datasource:
+    url: jdbc:h2:file:${user.home}/.z***REMOVED***/h2/z***REMOVED***;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
 
 # ==================== z-***REMOVED*** 配置 ====================
 z***REMOVED***:
