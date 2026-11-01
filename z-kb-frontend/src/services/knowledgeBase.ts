@@ -58,7 +58,7 @@ export interface KnowledgeBaseUpdatePayload {
   description?: string;
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/z***REMOVED***/v1/knowledgeBase';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

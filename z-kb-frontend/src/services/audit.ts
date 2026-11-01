@@ -4,7 +4,7 @@ import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
 /** 操作审计（sys_audit_log）查询，与后端 /v1/auditLog 对齐。 */
-const BASE = '/***REMOVED***/v1/auditLog';
+const BASE = '/z***REMOVED***/v1/auditLog';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

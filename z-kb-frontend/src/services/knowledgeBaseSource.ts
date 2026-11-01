@@ -75,7 +75,7 @@ export interface KnowledgeBaseSourceDocList {
   message?: string;
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBaseSource';
+const BASE = '/z***REMOVED***/v1/knowledgeBaseSource';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

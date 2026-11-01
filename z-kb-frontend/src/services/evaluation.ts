@@ -3,7 +3,7 @@ import { getTenantCode } from '@/utils/tenant';
 
 /**
  * T-11 知识评测接口。
- * 契约：BASE /***REMOVED***/v1/evaluation，字段名不可改。
+ * 契约：BASE /z***REMOVED***/v1/evaluation，字段名不可改。
  */
 
 export interface EvalPageQuery {
@@ -251,7 +251,7 @@ export interface EvalCreateRunResult {
   reused?: boolean | null;
 }
 
-const BASE = '/***REMOVED***/v1/evaluation';
+const BASE = '/z***REMOVED***/v1/evaluation';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

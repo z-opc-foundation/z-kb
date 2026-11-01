@@ -16,7 +16,7 @@ describe('知识库活跃度接口', () => {
     const heatmap = { '***REMOVED***-1': [{ date: '2026-01-01', count: 2 }] };
     vi.mocked(request).mockResolvedValue(heatmap as never);
     await expect(fetch***REMOVED***ActivityHeatmap(['***REMOVED***-1', '***REMOVED***-2'])).resolves.toBe(heatmap);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/knowledgeBase/activity', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/knowledgeBase/activity', {
       method: 'post',
       data: { ***REMOVED***Ids: ['***REMOVED***-1', '***REMOVED***-2'], days: 168 },
       headers,
@@ -27,7 +27,7 @@ describe('知识库活跃度接口', () => {
   it('支持自定义统计天数', async () => {
     vi.mocked(request).mockResolvedValue({} as never);
     await fetch***REMOVED***ActivityHeatmap(['***REMOVED***-1'], 30);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/knowledgeBase/activity', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/knowledgeBase/activity', {
       method: 'post',
       data: { ***REMOVED***Ids: ['***REMOVED***-1'], days: 30 },
       headers,

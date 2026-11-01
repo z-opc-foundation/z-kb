@@ -38,7 +38,7 @@ import KnowledgeBaseListPage from './index';
 function record(overrides: Partial<KnowledgeBaseRecord>): KnowledgeBaseRecord {
   return {
     ***REMOVED***Id: '***REMOVED***-1',
-    tenantCode: '***REMOVED***',
+    tenantCode: 'z***REMOVED***_demo',
     name: '护理知识库',
     code: '***REMOVED***_nursing',
     type: 'FILE',
@@ -145,7 +145,7 @@ describe('知识库列表页', () => {
 
     fireEvent.click(container.querySelectorAll('.fav-btn')[0]);
 
-    expect(localStorage.getItem('***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
+    expect(localStorage.getItem('z***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
     fireEvent.click(screen.getByRole('button', { name: /我收藏的/ }));
 
     const cards = container.querySelectorAll('.***REMOVED***-card');

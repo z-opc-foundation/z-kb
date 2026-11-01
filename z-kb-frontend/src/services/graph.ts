@@ -29,7 +29,7 @@ export interface KnowledgeGraphRecord {
   edges: GraphEdgeRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/graph';
+const BASE = '/z***REMOVED***/v1/graph';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

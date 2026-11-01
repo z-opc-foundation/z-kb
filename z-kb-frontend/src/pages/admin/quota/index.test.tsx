@@ -8,7 +8,7 @@ describe('全局管理 · 配额管理', () => {
   it('展示存储、问答、编译与成员概览', () => {
     render(<QuotaAdminPage />);
 
-    expect(screen.getByText('未来医院')).toBeInTheDocument();
+    expect(screen.getByText('演示租户')).toBeInTheDocument();
     expect(screen.getByText('存储空间')).toBeInTheDocument();
     expect(screen.getByText(/^69\.9/)).toBeInTheDocument();
     expect(screen.getByText('本月问答')).toBeInTheDocument();

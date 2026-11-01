@@ -27,7 +27,7 @@ export interface TenantSavePayload {
   description?: string;
 }
 
-const BASE = '/***REMOVED***/v1/identity/tenants';
+const BASE = '/z***REMOVED***/v1/identity/tenants';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

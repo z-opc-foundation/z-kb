@@ -22,8 +22,8 @@ import WikiWorkspace from './wiki-workspace';
 import { AgentAskButton } from '@/pages/ai/agent-ask';
 import { KnowledgeAssistant } from './components/knowledge-assistant';
 
-const FAV_STORAGE_KEY = '***REMOVED***.favorite-***REMOVED***s';
-const ASSISTANT_STORAGE_KEY = '***REMOVED***.workspace-assistant';
+const FAV_STORAGE_KEY = 'z***REMOVED***.favorite-***REMOVED***s';
+const ASSISTANT_STORAGE_KEY = 'z***REMOVED***.workspace-assistant';
 
 const TYPE_META: Record<KnowledgeBaseType, { label: string; icon: string }> = {
   FILE: { label: '文件库', icon: 'file-text' },

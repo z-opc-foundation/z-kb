@@ -19,14 +19,14 @@ describe('概念接口', () => {
     vi.mocked(request).mockResolvedValue(concepts as never);
 
     await expect(listConceptsBy***REMOVED***('***REMOVED***-1')).resolves.toBe(concepts);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/concept/listBy***REMOVED***', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/concept/listBy***REMOVED***', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1', keyword: undefined },
       headers,
     });
 
     await listConceptsBy***REMOVED***('***REMOVED***-1', '术语');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/concept/listBy***REMOVED***', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/concept/listBy***REMOVED***', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1', keyword: '术语' },
       headers,
@@ -37,7 +37,7 @@ describe('概念接口', () => {
     const detail = { concept: { conceptId: 'c1' }, mentions: [] };
     vi.mocked(request).mockResolvedValue(detail as never);
     await expect(getConcept('***REMOVED***-1', 'c1')).resolves.toBe(detail);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/concept/queryById', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/concept/queryById', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1', conceptId: 'c1' },
       headers,

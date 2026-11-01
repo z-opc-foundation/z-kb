@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { EvalRunRecord } from '@/services/evaluation';
 import { mergeRunRecords, readKnownRuns, writeKnownRuns } from './run-cache';
 
-const KEY = '***REMOVED***.eval-runs.***REMOVED***.***REMOVED***-1';
+const KEY = 'z***REMOVED***.eval-runs.z***REMOVED***_demo.***REMOVED***-1';
 
 function run(
   runId: string,
@@ -48,13 +48,13 @@ describe('run-cache 会话缓存', () => {
 
   it('按租户与知识库隔离', () => {
     writeKnownRuns('***REMOVED***-1', [run('run-1')]);
-    localStorage.setItem('***REMOVED***.tenant-code', 'other_hospital');
+    localStorage.setItem('z***REMOVED***.tenant-code', 'other_hospital');
     expect(readKnownRuns('***REMOVED***-1')).toEqual([]);
 
     writeKnownRuns('***REMOVED***-1', [run('run-2')]);
     expect(readKnownRuns('***REMOVED***-1')).toEqual([{ runId: 'run-2' }]);
 
-    localStorage.setItem('***REMOVED***.tenant-code', '***REMOVED***');
+    localStorage.setItem('z***REMOVED***.tenant-code', 'z***REMOVED***_demo');
     expect(readKnownRuns('***REMOVED***-1')).toEqual([{ runId: 'run-1' }]);
   });
 });

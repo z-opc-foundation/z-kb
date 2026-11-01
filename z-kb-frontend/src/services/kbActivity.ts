@@ -2,7 +2,7 @@ import { request } from '@/services/http';
 import { getTenantCode } from '@/utils/tenant';
 
 /** 知识库活跃度（审计日志 type=***REMOVED*** 按日聚合），供列表卡片热力图异步渲染。 */
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/z***REMOVED***/v1/knowledgeBase';
 
 export interface ***REMOVED***ActivityDay {
   /** yyyy-MM-dd */

@@ -22,7 +22,7 @@ vi.mock('@/services/ai', () => ({
       emit({
         type: 'tool_call',
         data: {
-          name: '***REMOVED***_knowledge_search',
+          name: 'z***REMOVED***_knowledge_search',
           // galaxy 下发的 arguments 也是 JSON 字符串
           arguments: JSON.stringify({
             query: '门诊退费',
@@ -33,7 +33,7 @@ vi.mock('@/services/ai', () => ({
       emit({
         type: 'tool_result',
         data: {
-          name: '***REMOVED***_knowledge_search',
+          name: 'z***REMOVED***_knowledge_search',
           error: false,
           // galaxy 把工具返回按 JSON 字符串透传
           result: JSON.stringify({

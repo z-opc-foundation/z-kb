@@ -20,7 +20,7 @@ vi.mock('@/services/http', () => ({ request: vi.fn() }));
 vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/identity';
+const BASE = '/z***REMOVED***/v1/identity';
 
 beforeEach(() => {
   vi.clearAllMocks();

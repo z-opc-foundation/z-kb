@@ -1,6 +1,6 @@
-# 能力对标矩阵：***REMOVED***（参考） → z-***REMOVED***（我方）
+# 能力对标矩阵：参考实现 → z-***REMOVED***（我方）
 
-> 日期：2026-10-31｜参考物：`~/Downloads/***REMOVED***_20261031_141924`（后端 `***REMOVED***` + 前端 `fe_***REMOVED***`）
+> 日期：2026-10-31｜参考物：`~/Downloads/参考实现_20261031_141924`（后端 + 前端，已脱敏归档）
 > 口径：**只认真实落地代码**（参考仓 README 自述「模块存在不等于能力可用」），逐项核到 Controller / Service / 实体类。
 
 ## 1. 规模对照（一手实测）
@@ -50,7 +50,7 @@
 
 ## 4. 前端：可照搬 vs 必须重写
 
-参考前端 `fe_***REMOVED***`：React 19 + TS strict + Vite 6 + HashRouter + antd 5（几乎不用，只用 Spin/Tree/ConfigProvider/App，视觉是自研 CSS 类）+ `@antv/g6` 5.1 + d3-force + ag-grid + pdfjs/docx-preview/pptx-preview/xlsx + axios + less；约 5.8 万行源码 + 161 个测试文件。
+参考前端：React 19 + TS strict + Vite 6 + HashRouter + antd 5（几乎不用，只用 Spin/Tree/ConfigProvider/App，视觉是自研 CSS 类）+ `@antv/g6` 5.1 + d3-force + ag-grid + pdfjs/docx-preview/pptx-preview/xlsx + axios + less；约 5.8 万行源码 + 161 个测试文件。
 
 ### 4.1 可直接照搬（低耦合）
 
@@ -68,7 +68,7 @@
 
 ### 4.2 必须重写（与后端契约/平台强耦合）
 
-* 全部 `src/services/*.ts`（51 个文件）：路径 `/***REMOVED***/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
+* 全部 `src/services/*.ts`（51 个文件）：路径 `/z***REMOVED***/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
 * `services/http.ts`：baseURL `/kapi`、错误码 `101012001`、登录失效跳转 —— 换我方 `/api/***REMOVED***` + 我方鉴权。
 * 鉴权/权限体系：`AuthProvider`、`canAccess`、apex 登录跳转 —— 我方走主壳 SSO 体系。
 * SSE 问答：`streamAiChat` 事件协议（meta/token/tool_result/done/error）—— 我方 `ChatController` 是同步返回，需先定是否改流式。

@@ -10,7 +10,7 @@ import { getTenantCode } from '@/utils/tenant';
  * stats → 节点 / 边按类型实时计数。z-***REMOVED*** 图谱引擎是本地规则图谱，不支持 nGQL，
  * executeNGQLQuery 显式返回失败，页面实例查询标签页如实展示原因。
  */
-const ***REMOVED***BASE = '/***REMOVED***/v1';
+const ***REMOVED***BASE = '/z***REMOVED***/v1';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

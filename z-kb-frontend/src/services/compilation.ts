@@ -120,7 +120,7 @@ export interface RetrievalChunkRecord {
   indexedAt?: string;
 }
 
-const BASE = '/***REMOVED***/v1/compilation';
+const BASE = '/z***REMOVED***/v1/compilation';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

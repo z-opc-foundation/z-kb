@@ -412,7 +412,7 @@ export function proposalTypeLabel(type: number): string {
   return { 1: '结构', 2: '数据' }[type] || `类型${type}`;
 }
 
-const BASE = '/***REMOVED***/v1/ontology';
+const BASE = '/z***REMOVED***/v1/ontology';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

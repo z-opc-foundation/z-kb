@@ -180,7 +180,7 @@ export interface OntologyInstancePage {
 /** 本体不存在（未开通）业务错误码 */
 export const ONTOLOGY_NOT_OPEN_CODE = 51001;
 
-const BASE = '/***REMOVED***/v1/ontology';
+const BASE = '/z***REMOVED***/v1/ontology';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -222,7 +222,7 @@ export async function getOntologyDetail(): Promise<
         name: string;
         description?: string;
       }>
-    >('/***REMOVED***/v1/knowledgeBase/page', {
+    >('/z***REMOVED***/v1/knowledgeBase/page', {
       method: 'post',
       data: { current: 1, size: 1 },
       headers: tenantHeaders(),

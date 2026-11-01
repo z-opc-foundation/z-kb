@@ -30,7 +30,7 @@ describe('审计日志接口', () => {
       endTime: 200,
     };
     await expect(pageAuditLogs(query)).resolves.toBe(page);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/auditLog/page', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/auditLog/page', {
       method: 'post',
       data: query,
       headers,
@@ -41,7 +41,7 @@ describe('审计日志接口', () => {
     const record = { id: '1', tenantCode: 'tenant-a', action: 'A', targetMethod: 'm', success: 1, createTime: '2026-01-01' };
     vi.mocked(request).mockResolvedValue(record as never);
     await expect(getAuditLog('1')).resolves.toBe(record);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/auditLog/get', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/auditLog/get', {
       method: 'get',
       params: { id: '1' },
       headers,

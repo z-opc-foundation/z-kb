@@ -19,14 +19,14 @@ describe('知识图谱接口', () => {
     vi.mocked(request).mockResolvedValue(graph as never);
 
     await expect(getGraphByMaterial('m1')).resolves.toBe(graph);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/graph/queryByMaterial', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/graph/queryByMaterial', {
       method: 'get',
       params: { materialId: 'm1' },
       headers,
     });
 
     await getGraphBy***REMOVED***('***REMOVED***-1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/graph/queryBy***REMOVED***', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/graph/queryBy***REMOVED***', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1' },
       headers,

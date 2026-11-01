@@ -126,7 +126,7 @@ export interface AiChatEvent {
   messageId?: string;
 }
 
-const BASE = '/***REMOVED***/v1/ai';
+const BASE = '/z***REMOVED***/v1/ai';
 
 const tenantHeaders = () => ({
   'X-Tenant-Code': getTenantCode(),

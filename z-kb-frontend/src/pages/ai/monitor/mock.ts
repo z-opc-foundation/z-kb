@@ -88,7 +88,7 @@ const TOOL_PROFILES: ToolProfile[] = [
     spread: 1.6,
   },
   {
-    code: '***REMOVED***_knowledge_search',
+    code: 'z***REMOVED***_knowledge_search',
     name: '知识库检索（远端）',
     weight: 26,
     failRate: 0.048,
@@ -178,7 +178,7 @@ function pickAgent(toolCode: string, rng: () => number): AgentProfile {
   if (toolCode === 'current_time') {
     return qa;
   }
-  if (toolCode === '***REMOVED***_knowledge_search') {
+  if (toolCode === 'z***REMOVED***_knowledge_search') {
     return pickWeighted([qa, operator], rng);
   }
   return pickWeighted(AGENT_PROFILES, rng);
@@ -200,7 +200,7 @@ function buildCall(
   if (profile.code === 'current_time') {
     args = { timezone: 'Asia/Shanghai' };
     resultSummary = `${formatDayTime(at)} +08:00`;
-  } else if (profile.code === '***REMOVED***_knowledge_search') {
+  } else if (profile.code === 'z***REMOVED***_knowledge_search') {
     args = { ***REMOVED***Id, query };
     resultSummary = `命中 ${1 + Math.floor(rng() * 5)} 条 · tookMs ${Math.round(durationMs * 0.92)}`;
   } else {
@@ -216,7 +216,7 @@ function buildCall(
       : status === 'failed'
         ? profile.code === 'current_time'
           ? '时间服务不可用'
-          : profile.code === '***REMOVED***_knowledge_search'
+          : profile.code === 'z***REMOVED***_knowledge_search'
             ? '远端检索服务异常'
             : '无权限访问知识库'
         : undefined;
@@ -226,7 +226,7 @@ function buildCall(
       : status === 'failed'
         ? profile.code === 'current_time'
           ? '时间服务不可用（HTTP 503）'
-          : profile.code === '***REMOVED***_knowledge_search'
+          : profile.code === 'z***REMOVED***_knowledge_search'
             ? '调用 galaxy 远端工具失败：HTTP 502 Bad Gateway'
             : `检索失败：当前租户无权访问知识库 ${***REMOVED***Id}（***REMOVED***_acl 拒绝）`
         : undefined;

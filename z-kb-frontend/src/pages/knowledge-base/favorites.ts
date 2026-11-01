@@ -1,4 +1,4 @@
-const FAV_STORAGE_KEY = '***REMOVED***.favorite-***REMOVED***s';
+const FAV_STORAGE_KEY = 'z***REMOVED***.favorite-***REMOVED***s';
 
 export function readFavorites(): string[] {
   try {

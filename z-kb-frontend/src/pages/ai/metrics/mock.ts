@@ -185,7 +185,7 @@ const TOOL_PROFILES: ToolProfile[] = [
   {
     key: 'remote_search',
     name: '知识库检索（远端）',
-    code: '***REMOVED***_knowledge_search',
+    code: 'z***REMOVED***_knowledge_search',
     weight: 0.22,
     p50: 860,
     timeoutRate: 0.021,

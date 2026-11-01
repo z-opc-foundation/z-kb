@@ -38,7 +38,7 @@ export interface RetrievalResultRecord {
   hits: RetrievalHitRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/z***REMOVED***/v1/knowledgeBase';
 
 export async function retrieveKnowledge(params: {
   ***REMOVED***Id: string;

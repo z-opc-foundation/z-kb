@@ -77,7 +77,7 @@ export interface WikiLineageRecord {
   note?: string;
 }
 
-const BASE = '/***REMOVED***/v1/wiki';
+const BASE = '/z***REMOVED***/v1/wiki';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

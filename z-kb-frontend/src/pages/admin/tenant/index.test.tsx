@@ -26,8 +26,8 @@ vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 const baseRecords: TenantRecord[] = [
   {
     id: '1',
-    code: '***REMOVED***',
-    name: '未来医院',
+    code: 'z***REMOVED***_demo',
+    name: '演示租户',
     status: 'ACTIVE',
     description: '总院',
     createTime: '2026-10-20T10:00:00',
@@ -82,8 +82,8 @@ describe('全局管理 · 租户管理', () => {
 
     await screen.findByText('新区医院');
     expect(screen.getByText('共 3 个 · 启用 2')).toBeInTheDocument();
-    expect(within(rowOf('未来医院')).getByText('当前')).toBeInTheDocument();
-    expect(within(rowOf('未来医院')).getByRole('switch')).toBeDisabled();
+    expect(within(rowOf('演示租户')).getByText('当前')).toBeInTheDocument();
+    expect(within(rowOf('演示租户')).getByRole('switch')).toBeDisabled();
     expect(within(rowOf('新区医院')).getByText('停用')).toBeInTheDocument();
   });
 
@@ -119,10 +119,10 @@ describe('全局管理 · 租户管理', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /新建租户/ }));
     const dialog = screen.getByRole('dialog', { name: '新建租户' });
-    fireEvent.change(within(dialog).getByPlaceholderText('如 ***REMOVED***'), {
+    fireEvent.change(within(dialog).getByPlaceholderText('如 z***REMOVED***_demo'), {
       target: { value: 'xc_hospital' },
     });
-    fireEvent.change(within(dialog).getByPlaceholderText('如 未来医院'), {
+    fireEvent.change(within(dialog).getByPlaceholderText('如 演示租户'), {
       target: { value: '西城医院' },
     });
     fireEvent.change(within(dialog).getByPlaceholderText('租户用途或对接说明，最长 500 字'), {
@@ -171,7 +171,7 @@ describe('全局管理 · 租户管理', () => {
     renderPage();
     await screen.findByText('新区医院');
 
-    expect(within(rowOf('未来医院')).getByRole('button', { name: '删除' })).toBeDisabled();
+    expect(within(rowOf('演示租户')).getByRole('button', { name: '删除' })).toBeDisabled();
 
     fireEvent.click(within(rowOf('东城医院')).getByRole('switch'));
     await waitFor(() => expect(changeTenantStatus).toHaveBeenCalledWith('3', 'DISABLED'));

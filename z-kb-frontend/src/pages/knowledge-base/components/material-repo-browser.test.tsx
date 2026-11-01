@@ -23,7 +23,7 @@ const MATERIAL: MaterialRecord = {
   materialId: 'mat-repo',
   ***REMOVED***Id: '***REMOVED***-1',
   materialType: 'CODE',
-  title: 'c2f/***REMOVED***',
+  title: 'z-opc/z-***REMOVED***',
   sourceType: 'CODE_GIT',
   materialStatus: 'ACTIVE',
   fingerprint: 'fp-1',
@@ -35,10 +35,10 @@ const MATERIAL: MaterialRecord = {
 
 const OVERVIEW: RepoOverview = {
   materialId: 'mat-repo',
-  title: 'c2f/***REMOVED***',
+  title: 'z-opc/z-***REMOVED***',
   provider: 'GIT',
-  repo: 'c2f/***REMOVED***',
-  repoUrl: 'https://git.example.com/c2f/***REMOVED***',
+  repo: 'z-opc/z-***REMOVED***',
+  repoUrl: 'https://git.example.com/z-opc/z-***REMOVED***',
   branch: 'main',
   commit: 'abcdef1234567890',
   fileCount: 12,
@@ -76,7 +76,7 @@ describe('MaterialRepoBrowser', () => {
 
     render(<MaterialRepoBrowser material={MATERIAL} />);
 
-    expect(await screen.findByText('c2f/***REMOVED***')).toBeTruthy();
+    expect(await screen.findByText('z-opc/z-***REMOVED***')).toBeTruthy();
     expect(screen.getByText(/分支 main/)).toBeTruthy();
     expect(screen.getByText('README.md')).toBeTruthy();
 

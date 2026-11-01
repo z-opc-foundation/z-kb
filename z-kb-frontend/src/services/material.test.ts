@@ -30,7 +30,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/material';
+const BASE = '/z***REMOVED***/v1/material';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -195,7 +195,7 @@ describe('资料下载接口', () => {
     expect(params.has('versionId')).toBe(false);
 
     expect(materialDownloadUrl('m1', 'v1')).toBe(
-      'https://api.test/kapi/***REMOVED***/v1/material/download?materialId=m1&versionId=v1',
+      'https://api.test/kapi/z***REMOVED***/v1/material/download?materialId=m1&versionId=v1',
     );
   });
 

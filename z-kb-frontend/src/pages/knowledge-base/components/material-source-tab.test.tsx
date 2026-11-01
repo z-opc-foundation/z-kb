@@ -88,7 +88,7 @@ describe('MaterialSourceTab', () => {
   it('代码仓库资料的原文走项目浏览，而不是单文件原件', () => {
     render(
       <MaterialSourceTab
-        material={{ ...MATERIAL, sourceType: 'CODE_GIT', title: 'c2f/***REMOVED***' }}
+        material={{ ...MATERIAL, sourceType: 'CODE_GIT', title: 'z-opc/z-***REMOVED***' }}
         draft={DRAFT}
         canEdit={false}
         saving={false}

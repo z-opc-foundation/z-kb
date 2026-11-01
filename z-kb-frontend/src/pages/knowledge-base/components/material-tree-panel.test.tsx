@@ -263,10 +263,10 @@ describe('资料树面板', () => {
           {
             categoryId: 'repo-1',
             parentId: 'src-git',
-            name: 'c2f/***REMOVED***',
+            name: 'z-opc/z-***REMOVED***',
             sortNo: 1,
             nodeKind: 'SOURCE_REPO',
-            ext: { provider: 'GIT', sourceId: 's-git', repo: 'c2f/***REMOVED***' },
+            ext: { provider: 'GIT', sourceId: 's-git', repo: 'z-opc/z-***REMOVED***' },
           },
         ],
       },
@@ -282,7 +282,7 @@ describe('资料树面板', () => {
 
     fireEvent.click(screen.getByTitle('同步「代码库」：拉取仓库最新的项目结构与文档'));
     expect(ctrl.syncSource).toHaveBeenCalledWith('s-git');
-    expect(screen.queryByTitle('同步「c2f/***REMOVED***」：拉取仓库最新的项目结构与文档')).toBeNull();
+    expect(screen.queryByTitle('同步「z-opc/z-***REMOVED***」：拉取仓库最新的项目结构与文档')).toBeNull();
     expect(screen.queryByTitle('重命名分类')).toBeNull();
     // 只读的接入源/仓库节点右键仍可发起批任务，但没有改名与删除
     fireEvent.contextMenu(screen.getByText('代码库'));
@@ -291,7 +291,7 @@ describe('资料树面板', () => {
     expect(screen.queryByRole('menuitem', { name: '删除分类' })).toBeNull();
     fireEvent.keyDown(document, { key: 'Escape' });
 
-    fireEvent.contextMenu(screen.getByText('c2f/***REMOVED***'));
+    fireEvent.contextMenu(screen.getByText('z-opc/z-***REMOVED***'));
     fireEvent.click(screen.getByRole('menuitem', { name: '发起批任务' }));
     expect(ctrl.openNodeBatch).toHaveBeenCalledWith(sourceTree[0].children?.[0]);
   });

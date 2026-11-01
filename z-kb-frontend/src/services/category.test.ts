@@ -24,7 +24,7 @@ describe('资料分类接口', () => {
     const tree = [{ categoryId: 'c1', name: '根', sortNo: 1 }];
     vi.mocked(request).mockResolvedValue(tree as never);
     await expect(getCategoryTree('***REMOVED***-1')).resolves.toBe(tree);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/materialCategory/tree', {
+    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/materialCategory/tree', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1' },
       headers,
@@ -35,35 +35,35 @@ describe('资料分类接口', () => {
     vi.mocked(request).mockResolvedValue(true as never);
 
     await createCategory('***REMOVED***-1', '新目录', 'parent-1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/materialCategory/add', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/materialCategory/add', {
       method: 'post',
       data: { ***REMOVED***Id: '***REMOVED***-1', name: '新目录', parentId: 'parent-1' },
       headers,
     });
 
     await renameCategory('c1', '改名');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/materialCategory/update', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/materialCategory/update', {
       method: 'post',
       data: { categoryId: 'c1', name: '改名' },
       headers,
     });
 
     await moveCategory('c1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/materialCategory/move', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/materialCategory/move', {
       method: 'post',
       data: { categoryId: 'c1', parentId: null },
       headers,
     });
 
     await moveCategory('c1', 'p2');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/materialCategory/move', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/materialCategory/move', {
       method: 'post',
       data: { categoryId: 'c1', parentId: 'p2' },
       headers,
     });
 
     await removeCategory('c1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/materialCategory/remove', {
+    expect(request).toHaveBeenLastCalledWith('/z***REMOVED***/v1/materialCategory/remove', {
       method: 'post',
       data: { categoryId: 'c1' },
       headers,

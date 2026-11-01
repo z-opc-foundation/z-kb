@@ -220,8 +220,8 @@ npm install
 npm run dev      # scripts/dev.mjs，Vite 监听 5173（strictPort，host 0.0.0.0）
 ```
 
-要求 Node ≥20（`.nvmrc` 钉 20）。代理契约：`/kapi/***REMOVED***/v1/*` → `http://127.0.0.1:8889/api/***REMOVED***/v1/*`
-（`***REMOVED***API_TARGET` 可覆盖后端地址），并由代理注入 `X-Tenant-Code`（默认 `***REMOVED***`，`***REMOVED***TENANT_CODE` 覆盖）
+要求 Node ≥20（`.nvmrc` 钉 20）。代理契约：`/kapi/z***REMOVED***/v1/*` → `http://127.0.0.1:8889/api/***REMOVED***/v1/*`
+（`***REMOVED***API_TARGET` 可覆盖后端地址），并由代理注入 `X-Tenant-Code`（默认 `z***REMOVED***_demo`，`***REMOVED***TENANT_CODE` 覆盖）
 与 `X-Actor-Id`（默认 `1`，`***REMOVED***ACTOR_ID` 覆盖），与后端 `***REMOVED***CallerResolver` 直接对齐——本地无 SSO 会话也能联调。
 其余前缀（`/kapi`、`/galaxy-meta-service`、`/galaxy-meta-admin`、`/apex-spc`）统一指向同一本地后端，
 z-***REMOVED*** 未提供的端点如实 404、页面按失败态展示，不做静默兜底。
@@ -243,7 +243,7 @@ Node ≥22 自带 `localStorage` 全局（未传 `--localstorage-file` 时取值
 
 ## 🔌 API 一览（z-***REMOVED***-web，25 个 Controller 实测）
 
-### 资源域 v1（`/api/***REMOVED***/v1/*`，对齐 ***REMOVED*** 契约）
+### 资源域 v1（`/api/***REMOVED***/v1/*`，统一资源域契约）
 
 统一信封 `***REMOVED***Result`：`{success, code, message, data}`；成功 `code=0`、`message="ok"`，
 失败时 HTTP 状态与 `code` 同为 400/403/404/409/500，`data` 恒存在（空对象）以免 `NON_NULL` 序列化吞键。

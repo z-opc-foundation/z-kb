@@ -33,7 +33,7 @@ export interface ConceptDetailRecord {
   mentions: ConceptMentionRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/concept';
+const BASE = '/z***REMOVED***/v1/concept';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

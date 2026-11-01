@@ -40,7 +40,7 @@ export interface MaterialExtractionRecord {
   faqs: ExtractionItemRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/extraction';
+const BASE = '/z***REMOVED***/v1/extraction';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
