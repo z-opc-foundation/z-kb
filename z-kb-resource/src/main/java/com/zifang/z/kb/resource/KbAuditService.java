@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 知识库审计与活跃度：成功写操作落 z***REMOVED***_audit_log，热力图按库 + 自然日聚合。
+ * 知识库审计与活跃度：成功写操作落 ***REMOVED***_audit_log，热力图按库 + 自然日聚合。
  */
 public class ***REMOVED***AuditService {
 

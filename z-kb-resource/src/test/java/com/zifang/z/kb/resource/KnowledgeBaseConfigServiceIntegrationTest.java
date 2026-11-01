@@ -39,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 配置版本集成测试：草稿 → 校验 → 发布，钉住 diff / impact / validation 与服务端保护。
  */
 @SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-config;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-config;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/config-z***REMOVED***.json",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/config-***REMOVED***.json",
         "spring.main.banner-mode=off"
 })
 class KnowledgeBaseConfigServiceIntegrationTest {

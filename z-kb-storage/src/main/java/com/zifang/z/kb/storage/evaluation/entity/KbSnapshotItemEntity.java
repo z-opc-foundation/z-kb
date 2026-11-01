@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 内容快照成员清单（z***REMOVED***_***REMOVED***_snapshot_item）。
+ * 内容快照成员清单（***REMOVED***_***REMOVED***_snapshot_item）。
  */
-@TableName("z***REMOVED***_***REMOVED***_snapshot_item")
+@TableName("***REMOVED***_***REMOVED***_snapshot_item")
 public class ***REMOVED***SnapshotItemEntity {
 
     @TableId(type = IdType.INPUT)

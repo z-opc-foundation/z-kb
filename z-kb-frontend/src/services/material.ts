@@ -83,7 +83,7 @@ export interface MaterialPageQuery {
   materialStatus?: string;
 }
 
-const BASE = '/z***REMOVED***/v1/material';
+const BASE = '/***REMOVED***/v1/material';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

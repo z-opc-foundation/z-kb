@@ -9,12 +9,12 @@ import java.nio.file.Paths;
  * <p>1.1.0 之前 z-***REMOVED*** 的三块本地状态各写各的：
  * <ul>
  *   <li>向量：{@code ./data/zvector}（相对当前工作目录 ⇒ 换个启动目录就是另一份数据）；</li>
- *   <li>图谱 JSON：{@code ~/.z***REMOVED***/graph}；</li>
- *   <li>文档 JSON：{@code ~/.z***REMOVED***/z***REMOVED***.json}。</li>
+ *   <li>图谱 JSON：{@code ~/.***REMOVED***/graph}；</li>
+ *   <li>文档 JSON：{@code ~/.***REMOVED***/***REMOVED***.json}。</li>
  * </ul>
  *
- * <p>1.1.0 起统一收敛到 {@code ~/.z***REMOVED***/} 这一个状态根目录，并且<b>所有可配置路径都接受
- * {@code ~} 展开</b>：写 {@code z***REMOVED***.vector.data-dir=~/data/vector} 会被展开成
+ * <p>1.1.0 起统一收敛到 {@code ~/.***REMOVED***/} 这一个状态根目录，并且<b>所有可配置路径都接受
+ * {@code ~} 展开</b>：写 {@code ***REMOVED***.vector.data-dir=~/data/vector} 会被展开成
  * {@code /home/<用户>/data/vector}，而不是在当前目录下造一个名字叫「~」的目录。
  *
  * <p>约定：
@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 public final class ***REMOVED***Paths {
 
     /** z-***REMOVED*** 状态根目录名（相对 home）。 */
-    public static final String STATE_DIR_NAME = ".z***REMOVED***";
+    public static final String STATE_DIR_NAME = ".***REMOVED***";
 
     private ***REMOVED***Paths() {
     }
@@ -45,24 +45,24 @@ public final class ***REMOVED***Paths {
         return (h == null || h.trim().isEmpty()) ? "" : h.trim();
     }
 
-    /** z-***REMOVED*** 状态根目录绝对路径：{@code ~/.z***REMOVED***}。 */
+    /** z-***REMOVED*** 状态根目录绝对路径：{@code ~/.***REMOVED***}。 */
     public static String stateDir() {
         return home() + File.separator + STATE_DIR_NAME;
     }
 
-    /** 向量存储默认目录：{@code ~/.z***REMOVED***/vector}。 */
+    /** 向量存储默认目录：{@code ~/.***REMOVED***/vector}。 */
     public static String vectorDataDir() {
         return stateDir() + File.separator + "vector";
     }
 
-    /** 图谱 JSON 默认目录：{@code ~/.z***REMOVED***/graph}。 */
+    /** 图谱 JSON 默认目录：{@code ~/.***REMOVED***/graph}。 */
     public static String graphDir() {
         return stateDir() + File.separator + "graph";
     }
 
-    /** 文档 JSON 默认文件：{@code ~/.z***REMOVED***/z***REMOVED***.json}。 */
+    /** 文档 JSON 默认文件：{@code ~/.***REMOVED***/***REMOVED***.json}。 */
     public static String documentFile() {
-        return stateDir() + File.separator + "z***REMOVED***.json";
+        return stateDir() + File.separator + "***REMOVED***.json";
     }
 
     /**

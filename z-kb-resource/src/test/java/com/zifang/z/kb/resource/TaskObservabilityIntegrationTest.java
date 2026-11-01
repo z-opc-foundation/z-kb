@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 任务与观测域集成测试：概览、审计日志、任务配置（租户/库）与任务监控，真起 H2。
  */
 @SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-observability;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-observability;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/observability-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/observability-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/observability-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/observability-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/observability-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/observability-repo",
         "spring.main.banner-mode=off"
 })
 class TaskObservabilityIntegrationTest {

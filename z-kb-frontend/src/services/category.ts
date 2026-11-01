@@ -16,7 +16,7 @@ export interface CategoryNode {
   children?: CategoryNode[];
 }
 
-const BASE = '/z***REMOVED***/v1/materialCategory';
+const BASE = '/***REMOVED***/v1/materialCategory';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

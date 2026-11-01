@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 物料主表（z***REMOVED***_material）。
+ * 物料主表（***REMOVED***_material）。
  */
-@TableName("z***REMOVED***_material")
+@TableName("***REMOVED***_material")
 public class MaterialEntity {
 
     @TableId(type = IdType.INPUT)

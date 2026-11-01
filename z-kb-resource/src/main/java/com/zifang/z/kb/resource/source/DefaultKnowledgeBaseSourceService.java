@@ -52,7 +52,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 知识库接入源：配置存 {@code z***REMOVED***_knowledge_base_profile.source_policy}，
+ * 知识库接入源：配置存 {@code ***REMOVED***_knowledge_base_profile.source_policy}，
  * 列表脱敏、保存全量覆盖、探测只读、语雀可选项按需加载。权限一律走
  * {@link KnowledgeBaseResourceService}，不读线程上下文。
  */

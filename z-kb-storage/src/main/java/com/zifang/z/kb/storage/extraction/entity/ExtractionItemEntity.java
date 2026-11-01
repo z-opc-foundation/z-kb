@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 本地规则萃取条目（z***REMOVED***_extraction_item）：摘要/问句/术语/FAQ 各占一行。
+ * 本地规则萃取条目（***REMOVED***_extraction_item）：摘要/问句/术语/FAQ 各占一行。
  */
-@TableName("z***REMOVED***_extraction_item")
+@TableName("***REMOVED***_extraction_item")
 public class ExtractionItemEntity {
 
     @TableId(type = IdType.INPUT)

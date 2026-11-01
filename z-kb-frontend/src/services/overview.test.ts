@@ -40,7 +40,7 @@ describe('知识库概览接口', () => {
       recentMaterials: [],
       refreshedAt: '2026-01-01',
     });
-    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/overview/***REMOVED***Stats', {
+    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/overview/***REMOVED***Stats', {
       method: 'get',
       params: { ***REMOVED***Id: '***REMOVED***-1' },
       headers,

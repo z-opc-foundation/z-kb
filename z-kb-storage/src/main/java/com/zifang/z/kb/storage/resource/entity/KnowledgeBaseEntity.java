@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库主表（z***REMOVED***_knowledge_base）。
+ * 知识库主表（***REMOVED***_knowledge_base）。
  */
-@TableName("z***REMOVED***_knowledge_base")
+@TableName("***REMOVED***_knowledge_base")
 public class KnowledgeBaseEntity {
 
     @TableId(type = IdType.INPUT)

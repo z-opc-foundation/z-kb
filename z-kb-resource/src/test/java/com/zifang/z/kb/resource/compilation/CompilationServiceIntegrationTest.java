@@ -45,13 +45,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 编译域集成测试：真起 Spring 容器 + H2，钉住 P0–P4 同步编排、产物版本、检索块与组别口径。
  */
 @SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-compilation;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-compilation;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/compilation-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/compilation-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/compilation-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/compilation-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/compilation-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/compilation-repo",
         "spring.main.banner-mode=off"
 })
 class CompilationServiceIntegrationTest {

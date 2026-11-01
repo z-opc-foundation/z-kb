@@ -191,7 +191,7 @@ class LocalDirScannerTest {
     // ==================== 工具 ====================
 
     private Path tempDir(String tag) throws IOException {
-        Path dir = Files.createTempDirectory("z***REMOVED***-local-" + tag + "-");
+        Path dir = Files.createTempDirectory("***REMOVED***-local-" + tag + "-");
         dir.toFile().deleteOnExit();
         return dir;
     }

@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测题目（z***REMOVED***_eval_case）。
+ * 评测题目（***REMOVED***_eval_case）。
  */
-@TableName("z***REMOVED***_eval_case")
+@TableName("***REMOVED***_eval_case")
 public class EvalCaseEntity {
 
     @TableId(type = IdType.INPUT)

@@ -68,7 +68,7 @@
 
 ### 4.2 必须重写（与后端契约/平台强耦合）
 
-* 全部 `src/services/*.ts`（51 个文件）：路径 `/z***REMOVED***/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
+* 全部 `src/services/*.ts`（51 个文件）：路径 `/***REMOVED***/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
 * `services/http.ts`：baseURL `/kapi`、错误码 `101012001`、登录失效跳转 —— 换我方 `/api/***REMOVED***` + 我方鉴权。
 * 鉴权/权限体系：`AuthProvider`、`canAccess`、apex 登录跳转 —— 我方走主壳 SSO 体系。
 * SSE 问答：`streamAiChat` 事件协议（meta/token/tool_result/done/error）—— 我方 `ChatController` 是同步返回，需先定是否改流式。

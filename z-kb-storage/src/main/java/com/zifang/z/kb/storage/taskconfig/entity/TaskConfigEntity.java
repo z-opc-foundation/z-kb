@@ -7,10 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 任务配置行（z***REMOVED***_task_config）。***REMOVED***_id 为空串表示租户级配置，非空表示库级覆盖。
+ * 任务配置行（***REMOVED***_task_config）。***REMOVED***_id 为空串表示租户级配置，非空表示库级覆盖。
  * 同一 (tenant, ***REMOVED***_id, config_version) 下每个任务性质一行，执行参数整体落在 executor_config。
  */
-@TableName("z***REMOVED***_task_config")
+@TableName("***REMOVED***_task_config")
 public class TaskConfigEntity {
 
     @TableId(type = IdType.INPUT)

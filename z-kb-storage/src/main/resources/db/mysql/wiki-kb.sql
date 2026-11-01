@@ -3,7 +3,7 @@
 -- 页面表同时承载规则页（page_slug 为空）与 Agent 多页；来源表只记证据关系，
 -- 目录表一物料版本一行，记录页面集合与证据块覆盖。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_page (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     wiki_id VARCHAR(64) NOT NULL COMMENT 'Wiki 页面业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
@@ -28,13 +28,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_wiki_id (tenant_code, wiki_id, is_deleted),
-    KEY idx_z***REMOVED***_wiki_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, update_time),
-    KEY idx_z***REMOVED***_wiki_material (tenant_code, material_id, is_deleted, page_slug),
-    KEY idx_z***REMOVED***_wiki_version (tenant_code, material_id, material_version_id)
+    UNIQUE KEY uk_***REMOVED***_wiki_id (tenant_code, wiki_id, is_deleted),
+    KEY idx_***REMOVED***_wiki_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, update_time),
+    KEY idx_***REMOVED***_wiki_material (tenant_code, material_id, is_deleted, page_slug),
+    KEY idx_***REMOVED***_wiki_version (tenant_code, material_id, material_version_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'Wiki 页面产物';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page_source (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_page_source (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     wiki_id VARCHAR(64) NOT NULL COMMENT '所属 Wiki 页面业务标识',
@@ -48,11 +48,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page_source (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_wiki_source (tenant_code, wiki_id, material_id, is_deleted),
-    KEY idx_z***REMOVED***_wiki_source_material (tenant_code, material_id)
+    UNIQUE KEY uk_***REMOVED***_wiki_source (tenant_code, wiki_id, material_id, is_deleted),
+    KEY idx_***REMOVED***_wiki_source_material (tenant_code, material_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'Wiki 页面来源资料';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_doc (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_doc (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL,
@@ -71,6 +71,6 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_doc (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_wiki_doc_version (tenant_code, material_id, material_version_id, is_deleted),
-    KEY idx_z***REMOVED***_wiki_doc_material (tenant_code, material_id, is_deleted)
+    UNIQUE KEY uk_***REMOVED***_wiki_doc_version (tenant_code, material_id, material_version_id, is_deleted),
+    KEY idx_***REMOVED***_wiki_doc_material (tenant_code, material_id, is_deleted)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'Wiki 文档目录';

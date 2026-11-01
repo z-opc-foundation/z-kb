@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @AutoConfiguration
 @ConditionalOnClass(KnowledgeBaseService.class)
-@ConditionalOnProperty(prefix = "z***REMOVED***", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "***REMOVED***", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(***REMOVED***Properties.class)
 public class ***REMOVED***AutoConfiguration {
 

@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库内容快照（z***REMOVED***_***REMOVED***_snapshot）：只在跑批等时刻生成。
+ * 知识库内容快照（***REMOVED***_***REMOVED***_snapshot）：只在跑批等时刻生成。
  */
-@TableName("z***REMOVED***_***REMOVED***_snapshot")
+@TableName("***REMOVED***_***REMOVED***_snapshot")
 public class ***REMOVED***SnapshotEntity {
 
     @TableId(type = IdType.INPUT)

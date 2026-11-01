@@ -1,7 +1,7 @@
 -- z-***REMOVED*** 萃取/概念/图谱 MySQL 元数据表（幂等，可重复执行）
 -- 萃取条目直接落表，不重复登记产物；图谱以 "***REMOVED***:" + ***REMOVED***Id 作为库级物理空间键。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_extraction_item (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_extraction_item (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     item_id VARCHAR(64) NOT NULL COMMENT '条目业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
@@ -19,12 +19,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_extraction_item (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_extract_item_id (tenant_code, item_id, is_deleted),
-    KEY idx_z***REMOVED***_extract_version (tenant_code, material_version_id, item_type, seq, id),
-    KEY idx_z***REMOVED***_extract_material (tenant_code, ***REMOVED***_id, material_id, item_type)
+    UNIQUE KEY uk_***REMOVED***_extract_item_id (tenant_code, item_id, is_deleted),
+    KEY idx_***REMOVED***_extract_version (tenant_code, material_version_id, item_type, seq, id),
+    KEY idx_***REMOVED***_extract_material (tenant_code, ***REMOVED***_id, material_id, item_type)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '本地规则萃取条目';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_concept (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_concept (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     concept_id VARCHAR(64) NOT NULL COMMENT '概念业务标识，按租户+库+规范化名称确定性生成',
     tenant_code VARCHAR(64) NOT NULL,
@@ -46,13 +46,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_concept (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_concept_id (tenant_code, concept_id, is_deleted),
-    UNIQUE KEY uk_z***REMOVED***_concept_name (tenant_code, ***REMOVED***_id, normalized_name, is_deleted),
-    KEY idx_z***REMOVED***_concept_status (tenant_code, ***REMOVED***_id, status),
-    KEY idx_z***REMOVED***_concept_material (tenant_code, ***REMOVED***_id, last_material_id)
+    UNIQUE KEY uk_***REMOVED***_concept_id (tenant_code, concept_id, is_deleted),
+    UNIQUE KEY uk_***REMOVED***_concept_name (tenant_code, ***REMOVED***_id, normalized_name, is_deleted),
+    KEY idx_***REMOVED***_concept_status (tenant_code, ***REMOVED***_id, status),
+    KEY idx_***REMOVED***_concept_material (tenant_code, ***REMOVED***_id, last_material_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库级概念模型';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_concept_mention (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_concept_mention (
     id VARCHAR(64) NOT NULL,
     mention_id VARCHAR(64) NOT NULL COMMENT '提及业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -71,14 +71,14 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_concept_mention (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_mention_id (tenant_code, mention_id, is_deleted),
-    UNIQUE KEY uk_z***REMOVED***_mention_concept_version (tenant_code, material_version_id, concept_id, is_deleted),
-    KEY idx_z***REMOVED***_mention_concept (tenant_code, ***REMOVED***_id, concept_id),
-    KEY idx_z***REMOVED***_mention_material (tenant_code, material_id),
-    KEY idx_z***REMOVED***_mention_version (tenant_code, material_version_id)
+    UNIQUE KEY uk_***REMOVED***_mention_id (tenant_code, mention_id, is_deleted),
+    UNIQUE KEY uk_***REMOVED***_mention_concept_version (tenant_code, material_version_id, concept_id, is_deleted),
+    KEY idx_***REMOVED***_mention_concept (tenant_code, ***REMOVED***_id, concept_id),
+    KEY idx_***REMOVED***_mention_material (tenant_code, material_id),
+    KEY idx_***REMOVED***_mention_version (tenant_code, material_version_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '概念提及：萃取输出与概念模型的桥接';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_graph_node (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_graph_node (
     id VARCHAR(64) NOT NULL,
     node_id VARCHAR(128) NOT NULL COMMENT '图节点业务标识',
     tenant_code VARCHAR(64) NOT NULL,
@@ -95,12 +95,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_graph_node (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    KEY idx_z***REMOVED***_graph_node_space (tenant_code, ***REMOVED***_id, graph_space_key),
-    KEY idx_z***REMOVED***_graph_node_material (tenant_code, material_id),
-    KEY idx_z***REMOVED***_graph_node_node (tenant_code, node_id)
+    KEY idx_***REMOVED***_graph_node_space (tenant_code, ***REMOVED***_id, graph_space_key),
+    KEY idx_***REMOVED***_graph_node_material (tenant_code, material_id),
+    KEY idx_***REMOVED***_graph_node_node (tenant_code, node_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '本地规则图谱节点';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_graph_edge (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_graph_edge (
     id VARCHAR(64) NOT NULL,
     edge_id VARCHAR(128) NOT NULL COMMENT '图边业务标识',
     tenant_code VARCHAR(64) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_graph_edge (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    KEY idx_z***REMOVED***_graph_edge_space (tenant_code, ***REMOVED***_id, graph_space_key),
-    KEY idx_z***REMOVED***_graph_edge_material (tenant_code, material_id),
-    KEY idx_z***REMOVED***_graph_edge_edge (tenant_code, edge_id)
+    KEY idx_***REMOVED***_graph_edge_space (tenant_code, ***REMOVED***_id, graph_space_key),
+    KEY idx_***REMOVED***_graph_edge_material (tenant_code, material_id),
+    KEY idx_***REMOVED***_graph_edge_edge (tenant_code, edge_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '本地规则图谱边';

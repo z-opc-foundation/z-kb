@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 库内资料分类（z***REMOVED***_category）。接入源同步节点与普通分类同表，按 node_kind 区分。
+ * 库内资料分类（***REMOVED***_category）。接入源同步节点与普通分类同表，按 node_kind 区分。
  */
-@TableName("z***REMOVED***_category")
+@TableName("***REMOVED***_category")
 public class MaterialCategoryEntity {
 
     @TableId(type = IdType.INPUT)

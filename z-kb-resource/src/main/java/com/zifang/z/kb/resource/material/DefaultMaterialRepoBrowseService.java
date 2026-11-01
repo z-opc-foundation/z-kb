@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * 代码仓库物料只读浏览。参考实现按接入源凭据实时读 Git；本实现读宿主配置的本地检出根目录
- * （{@code z***REMOVED***.material.repo.root}），仓库坐标来自物料元数据 {@code kind=REPO, repo, branch, commit}。
+ * （{@code ***REMOVED***.material.repo.root}），仓库坐标来自物料元数据 {@code kind=REPO, repo, branch, commit}。
  *
  * <p>尚未配置根目录或物料不是仓库类型时抛 MATERIAL_REPO_UNSUPPORTED；路径只接受仓库内相对路径。</p>
  */
@@ -136,7 +136,7 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
         }
         if (repoRoot == null) {
             throw new ***REMOVED***Exception("MATERIAL_REPO_UNSUPPORTED",
-                    "未配置 z***REMOVED***.material.repo.root，仓库浏览不可用");
+                    "未配置 ***REMOVED***.material.repo.root，仓库浏览不可用");
         }
         Object repoValue = meta.get("repo");
         String repo = repoValue == null ? "" : String.valueOf(repoValue).trim();

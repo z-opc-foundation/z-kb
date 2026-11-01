@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 本地规则图谱节点（z***REMOVED***_graph_node）：MATERIAL 节点每个物料一条，CONCEPT 节点回指概念模型。
+ * 本地规则图谱节点（***REMOVED***_graph_node）：MATERIAL 节点每个物料一条，CONCEPT 节点回指概念模型。
  */
-@TableName("z***REMOVED***_graph_node")
+@TableName("***REMOVED***_graph_node")
 public class GraphNodeEntity {
 
     @TableId(type = IdType.INPUT)

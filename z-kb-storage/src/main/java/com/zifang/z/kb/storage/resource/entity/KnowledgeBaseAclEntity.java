@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库 ACL（z***REMOVED***_knowledge_base_acl）。
+ * 知识库 ACL（***REMOVED***_knowledge_base_acl）。
  */
-@TableName("z***REMOVED***_knowledge_base_acl")
+@TableName("***REMOVED***_knowledge_base_acl")
 public class KnowledgeBaseAclEntity {
 
     @TableId(type = IdType.INPUT)

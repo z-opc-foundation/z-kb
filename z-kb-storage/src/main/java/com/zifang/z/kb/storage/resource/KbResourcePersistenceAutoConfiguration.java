@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 @AutoConfiguration(after = DataSourceAutoConfiguration.class)
 @ConditionalOnClass({SqlSessionFactory.class, BaseMapper.class, DataSource.class})
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnProperty(name = "z***REMOVED***.resource.persistence.enabled", havingValue = "true",
+@ConditionalOnProperty(name = "***REMOVED***.resource.persistence.enabled", havingValue = "true",
         matchIfMissing = true)
 @MapperScan({"com.zifang.z.***REMOVED***.storage.resource.mapper", "com.zifang.z.***REMOVED***.storage.material.mapper",
         "com.zifang.z.***REMOVED***.storage.compilation.mapper", "com.zifang.z.***REMOVED***.storage.taskconfig.mapper",
@@ -31,7 +31,7 @@ public class ***REMOVED***ResourcePersistenceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(name = "z***REMOVED***.resource.auto-ddl", havingValue = "true",
+    @ConditionalOnProperty(name = "***REMOVED***.resource.auto-ddl", havingValue = "true",
             matchIfMissing = true)
     public ***REMOVED***SchemaInitializer ***REMOVED***SchemaInitializer(DataSource dataSource) {
         return new ***REMOVED***SchemaInitializer(dataSource);

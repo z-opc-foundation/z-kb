@@ -1,7 +1,7 @@
 -- z-***REMOVED*** 物料域 MySQL 元数据表（幂等，可重复执行）
 -- 原始文件字节走对象存储（***REMOVED***OriginalFileStore），这里只放元数据；文档正文独立存解析稿表。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     material_id VARCHAR(64) NOT NULL COMMENT '物料业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
@@ -24,14 +24,14 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_material_id (tenant_code, material_id, is_deleted),
-    UNIQUE KEY uk_z***REMOVED***_material_fp (tenant_code, ***REMOVED***_id, material_type, fingerprint, is_deleted),
-    KEY idx_z***REMOVED***_material_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, create_time),
-    KEY idx_z***REMOVED***_material_category (tenant_code, ***REMOVED***_id, category_id),
-    KEY idx_z***REMOVED***_material_source (tenant_code, ***REMOVED***_id, source_binding_id)
+    UNIQUE KEY uk_***REMOVED***_material_id (tenant_code, material_id, is_deleted),
+    UNIQUE KEY uk_***REMOVED***_material_fp (tenant_code, ***REMOVED***_id, material_type, fingerprint, is_deleted),
+    KEY idx_***REMOVED***_material_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, create_time),
+    KEY idx_***REMOVED***_material_category (tenant_code, ***REMOVED***_id, category_id),
+    KEY idx_***REMOVED***_material_source (tenant_code, ***REMOVED***_id, source_binding_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '物料主表';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material_version (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material_version (
     id VARCHAR(64) NOT NULL,
     version_id VARCHAR(64) NOT NULL COMMENT '版本业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -53,13 +53,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material_version (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_material_version_id (tenant_code, version_id, is_deleted),
-    UNIQUE KEY uk_z***REMOVED***_material_version_no (tenant_code, material_id, version_no, is_deleted),
-    KEY idx_z***REMOVED***_material_version (tenant_code, material_id, version_no),
-    KEY idx_z***REMOVED***_material_version_status (tenant_code, ***REMOVED***_id, version_status)
+    UNIQUE KEY uk_***REMOVED***_material_version_id (tenant_code, version_id, is_deleted),
+    UNIQUE KEY uk_***REMOVED***_material_version_no (tenant_code, material_id, version_no, is_deleted),
+    KEY idx_***REMOVED***_material_version (tenant_code, material_id, version_no),
+    KEY idx_***REMOVED***_material_version_status (tenant_code, ***REMOVED***_id, version_status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '物料版本，不可变';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material_parsed_draft (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material_parsed_draft (
     id VARCHAR(64) NOT NULL,
     draft_id VARCHAR(64) NOT NULL COMMENT '解析稿业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -78,12 +78,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material_parsed_draft (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_draft_id (tenant_code, draft_id, is_deleted),
-    KEY idx_z***REMOVED***_draft_version (tenant_code, material_version_id, parsed_at),
-    KEY idx_z***REMOVED***_draft_material (tenant_code, material_id)
+    UNIQUE KEY uk_***REMOVED***_draft_id (tenant_code, draft_id, is_deleted),
+    KEY idx_***REMOVED***_draft_version (tenant_code, material_version_id, parsed_at),
+    KEY idx_***REMOVED***_draft_material (tenant_code, material_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '解析稿，不可变';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_category (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_category (
     id VARCHAR(64) NOT NULL,
     category_id VARCHAR(64) NOT NULL COMMENT '分类业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -99,6 +99,6 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_category (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_category_id (tenant_code, category_id, is_deleted),
-    KEY idx_z***REMOVED***_category_parent (tenant_code, ***REMOVED***_id, parent_id, sort_no)
+    UNIQUE KEY uk_***REMOVED***_category_id (tenant_code, category_id, is_deleted),
+    KEY idx_***REMOVED***_category_parent (tenant_code, ***REMOVED***_id, parent_id, sort_no)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '库内资料分类';

@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库配置版本（z***REMOVED***_knowledge_base_profile_version）：草稿 / 生效 / 历史。
+ * 知识库配置版本（***REMOVED***_knowledge_base_profile_version）：草稿 / 生效 / 历史。
  */
-@TableName("z***REMOVED***_knowledge_base_profile_version")
+@TableName("***REMOVED***_knowledge_base_profile_version")
 public class KnowledgeBaseProfileVersionEntity {
 
     @TableId(type = IdType.INPUT)

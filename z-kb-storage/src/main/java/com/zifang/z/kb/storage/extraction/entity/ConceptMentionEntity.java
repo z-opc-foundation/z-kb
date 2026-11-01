@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 概念提及（z***REMOVED***_concept_mention）：一个物料版本对一个概念的一次涌现，桥接萃取条目。
+ * 概念提及（***REMOVED***_concept_mention）：一个物料版本对一个概念的一次涌现，桥接萃取条目。
  */
-@TableName("z***REMOVED***_concept_mention")
+@TableName("***REMOVED***_concept_mention")
 public class ConceptMentionEntity {
 
     @TableId(type = IdType.INPUT)

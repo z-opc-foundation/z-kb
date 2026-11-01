@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 物料解析稿（z***REMOVED***_material_parsed_draft）。解析稿不可变，重新解析追加新稿。
+ * 物料解析稿（***REMOVED***_material_parsed_draft）。解析稿不可变，重新解析追加新稿。
  */
-@TableName("z***REMOVED***_material_parsed_draft")
+@TableName("***REMOVED***_material_parsed_draft")
 public class ParsedDraftEntity {
 
     @TableId(type = IdType.INPUT)

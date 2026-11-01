@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库审计日志（z***REMOVED***_audit_log）：记录成功写操作，活跃度热力图的唯一数据源。
+ * 知识库审计日志（***REMOVED***_audit_log）：记录成功写操作，活跃度热力图的唯一数据源。
  */
-@TableName("z***REMOVED***_audit_log")
+@TableName("***REMOVED***_audit_log")
 public class ***REMOVED***AuditLogEntity {
 
     @TableId(type = IdType.INPUT)

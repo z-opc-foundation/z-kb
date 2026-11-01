@@ -2,7 +2,7 @@ import { request } from '@/services/http';
 import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
-const BASE = '/z***REMOVED***/v1/knowledgeBase';
+const BASE = '/***REMOVED***/v1/knowledgeBase';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

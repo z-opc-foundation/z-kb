@@ -39,7 +39,7 @@
 ### 建议命令（可执行；Dockerfile 需先补进本仓）
 
 ```bash
-# 1) 打 jar —— 启动类是 z-***REMOVED***-bootstrap 里的 Z***REMOVED***Application
+# 1) 打 jar —— 启动类是 z-***REMOVED***-bootstrap 里的 ***REMOVED***Application
 cd z-***REMOVED***
 mvn -pl z-***REMOVED***-bootstrap -am clean package -DskipTests
 # 产物：z-***REMOVED***-bootstrap/target/z-***REMOVED***-bootstrap-1.0.7.jar

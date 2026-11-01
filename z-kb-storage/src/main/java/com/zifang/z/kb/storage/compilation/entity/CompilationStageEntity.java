@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 编译阶段执行明细（z***REMOVED***_compilation_stage）。多文件作业按物料版本分行，阶段顺序见 seq_no。
+ * 编译阶段执行明细（***REMOVED***_compilation_stage）。多文件作业按物料版本分行，阶段顺序见 seq_no。
  */
-@TableName("z***REMOVED***_compilation_stage")
+@TableName("***REMOVED***_compilation_stage")
 public class CompilationStageEntity {
 
     @TableId(type = IdType.INPUT)

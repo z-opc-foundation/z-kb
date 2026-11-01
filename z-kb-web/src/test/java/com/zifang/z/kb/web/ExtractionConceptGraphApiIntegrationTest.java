@@ -32,13 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 萃取 / 概念 / 图谱三个 v1 REST 域的集成测试：编译 P4 落库后由接口读回。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-extraction-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-extraction-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/extraction-api-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/extraction-api-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/extraction-api-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/extraction-api-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/extraction-api-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/extraction-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc

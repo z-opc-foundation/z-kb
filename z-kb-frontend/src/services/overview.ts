@@ -16,7 +16,7 @@ export interface ***REMOVED***Overview {
   refreshedAt: string;
 }
 
-const BASE = '/z***REMOVED***/v1/overview';
+const BASE = '/***REMOVED***/v1/overview';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

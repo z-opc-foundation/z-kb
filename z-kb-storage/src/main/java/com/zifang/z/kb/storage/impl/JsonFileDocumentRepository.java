@@ -23,8 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * JSON 文件持久化版 DocumentRepository — 解决内存版重启丢数据的痛点。
  *
- * <p>所有变更同步落盘到 {@code z***REMOVED***.json}，启动时自动加载。
- * <p>默认路径：{@code ~/.z***REMOVED***/z***REMOVED***.json}，可通过 {@code z***REMOVED***.storage.path} 配置覆盖。
+ * <p>所有变更同步落盘到 {@code ***REMOVED***.json}，启动时自动加载。
+ * <p>默认路径：{@code ~/.***REMOVED***/***REMOVED***.json}，可通过 {@code ***REMOVED***.storage.path} 配置覆盖。
  *
  * <p>适用场景：单实例 demo / 开发 / 嵌入式部署。
  * <p>生产多实例场景建议替换为基于 MySQL/MyBatis-Plus 的实现（见 storage 模块 entity/mapper 包）。
@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JsonFileDocumentRepository implements DocumentRepository {
 
     private static final Logger log = LoggerFactory.getLogger(JsonFileDocumentRepository.class);
-    private static final String DEFAULT_PATH = System.getProperty("user.home") + "/.z***REMOVED***/z***REMOVED***.json";
+    private static final String DEFAULT_PATH = System.getProperty("user.home") + "/.***REMOVED***/***REMOVED***.json";
 
     /** workspace → documentId → Document */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Document>> docs =
@@ -84,7 +84,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
         }
         // 单线程池，定期扫描 dirty 标记并落盘（合并写）
         this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "z***REMOVED***-doc-persist");
+            Thread t = new Thread(r, "***REMOVED***-doc-persist");
             t.setDaemon(true);
             return t;
         });

@@ -70,7 +70,7 @@ public class ***REMOVED***DevProfileAutoConfiguration {
     /** dev 回落：JSON 图谱（保留 1.0.x 的文件持久化口径，便于本地复现线上数据形状）。 */
     @Bean(destroyMethod = "close")
     @ConditionalOnMissingBean(KnowledgeGraphStore.class)
-    public KnowledgeGraphStore devGraphStore(@Value("${z***REMOVED***.graph.path:#{null}}") String path) {
+    public KnowledgeGraphStore devGraphStore(@Value("${***REMOVED***.graph.path:#{null}}") String path) {
         String dir = (path == null || path.trim().isEmpty())
                 ? ***REMOVED***Paths.graphDir() : ***REMOVED***Paths.expand(path);
         KnowledgeGraphStore store = new JsonFileKnowledgeGraphStore(dir);

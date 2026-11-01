@@ -3,7 +3,7 @@ import WorkspaceListPage from './WorkspaceListPage'
 import DocumentListPage from './DocumentListPage'
 import SearchPage from './SearchPage'
 
-export default function Z***REMOVED***App() {
+export default function ***REMOVED***App() {
     return (
         <Routes>
             <Route index element={<Navigate to="workspaces" replace/>}/>

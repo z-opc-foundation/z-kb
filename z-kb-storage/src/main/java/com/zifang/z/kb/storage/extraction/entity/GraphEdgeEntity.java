@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 本地规则图谱边（z***REMOVED***_graph_edge）：MENTIONS 由物料指向概念，RELATED_TO 连接同块共现概念。
+ * 本地规则图谱边（***REMOVED***_graph_edge）：MENTIONS 由物料指向概念，RELATED_TO 连接同块共现概念。
  */
-@TableName("z***REMOVED***_graph_edge")
+@TableName("***REMOVED***_graph_edge")
 public class GraphEdgeEntity {
 
     @TableId(type = IdType.INPUT)

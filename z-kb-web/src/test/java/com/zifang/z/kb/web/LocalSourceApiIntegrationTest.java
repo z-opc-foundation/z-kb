@@ -47,13 +47,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 网页上传或推代码，本地接入源的口径是文件落在目录里就已经在库里。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-local-source-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-local-source-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/local-source-api-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/local-source-api-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/local-source-api-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/local-source-api-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/local-source-api-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/local-source-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -78,7 +78,7 @@ class LocalSourceApiIntegrationTest {
     @DisplayName("本地接入源：保存免凭据 → 探测可读 → 同步入库 → 再同步未变")
     void localSourceSyncsDirectory() throws Exception {
         String ***REMOVED***Id = create***REMOVED***("本地接入源库");
-        Path dir = Files.createTempDirectory("z***REMOVED***-local-note-");
+        Path dir = Files.createTempDirectory("***REMOVED***-local-note-");
         write(dir, "部署.md", "# 部署\n\n部署步骤在这里。\n");
         write(dir, "运维/监控.md", "# 监控\n\n监控指标在这里。\n");
 
@@ -138,7 +138,7 @@ class LocalSourceApiIntegrationTest {
     @DisplayName("本地接入源：工具产物目录不入库（与桌面端 note 同源）")
     void localSourceSkipsToolDirs() throws Exception {
         String ***REMOVED***Id = create***REMOVED***("本地接入源排除库");
-        Path dir = Files.createTempDirectory("z***REMOVED***-local-tool-");
+        Path dir = Files.createTempDirectory("***REMOVED***-local-tool-");
         write(dir, "主库/笔记.md", "# 主库笔记\n\n正文。\n");
         write(dir, ".worktrees/fork-x/笔记.md", "# 副本\n\n正文。\n");
         write(dir, "node_modules/pkg/readme.md", "# readme\n\n正文。\n");
@@ -170,7 +170,7 @@ class LocalSourceApiIntegrationTest {
     @DisplayName("本地接入源：目录不存在时探测与同步都拒绝")
     void localSourceRejectsMissingDir() throws Exception {
         String ***REMOVED***Id = create***REMOVED***("本地接入源缺目录库");
-        Path missing = Files.createTempDirectory("z***REMOVED***-local-missing-").resolve("不存在");
+        Path missing = Files.createTempDirectory("***REMOVED***-local-missing-").resolve("不存在");
 
         Map<String, Object> source = localSource("不存在的目录", missing.toString());
         MvcResult saved = mvc.perform(post("/api/***REMOVED***/v1/knowledgeBaseSource/save")
@@ -203,7 +203,7 @@ class LocalSourceApiIntegrationTest {
     @DisplayName("本地接入源：目录里的文件删掉后被标记失效")
     void localSourceRetiresDeletedFiles() throws Exception {
         String ***REMOVED***Id = create***REMOVED***("本地接入源失效库");
-        Path dir = Files.createTempDirectory("z***REMOVED***-local-retire-");
+        Path dir = Files.createTempDirectory("***REMOVED***-local-retire-");
         write(dir, "保留.md", "# 保留\n\n正文。\n");
         write(dir, "删除.md", "# 删除\n\n正文。\n");
 

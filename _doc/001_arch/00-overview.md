@@ -36,9 +36,9 @@ z-***REMOVED***/
 ├── z-***REMOVED***-protocol/              # 协议层：REST 请求/响应 DTO + OpenAPI 契约注解（request / response 两个子包）
 ├── z-***REMOVED***-ingest/                # 9 种 DataSource + IngestPipeline + HtmlToMarkdown
 ├── z-***REMOVED***-modeling/              # 工作台 → 产品模型 → 小抄
-├── z-***REMOVED***-spring-boot-starter/   # ***REMOVED***AutoConfiguration + ***REMOVED***Properties（前缀 z***REMOVED***.*）+ 三个 Default*Service
+├── z-***REMOVED***-spring-boot-starter/   # ***REMOVED***AutoConfiguration + ***REMOVED***Properties（前缀 ***REMOVED***.*）+ 三个 Default*Service
 ├── z-***REMOVED***-web/                   # REST 层：7 个 Controller + SwaggerConfig（springdoc 2.6.0 / GroupedOpenApi），纯 jar
-├── z-***REMOVED***-bootstrap/             # 独立启动器 Z***REMOVED***Application（端口 8889）。
+├── z-***REMOVED***-bootstrap/             # 独立启动器 ***REMOVED***Application（端口 8889）。
 │                               #   已从根 POM <modules> 注释排除（standalone uber-jar 体积触发中央上传失败）
 ├── z-***REMOVED***-frontend/              # 独立 npm 工程（React 18 + antd 5 + TS + Vite，非 Maven 模块）
 ├── _eval/                      # 语料生成脚本（gen_corpus.py / gen_corpus_longtail.py）
@@ -80,14 +80,14 @@ starter 只注册 `***REMOVED***AutoConfiguration` 一个入口。
 `JsonFileKnowledgeGraphStore` 一工作台一份 JSON，文件名是 workspace 名的**可逆转义**
 （合法字符原样保留，其余编成 `~` + 两位大写 hex），因此中文、含 `.` / `:` / 空格的工作台名互不覆盖。
 
-向量后端按 `z***REMOVED***.vector.storage-type` 分支：`in-memory`（默认）直接用 z-vector 的 `InMemoryVectorStore`；
+向量后端按 `***REMOVED***.vector.storage-type` 分支：`in-memory`（默认）直接用 z-vector 的 `InMemoryVectorStore`；
 `persistent` 走**反射**加载 `com.zifang.z.vector.storage.PersistentVectorStore`，类不在时打 warn 并回退内存，
 不因可选依赖缺失而启动失败。
 
 ### 3.5 RAG 问答与知识建模
 
 - `DefaultChatService`（starter）：单次问答 + 会话管理（createSession / chatInSession / getHistory）；
-  `z***REMOVED***.chat.endpoint` 留空或 LLM 调用失败时回退抽取式回答。
+  `***REMOVED***.chat.endpoint` 留空或 LLM 调用失败时回退抽取式回答。
 - `z-***REMOVED***-modeling`：`ModelingService.decompose` → `ProductModel` → `CheatSheet`，
   由 `ProductDecomposer` / `CausalChainExtractor` / `CheatSheetGenerator` 三段实现。
 
@@ -120,7 +120,7 @@ starter 只注册 `***REMOVED***AutoConfiguration` 一个入口。
 对外路径全部在 `/api/***REMOVED***/*` 下；Knife4j 文档在 `/doc.html`，Actuator 暴露 `health,info,metrics`。
 作为 starter 嵌入宿主时，端口与 context-path 随宿主应用。
 
-**下游消费方：** 引用 `z-***REMOVED***-spring-boot-starter` 的宿主应用（配置前缀 `z***REMOVED***.*`）；
+**下游消费方：** 引用 `z-***REMOVED***-spring-boot-starter` 的宿主应用（配置前缀 `***REMOVED***.*`）；
 或直接引用 `z-***REMOVED***-core` / `z-***REMOVED***-api` 自建流水线的应用。
 
 **运维脚本：** `_doc/003_script/deploy_maven_center.sh`（子命令 `publish` / `verify` / `gpg-init` / `readme`），
@@ -131,12 +131,12 @@ starter 只注册 `***REMOVED***AutoConfiguration` 一个入口。
 1. **强制桶之外无空目录**：`_doc/` 下只有 `001_arch` / `003_script` / `006_release` 三个真实桶，
    README「文档目录」段与磁盘双向对齐，不列空桶。
 2. **存储全部走可插拔接口 + 自动装配**：文档仓库 / 向量库 / 图谱三处各是一个接口 + 一个 JSON 文件默认实现 +
-   一个 `AutoConfiguration.imports`，换后端只改配置（`z***REMOVED***.storage.path` / `z***REMOVED***.vector.storage-type` / `z***REMOVED***.graph.path`），
+   一个 `AutoConfiguration.imports`，换后端只改配置（`***REMOVED***.storage.path` / `***REMOVED***.vector.storage-type` / `***REMOVED***.graph.path`），
    不改业务代码。
 3. **图谱文件名用可逆转义而非下划线压缩**：非法字符编成 `~` + 两位大写 hex，编码是单射，
    旧实现把非法字符一律压成同一个下划线会让「默认空间」与「生产环境」算出同一个文件名、互相覆盖。
 4. **离线可跑是硬要求**：默认嵌入实现是 `TfIdfEmbeddingProvider`（不调外部端点），
-   `z***REMOVED***.chat.endpoint` 留空时问答走抽取式回答 —— 不配任何 API Key 也能起库、能检索、能问答。
+   `***REMOVED***.chat.endpoint` 留空时问答走抽取式回答 —— 不配任何 API Key 也能起库、能检索、能问答。
 5. **检索质量有硬证据而非口头声明**：`z-***REMOVED***-core/eval` 里 9 个类把「检索侧指标」「生成侧两臂对照」
    「策略消融」三件事做成可归档报告，`_eval/` 下两个脚本生成评测语料。
 6. **bootstrap 从 reactor 排除是工程决策不是遗漏**：standalone uber-jar 体积触发 Maven Central 上传失败，
@@ -166,7 +166,7 @@ com.zifang.z.***REMOVED***
 ├── modeling/            # z-***REMOVED***-modeling：core/ + model/ + extractor/ + generator/
 ├── starter/             # z-***REMOVED***-spring-boot-starter：config/ + service/ + metrics/
 ├── web/                 # z-***REMOVED***-web：controller/ + config/ + exception/
-└── bootstrap/           # z-***REMOVED***-bootstrap：Z***REMOVED***Application（单类）
+└── bootstrap/           # z-***REMOVED***-bootstrap：***REMOVED***Application（单类）
 ```
 
 **规模（`src/main/java` 实测）：** api 30 文件 / 1618 行，core 20 文件 / 2804 行，

@@ -41,10 +41,10 @@ import org.springframework.context.annotation.ComponentScan;
         "com.zifang.z.***REMOVED***.web.config",
         "com.zifang.z.***REMOVED***.web.controller"
 })
-public class Z***REMOVED***Application {
+public class ***REMOVED***Application {
 
     public static void main(String[] args) {
         System.setProperty("spring.devtools.restart.enabled", "false");
-        SpringApplication.run(Z***REMOVED***Application.class, args);
+        SpringApplication.run(***REMOVED***Application.class, args);
     }
 }

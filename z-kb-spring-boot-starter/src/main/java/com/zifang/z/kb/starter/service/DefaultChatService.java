@@ -141,7 +141,7 @@ public class DefaultChatService implements ChatService {
             sb.append(content).append("\n\n");
         }
         sb.append("---\n");
-        sb.append("提示：配置 z***REMOVED***.chat.endpoint 启用 LLM 生成式回答。");
+        sb.append("提示：配置 ***REMOVED***.chat.endpoint 启用 LLM 生成式回答。");
         return sb.toString();
     }
 

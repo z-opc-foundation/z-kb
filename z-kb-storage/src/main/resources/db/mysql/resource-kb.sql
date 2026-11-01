@@ -1,7 +1,7 @@
 -- z-***REMOVED*** 资源域 MySQL 元数据表（幂等，可重复执行）
 -- 原始文件走对象存储，这里只放元数据。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     ***REMOVED***_id VARCHAR(64) NOT NULL COMMENT '知识库业务标识',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
@@ -19,12 +19,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_***REMOVED***_tenant_code (tenant_code, code),
-    KEY idx_z***REMOVED***_***REMOVED***_tenant_status (tenant_code, status),
-    KEY idx_z***REMOVED***_***REMOVED***_owner (tenant_code, owner_id)
+    UNIQUE KEY uk_***REMOVED***_***REMOVED***_tenant_code (tenant_code, code),
+    KEY idx_***REMOVED***_***REMOVED***_tenant_status (tenant_code, status),
+    KEY idx_***REMOVED***_***REMOVED***_owner (tenant_code, owner_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_acl (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_acl (
     id VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -39,11 +39,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_acl (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_acl_***REMOVED***_principal (tenant_code, ***REMOVED***_id, principal_type, principal_id),
-    KEY idx_z***REMOVED***_acl_principal (tenant_code, principal_id)
+    UNIQUE KEY uk_***REMOVED***_acl_***REMOVED***_principal (tenant_code, ***REMOVED***_id, principal_type, principal_id),
+    KEY idx_***REMOVED***_acl_principal (tenant_code, principal_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库 ACL';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_profile (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile (
     id VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -64,10 +64,10 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_profile (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_profile_***REMOVED*** (tenant_code, ***REMOVED***_id)
+    UNIQUE KEY uk_***REMOVED***_profile_***REMOVED*** (tenant_code, ***REMOVED***_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库配置档案';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_profile_version (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile_version (
     id VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -91,11 +91,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_knowledge_base_profile_version (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_profile_version_no (tenant_code, ***REMOVED***_id, version_no),
-    KEY idx_z***REMOVED***_profile_version_status (tenant_code, ***REMOVED***_id, status)
+    UNIQUE KEY uk_***REMOVED***_profile_version_no (tenant_code, ***REMOVED***_id, version_no),
+    KEY idx_***REMOVED***_profile_version_status (tenant_code, ***REMOVED***_id, status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库配置版本';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_audit_log (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_audit_log (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NULL,
@@ -107,5 +107,5 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_audit_log (
     detail VARCHAR(1000) NULL,
     created_at DATETIME(3) NOT NULL,
     PRIMARY KEY (id),
-    KEY idx_z***REMOVED***_audit_***REMOVED***_day (tenant_code, ***REMOVED***_id, created_at)
+    KEY idx_***REMOVED***_audit_***REMOVED***_day (tenant_code, ***REMOVED***_id, created_at)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库审计日志';

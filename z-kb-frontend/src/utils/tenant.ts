@@ -1,9 +1,9 @@
 /**
  * 租户上下文。头名与登录态方案待 R17 拍板，当前先由前端显式携带。
  */
-const TENANT_STORAGE_KEY = 'z***REMOVED***.tenant-code';
+const TENANT_STORAGE_KEY = '***REMOVED***.tenant-code';
 
-export const DEFAULT_TENANT_CODE = 'z***REMOVED***_demo';
+export const DEFAULT_TENANT_CODE = '***REMOVED***_demo';
 
 export interface TenantInfo {
   code: string;

@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * 评测指标结果（z***REMOVED***_eval_result）。
+ * 评测指标结果（***REMOVED***_eval_result）。
  */
-@TableName("z***REMOVED***_eval_result")
+@TableName("***REMOVED***_eval_result")
 public class EvalResultEntity {
 
     @TableId(type = IdType.INPUT)

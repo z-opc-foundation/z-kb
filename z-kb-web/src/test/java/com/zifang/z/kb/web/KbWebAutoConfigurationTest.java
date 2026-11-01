@@ -43,7 +43,7 @@ class ***REMOVED***WebAutoConfigurationTest {
 
     @BeforeEach
     void prepare() throws Exception {
-        tempDir = Files.createTempDirectory("z***REMOVED***-web-test");
+        tempDir = Files.createTempDirectory("***REMOVED***-web-test");
     }
 
     @AfterEach
@@ -160,10 +160,10 @@ class ***REMOVED***WebAutoConfigurationTest {
                 "server.port=0",
                 "spring.main.allow-bean-definition-overriding=true",
                 // 测试不落用户真实 home：向量走内存，图谱与文档仓库落临时目录
-                "z***REMOVED***.vector.storage-type=in-memory",
-                "z***REMOVED***.graph.engine=json",
-                "z***REMOVED***.graph.path=" + tempDir.resolve("graph").toString(),
-                "z***REMOVED***.storage.path=" + tempDir.resolve("z***REMOVED***.json").toString()));
+                "***REMOVED***.vector.storage-type=in-memory",
+                "***REMOVED***.graph.engine=json",
+                "***REMOVED***.graph.path=" + tempDir.resolve("graph").toString(),
+                "***REMOVED***.storage.path=" + tempDir.resolve("***REMOVED***.json").toString()));
         props.addAll(List.of(extraProperties));
         SpringApplicationBuilder builder = new SpringApplicationBuilder(TestApp.class)
                 .web(WebApplicationType.SERVLET)

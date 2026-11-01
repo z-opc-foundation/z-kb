@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测坏例台账（z***REMOVED***_eval_badcase）：按（库, 题目, 阶段）唯一。
+ * 评测坏例台账（***REMOVED***_eval_badcase）：按（库, 题目, 阶段）唯一。
  */
-@TableName("z***REMOVED***_eval_badcase")
+@TableName("***REMOVED***_eval_badcase")
 public class EvalBadcaseEntity {
 
     @TableId(type = IdType.INPUT)

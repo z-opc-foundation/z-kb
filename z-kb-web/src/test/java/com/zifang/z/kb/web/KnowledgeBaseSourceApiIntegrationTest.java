@@ -42,13 +42,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 以及文档同步执行器的两级增量与失效标记。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-source-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-source-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/source-api-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/source-api-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/source-api-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/source-api-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/source-api-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/source-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc

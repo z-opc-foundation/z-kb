@@ -13,7 +13,7 @@ import ChatPage from './***REMOVED***/pages/ChatPage'
 export {with***REMOVED***Workspace, use***REMOVED***Workspace} from './***REMOVED***/workspaceHook'
 export {DocAPI, SearchAPI, GraphAPI, WorkspaceAPI} from './***REMOVED***/services/api'
 import HomePage from './pages/HomePage'
-import Z***REMOVED***App from './pages/Z***REMOVED***App.jsx'
+import ***REMOVED***App from './pages/***REMOVED***App.jsx'
 import ComponentDocPage from './pages/ComponentDoc.jsx'
 
 /** 菜单 + 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。 */
@@ -41,7 +41,7 @@ export const routes = [
     { path: '/z-***REMOVED***/graph', Component: with***REMOVED***Workspace(GraphPage) },
     { path: '/z-***REMOVED***/chat', Component: with***REMOVED***Workspace(ChatPage) },
     { path: '/z-***REMOVED***/docs', Component: ComponentDocPage },
-    { path: '/z-***REMOVED***/:rest*', Component: Z***REMOVED***App },
+    { path: '/z-***REMOVED***/:rest*', Component: ***REMOVED***App },
 ]
 
 export { default as HomePage } from './pages/HomePage'

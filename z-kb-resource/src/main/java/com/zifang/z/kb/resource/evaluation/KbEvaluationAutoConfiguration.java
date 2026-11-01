@@ -38,7 +38,7 @@ import javax.sql.DataSource;
 @AutoConfiguration(after = com.zifang.z.***REMOVED***.resource.***REMOVED***ResourceAutoConfiguration.class)
 @ConditionalOnClass({DataSource.class, BaseMapper.class})
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnProperty(name = "z***REMOVED***.resource.persistence.enabled", havingValue = "true",
+@ConditionalOnProperty(name = "***REMOVED***.resource.persistence.enabled", havingValue = "true",
         matchIfMissing = true)
 public class ***REMOVED***EvaluationAutoConfiguration {
 

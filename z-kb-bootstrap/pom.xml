@@ -156,7 +156,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.zifang.z.***REMOVED***.bootstrap.Z***REMOVED***Application</mainClass>
+                    <mainClass>com.zifang.z.***REMOVED***.bootstrap.***REMOVED***Application</mainClass>
                     <!-- 原 <excludes>slf4j-simple</excludes> 已删（2026-10-02）：上面 provided
                          声明同时没了，fat jar 没有任何东西要再显式排除；留着是误以为有 binding 要滤。 -->
                 </configuration>

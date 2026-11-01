@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测 QA 集合（z***REMOVED***_eval_dataset）：单库单份、可版本化。
+ * 评测 QA 集合（***REMOVED***_eval_dataset）：单库单份、可版本化。
  */
-@TableName("z***REMOVED***_eval_dataset")
+@TableName("***REMOVED***_eval_dataset")
 public class EvalDatasetEntity {
 
     @TableId(type = IdType.INPUT)

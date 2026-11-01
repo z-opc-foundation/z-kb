@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测跑批（z***REMOVED***_eval_run）。
+ * 评测跑批（***REMOVED***_eval_run）。
  */
-@TableName("z***REMOVED***_eval_run")
+@TableName("***REMOVED***_eval_run")
 public class EvalRunEntity {
 
     @TableId(type = IdType.INPUT)

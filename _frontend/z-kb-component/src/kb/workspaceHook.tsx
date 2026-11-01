@@ -2,7 +2,7 @@
 import {useEffect, useState} from 'react'
 import {WorkspaceAPI} from './services/api'
 
-const WS_KEY = 'z***REMOVED***_workspace'
+const WS_KEY = '***REMOVED***_workspace'
 
 export function use***REMOVED***Workspace() {
     const [workspaces, setWorkspaces] = useState([])

@@ -19,7 +19,7 @@
     <description>
         z-***REMOVED*** Spring Boot 自动装配 — 通过 spring.factories 注册，
         提供 ***REMOVED***Properties 配置属性和 ***REMOVED*** AutoConfiguration。
-        用户引入 starter 后，配置 z***REMOVED***.* 即可使用全部能力。
+        用户引入 starter 后，配置 ***REMOVED***.* 即可使用全部能力。
     </description>
 
     <url>https://github.com/yuku123/z-***REMOVED***</url>

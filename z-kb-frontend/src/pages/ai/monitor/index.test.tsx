@@ -64,7 +64,7 @@ const events: CallEvent[] = [
     errorMessage: '检索失败：当前租户无权访问知识库 ***REMOVED***_1',
   }),
   makeEvent('req_3', 'timeout', {
-    toolCode: 'z***REMOVED***_knowledge_search',
+    toolCode: '***REMOVED***_knowledge_search',
     toolName: '知识库检索（远端）',
     durationMs: 9000,
     resultSummary: '未返回业务结果',
@@ -104,7 +104,7 @@ const snapshot: MonitorSnapshot = {
       p95Ms: 2500,
     },
     {
-      toolCode: 'z***REMOVED***_knowledge_search',
+      toolCode: '***REMOVED***_knowledge_search',
       toolName: '知识库检索（远端）',
       calls: 1,
       successRate: 0,
@@ -229,23 +229,23 @@ describe('CallMonitorPage', () => {
       container.querySelectorAll<HTMLElement>('.ai-monitor-ranking tbody tr'),
     );
     const remoteRow = rankingRows.find((row) =>
-      row.textContent?.includes('z***REMOVED***_knowledge_search'),
+      row.textContent?.includes('***REMOVED***_knowledge_search'),
     ) as HTMLElement;
     fireEvent.click(remoteRow);
 
     expect(
-      screen.getByText('工具：z***REMOVED***_knowledge_search'),
+      screen.getByText('工具：***REMOVED***_knowledge_search'),
     ).toBeInTheDocument();
     expect(screen.getByText('req_3')).toBeInTheDocument();
     expect(screen.queryByText('req_1')).not.toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: /工具：z***REMOVED***_knowledge_search/,
+        name: /工具：***REMOVED***_knowledge_search/,
       }),
     );
     expect(screen.getByText('req_1')).toBeInTheDocument();
-    expect(screen.queryByText(/工具：z***REMOVED***_knowledge_search_old/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/工具：***REMOVED***_knowledge_search_old/)).not.toBeInTheDocument();
   });
 
   it('打开调用详情抽屉并关闭', () => {

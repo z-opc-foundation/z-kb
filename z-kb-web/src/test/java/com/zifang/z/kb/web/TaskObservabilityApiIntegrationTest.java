@@ -35,13 +35,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 任务与观测域 v1 REST 集成测试：概览、审计日志、任务配置（租户/库）与任务监控。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-observability-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-observability-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/observability-api-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/observability-api-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/observability-api-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/observability-api-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/observability-api-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/observability-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc

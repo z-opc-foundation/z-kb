@@ -26,7 +26,7 @@ class JsonFileDocumentRepositoryReloadTest {
 
     @Test
     void 重启后枚举时间戳与嵌套Map都完整回来() throws Exception {
-        Path store = Files.createTempDirectory("z***REMOVED***-reload").resolve("z***REMOVED***.json");
+        Path store = Files.createTempDirectory("***REMOVED***-reload").resolve("***REMOVED***.json");
 
         JsonFileDocumentRepository first = new JsonFileDocumentRepository(store.toString());
         Workspace ws = first.getWorkspaceByName("default");

@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 编译作业（z***REMOVED***_compilation_job）。单文件任务与多文件组别共用一表，靠 scope_type 区分。
+ * 编译作业（***REMOVED***_compilation_job）。单文件任务与多文件组别共用一表，靠 scope_type 区分。
  */
-@TableName("z***REMOVED***_compilation_job")
+@TableName("***REMOVED***_compilation_job")
 public class CompilationJobEntity {
 
     @TableId(type = IdType.INPUT)

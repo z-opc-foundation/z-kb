@@ -40,7 +40,7 @@ export interface TaskSummary {
   taskTotal: number;
 }
 
-const BASE = '/z***REMOVED***/v1/taskMonitor';
+const BASE = '/***REMOVED***/v1/taskMonitor';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

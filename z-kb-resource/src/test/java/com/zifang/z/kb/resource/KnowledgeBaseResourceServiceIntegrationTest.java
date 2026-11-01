@@ -36,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 知识库资源域集成测试：H2(MySQL 模式) 真跑 SQL，钉住生命周期、可见范围、ACL 与活跃度。
  */
 @SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-resource;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-resource;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/resource-z***REMOVED***.json",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/resource-***REMOVED***.json",
         "spring.main.banner-mode=off"
 })
 class KnowledgeBaseResourceServiceIntegrationTest {

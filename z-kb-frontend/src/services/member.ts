@@ -41,7 +41,7 @@ export interface KnowledgeBaseEffectiveRecord {
   actions: string[];
 }
 
-const BASE = '/z***REMOVED***/v1/knowledgeBase/member';
+const BASE = '/***REMOVED***/v1/knowledgeBase/member';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

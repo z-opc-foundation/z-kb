@@ -1,7 +1,7 @@
 -- z-***REMOVED*** Wiki 域 H2 元数据表（MySQL 兼容模式，幂等）
 -- 与 db/mysql/wiki-***REMOVED***.sql 保持同构；索引用独立语句。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_page (
     id VARCHAR(64) NOT NULL,
     wiki_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -27,12 +27,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_wiki_id ON z***REMOVED***_wiki_page (tenant_code, wiki_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_wiki_***REMOVED*** ON z***REMOVED***_wiki_page (tenant_code, ***REMOVED***_id, is_deleted, update_time);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_wiki_material ON z***REMOVED***_wiki_page (tenant_code, material_id, is_deleted, page_slug);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_wiki_version ON z***REMOVED***_wiki_page (tenant_code, material_id, material_version_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_wiki_id ON ***REMOVED***_wiki_page (tenant_code, wiki_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_wiki_***REMOVED*** ON ***REMOVED***_wiki_page (tenant_code, ***REMOVED***_id, is_deleted, update_time);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_wiki_material ON ***REMOVED***_wiki_page (tenant_code, material_id, is_deleted, page_slug);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_wiki_version ON ***REMOVED***_wiki_page (tenant_code, material_id, material_version_id);
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page_source (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_page_source (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     wiki_id VARCHAR(64) NOT NULL,
@@ -47,10 +47,10 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_page_source (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_wiki_source ON z***REMOVED***_wiki_page_source (tenant_code, wiki_id, material_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_wiki_source_material ON z***REMOVED***_wiki_page_source (tenant_code, material_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_wiki_source ON ***REMOVED***_wiki_page_source (tenant_code, wiki_id, material_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_wiki_source_material ON ***REMOVED***_wiki_page_source (tenant_code, material_id);
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_doc (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_wiki_doc (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL,
@@ -70,5 +70,5 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_wiki_doc (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_wiki_doc_version ON z***REMOVED***_wiki_doc (tenant_code, material_id, material_version_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_wiki_doc_material ON z***REMOVED***_wiki_doc (tenant_code, material_id, is_deleted);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_wiki_doc_version ON ***REMOVED***_wiki_doc (tenant_code, material_id, material_version_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_wiki_doc_material ON ***REMOVED***_wiki_doc (tenant_code, material_id, is_deleted);

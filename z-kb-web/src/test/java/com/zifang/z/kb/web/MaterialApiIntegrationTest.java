@@ -33,16 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 物料域 v1 REST 集成测试：真起 Spring 容器 + H2，按参考实现的路径与信封钉契约。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-material;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-material;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.vector.storage-type=in-memory",
-        "z***REMOVED***.graph.engine=json",
-        "z***REMOVED***.graph.path=target/test-***REMOVED***/graph",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/material-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/material-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/material-repo",
+        "***REMOVED***.vector.storage-type=in-memory",
+        "***REMOVED***.graph.engine=json",
+        "***REMOVED***.graph.path=target/test-***REMOVED***/graph",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/material-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/material-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/material-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc

@@ -35,7 +35,7 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 | 实体 / 关系抽取 | `EntityExtractor`（词典 + 词频 + wikilink 的轻量混合策略，非深度学习 NER）/ `RelationExtractor` | z-***REMOVED***-core |
 | 检索 | `Bm25Searcher` + `HybridSearcher`（向量 / BM25 / 图谱三路召回，RRF 融合）；`SearchMode` = VECTOR / KEYWORD / GRAPH / HYBRID / FUSION | z-***REMOVED***-core |
 | 库内 dense 检索（v1） | `KnowledgeRetrievalService`：本地哈希向量（384 维、中文二元组、FNV-1a）、只保留当前物料版本、按需回填向量；命中带得分、命中词、解释与章节上下文 | z-***REMOVED***-core / z-***REMOVED***-resource |
-| RAG 问答 | `DefaultChatService`：检索 + 引用返回；`z***REMOVED***.chat.endpoint` 留空或 LLM 调用失败时回退抽取式回答；会话管理（createSession / chatInSession / getHistory） | z-***REMOVED***-spring-boot-starter |
+| RAG 问答 | `DefaultChatService`：检索 + 引用返回；`***REMOVED***.chat.endpoint` 留空或 LLM 调用失败时回退抽取式回答；会话管理（createSession / chatInSession / getHistory） | z-***REMOVED***-spring-boot-starter |
 | 知识建模 | `ModelingService.decompose` → `ProductModel` → `CheatSheet`（`ProductDecomposer` / `CausalChainExtractor` / `CheatSheetGenerator`） | z-***REMOVED***-modeling |
 | 工作台隔离 | `Workspace` + 各服务按 workspace 分区；`listEntities` / `getNeighbors` / `getSubgraph` 图谱查询 | z-***REMOVED***-api / starter |
 | REST API + 在线文档 | 25 个 Controller（见下文）+ springdoc 2.6.0 / OpenAPI 3（DTO 注解为 `@Schema` / `@Operation` / `@Tag`） | z-***REMOVED***-web |
@@ -59,12 +59,12 @@ wikilink）→ `Chunker` 分块 → `EmbeddingProvider` 向量化并写 `ChunkVe
 
 | 接口 | 默认实现 | 备选 | 配置键 |
 |------|----------|------|--------|
-| `DocumentRepository` | `JsonFileDocumentRepository`（默认 `~/.z***REMOVED***/z***REMOVED***.json`） | `InMemoryDocumentRepository` | `z***REMOVED***.storage.path` |
-| `ChunkVectorStore` | `ZVectorChunkVectorStore`（包装 z-vector `VectorStore`；`storage-type=persistent`（**1.1.0 起的默认**）反射加载 `PersistentVectorStore`（默认 `~/.z***REMOVED***/vector`），**装不上就启动失败并给修复指引，不再静默回退内存**） | `storage-type=in-memory` ⇒ `InMemoryVectorStore` | `z***REMOVED***.vector.storage-type` / `data-dir` / `dimension` / `index-type` / `metric` |
-| `KnowledgeGraphStore` | `ZGraphKnowledgeGraphStore`（**1.1.0 起的默认**，走 z-graph 引擎 `com.zifang.z.graph.core.InMemoryGraphStore`；**进程内图谱，重启不保留**） | `z***REMOVED***.graph.engine=json` ⇒ `JsonFileKnowledgeGraphStore`（默认 `~/.z***REMOVED***/graph`，重启不丢数据） | `z***REMOVED***.graph.engine` / `z***REMOVED***.graph.path` |
+| `DocumentRepository` | `JsonFileDocumentRepository`（默认 `~/.***REMOVED***/***REMOVED***.json`） | `InMemoryDocumentRepository` | `***REMOVED***.storage.path` |
+| `ChunkVectorStore` | `ZVectorChunkVectorStore`（包装 z-vector `VectorStore`；`storage-type=persistent`（**1.1.0 起的默认**）反射加载 `PersistentVectorStore`（默认 `~/.***REMOVED***/vector`），**装不上就启动失败并给修复指引，不再静默回退内存**） | `storage-type=in-memory` ⇒ `InMemoryVectorStore` | `***REMOVED***.vector.storage-type` / `data-dir` / `dimension` / `index-type` / `metric` |
+| `KnowledgeGraphStore` | `ZGraphKnowledgeGraphStore`（**1.1.0 起的默认**，走 z-graph 引擎 `com.zifang.z.graph.core.InMemoryGraphStore`；**进程内图谱，重启不保留**） | `***REMOVED***.graph.engine=json` ⇒ `JsonFileKnowledgeGraphStore`（默认 `~/.***REMOVED***/graph`，重启不丢数据） | `***REMOVED***.graph.engine` / `***REMOVED***.graph.path` |
 
-三个后端的**本地状态目录**在 1.1.0 统一收敛到 `~/.z***REMOVED***/`（`vector/` / `graph/` / `z***REMOVED***.json`），
-且三个路径配置项都支持 `~` 展开（写 `~/data/z***REMOVED***` 会被展开成 `/home/<用户>/data/z***REMOVED***`，
+三个后端的**本地状态目录**在 1.1.0 统一收敛到 `~/.***REMOVED***/`（`vector/` / `graph/` / `***REMOVED***.json`），
+且三个路径配置项都支持 `~` 展开（写 `~/data/***REMOVED***` 会被展开成 `/home/<用户>/data/***REMOVED***`，
 而不是在当前目录下造一个名叫「~」的目录）。
 
 注意：`z-***REMOVED***-storage` 的 POM 虽声明了 MyBatis-Plus / mysql-connector-j / H2，但仓内**没有** JDBC 版
@@ -79,19 +79,19 @@ wikilink）→ `Chunker` 分块 → `EmbeddingProvider` 向量化并写 `ChunkVe
 
 | 项 | 旧默认（1.0.x） | 新默认（1.1.0） | 显式回旧档 |
 |---|---|---|---|
-| 向量存储 | `in-memory`（内存，重启丢） | `persistent` ⇒ `PersistentVectorStore`（落盘，重启不丢） | `z***REMOVED***.vector.storage-type=in-memory` |
+| 向量存储 | `in-memory`（内存，重启丢） | `persistent` ⇒ `PersistentVectorStore`（落盘，重启不丢） | `***REMOVED***.vector.storage-type=in-memory` |
 | 持久化向量装不上时 | **静默回落**内存向量（服务照常起、数据悄悄不落盘） | **启动失败**，错误信息带修复指引 | 无（这正是本次要改的行为） |
-| 图谱存储 | `JsonFileKnowledgeGraphStore`（JSON 文件，重启不丢） | `ZGraphKnowledgeGraphStore`（z-graph 引擎，**进程内图谱，重启不保留**） | `z***REMOVED***.graph.engine=json` |
-| 图谱引擎开关 | 无 | 新增 `z***REMOVED***.graph.engine`（`zgraph` 默认 / `json`） | `z***REMOVED***.graph.engine=json` |
-| 本地状态目录 | 向量 `./data/zvector`（相对 CWD）／图谱 `~/.z***REMOVED***/graph`／文档 `~/.z***REMOVED***/z***REMOVED***.json` | 统一 `~/.z***REMOVED***/`：`vector/`、`graph/`、`z***REMOVED***.json` | `z***REMOVED***.vector.data-dir` / `z***REMOVED***.graph.path` / `z***REMOVED***.storage.path`（均支持 `~` 展开） |
+| 图谱存储 | `JsonFileKnowledgeGraphStore`（JSON 文件，重启不丢） | `ZGraphKnowledgeGraphStore`（z-graph 引擎，**进程内图谱，重启不保留**） | `***REMOVED***.graph.engine=json` |
+| 图谱引擎开关 | 无 | 新增 `***REMOVED***.graph.engine`（`zgraph` 默认 / `json`） | `***REMOVED***.graph.engine=json` |
+| 本地状态目录 | 向量 `./data/zvector`（相对 CWD）／图谱 `~/.***REMOVED***/graph`／文档 `~/.***REMOVED***/***REMOVED***.json` | 统一 `~/.***REMOVED***/`：`vector/`、`graph/`、`***REMOVED***.json` | `***REMOVED***.vector.data-dir` / `***REMOVED***.graph.path` / `***REMOVED***.storage.path`（均支持 `~` 展开） |
 | `dev` profile | 无专门口径 | **回落成 1.0.x 默认口径**：内存向量 + JSON 图谱（对齐 z-lc 的 dev H2 家族惯例） | — |
 
 **消费方（z-opc 等）升级三件事**：
 
-1. **确认 data-dir 可写** —— 向量默认落 `~/.z***REMOVED***/vector`；容器里没有可写 HOME / 没挂卷 ⇒ 启动会失败
-   （失败要响是本次的立意）。显式指路：`z***REMOVED***.vector.data-dir=/data/z***REMOVED***/vector`。
+1. **确认 data-dir 可写** —— 向量默认落 `~/.***REMOVED***/vector`；容器里没有可写 HOME / 没挂卷 ⇒ 启动会失败
+   （失败要响是本次的立意）。显式指路：`***REMOVED***.vector.data-dir=/data/***REMOVED***/vector`。
 2. **图谱默认从「JSON 文件」变成「进程内 z-graph」⇒ 重启后图谱不保留**；要保留请显式
-   `z***REMOVED***.graph.engine=json`（存量 JSON 文件原地继续读写，无需迁移）。
+   `***REMOVED***.graph.engine=json`（存量 JSON 文件原地继续读写，无需迁移）。
 3. **依赖树多了 `io.github.yuku123:z-vector-storage`**（`PersistentVectorStore` 所在坐标）⇒ fat jar 体积变化。
 
 完整公告与取证清单见 [`_doc/006_release/02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md)。
@@ -128,10 +128,10 @@ z-***REMOVED***/
 ├── z-***REMOVED***-protocol/               # 协议层：REST 请求/响应 DTO + OpenAPI 契约注解（1.0.7 起有源码）
 ├── z-***REMOVED***-ingest/                 # 9 种数据源 + IngestPipeline + HtmlToMarkdown
 ├── z-***REMOVED***-modeling/               # 工作台 → 产品模型 → 小抄
-├── z-***REMOVED***-spring-boot-starter/    # ***REMOVED***AutoConfiguration + ***REMOVED***Properties（前缀 z***REMOVED***.*）+ Default{Chat,Search,KnowledgeBase}Service
+├── z-***REMOVED***-spring-boot-starter/    # ***REMOVED***AutoConfiguration + ***REMOVED***Properties（前缀 ***REMOVED***.*）+ Default{Chat,Search,KnowledgeBase}Service
 ├── z-***REMOVED***-resource/               # 知识库资源域：生命周期 / 配置版本（草稿→校验→发布）/ 成员 ACL / 审计（JDBC 持久化）
 ├── z-***REMOVED***-web/                    # REST 层：25 个 Controller + SwaggerConfig（springdoc GroupedOpenApi），纯 jar，不内置前端静态资源
-├── z-***REMOVED***-bootstrap/              # 独立启动器（Z***REMOVED***Application，端口 8889）。已从 <modules> 注释排除：
+├── z-***REMOVED***-bootstrap/              # 独立启动器（***REMOVED***Application，端口 8889）。已从 <modules> 注释排除：
 │                                #   standalone uber-jar 约 77MB 触发 Maven Central 上传 broken pipe；其 pom 仍停在 1.0.1
 ├── z-***REMOVED***-frontend/               # 独立 npm 工程（React 19 + antd 5.26 + @antv/g6 5 + Vite 6 + TS，非 Maven 模块）
 ├── _doc/                        # 文档目录（见文末）
@@ -179,10 +179,10 @@ mvn clean install -DskipTests
 </dependency>
 ```
 
-配置前缀是 **`z***REMOVED***.*`**（不是 `z.***REMOVED***.*`）。最小离线可用配置（不需要任何 API Key）：
+配置前缀是 **`***REMOVED***.*`**（不是 `z.***REMOVED***.*`）。最小离线可用配置（不需要任何 API Key）：
 
 ```yaml
-z***REMOVED***:
+***REMOVED***:
   enabled: true
   embedding:
     provider: tfidf        # tfidf（默认，离线）/ http（OpenAI 兼容端点）
@@ -198,17 +198,17 @@ z***REMOVED***:
 
 | 配置键 | 说明 |
 |--------|------|
-| `z***REMOVED***.embedding.provider` / `endpoint` / `model` / `api-key` / `dimension` | `http` 时对接 OpenAI 兼容 embeddings 端点（如 Ollama） |
-| `z***REMOVED***.vector.storage-type` / `data-dir` / `index-type` / `metric` | **persistent（1.1.0 默认，落 `PersistentVectorStore`）/ in-memory**；HNSW + COSINE 口径；`data-dir` 默认 `~/.z***REMOVED***/vector`（支持 `~` 展开） |
-| `z***REMOVED***.graph.engine` / `z***REMOVED***.graph.path` | **zgraph（1.1.0 默认，走 z-graph 引擎）/ json**（JSON 文件持久化）；`path` 默认 `~/.z***REMOVED***/graph` |
-| `z***REMOVED***.storage.path` | 文档 JSON 位置（默认 `~/.z***REMOVED***/z***REMOVED***.json`，支持 `~` 展开） |
+| `***REMOVED***.embedding.provider` / `endpoint` / `model` / `api-key` / `dimension` | `http` 时对接 OpenAI 兼容 embeddings 端点（如 Ollama） |
+| `***REMOVED***.vector.storage-type` / `data-dir` / `index-type` / `metric` | **persistent（1.1.0 默认，落 `PersistentVectorStore`）/ in-memory**；HNSW + COSINE 口径；`data-dir` 默认 `~/.***REMOVED***/vector`（支持 `~` 展开） |
+| `***REMOVED***.graph.engine` / `***REMOVED***.graph.path` | **zgraph（1.1.0 默认，走 z-graph 引擎）/ json**（JSON 文件持久化）；`path` 默认 `~/.***REMOVED***/graph` |
+| `***REMOVED***.storage.path` | 文档 JSON 位置（默认 `~/.***REMOVED***/***REMOVED***.json`，支持 `~` 展开） |
 
-**API Key 等凭据必须经环境变量注入**（Spring relaxed binding，如 `Z***REMOVED***CHAT_API_KEY`、
-`Z***REMOVED***EMBEDDING_API_KEY`），禁止写进 yml / jar / 镜像层。
+**API Key 等凭据必须经环境变量注入**（Spring relaxed binding，如 `***REMOVED***CHAT_API_KEY`、
+`***REMOVED***EMBEDDING_API_KEY`），禁止写进 yml / jar / 镜像层。
 
 ### 独立启动
 
-唯一入口是 `z-***REMOVED***-bootstrap` 的 `Z***REMOVED***Application`（component-scan `com.zifang.z.***REMOVED***`）。
+唯一入口是 `z-***REMOVED***-bootstrap` 的 `***REMOVED***Application`（component-scan `com.zifang.z.***REMOVED***`）。
 该模块当前不在 reactor（见项目结构说明），POM 停在 1.0.1；默认监听 **8889**，
 Knife4j 文档在 `http://localhost:8889/doc.html`，Actuator 暴露 `health,info,metrics`。
 
@@ -220,8 +220,8 @@ npm install
 npm run dev      # scripts/dev.mjs，Vite 监听 5173（strictPort，host 0.0.0.0）
 ```
 
-要求 Node ≥20（`.nvmrc` 钉 20）。代理契约：`/kapi/z***REMOVED***/v1/*` → `http://127.0.0.1:8889/api/***REMOVED***/v1/*`
-（`***REMOVED***API_TARGET` 可覆盖后端地址），并由代理注入 `X-Tenant-Code`（默认 `z***REMOVED***_demo`，`***REMOVED***TENANT_CODE` 覆盖）
+要求 Node ≥20（`.nvmrc` 钉 20）。代理契约：`/kapi/***REMOVED***/v1/*` → `http://127.0.0.1:8889/api/***REMOVED***/v1/*`
+（`***REMOVED***API_TARGET` 可覆盖后端地址），并由代理注入 `X-Tenant-Code`（默认 `***REMOVED***_demo`，`***REMOVED***TENANT_CODE` 覆盖）
 与 `X-Actor-Id`（默认 `1`，`***REMOVED***ACTOR_ID` 覆盖），与后端 `***REMOVED***CallerResolver` 直接对齐——本地无 SSO 会话也能联调。
 其余前缀（`/kapi`、`/galaxy-meta-service`、`/galaxy-meta-admin`、`/apex-spc`）统一指向同一本地后端，
 z-***REMOVED*** 未提供的端点如实 404、页面按失败态展示，不做静默兜底。
@@ -264,7 +264,7 @@ Node ≥22 自带 `localStorage` 全局（未传 `--localstorage-file` 时取值
 | `POST /api/***REMOVED***/v1/material/reparse` / `saveDraftText`、`GET …/listDrafts` | MaterialController | 重新解析 / 人工改稿（`manual-edit`）/ 解析稿列表（新稿在前） |
 | `POST /api/***REMOVED***/v1/material/attachment` / `registerText` / `registerFromUrl` | MaterialController | 会话附件只落存储 / 文本登记为 `.md` / 按附件地址登记 |
 | `GET /api/***REMOVED***/v1/materialCategory/tree`、`POST …/add` / `update` / `move` / `remove` | MaterialCategoryController | 三层分类树；同层重名、成环、超深拒绝；有子分类或物料时禁止删除 |
-| `GET /api/***REMOVED***/v1/material/repo/overview` / `tree` / `file` | MaterialRepoController | 代码仓库物料只读浏览（读宿主本地检出根 `z***REMOVED***.material.repo.root`） |
+| `GET /api/***REMOVED***/v1/material/repo/overview` / `tree` / `file` | MaterialRepoController | 代码仓库物料只读浏览（读宿主本地检出根 `***REMOVED***.material.repo.root`） |
 | `POST /api/***REMOVED***/v1/compilation/run` / `retry` / `cancel` | CompilationController | 单文件编译：请求内同步执行 P0–P4、按起始阶段重跑（轮次 +1）、取消 |
 | `GET /api/***REMOVED***/v1/compilation/queryByMaterial` / `queryByJob` / `listBy***REMOVED***` | CompilationController | 按物料 / 作业查询编译详情，库内作业列表（未编译返回 `null`） |
 | `GET /api/***REMOVED***/v1/compilation/listChunks` / `search` | CompilationController | 物料段落块（`chunk_role=PASSAGE`）/ 库内已索引块词法关键词检索 |
@@ -301,7 +301,7 @@ Node ≥22 自带 `localStorage` 全局（未传 `--localstorage-file` 时取值
 
 > **与参考实现的三处已知差异**（有意为之，不是缺件）：  
 > ① 解析在登记事务内**同步**完成，`parseStatus` 直接返回真实的 `READY` / `FAILED`；参考实现是异步任务，登记后先返回 `PARSING`。  
-> ② 原件存储走 `***REMOVED***OriginalFileStore` SPI，默认实现 `Local***REMOVED***OriginalFileStore` 落本地磁盘（`z***REMOVED***.material.storage.root`，默认 `~/.z***REMOVED***/material-original`）；接 OSS/S3 需宿主提供同名 Bean 覆盖，仓内**没有**已实现的 OSS 客户端。  
+> ② 原件存储走 `***REMOVED***OriginalFileStore` SPI，默认实现 `Local***REMOVED***OriginalFileStore` 落本地磁盘（`***REMOVED***.material.storage.root`，默认 `~/.***REMOVED***/material-original`）；接 OSS/S3 需宿主提供同名 Bean 覆盖，仓内**没有**已实现的 OSS 客户端。  
 > ③ 编译阶段同样在请求内同步执行（z-***REMOVED*** 无任务内核），状态机 / 里程碑 / 产物登记口径与参考一致；P4 EXTRACT 调用 `ExtractionEngine` 做本地规则萃取，摘要 / 问句 / 术语 / FAQ、概念模型与图谱按物料版本覆盖落库（阶段 `detail` 汇报各类型条数与节点/边数），全程不调 LLM。
 
 ### 既有 `/api/***REMOVED***/*`（沿用原 `{status, code, message}` 响应形状）

@@ -78,7 +78,7 @@ describe('实例子图查询', () => {
     });
 
     expect(requestMock).toHaveBeenCalledWith(
-      '/z***REMOVED***/v1/ontology/schema/instance/subgraph',
+      '/***REMOVED***/v1/ontology/schema/instance/subgraph',
       expect.objectContaining({
         method: 'post',
         data: { tagNames: ['Drug', 'Disease'], edgeNames: ['Treats'], limit: 500 },

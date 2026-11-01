@@ -26,16 +26,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 检索域 v1 REST 集成测试：真起 Spring 容器 + H2，钉住参考实现的路径、信封与错误码。
  */
 @SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-retrieval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-retrieval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.vector.storage-type=in-memory",
-        "z***REMOVED***.graph.engine=json",
-        "z***REMOVED***.graph.path=target/test-***REMOVED***/retrieval-api-graph",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-api-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-api-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-api-repo",
+        "***REMOVED***.vector.storage-type=in-memory",
+        "***REMOVED***.graph.engine=json",
+        "***REMOVED***.graph.path=target/test-***REMOVED***/retrieval-api-graph",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-api-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-api-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc

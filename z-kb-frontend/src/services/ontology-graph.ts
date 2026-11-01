@@ -10,7 +10,7 @@ import { getTenantCode } from '@/utils/tenant';
  * stats → 节点 / 边按类型实时计数。z-***REMOVED*** 图谱引擎是本地规则图谱，不支持 nGQL，
  * executeNGQLQuery 显式返回失败，页面实例查询标签页如实展示原因。
  */
-const ***REMOVED***BASE = '/z***REMOVED***/v1';
+const ***REMOVED***BASE = '/***REMOVED***/v1';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -247,7 +247,7 @@ export function refreshSpaceStats(
   spaceName: string,
 ): Promise<{ jobId: string; status: string; message?: string }> {
   return Promise.resolve({
-    jobId: `z***REMOVED***-realtime-${spaceName}`,
+    jobId: `***REMOVED***-realtime-${spaceName}`,
     status: 'finished',
     message: 'z-***REMOVED*** 图谱统计为实时计算，无需刷新任务',
   });
@@ -258,6 +258,6 @@ export function getStatsJobStatus(spaceName: string): Promise<StatsJobStatus> {
   return Promise.resolve({
     status: 'finished',
     stopTime: nowStamp(),
-    jobId: `z***REMOVED***-realtime-${spaceName}`,
+    jobId: `***REMOVED***-realtime-${spaceName}`,
   });
 }

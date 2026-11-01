@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * z-***REMOVED***-vector Spring Boot 自动装配。
  *
- * <p><b>1.1.0 破坏性变更（fail-fast）</b>：{@code z***REMOVED***.vector.storage-type} 默认由
+ * <p><b>1.1.0 破坏性变更（fail-fast）</b>：{@code ***REMOVED***.vector.storage-type} 默认由
  * {@code in-memory} 翻成 {@code persistent}；而 persistent 模式下
  * {@code PersistentVectorStore} 装不上时<b>启动直接失败</b>，不再静默回落成内存向量 ——
  * 静默回落的后果是「服务起来了、向量写进了内存、重启全丢」，现场根本看不出来。
@@ -162,9 +162,9 @@ public class ChunkVectorStoreAutoConfiguration {
             return store;
         }
         throw new IllegalStateException(
-                "z-***REMOVED*** 启动失败：z***REMOVED***.vector.storage-type 取值非法 —— '" + type + "'。"
+                "z-***REMOVED*** 启动失败：***REMOVED***.vector.storage-type 取值非法 —— '" + type + "'。"
                         + "修复指引：只接受 persistent（1.1.0 起的默认，向量落 PersistentVectorStore，重启不丢）"
-                        + "或 in-memory（内存向量，重启不保留）；请检查 z***REMOVED***.vector.storage-type 配置。");
+                        + "或 in-memory（内存向量，重启不保留）；请检查 ***REMOVED***.vector.storage-type 配置。");
     }
 
     /**
@@ -189,12 +189,12 @@ public class ChunkVectorStoreAutoConfiguration {
 
     /** 失败信息里必须带修复指引 —— 现场拿到这一行就知道下一步干什么。 */
     private static String persistentFailureMessage(String dataDir, String reason) {
-        return "z-***REMOVED*** 启动失败：持久化向量存储不可用（z***REMOVED***.vector.storage-type=persistent, data-dir="
+        return "z-***REMOVED*** 启动失败：持久化向量存储不可用（***REMOVED***.vector.storage-type=persistent, data-dir="
                 + dataDir + "）—— " + reason
                 + "。修复指引："
                 + "① 确认依赖已引入 io.github.yuku123:z-vector-storage（z-***REMOVED***-vector 的传递依赖）；"
                 + "② 确认 data-dir 目录存在且当前进程用户可写（ls -ld / chmod u+w / chown）；"
-                + "③ 若确需退回内存向量，显式配置 z***REMOVED***.vector.storage-type=in-memory"
+                + "③ 若确需退回内存向量，显式配置 ***REMOVED***.vector.storage-type=in-memory"
                 + "（注意：内存向量重启后不保留）。";
     }
 

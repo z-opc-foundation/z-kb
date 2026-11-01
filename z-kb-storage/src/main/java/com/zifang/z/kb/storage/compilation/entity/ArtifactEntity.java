@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 产物登记簿（z***REMOVED***_artifact）。一件产物一行，内容仍在各自结构表。
+ * 产物登记簿（***REMOVED***_artifact）。一件产物一行，内容仍在各自结构表。
  */
-@TableName("z***REMOVED***_artifact")
+@TableName("***REMOVED***_artifact")
 public class ArtifactEntity {
 
     @TableId(type = IdType.INPUT)

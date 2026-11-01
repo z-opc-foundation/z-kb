@@ -24,20 +24,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p>每个 workspace 一份 JSON：
  * <ul>
  *   <li>{@code workspaceId} → {@link GraphData}（entities + relations + id 映射）</li>
- *   <li>默认目录：{@code ~/.z***REMOVED***/graph/}（与 {@code z***REMOVED***.graph.path} 共享 home）</li>
+ *   <li>默认目录：{@code ~/.***REMOVED***/graph/}（与 {@code ***REMOVED***.graph.path} 共享 home）</li>
  * </ul>
  *
  * <p>特点：
  * <ul>
  *   <li>扁平 JSON，可人工 cat 查看</li>
  *   <li>异步落盘，WAL  写锁防并发写</li>
- *   <li>支持通过 {@code z***REMOVED***.graph.path} 自定义目录</li>
+ *   <li>支持通过 {@code ***REMOVED***.graph.path} 自定义目录</li>
  * </ul>
  */
 public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
 
     private static final Logger log = LoggerFactory.getLogger(JsonFileKnowledgeGraphStore.class);
-    private static final String DEFAULT_DIR = System.getProperty("user.home") + "/.z***REMOVED***/graph";
+    private static final String DEFAULT_DIR = System.getProperty("user.home") + "/.***REMOVED***/graph";
 
     private final Path baseDir;
     private final ReentrantLock writeLock = new ReentrantLock();
@@ -69,7 +69,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         }
         // 单线程池，定期扫描 dirty workspace 并落盘
         this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "z***REMOVED***-graph-persist");
+            Thread t = new Thread(r, "***REMOVED***-graph-persist");
             t.setDaemon(true);
             return t;
         });

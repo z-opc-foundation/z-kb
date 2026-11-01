@@ -36,14 +36,14 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       allowedHosts: ['.cfuture.shop'],
       proxy: {
-        // z-***REMOVED*** 后端：/kapi/z***REMOVED***/v1/* 一一映射到 z-***REMOVED*** 的 /api/***REMOVED***/v1/*；
+        // z-***REMOVED*** 后端：/kapi/***REMOVED***/v1/* 一一映射到 z-***REMOVED*** 的 /api/***REMOVED***/v1/*；
         // 本地没有 SSO 会话，租户 / 操作人头由代理补上（线上由网关注入）
-        '/kapi/z***REMOVED***': {
+        '/kapi/***REMOVED***': {
           target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
-          rewrite: (p) => p.replace(/^\/kapi\/z***REMOVED***/, '/api/***REMOVED***'),
+          rewrite: (p) => p.replace(/^\/kapi\/***REMOVED***/, '/api/***REMOVED***'),
           headers: {
-            'X-Tenant-Code': process.env.***REMOVED***TENANT_CODE || 'z***REMOVED***_demo',
+            'X-Tenant-Code': process.env.***REMOVED***TENANT_CODE || '***REMOVED***_demo',
             'X-Actor-Id': process.env.***REMOVED***ACTOR_ID || '1',
           },
         },

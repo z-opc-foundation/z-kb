@@ -4,9 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * z-***REMOVED*** 顶层配置属性（统一前缀 z***REMOVED***.*）。
+ * z-***REMOVED*** 顶层配置属性（统一前缀 ***REMOVED***.*）。
  */
-@ConfigurationProperties(prefix = "z***REMOVED***")
+@ConfigurationProperties(prefix = "***REMOVED***")
 public class ***REMOVED***Properties {
 
     /** 启用 z-***REMOVED*** */

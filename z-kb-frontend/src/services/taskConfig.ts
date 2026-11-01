@@ -43,7 +43,7 @@ export interface TaskConfigItemPayload {
   boundaryNote?: string;
 }
 
-const BASE = '/z***REMOVED***/v1/taskConfig';
+const BASE = '/***REMOVED***/v1/taskConfig';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

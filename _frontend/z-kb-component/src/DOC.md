@@ -34,9 +34,9 @@ OpsWor***REMOVED***ench（`/***REMOVED***/*` 通配挂载）或 z-opc 主壳挂�
 `manifest` 里这 7 个 ***REMOVED*** 页面都套了一层 `with***REMOVED***Workspace(...)`（`***REMOVED***/workspaceHook`），
 由它统一注入当前工作区。
 
-### 1.2 Z***REMOVED***App 面（`/***REMOVED***/*`，`src/pages/Z***REMOVED***App.jsx`）
+### 1.2 ***REMOVED***App 面（`/***REMOVED***/*`，`src/pages/***REMOVED***App.jsx`）
 
-`Z***REMOVED***App` 是给 OpsWor***REMOVED***ench 通配挂载用的**子路由集合**，入口重定向到 `workspaces`：
+`***REMOVED***App` 是给 OpsWor***REMOVED***ench 通配挂载用的**子路由集合**，入口重定向到 `workspaces`：
 
 | 子路由 | 源文件 | 能力 |
 |--------|--------|------|
@@ -58,7 +58,7 @@ OpsWor***REMOVED***ench（`/***REMOVED***/*` 通配挂载）或 z-opc 主壳挂�
 
 ```js
 // 主入口（. 桶）：JS 版请求层 + 域挂载点
-import {***REMOVED***Api, toNumber, DEFAULT_WORKSPACE, Z***REMOVED***App} from '@yuku123/z-***REMOVED***-component'
+import {***REMOVED***Api, toNumber, DEFAULT_WORKSPACE, ***REMOVED***App} from '@yuku123/z-***REMOVED***-component'
 
 // 宿主组装面（./pages 桶）：manifest + 页面组件（TS 版请求层也从这里出）
 import {menuItems, routes, appMeta, HomePage, LoginPage,
@@ -151,7 +151,7 @@ import {ComponentDocPage} from '@yuku123/z-***REMOVED***-component'
 - **图谱**：实体邻域与子图，用 echarts 画（源码引的是 tree-shaken 子路径）。
 - **对话**：会话式问答。
 
-### 4.3 工作区 / 文档清单 / 检索（Z***REMOVED***App 面）
+### 4.3 工作区 / 文档清单 / 检索（***REMOVED***App 面）
 
 `src/pages/` 下的三个 JS 页面：**工作区**清单 + 统计、**文档**清单（服务端分页，
 总数另走 `/count`）、**检索**。⚠ `pages/SearchPage.jsx` 与 `***REMOVED***/pages/SearchPage.tsx`
@@ -214,4 +214,4 @@ import {ComponentDocPage} from '@yuku123/z-***REMOVED***-component'
 | 版本 | 变更 |
 |---|---|
 | 0.1.2 | 新增组件文档页 `ComponentDocPage`（lead 008 §7）：`src/DOC.md` + 基座 `ComponentDoc` 薄包装 |
-| 0.1.2 | 首版：工作区 / 文档 / 接入 / 建模 / 检索 / 图谱 / 对话页面集 + manifest + Z***REMOVED***App 挂载点 |
+| 0.1.2 | 首版：工作区 / 文档 / 接入 / 建模 / 检索 / 图谱 / 对话页面集 + manifest + ***REMOVED***App 挂载点 |

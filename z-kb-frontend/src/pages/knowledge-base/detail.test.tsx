@@ -50,7 +50,7 @@ import KnowledgeBaseDetailPage from './detail';
 
 const ***REMOVED***: KnowledgeBaseRecord = {
   ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: 'z***REMOVED***_demo',
+  tenantCode: '***REMOVED***_demo',
   name: '心内科知识库',
   code: '***REMOVED***_cardio',
   type: 'FILE',
@@ -202,7 +202,7 @@ describe('知识库详情页', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^收藏$/ }));
     expect(await screen.findByRole('button', { name: /已收藏/ })).toBeTruthy();
-    expect(localStorage.getItem('z***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
+    expect(localStorage.getItem('***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
 
     fireEvent.click(screen.getByRole('button', { name: /已收藏/ }));
     await waitFor(() =>

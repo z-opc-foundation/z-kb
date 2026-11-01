@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * Wiki 文档目录（z***REMOVED***_wiki_doc）：一次 Agent 编译产出一份，一物料版本一行。
+ * Wiki 文档目录（***REMOVED***_wiki_doc）：一次 Agent 编译产出一份，一物料版本一行。
  */
-@TableName("z***REMOVED***_wiki_doc")
+@TableName("***REMOVED***_wiki_doc")
 public class WikiDocEntity {
 
     @TableId(type = IdType.INPUT)

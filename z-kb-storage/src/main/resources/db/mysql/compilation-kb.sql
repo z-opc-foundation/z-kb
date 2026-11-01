@@ -3,7 +3,7 @@
 -- 编译作业既是单文件任务（scope_type=SINGLE）也是多文件组别（WORKSPACE/CATEGORY/FOLDER），
 -- 组别不单独落表；阶段按物料版本分行，产物登记簿只记「产出了什么」，内容在检索块表。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_compilation_job (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_job (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     job_id VARCHAR(64) NOT NULL COMMENT '编译作业业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
@@ -39,13 +39,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_compilation_job (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_job_id (tenant_code, job_id, is_deleted),
-    KEY idx_z***REMOVED***_job_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, create_time),
-    KEY idx_z***REMOVED***_job_material (tenant_code, material_id, material_version_id),
-    KEY idx_z***REMOVED***_job_scope (tenant_code, ***REMOVED***_id, scope_type, run_status)
+    UNIQUE KEY uk_***REMOVED***_job_id (tenant_code, job_id, is_deleted),
+    KEY idx_***REMOVED***_job_***REMOVED*** (tenant_code, ***REMOVED***_id, is_deleted, create_time),
+    KEY idx_***REMOVED***_job_material (tenant_code, material_id, material_version_id),
+    KEY idx_***REMOVED***_job_scope (tenant_code, ***REMOVED***_id, scope_type, run_status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '编译作业与编译组别';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_compilation_stage (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_stage (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     job_id VARCHAR(64) NOT NULL COMMENT '所属编译作业业务标识',
@@ -68,12 +68,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_compilation_stage (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_stage (tenant_code, job_id, material_version_id, stage, round_no, is_deleted),
-    KEY idx_z***REMOVED***_stage_job (tenant_code, job_id, round_no, material_version_id, seq_no),
-    KEY idx_z***REMOVED***_stage_version (tenant_code, material_version_id, create_time)
+    UNIQUE KEY uk_***REMOVED***_stage (tenant_code, job_id, material_version_id, stage, round_no, is_deleted),
+    KEY idx_***REMOVED***_stage_job (tenant_code, job_id, round_no, material_version_id, seq_no),
+    KEY idx_***REMOVED***_stage_version (tenant_code, material_version_id, create_time)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '编译阶段执行明细，按物料版本分行';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_artifact (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact (
     id VARCHAR(64) NOT NULL,
     artifact_id VARCHAR(64) NOT NULL COMMENT '产物业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -94,13 +94,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_artifact (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_artifact_id (tenant_code, artifact_id, is_deleted),
-    KEY idx_z***REMOVED***_artifact_***REMOVED*** (tenant_code, ***REMOVED***_id, artifact_type),
-    KEY idx_z***REMOVED***_artifact_material (tenant_code, material_id),
-    KEY idx_z***REMOVED***_artifact_version (tenant_code, material_version_id)
+    UNIQUE KEY uk_***REMOVED***_artifact_id (tenant_code, artifact_id, is_deleted),
+    KEY idx_***REMOVED***_artifact_***REMOVED*** (tenant_code, ***REMOVED***_id, artifact_type),
+    KEY idx_***REMOVED***_artifact_material (tenant_code, material_id),
+    KEY idx_***REMOVED***_artifact_version (tenant_code, material_version_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '产物登记簿，一件产物一行';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_artifact_version (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact_version (
     id VARCHAR(64) NOT NULL,
     artifact_version_id VARCHAR(64) NOT NULL COMMENT '产物版本业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -116,11 +116,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_artifact_version (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_artifact_version_id (tenant_code, artifact_version_id, is_deleted),
-    KEY idx_z***REMOVED***_artifact_version (tenant_code, artifact_id, version_no)
+    UNIQUE KEY uk_***REMOVED***_artifact_version_id (tenant_code, artifact_version_id, is_deleted),
+    KEY idx_***REMOVED***_artifact_version (tenant_code, artifact_id, version_no)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '产物版本，不可变';
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_retrieval_chunk (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_retrieval_chunk (
     id VARCHAR(64) NOT NULL,
     chunk_id VARCHAR(64) NOT NULL COMMENT '检索块业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -148,11 +148,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_retrieval_chunk (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_z***REMOVED***_chunk_id (tenant_code, chunk_id, is_deleted),
-    KEY idx_z***REMOVED***_chunk_***REMOVED*** (tenant_code, ***REMOVED***_id, source_type, source_id),
-    KEY idx_z***REMOVED***_chunk_material (tenant_code, ***REMOVED***_id, material_id),
-    KEY idx_z***REMOVED***_chunk_version (tenant_code, material_version_id, ordinal),
-    KEY idx_z***REMOVED***_chunk_parent (tenant_code, parent_chunk_id),
-    KEY idx_z***REMOVED***_chunk_role_state (tenant_code, ***REMOVED***_id, chunk_role, index_state, indexed_at, material_id, ordinal),
-    KEY idx_z***REMOVED***_chunk_artifact (tenant_code, artifact_id)
+    UNIQUE KEY uk_***REMOVED***_chunk_id (tenant_code, chunk_id, is_deleted),
+    KEY idx_***REMOVED***_chunk_***REMOVED*** (tenant_code, ***REMOVED***_id, source_type, source_id),
+    KEY idx_***REMOVED***_chunk_material (tenant_code, ***REMOVED***_id, material_id),
+    KEY idx_***REMOVED***_chunk_version (tenant_code, material_version_id, ordinal),
+    KEY idx_***REMOVED***_chunk_parent (tenant_code, parent_chunk_id),
+    KEY idx_***REMOVED***_chunk_role_state (tenant_code, ***REMOVED***_id, chunk_role, index_state, indexed_at, material_id, ordinal),
+    KEY idx_***REMOVED***_chunk_artifact (tenant_code, artifact_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '统一检索池：物料块、Wiki 页块与图谱实体块';

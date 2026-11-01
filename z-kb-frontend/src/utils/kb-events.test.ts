@@ -9,7 +9,7 @@ describe('知识库变更广播', () => {
   it('向 window 派发约定事件', () => {
     const dispatch = vi.spyOn(window, 'dispatchEvent');
     emit***REMOVED***Changed();
-    expect(***REMOVED***CHANGED_EVENT).toBe('z***REMOVED***:***REMOVED***-changed');
+    expect(***REMOVED***CHANGED_EVENT).toBe('***REMOVED***:***REMOVED***-changed');
     expect(dispatch).toHaveBeenCalledOnce();
     expect(dispatch.mock.calls[0][0]).toBeInstanceOf(Event);
     expect((dispatch.mock.calls[0][0] as Event).type).toBe(***REMOVED***CHANGED_EVENT);

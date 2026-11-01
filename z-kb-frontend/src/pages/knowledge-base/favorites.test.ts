@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFavorites, saveFavorites, toggleFavoriteId } from './favorites';
 
-const KEY = 'z***REMOVED***.favorite-***REMOVED***s';
+const KEY = '***REMOVED***.favorite-***REMOVED***s';
 
 describe('收藏本地存储', () => {
   afterEach(() => {

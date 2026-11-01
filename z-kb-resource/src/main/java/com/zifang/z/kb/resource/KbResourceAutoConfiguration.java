@@ -101,7 +101,7 @@ import java.util.List;
 @AutoConfiguration(after = ***REMOVED***ResourcePersistenceAutoConfiguration.class)
 @ConditionalOnClass({DataSource.class, BaseMapper.class})
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnProperty(name = "z***REMOVED***.resource.persistence.enabled", havingValue = "true",
+@ConditionalOnProperty(name = "***REMOVED***.resource.persistence.enabled", havingValue = "true",
         matchIfMissing = true)
 public class ***REMOVED***ResourceAutoConfiguration {
 
@@ -154,7 +154,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ***REMOVED***OriginalFileStore ***REMOVED***OriginalFileStore(
-            @Value("${z***REMOVED***.material.storage.root:}") String rootDir) {
+            @Value("${***REMOVED***.material.storage.root:}") String rootDir) {
         return new Local***REMOVED***OriginalFileStore(rootDir);
     }
 
@@ -191,7 +191,7 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @ConditionalOnMissingBean
     public MaterialRepoBrowseService materialRepoBrowseService(
             MaterialService materialService,
-            @Value("${z***REMOVED***.material.repo.root:}") String repoRoot) {
+            @Value("${***REMOVED***.material.repo.root:}") String repoRoot) {
         return new DefaultMaterialRepoBrowseService(materialService, repoRoot);
     }
 
@@ -353,9 +353,9 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public YuqueApiClient yuqueApiClient(
-            @Value("${z***REMOVED***.source.yuque.base-url:}") String baseUrl,
-            @Value("${z***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
-            @Value("${z***REMOVED***.source.http.read-timeout-ms:10000}") int readTimeoutMs) {
+            @Value("${***REMOVED***.source.yuque.base-url:}") String baseUrl,
+            @Value("${***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${***REMOVED***.source.http.read-timeout-ms:10000}") int readTimeoutMs) {
         return new YuqueApiClient(baseUrl, connectTimeoutMs, readTimeoutMs);
     }
 
@@ -368,9 +368,9 @@ public class ***REMOVED***ResourceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public GitApiClient gitApiClient(
-            @Value("${z***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
-            @Value("${z***REMOVED***.source.git.read-timeout-ms:20000}") int readTimeoutMs,
-            @Value("${z***REMOVED***.source.git.allowed-hosts:}") String allowedHosts) {
+            @Value("${***REMOVED***.source.http.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${***REMOVED***.source.git.read-timeout-ms:20000}") int readTimeoutMs,
+            @Value("${***REMOVED***.source.git.allowed-hosts:}") String allowedHosts) {
         return new GitApiClient(connectTimeoutMs, readTimeoutMs, allowedHosts);
     }
 

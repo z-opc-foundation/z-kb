@@ -25,7 +25,7 @@ describe('资料抽取接口', () => {
     };
     vi.mocked(request).mockResolvedValue(record as never);
     await expect(getExtractionByMaterial('m1')).resolves.toBe(record);
-    expect(request).toHaveBeenCalledWith('/z***REMOVED***/v1/extraction/queryByMaterial', {
+    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/extraction/queryByMaterial', {
       method: 'get',
       params: { materialId: 'm1' },
       headers,

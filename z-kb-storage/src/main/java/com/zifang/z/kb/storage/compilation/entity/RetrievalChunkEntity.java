@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 检索块（z***REMOVED***_retrieval_chunk）。块是产物，章节块承载上下文、段落块参与召回。
+ * 检索块（***REMOVED***_retrieval_chunk）。块是产物，章节块承载上下文、段落块参与召回。
  */
-@TableName("z***REMOVED***_retrieval_chunk")
+@TableName("***REMOVED***_retrieval_chunk")
 public class RetrievalChunkEntity {
 
     @TableId(type = IdType.INPUT)

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 接入源列表在 {@code z***REMOVED***_knowledge_base_profile.source_policy} 里的存储结构。
+ * 接入源列表在 {@code ***REMOVED***_knowledge_base_profile.source_policy} 里的存储结构。
  *
  * <p>用 Map 读写而不是反射绑 POJO：z-util JsonUtil 的 POJO 绑定语义与 Jackson 有差异，
  * 这里字段少、结构固定，显式取值更稳。凭据只在这份 JSON 内，读取时由服务层脱敏。</p>

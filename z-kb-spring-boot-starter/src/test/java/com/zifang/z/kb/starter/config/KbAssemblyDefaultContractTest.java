@@ -47,14 +47,14 @@ class ***REMOVED***AssemblyDefaultContractTest {
     private static final String JSON_GRAPH_STORE = "com.zifang.z.***REMOVED***.graph.impl.JsonFileKnowledgeGraphStore";
     private static final String JSON_DOC_REPOSITORY = "com.zifang.z.***REMOVED***.storage.impl.JsonFileDocumentRepository";
 
-    /** 隔离用的临时 home —— 默认路径（~/.z***REMOVED***/...）都落在它下面，不污染真实 home。 */
+    /** 隔离用的临时 home —— 默认路径（~/.***REMOVED***/...）都落在它下面，不污染真实 home。 */
     private Path tempHome;
     private String originalUserHome;
 
     @BeforeEach
     void isolateHome() throws Exception {
         originalUserHome = System.getProperty("user.home");
-        tempHome = Files.createTempDirectory("z***REMOVED***-contract-home");
+        tempHome = Files.createTempDirectory("***REMOVED***-contract-home");
         System.setProperty("user.home", tempHome.toString());
     }
 
@@ -107,7 +107,7 @@ class ***REMOVED***AssemblyDefaultContractTest {
         }
 
         Exception failure = assertThrows(Exception.class,
-                () -> boot("z***REMOVED***.vector.data-dir=" + dataDir),
+                () -> boot("***REMOVED***.vector.data-dir=" + dataDir),
                 "data-dir 不可用却启动成功了（说明在静默回落）");
         String text = stackTrace(failure);
         System.out.println("READING-FAILFAST " + firstCauseMessage(failure));
@@ -139,11 +139,11 @@ class ***REMOVED***AssemblyDefaultContractTest {
     @DisplayName("非法 storage-type / graph.engine：启动报错并带修复指引")
     void illegalValuesFailFastWithGuidance() {
         Exception vectorFailure = assertThrows(Exception.class,
-                () -> boot("z***REMOVED***.vector.storage-type=bogus"), "非法 storage-type 未报错");
+                () -> boot("***REMOVED***.vector.storage-type=bogus"), "非法 storage-type 未报错");
         assertTrue(stackTrace(vectorFailure).contains("修复指引"));
 
         Exception graphFailure = assertThrows(Exception.class,
-                () -> boot("z***REMOVED***.graph.engine=bogus"), "非法 graph.engine 未报错");
+                () -> boot("***REMOVED***.graph.engine=bogus"), "非法 graph.engine 未报错");
         assertTrue(stackTrace(graphFailure).contains("修复指引"));
     }
 
@@ -151,8 +151,8 @@ class ***REMOVED***AssemblyDefaultContractTest {
     @DisplayName("显式回旧档：storage-type=in-memory + graph.engine=json 都能落回 1.0.x 口径")
     void explicitLegacyConfigStillWorks() {
         try (ConfigurableApplicationContext ctx = boot(
-                "z***REMOVED***.vector.storage-type=in-memory",
-                "z***REMOVED***.graph.engine=json")) {
+                "***REMOVED***.vector.storage-type=in-memory",
+                "***REMOVED***.graph.engine=json")) {
             assertEquals(IN_MEMORY_VECTOR_STORE, ctx.getBean(VectorStore.class).getClass().getName());
             assertEquals(JSON_GRAPH_STORE, ctx.getBean(KnowledgeGraphStore.class).getClass().getName());
         }

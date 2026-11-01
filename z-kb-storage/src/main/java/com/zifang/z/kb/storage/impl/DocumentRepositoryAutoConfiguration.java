@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
  * <p>生产环境可自定义基于 MyBatis-Plus + MySQL 的 Repository，
  * 只需注册一个 DocumentRepository Bean 即可覆盖。
  *
- * <p><b>1.1.0</b>：路径约定化 —— {@code z***REMOVED***.storage.path} 支持 {@code ~} 展开，
- * 默认 {@code ~/.z***REMOVED***/z***REMOVED***.json}（D3 拍板：文档仓库仍默认 JSON 持久化）。
+ * <p><b>1.1.0</b>：路径约定化 —— {@code ***REMOVED***.storage.path} 支持 {@code ~} 展开，
+ * 默认 {@code ~/.***REMOVED***/***REMOVED***.json}（D3 拍板：文档仓库仍默认 JSON 持久化）。
  */
 @Configuration
 public class DocumentRepositoryAutoConfiguration {
@@ -26,12 +26,12 @@ public class DocumentRepositoryAutoConfiguration {
 
     /**
      * 默认 Bean — JSON 文件持久化（重启不丢数据）。
-     * 配置项 {@code z***REMOVED***.storage.path} 可指定存储路径，默认 {@code ~/.z***REMOVED***/z***REMOVED***.json}。
+     * 配置项 {@code ***REMOVED***.storage.path} 可指定存储路径，默认 {@code ~/.***REMOVED***/***REMOVED***.json}。
      */
     @Bean
     @ConditionalOnMissingBean(DocumentRepository.class)
     public DocumentRepository documentRepository(
-            @Value("${z***REMOVED***.storage.path:#{null}}") String path) {
+            @Value("${***REMOVED***.storage.path:#{null}}") String path) {
         String resolved = (path == null || path.trim().isEmpty())
                 ? ***REMOVED***Paths.documentFile() : ***REMOVED***Paths.expand(path);
         DocumentRepository repository = new JsonFileDocumentRepository(resolved);

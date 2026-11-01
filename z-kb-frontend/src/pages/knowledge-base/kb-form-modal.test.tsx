@@ -17,7 +17,7 @@ import ***REMOVED***FormModal from './***REMOVED***-form-modal';
 
 const ***REMOVED***: KnowledgeBaseRecord = {
   ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: 'z***REMOVED***_demo',
+  tenantCode: '***REMOVED***_demo',
   name: '护理知识库',
   code: '***REMOVED***_nursing',
   type: 'FILE',

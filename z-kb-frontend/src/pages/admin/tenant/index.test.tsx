@@ -26,7 +26,7 @@ vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 const baseRecords: TenantRecord[] = [
   {
     id: '1',
-    code: 'z***REMOVED***_demo',
+    code: '***REMOVED***_demo',
     name: '演示租户',
     status: 'ACTIVE',
     description: '总院',
@@ -119,7 +119,7 @@ describe('全局管理 · 租户管理', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /新建租户/ }));
     const dialog = screen.getByRole('dialog', { name: '新建租户' });
-    fireEvent.change(within(dialog).getByPlaceholderText('如 z***REMOVED***_demo'), {
+    fireEvent.change(within(dialog).getByPlaceholderText('如 ***REMOVED***_demo'), {
       target: { value: 'xc_hospital' },
     });
     fireEvent.change(within(dialog).getByPlaceholderText('如 演示租户'), {

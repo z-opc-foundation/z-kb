@@ -49,7 +49,7 @@ scripts/         本地启动脚本
 
 ## 请求与登录
 
-业务接口统一通过 `src/services/http.ts` 的 `request<T>(url, options)`、`downloadFile`、`buildApiUrl` 调用。Axios 的 `baseURL` 为 `/kapi`；知识中台接口统一走 `/kapi/z***REMOVED***/v1/...`（对应 Matrix 应用 `z-***REMOVED***`，dev 站点 `http://***REMOVED***-dev.cfuture.shop`）。
+业务接口统一通过 `src/services/http.ts` 的 `request<T>(url, options)`、`downloadFile`、`buildApiUrl` 调用。Axios 的 `baseURL` 为 `/kapi`；知识中台接口统一走 `/kapi/***REMOVED***/v1/...`（对应 Matrix 应用 `z-***REMOVED***`，dev 站点 `http://***REMOVED***-dev.cfuture.shop`）。
 
 响应包含 `data` 以及 `code` 或 `success` 时会自动解包。`success: true` 或 `code` 为 `0`、`200`（含字符串形式）表示成功，其他业务状态抛出 `RequestError`。非统一响应直接透传，文件下载返回 Blob。
 
@@ -61,7 +61,7 @@ scripts/         本地启动脚本
 
 | 前缀 | 目标及处理 |
 | --- | --- |
-| `/kapi/z***REMOVED***` | `***REMOVED***API_TARGET` 或 `http://***REMOVED***-dev.cfuture.shop`；设置 `***REMOVED***API_TARGET` 时剥掉 `/kapi` 打本地 18080，并补 `X-Tenant-Code`/`X-Actor-Id` |
+| `/kapi/***REMOVED***` | `***REMOVED***API_TARGET` 或 `http://***REMOVED***-dev.cfuture.shop`；设置 `***REMOVED***API_TARGET` 时剥掉 `/kapi` 打本地 18080，并补 `X-Tenant-Code`/`X-Actor-Id` |
 | `/kapi/development-brain-portal` | `http://127.0.0.1:8080`，仅剥掉 `/kapi` |
 | `/kapi/apex-sso` | `APEX_SSO_TARGET` 或 `http://c2f.apex-dev.cfuture.shop`（本地开发用同源代理完成登录/退出） |
 | `/kapi/hbos-emr` | `https://hbos-test.cfuture.shop` |

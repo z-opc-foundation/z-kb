@@ -111,7 +111,7 @@
         <jsoup.version>1.18.1</jsoup.version>
         <slf4j.version>2.0.13</slf4j.version>
         <junit.version>5.10.2</junit.version>
-        <!-- z-vector-storage 1.0.5：1.1.0 起 z***REMOVED***.vector.storage-type 默认 persistent，
+        <!-- z-vector-storage 1.0.5：1.1.0 起 ***REMOVED***.vector.storage-type 默认 persistent，
              PersistentVectorStore 必须真的在 classpath 上（装不上就启动失败，不静默回落）。
              PersistentVectorStore 落在 **z-vector-storage** 这个坐标里（不在 z-vector-core 里），
              而 z-boot-parent:1.1.0 的 DM 只管 z-vector-api / core / grpc-server / spring-boot-starter

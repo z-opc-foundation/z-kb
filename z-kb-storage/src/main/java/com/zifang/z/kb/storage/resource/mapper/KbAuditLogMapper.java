@@ -13,7 +13,7 @@ public interface ***REMOVED***AuditLogMapper extends BaseMapper<***REMOVED***Aud
     /** 按知识库 + 自然日聚合成功操作数（H2/MySQL 通用的 CAST AS DATE）。 */
     @Select("<script>"
             + "SELECT ***REMOVED***_id AS ***REMOVED***Id, CAST(created_at AS DATE) AS actDate, COUNT(*) AS total "
-            + "FROM z***REMOVED***_audit_log "
+            + "FROM ***REMOVED***_audit_log "
             + "WHERE tenant_code = #{tenantCode} AND success = TRUE AND created_at &gt;= #{start} "
             + "AND ***REMOVED***_id IN "
             + "<foreach collection='***REMOVED***Ids' item='id' open='(' separator=',' close=')'>#{id}</foreach> "

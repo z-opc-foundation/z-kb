@@ -2,7 +2,7 @@
 -- 与 db/mysql/material-***REMOVED***.sql 保持同构；索引用独立语句。
 -- H2 下 TEXT/MEDIUMTEXT 统一用 CLOB，长 JSON 用 VARCHAR(4000)。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material (
     id VARCHAR(64) NOT NULL,
     material_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -26,13 +26,13 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_material_id ON z***REMOVED***_material (tenant_code, material_id, is_deleted);
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_material_fp ON z***REMOVED***_material (tenant_code, ***REMOVED***_id, material_type, fingerprint, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_material_***REMOVED*** ON z***REMOVED***_material (tenant_code, ***REMOVED***_id, is_deleted, create_time);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_material_category ON z***REMOVED***_material (tenant_code, ***REMOVED***_id, category_id);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_material_source ON z***REMOVED***_material (tenant_code, ***REMOVED***_id, source_binding_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_material_id ON ***REMOVED***_material (tenant_code, material_id, is_deleted);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_material_fp ON ***REMOVED***_material (tenant_code, ***REMOVED***_id, material_type, fingerprint, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_material_***REMOVED*** ON ***REMOVED***_material (tenant_code, ***REMOVED***_id, is_deleted, create_time);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_material_category ON ***REMOVED***_material (tenant_code, ***REMOVED***_id, category_id);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_material_source ON ***REMOVED***_material (tenant_code, ***REMOVED***_id, source_binding_id);
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material_version (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material_version (
     id VARCHAR(64) NOT NULL,
     version_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -55,12 +55,12 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material_version (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_material_version_id ON z***REMOVED***_material_version (tenant_code, version_id, is_deleted);
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_material_version_no ON z***REMOVED***_material_version (tenant_code, material_id, version_no, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_material_version ON z***REMOVED***_material_version (tenant_code, material_id, version_no);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_material_version_status ON z***REMOVED***_material_version (tenant_code, ***REMOVED***_id, version_status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_material_version_id ON ***REMOVED***_material_version (tenant_code, version_id, is_deleted);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_material_version_no ON ***REMOVED***_material_version (tenant_code, material_id, version_no, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_material_version ON ***REMOVED***_material_version (tenant_code, material_id, version_no);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_material_version_status ON ***REMOVED***_material_version (tenant_code, ***REMOVED***_id, version_status);
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_material_parsed_draft (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_material_parsed_draft (
     id VARCHAR(64) NOT NULL,
     draft_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -80,11 +80,11 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_material_parsed_draft (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_draft_id ON z***REMOVED***_material_parsed_draft (tenant_code, draft_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_draft_version ON z***REMOVED***_material_parsed_draft (tenant_code, material_version_id, parsed_at);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_draft_material ON z***REMOVED***_material_parsed_draft (tenant_code, material_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_draft_id ON ***REMOVED***_material_parsed_draft (tenant_code, draft_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_draft_version ON ***REMOVED***_material_parsed_draft (tenant_code, material_version_id, parsed_at);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_draft_material ON ***REMOVED***_material_parsed_draft (tenant_code, material_id);
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_category (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_category (
     id VARCHAR(64) NOT NULL,
     category_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -101,5 +101,5 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_category (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_category_id ON z***REMOVED***_category (tenant_code, category_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_category_parent ON z***REMOVED***_category (tenant_code, ***REMOVED***_id, parent_id, sort_no);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_category_id ON ***REMOVED***_category (tenant_code, category_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_category_parent ON ***REMOVED***_category (tenant_code, ***REMOVED***_id, parent_id, sort_no);

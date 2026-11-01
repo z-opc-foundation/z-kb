@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 产物版本（z***REMOVED***_artifact_version）。版本不可变，内容变化追加新版本。
+ * 产物版本（***REMOVED***_artifact_version）。版本不可变，内容变化追加新版本。
  */
-@TableName("z***REMOVED***_artifact_version")
+@TableName("***REMOVED***_artifact_version")
 public class ArtifactVersionEntity {
 
     @TableId(type = IdType.INPUT)

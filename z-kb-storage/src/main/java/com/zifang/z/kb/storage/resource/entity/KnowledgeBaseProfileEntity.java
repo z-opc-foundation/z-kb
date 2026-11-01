@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库当前配置档案（z***REMOVED***_knowledge_base_profile）。
+ * 知识库当前配置档案（***REMOVED***_knowledge_base_profile）。
  *
  * <p>策略字段存 JSON 文本；类型与 {@link KnowledgeBaseProfileVersionEntity} 保持一致。</p>
  */
-@TableName("z***REMOVED***_knowledge_base_profile")
+@TableName("***REMOVED***_knowledge_base_profile")
 public class KnowledgeBaseProfileEntity {
 
     @TableId(type = IdType.INPUT)

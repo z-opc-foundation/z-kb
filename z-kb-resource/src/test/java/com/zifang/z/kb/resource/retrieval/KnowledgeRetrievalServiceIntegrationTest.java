@@ -37,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 检索域集成测试：真起 Spring 容器 + H2，钉住 dense 召回、解释字段与参数边界。
  */
 @SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:z***REMOVED***-retrieval;MODE=MySQL;DB_CLOSE_DELAY=-1",
+        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-retrieval;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "z***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-z***REMOVED***.json",
-        "z***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-original",
-        "z***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-repo",
+        "***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-***REMOVED***.json",
+        "***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-original",
+        "***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-repo",
         "spring.main.banner-mode=off"
 })
 class KnowledgeRetrievalServiceIntegrationTest {

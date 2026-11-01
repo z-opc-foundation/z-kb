@@ -23,15 +23,15 @@ spring:
   # 接入源 / 审计）自动装配条件（@ConditionalOnBean(DataSource.class)）恒不成立 ⇒
   # 资源域 v1 的 18 个 Controller 全部不注册。
   # 这里给一份 H2 文件库（MySQL 兼容模式，与仓内集成测试同口径）：
-  # 持久化到 ~/.z***REMOVED***/h2，重启不丢；想换成真 MySQL 只需覆盖 spring.datasource.* 四项。
+  # 持久化到 ~/.***REMOVED***/h2，重启不丢；想换成真 MySQL 只需覆盖 spring.datasource.* 四项。
   datasource:
-    url: jdbc:h2:file:${user.home}/.z***REMOVED***/h2/z***REMOVED***;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:${user.home}/.***REMOVED***/h2/***REMOVED***;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
 
 # ==================== z-***REMOVED*** 配置 ====================
-z***REMOVED***:
+***REMOVED***:
   enabled: true
   embedding:
     # tfidf = 本地 TF-IDF 实现（自包含，离线可用）

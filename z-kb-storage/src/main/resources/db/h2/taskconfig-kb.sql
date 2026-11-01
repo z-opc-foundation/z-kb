@@ -1,7 +1,7 @@
 -- z-***REMOVED*** 任务配置 H2 元数据表（MySQL 兼容模式，幂等）
 -- 与 db/mysql/taskconfig-***REMOVED***.sql 保持同构；***REMOVED***_id 空串表示租户级配置。
 
-CREATE TABLE IF NOT EXISTS z***REMOVED***_task_config (
+CREATE TABLE IF NOT EXISTS ***REMOVED***_task_config (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     ***REMOVED***_id VARCHAR(64) NOT NULL DEFAULT '',
@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS z***REMOVED***_task_config (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_z***REMOVED***_task_config ON z***REMOVED***_task_config (tenant_code, ***REMOVED***_id, config_version, task_code, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_z***REMOVED***_task_config_version ON z***REMOVED***_task_config (tenant_code, ***REMOVED***_id, published_at);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_task_config ON ***REMOVED***_task_config (tenant_code, ***REMOVED***_id, config_version, task_code, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_***REMOVED***_task_config_version ON ***REMOVED***_task_config (tenant_code, ***REMOVED***_id, published_at);

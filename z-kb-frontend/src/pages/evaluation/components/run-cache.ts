@@ -2,7 +2,7 @@ import type { EvalRunRecord } from '@/services/evaluation';
 import { getTenantCode } from '@/utils/tenant';
 
 function cacheKey(***REMOVED***Id: string): string {
-  return `z***REMOVED***.eval-runs.${getTenantCode()}.${***REMOVED***Id}`;
+  return `***REMOVED***.eval-runs.${getTenantCode()}.${***REMOVED***Id}`;
 }
 
 export function readKnownRuns(***REMOVED***Id: string): EvalRunRecord[] {

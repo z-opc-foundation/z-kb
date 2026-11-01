@@ -52,7 +52,7 @@ import KnowledgeBaseSettingsPage from './settings';
 
 const ACTIVE_***REMOVED***: KnowledgeBaseRecord = {
   ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: 'z***REMOVED***_demo',
+  tenantCode: '***REMOVED***_demo',
   name: '护理知识库',
   code: '***REMOVED***_nursing',
   type: 'FILE',
@@ -120,7 +120,7 @@ describe('知识库设置页', () => {
     expect(getEffectiveAccess).toHaveBeenCalledWith('***REMOVED***-1');
     expect(screen.getByText('***REMOVED***_nursing')).toBeTruthy();
     expect(screen.getByText('bge-m3')).toBeTruthy();
-    expect(screen.getByText('z***REMOVED***_demo')).toBeTruthy();
+    expect(screen.getByText('***REMOVED***_demo')).toBeTruthy();
     expect(screen.getAllByText(/演示租户/).length).toBeGreaterThan(0);
 
     fireEvent.change(screen.getByLabelText(/知识库名称/), {

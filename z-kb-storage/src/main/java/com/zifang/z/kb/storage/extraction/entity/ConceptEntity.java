@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库级概念模型（z***REMOVED***_concept）：同一库内按规范化名称归一，跨资料复用升级为 CONFIRMED。
+ * 知识库级概念模型（***REMOVED***_concept）：同一库内按规范化名称归一，跨资料复用升级为 CONFIRMED。
  */
-@TableName("z***REMOVED***_concept")
+@TableName("***REMOVED***_concept")
 public class ConceptEntity {
 
     @TableId(type = IdType.INPUT)

@@ -19,15 +19,15 @@ afterEach(() => {
 
 describe('租户上下文', () => {
   it('默认返回内置演示租户', () => {
-    expect(DEFAULT_TENANT_CODE).toBe('z***REMOVED***_demo');
-    expect(TENANTS).toEqual([{ code: 'z***REMOVED***_demo', name: '演示租户', mark: '演' }]);
+    expect(DEFAULT_TENANT_CODE).toBe('***REMOVED***_demo');
+    expect(TENANTS).toEqual([{ code: '***REMOVED***_demo', name: '演示租户', mark: '演' }]);
     expect(getTenantCode()).toBe(DEFAULT_TENANT_CODE);
     expect(getTenantInfo()).toEqual(TENANTS[0]);
   });
 
   it('读取并保存本地租户编码', () => {
     setTenantCode('tenant-b');
-    expect(localStorage.getItem('z***REMOVED***.tenant-code')).toBe('tenant-b');
+    expect(localStorage.getItem('***REMOVED***.tenant-code')).toBe('tenant-b');
     expect(getTenantCode()).toBe('tenant-b');
   });
 
@@ -38,7 +38,7 @@ describe('租户上下文', () => {
 
   it('显式传入租户编码优先于本地存储', () => {
     setTenantCode('tenant-b');
-    expect(getTenantInfo('z***REMOVED***_demo').name).toBe('演示租户');
+    expect(getTenantInfo('***REMOVED***_demo').name).toBe('演示租户');
   });
 
   it('本地存储不可用时回退默认租户且不抛错', () => {

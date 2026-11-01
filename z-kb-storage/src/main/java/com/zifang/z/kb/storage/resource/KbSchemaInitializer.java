@@ -12,7 +12,7 @@ import java.util.Locale;
 /**
  * 启动时建表：按数据库产品选择 H2 / MySQL 脚本，脚本本身幂等。
  *
- * <p>由 {@code z***REMOVED***.resource.auto-ddl=true}（默认）开启；生产环境如需 DBA 统一管表可关闭。</p>
+ * <p>由 {@code ***REMOVED***.resource.auto-ddl=true}（默认）开启；生产环境如需 DBA 统一管表可关闭。</p>
  */
 public class ***REMOVED***SchemaInitializer implements InitializingBean {
 
