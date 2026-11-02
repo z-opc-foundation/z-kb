@@ -16,6 +16,7 @@ import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import com.zifang.z.kb.api.taskconfig.TaskNature;
 import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
 import com.zifang.z.kb.resource.evaluation.EvaluationCaseScorer.ChunkCandidate;
+import com.zifang.z.kb.resource.retrieval.LibraryRetrievalEngine;
 import com.zifang.z.kb.resource.evaluation.EvaluationMetricCalculator.MetricComputation;
 import com.zifang.z.kb.resource.evaluation.EvaluationSnapshotBuilder.SnapshotBuild;
 import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
@@ -104,6 +105,9 @@ final class EvaluationRunExecutor {
 
     private final EvaluationQueryAssembler queryAssembler;
 
+    /** 库内混合检索引擎（dense + BM25 + 图谱三路 RRF）；为空时评测退回纯向量召回。 */
+    private final LibraryRetrievalEngine retrieval;
+
     EvaluationRunExecutor(KnowledgeBaseResourceService resourceService,
             KnowledgeBaseProfileMapper profileMapper,
             CompilationJobMapper jobMapper,
@@ -116,7 +120,8 @@ final class EvaluationRunExecutor {
             EvaluationMetricCalculator metricCalculator,
             EvaluationBadcaseManager badcaseManager,
             EvaluationDatasetManager datasetManager,
-            EvaluationQueryAssembler queryAssembler) {
+            EvaluationQueryAssembler queryAssembler,
+            LibraryRetrievalEngine retrieval) {
         this.resourceService = resourceService;
         this.profileMapper = profileMapper;
         this.jobMapper = jobMapper;
@@ -130,6 +135,7 @@ final class EvaluationRunExecutor {
         this.badcaseManager = badcaseManager;
         this.datasetManager = datasetManager;
         this.queryAssembler = queryAssembler;
+        this.retrieval = retrieval;
     }
 
     /** 创建并同步执行一次评测运行，含快照构建、指纹复用判断、逐题评测、指标落库与坏例更新。 */
@@ -255,8 +261,8 @@ final class EvaluationRunExecutor {
 
         long started = System.currentTimeMillis();
         try {
-            RunExecution execution = executeRun(tenantCode, run, cases, snapshot, scope, stage,
-                    judge, actorId);
+            RunExecution execution = executeRun(tenantCode, kb.getKbId(), run, cases, snapshot,
+                    scope, stage, judge, actorId);
             Instant finished = Instant.now();
             run.setStatus(EvalRunStatus.SUCCEEDED.name());
             run.setResultUsable(execution.usable ? 1 : 0);
@@ -284,7 +290,8 @@ final class EvaluationRunExecutor {
     }
 
     /** 在快照成员范围内加载分块并逐题评测，落库逐题结果与坏例，最后计算并持久化指标。 */
-    private RunExecution executeRun(String tenantCode, EvalRunEntity run, List<EvalCaseEntity> cases,
+    private RunExecution executeRun(String tenantCode, String kbId, EvalRunEntity run,
+            List<EvalCaseEntity> cases,
             SnapshotBuild snapshot, EvalScopeType scope, EvaluationStage stage,
             JudgeSettings judge, String actorId) {
         List<KbSnapshotItemEntity> items = snapshot.items;
@@ -328,7 +335,8 @@ final class EvaluationRunExecutor {
         List<CaseOutcome> outcomes = new ArrayList<>();
         for (EvalCaseEntity evalCase : cases) {
             CaseOutcome outcome = caseScorer.evaluateCase(evalCase, candidates, statsChunks,
-                    materialIds, materialVersionIds, judge);
+                    materialIds, materialVersionIds, judge, tenantCode, kbId, retrieval,
+                    candidateChunks);
             outcomes.add(outcome);
             persistCaseResult(tenantCode, run, outcome, actorId);
             badcaseManager.upsertBadcases(tenantCode, run, outcome, scope, stage, actorId);

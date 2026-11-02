@@ -1,7 +1,6 @@
 package com.zifang.z.kb.resource.retrieval;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zifang.z.kb.api.KBException;
 import com.zifang.z.kb.api.resource.KbCaller;
 import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
@@ -9,15 +8,15 @@ import com.zifang.z.kb.api.retrieval.KnowledgeRetrievalService;
 import com.zifang.z.kb.api.retrieval.RetrievalHitView;
 import com.zifang.z.kb.api.retrieval.RetrievalQueryParam;
 import com.zifang.z.kb.api.retrieval.RetrievalResultView;
-import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.core.retrieval.HybridLibrarySearcher;
 import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
 import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMentionMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
 import com.zifang.z.kb.storage.material.entity.MaterialEntity;
 import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,34 +25,46 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 库内 dense 检索实现：本地确定性向量召回，只保留当前物料版本的已索引段落块。
+ * 库内检索实现：向量 / 关键词 / 图谱三路召回 + RRF 融合，只保留当前物料版本的已索引段落块。
  *
- * <p>与参考实现同口径：扫描上限 2000 块、topK 默认 10 上限 50、minScore 默认 0.1、
- * 查询长度上限 200、过短块（&lt; 8 字符）跳过；返回得分、命中词与章节上下文解释。
+ * <p><b>默认模式</b>：{@code fusion}（三路融合）。此前只有 {@code dense} 一路，
+ * 实测语义改写类问题（「检索是怎么做的」）召回失败；接上 BM25 与图谱后词面与关系型问题都能覆盖。
+ * {@code dense} 仍然保留且语义不变，供需要纯向量口径的调用方使用。</p>
+ *
+ * <p>与参考实现同口径：扫描上限 2000 块、topK 默认 10 上限 50、查询长度上限 200、
+ * 过短块（&lt; 8 字符）跳过；返回得分、命中词与章节上下文解释。
  * Wiki 归属字段在 Wiki 域接入前保持为空。</p>
  */
 public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalService {
 
-    private static final int MAX_SCAN = 2000;
     private static final int DEFAULT_TOP_K = 10;
     private static final int MAX_TOP_K = 50;
-    private static final double DEFAULT_MIN_SCORE = 0.1d;
+    private static final double DEFAULT_MIN_SCORE = 0.0d;
     private static final int MAX_QUERY_LENGTH = 200;
-    private static final int MIN_CONTENT_CHARS = 8;
     private static final int SECTION_CONTEXT_CHARS = 1000;
-    private static final String MODE_DENSE = "dense";
 
     private final KnowledgeBaseResourceService resourceService;
     private final RetrievalChunkMapper chunkMapper;
     private final MaterialMapper materialMapper;
-    private final LocalHashEmbedding embedding = new LocalHashEmbedding();
+    private final LibraryRetrievalEngine engine;
 
     public DefaultKnowledgeRetrievalService(KnowledgeBaseResourceService resourceService,
                                             RetrievalChunkMapper chunkMapper,
-                                            MaterialMapper materialMapper) {
+                                            MaterialMapper materialMapper,
+                                            GraphNodeMapper graphNodeMapper,
+                                            ConceptMentionMapper mentionMapper) {
         this.resourceService = resourceService;
         this.chunkMapper = chunkMapper;
         this.materialMapper = materialMapper;
+        this.engine = new LibraryRetrievalEngine(chunkMapper, materialMapper,
+                graphNodeMapper, mentionMapper);
+    }
+
+    /** 兼容旧构造：只给三参时图谱路退化为空（召回退化为两路融合，不报错）。 */
+    public DefaultKnowledgeRetrievalService(KnowledgeBaseResourceService resourceService,
+                                            RetrievalChunkMapper chunkMapper,
+                                            MaterialMapper materialMapper) {
+        this(resourceService, chunkMapper, materialMapper, null, null);
     }
 
     @Override
@@ -66,11 +77,7 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         if (query.length() > MAX_QUERY_LENGTH) {
             throw paramInvalid();
         }
-        String mode = hasText(param.getMode())
-                ? param.getMode().trim().toLowerCase(Locale.ROOT) : MODE_DENSE;
-        if (!MODE_DENSE.equals(mode)) {
-            throw new KBException("KB_RETRIEVAL_MODE_UNSUPPORTED", "当前只开放向量（dense）检索");
-        }
+        HybridLibrarySearcher.Mode mode = resolveMode(param.getMode());
         int topK = param.getTopK() == null ? DEFAULT_TOP_K : param.getTopK();
         if (topK < 1 || topK > MAX_TOP_K) {
             throw paramInvalid();
@@ -82,143 +89,117 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         resourceService.requireReadable(kbId, caller);
 
         long started = System.currentTimeMillis();
-        List<RetrievalChunkEntity> raw = listIndexedByKb(caller.getTenantCode(), kbId, MAX_SCAN + 1);
-        boolean truncated = raw.size() > MAX_SCAN;
-        if (truncated) {
-            raw = new ArrayList<>(raw.subList(0, MAX_SCAN));
-        }
+        LibraryRetrievalEngine.Outcome outcome = engine.search(caller.getTenantCode(), kbId,
+                query, mode, topK, minScore, null);
 
-        Set<String> materialIds = new LinkedHashSet<>();
-        for (RetrievalChunkEntity chunk : raw) {
-            materialIds.add(chunk.getMaterialId());
-        }
-        Map<String, MaterialEntity> materialMap = materials(caller.getTenantCode(), materialIds);
-
-        double[] queryVector = embedding.embed(query);
-        List<String> queryTerms = embedding.queryTerms(query);
-        List<ScoredChunk> scored = new ArrayList<>();
-        long candidateCount = 0L;
-        for (RetrievalChunkEntity chunk : raw) {
-            MaterialEntity material = materialMap.get(chunk.getMaterialId());
-            if (material == null || !hasText(material.getCurrentVersionId())
-                    || !material.getCurrentVersionId().equals(chunk.getMaterialVersionId())) {
-                continue;
-            }
-            if (chunk.getContent() == null
-                    || chunk.getContent().trim().length() < MIN_CONTENT_CHARS) {
-                continue;
-            }
-            candidateCount++;
-            double[] vector = embedding.decode(chunk.getEmbedding());
-            if (vector == null || !embedding.model().equals(chunk.getEmbeddingModel())) {
-                vector = embedding.embed(chunk.getContent());
-                backfillEmbedding(chunk, vector, caller);
-            }
-            double score = Math.max(0.0d, embedding.cosine(queryVector, vector));
-            if (score + 1.0e-9 < minScore) {
-                continue;
-            }
-            scored.add(new ScoredChunk(chunk, score));
-        }
-
-        scored.sort(Comparator.comparingDouble(ScoredChunk::score).reversed()
-                .thenComparing(item -> item.chunk().getMaterialId())
-                .thenComparing(item -> item.chunk().getOrdinal()));
+        Map<String, RetrievalChunkEntity> chunkMap = chunks(caller.getTenantCode(), kbId,
+                outcome.getHits());
+        Map<String, MaterialEntity> materialMap = materials(caller.getTenantCode(), kbId,
+                chunkMap.values());
 
         List<RetrievalHitView> hits = new ArrayList<>();
-        int rank = 1;
-        for (ScoredChunk item : scored) {
-            if (hits.size() >= topK) {
-                break;
+        for (HybridLibrarySearcher.Hit hit : outcome.getHits()) {
+            RetrievalChunkEntity chunk = chunkMap.get(hit.getChunkId());
+            if (chunk == null) {
+                continue;
             }
-            RetrievalChunkEntity chunk = item.chunk();
-            RetrievalHitView hit = new RetrievalHitView();
-            hit.setRank(rank++);
-            hit.setChunkId(chunk.getChunkId());
-            hit.setMaterialId(chunk.getMaterialId());
+            RetrievalHitView view = new RetrievalHitView();
+            view.setRank(hit.getRank());
+            view.setChunkId(chunk.getChunkId());
+            view.setMaterialId(chunk.getMaterialId());
             MaterialEntity material = materialMap.get(chunk.getMaterialId());
-            hit.setMaterialTitle(material == null ? null : material.getTitle());
-            hit.setMaterialVersionId(chunk.getMaterialVersionId());
-            hit.setArtifactId(chunk.getArtifactId());
-            hit.setOrdinal(chunk.getOrdinal());
-            hit.setHeading(chunk.getHeading());
-            hit.setContent(chunk.getContent());
-            hit.setParentChunkId(chunk.getParentChunkId());
-            hit.setCharCount(chunk.getCharCount());
-            hit.setScore(round(item.score()));
-            hit.setIndexState(chunk.getIndexState());
-            hit.setIndexedAt(chunk.getIndexedAt());
-
-            List<String> matched = new ArrayList<>();
-            for (String term : queryTerms) {
-                if (contains(chunk.getHeading(), term) || contains(chunk.getContent(), term)) {
-                    matched.add(term);
-                }
-            }
-            hit.setMatchedTerms(matched);
-            hit.setExplanation(explain(item.score(), matched));
-            hits.add(hit);
+            view.setMaterialTitle(material == null ? null : material.getTitle());
+            view.setMaterialVersionId(chunk.getMaterialVersionId());
+            view.setArtifactId(chunk.getArtifactId());
+            view.setOrdinal(chunk.getOrdinal());
+            view.setHeading(chunk.getHeading());
+            view.setContent(chunk.getContent());
+            view.setParentChunkId(chunk.getParentChunkId());
+            view.setCharCount(chunk.getCharCount());
+            view.setScore(round(hit.getScore()));
+            view.setIndexState(chunk.getIndexState());
+            view.setIndexedAt(chunk.getIndexedAt());
+            view.setMatchedTerms(new ArrayList<>(hit.getMatchedTerms()));
+            view.setExplanation(explain(mode, hit));
+            hits.add(view);
         }
         attachSectionContext(caller.getTenantCode(), hits);
 
         RetrievalResultView result = new RetrievalResultView();
         result.setKbId(kbId);
         result.setQuery(query);
-        result.setMode(MODE_DENSE);
-        result.setEmbeddingModel(embedding.model());
+        result.setMode(mode.name().toLowerCase(Locale.ROOT));
+        result.setEmbeddingModel(engine.embedding().model());
         result.setTopK(topK);
         result.setMinScore(minScore);
-        result.setTotalCandidates(candidateCount);
-        result.setScanned(raw.size());
+        result.setTotalCandidates(outcome.getCandidateCount());
+        result.setScanned(outcome.getScanned());
         result.setReturned(hits.size());
-        result.setTruncated(truncated);
+        result.setTruncated(outcome.isTruncated());
         result.setTookMs(System.currentTimeMillis() - started);
         result.setHits(hits);
         return result;
     }
 
-    private List<RetrievalChunkEntity> listIndexedByKb(String tenantCode, String kbId, int limit) {
+    /**
+     * 解析召回模式。
+     *
+     * <p>空值落到 {@code fusion}（三路）；{@code dense} / {@code bm25} / {@code hybrid} /
+     * {@code fusion} 显式支持；未知值报错并说明可选值 —— 旧实现只说「当前只开放向量（dense）检索」，
+     * 那个口径在开放多路后已经过期。</p>
+     */
+    private HybridLibrarySearcher.Mode resolveMode(String value) {
+        if (!hasText(value)) {
+            return HybridLibrarySearcher.Mode.FUSION;
+        }
+        HybridLibrarySearcher.Mode mode = HybridLibrarySearcher.Mode.parse(value);
+        if (mode == null) {
+            throw new KBException("KB_RETRIEVAL_MODE_UNSUPPORTED",
+                    "检索模式只能是 dense / bm25 / hybrid / fusion");
+        }
+        return mode;
+    }
+
+    private Map<String, RetrievalChunkEntity> chunks(String tenantCode, String kbId,
+            List<HybridLibrarySearcher.Hit> hits) {
+        Map<String, RetrievalChunkEntity> result = new HashMap<>();
+        Set<String> chunkIds = new LinkedHashSet<>();
+        for (HybridLibrarySearcher.Hit hit : hits) {
+            chunkIds.add(hit.getChunkId());
+        }
+        if (chunkIds.isEmpty()) {
+            return result;
+        }
         QueryWrapper<RetrievalChunkEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", tenantCode)
                 .eq("kb_id", kbId)
-                .eq("chunk_role", "PASSAGE")
-                .eq("index_state", "INDEXED")
-                .eq("is_deleted", 0)
-                .orderByDesc("indexed_at")
-                .orderByAsc("material_id")
-                .orderByAsc("ordinal")
-                .last("limit " + limit);
-        return chunkMapper.selectList(query);
+                .in("chunk_id", chunkIds)
+                .eq("is_deleted", 0);
+        for (RetrievalChunkEntity chunk : chunkMapper.selectList(query)) {
+            result.put(chunk.getChunkId(), chunk);
+        }
+        return result;
     }
 
-    private Map<String, MaterialEntity> materials(String tenantCode, Set<String> materialIds) {
+    private Map<String, MaterialEntity> materials(String tenantCode, String kbId,
+            java.util.Collection<RetrievalChunkEntity> chunks) {
         Map<String, MaterialEntity> result = new HashMap<>();
+        Set<String> materialIds = new LinkedHashSet<>();
+        for (RetrievalChunkEntity chunk : chunks) {
+            materialIds.add(chunk.getMaterialId());
+        }
         if (materialIds.isEmpty()) {
             return result;
         }
         QueryWrapper<MaterialEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", tenantCode)
+                .eq("kb_id", kbId)
                 .in("material_id", materialIds)
                 .eq("is_deleted", 0);
         for (MaterialEntity material : materialMapper.selectList(query)) {
             result.put(material.getMaterialId(), material);
         }
         return result;
-    }
-
-    private void backfillEmbedding(RetrievalChunkEntity chunk, double[] vector, KbCaller caller) {
-        String encoded = embedding.encode(vector);
-        UpdateWrapper<RetrievalChunkEntity> update = new UpdateWrapper<>();
-        update.eq("tenant_code", caller.getTenantCode())
-                .eq("chunk_id", chunk.getChunkId())
-                .eq("is_deleted", 0)
-                .set("embedding_model", embedding.model())
-                .set("embedding", encoded)
-                .set("update_by", caller.getActorId())
-                .set("update_time", Instant.now());
-        chunkMapper.update(null, update);
-        chunk.setEmbeddingModel(embedding.model());
-        chunk.setEmbedding(encoded);
     }
 
     /** 命中段落块时回带所属章节块正文摘录，父块缺失时保持为空。 */
@@ -250,20 +231,34 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         }
     }
 
-    private boolean contains(String text, String term) {
-        return text != null && text.toLowerCase(Locale.ROOT).contains(term.toLowerCase(Locale.ROOT));
-    }
-
-    private String explain(double score, List<String> matched) {
-        String base = "向量余弦 " + String.format(Locale.ROOT, "%.3f", score);
-        if (matched.isEmpty()) {
-            return base + "；正文未出现查询片段";
+    /** 召回解释：说明命中来自哪几路，并给出各路得分分解。 */
+    private String explain(HybridLibrarySearcher.Mode mode, HybridLibrarySearcher.Hit hit) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RRF 融合分 ").append(String.format(Locale.ROOT, "%.4f", hit.getScore()));
+        Map<String, Double> sourceScores = hit.getSourceScores();
+        if (sourceScores != null && !sourceScores.isEmpty()) {
+            List<String> parts = new ArrayList<>();
+            for (Map.Entry<String, Double> entry : sourceScores.entrySet()) {
+                parts.add(entry.getKey() + " " + String.format(Locale.ROOT, "%.4f",
+                        entry.getValue()));
+            }
+            builder.append("（").append(String.join(" + ", parts)).append("）");
         }
-        return base + "；正文命中「" + String.join("、", matched) + "」";
+        if (!hit.getMatchedTerms().isEmpty()) {
+            builder.append("；命中词「").append(String.join("、", hit.getMatchedTerms())).append("」");
+        }
+        if (!hit.getMatchedEntities().isEmpty()) {
+            builder.append("；命中概念「").append(String.join("、", hit.getMatchedEntities()))
+                    .append("」");
+        }
+        if (hit.getMatchedTerms().isEmpty() && hit.getMatchedEntities().isEmpty()) {
+            builder.append("；正文未出现查询片段");
+        }
+        return builder.toString();
     }
 
     private static double round(double value) {
-        return Math.round(value * 1000.0d) / 1000.0d;
+        return Math.round(value * 10000.0d) / 10000.0d;
     }
 
     private static boolean hasText(String value) {
@@ -272,8 +267,5 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
 
     private static KBException paramInvalid() {
         return new KBException("KB_RETRIEVAL_PARAM_INVALID", "检索参数不合法");
-    }
-
-    private record ScoredChunk(RetrievalChunkEntity chunk, double score) {
     }
 }

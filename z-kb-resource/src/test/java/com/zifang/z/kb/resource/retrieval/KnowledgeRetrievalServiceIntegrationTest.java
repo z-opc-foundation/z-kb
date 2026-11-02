@@ -67,7 +67,7 @@ class KnowledgeRetrievalServiceIntegrationTest {
     private RetrievalChunkMapper chunkMapper;
 
     @Test
-    @DisplayName("dense 召回：命中带分数、命中词与章节上下文，缺失向量按需回填")
+    @DisplayName("融合召回：命中带分数、命中词与章节上下文，缺失向量按需回填")
     void retrieveExplainsHitsAndBackfillsEmbeddings() {
         KbCaller caller = KbCaller.of(TENANT, ACTOR);
         KnowledgeBaseView kb = createKb(caller);
@@ -78,10 +78,13 @@ class KnowledgeRetrievalServiceIntegrationTest {
         assertEquals("COMPLETED", job.getRunStatus());
 
         RetrievalResultView result = retrievalService.retrieve(query(kb.getKbId(), "Prometheus 告警"), caller);
-        assertEquals("dense", result.getMode());
+        // 缺省模式落到 fusion（向量 + BM25 + 图谱三路 RRF 融合），不再是单路 dense。
+        assertEquals("fusion", result.getMode());
         assertEquals("local-hash-ngram-v1", result.getEmbeddingModel());
         assertEquals(10, result.getTopK());
-        assertEquals(0.1d, result.getMinScore(), 1.0e-9);
+        // 默认 minScore 归零：RRF 融合分的量级与余弦分不同（RRF ≈ w/(k+rank) ≈ 0.008 量级），
+        // 沿用旧 dense 口径的 0.1 会把命中全滤掉 —— 阈值交给调用方按需显式传。
+        assertEquals(0.0d, result.getMinScore(), 1.0e-9);
         assertFalse(result.getHits().isEmpty());
         assertEquals(result.getHits().size(), result.getReturned());
         assertTrue(result.getTotalCandidates() > 0);
@@ -95,8 +98,10 @@ class KnowledgeRetrievalServiceIntegrationTest {
         assertEquals("INDEXED", top.getIndexState());
         assertTrue(top.getScore() > 0.0d);
         assertFalse(top.getMatchedTerms().isEmpty());
-        assertTrue(top.getExplanation().startsWith("向量余弦 "));
-        assertTrue(top.getExplanation().contains("正文命中「"));
+        assertTrue(top.getExplanation().startsWith("RRF 融合分 "),
+                "解释应以 RRF 融合分开头，实际=" + top.getExplanation());
+        assertTrue(top.getExplanation().contains("命中词「"),
+                "解释应含命中词，实际=" + top.getExplanation());
         RetrievalHitView withSection = result.getHits().stream()
                 .filter(hit -> hit.getParentChunkId() != null)
                 .findFirst().orElse(null);
@@ -147,9 +152,16 @@ class KnowledgeRetrievalServiceIntegrationTest {
         });
         assertEquals("KB_RETRIEVAL_PARAM_INVALID", minScore.getCode());
 
+        // bm25 路已开放：应能正常召回，不再报 KB_RETRIEVAL_MODE_UNSUPPORTED。
+        RetrievalQueryParam bm25 = query(kb.getKbId(), "Redis");
+        bm25.setMode("bm25");
+        RetrievalResultView bm25Result = retrievalService.retrieve(bm25, caller);
+        assertEquals("bm25", bm25Result.getMode());
+
+        // 未知模式必须报错，并说清可选值。
         KBException mode = assertThrows(KBException.class, () -> {
             RetrievalQueryParam param = query(kb.getKbId(), "Redis");
-            param.setMode("bm25");
+            param.setMode("magic");
             retrievalService.retrieve(param, caller);
         });
         assertEquals("KB_RETRIEVAL_MODE_UNSUPPORTED", mode.getCode());

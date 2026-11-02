@@ -287,9 +287,11 @@ public class KbResourceAutoConfiguration {
     public KnowledgeRetrievalService knowledgeRetrievalService(
             KnowledgeBaseResourceService resourceService,
             RetrievalChunkMapper retrievalChunkMapper,
-            MaterialMapper materialMapper) {
+            MaterialMapper materialMapper,
+            GraphNodeMapper graphNodeMapper,
+            ConceptMentionMapper mentionMapper) {
         return new DefaultKnowledgeRetrievalService(resourceService, retrievalChunkMapper,
-                materialMapper);
+                materialMapper, graphNodeMapper, mentionMapper);
     }
 
     @Bean

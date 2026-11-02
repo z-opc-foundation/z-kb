@@ -81,7 +81,7 @@ class KnowledgeRetrievalApiIntegrationTest {
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Elasticsearch 检索\","
-                                + "\"topK\":2,\"minScore\":0.0}"))
+                                + "\"topK\":2,\"minScore\":0.0,\"mode\":\"dense\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.mode").value("dense"))
@@ -91,16 +91,46 @@ class KnowledgeRetrievalApiIntegrationTest {
                 .andExpect(jsonPath("$.data.hits[0].rank").value(1))
                 .andExpect(jsonPath("$.data.hits[0].materialTitle").value("检索接口"))
                 .andExpect(jsonPath("$.data.hits[0].explanation")
-                        .value(org.hamcrest.Matchers.startsWith("向量余弦 ")));
+                        .value(org.hamcrest.Matchers.startsWith("RRF 融合分 ")));
 
+        // BM25 路已开放：词面问题必须能召回，不再是 400。
         mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Elasticsearch\",\"mode\":\"bm25\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.mode").value("bm25"))
+                .andExpect(jsonPath("$.data.hits.length()").value(1));
+
+        // 缺省模式落到 fusion（向量 + BM25 + 图谱三路 RRF 融合）。
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
+                        .header("X-Tenant-Code", TENANT)
+                        .header("X-Actor-Id", ACTOR)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Qdrant 向量召回\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.mode").value("fusion"))
+                .andExpect(jsonPath("$.data.hits[0].rank").value(1));
+
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
+                        .header("X-Tenant-Code", TENANT)
+                        .header("X-Actor-Id", ACTOR)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Qdrant\",\"mode\":\"hybrid\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.mode").value("hybrid"));
+
+        // 未知模式必须报错并说清可选值（不再说「只开放向量」）。
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
+                        .header("X-Tenant-Code", TENANT)
+                        .header("X-Actor-Id", ACTOR)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Elasticsearch\",\"mode\":\"magic\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("当前只开放向量（dense）检索"));
+                .andExpect(jsonPath("$.message").value("检索模式只能是 dense / bm25 / hybrid / fusion"));
 
         mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)

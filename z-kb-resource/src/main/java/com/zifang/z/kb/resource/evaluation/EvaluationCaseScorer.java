@@ -5,13 +5,16 @@ import com.zifang.z.kb.api.evaluation.EvalExpectedBehavior;
 import com.zifang.z.kb.api.evaluation.EvalMetricStatus;
 import com.zifang.z.kb.api.evaluation.EvaluationMetricCode;
 import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.core.retrieval.HybridLibrarySearcher;
 import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.resource.retrieval.LibraryRetrievalEngine;
 import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
 import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -47,6 +50,23 @@ final class EvaluationCaseScorer {
     CaseOutcome evaluateCase(EvalCaseEntity evalCase, List<ChunkCandidate> candidates,
             List<RetrievalChunkEntity> statsChunks, Set<String> snapshotMaterialIds,
             Set<String> snapshotVersionIds, JudgeSettings judge) {
+        return evaluateCase(evalCase, candidates, statsChunks, snapshotMaterialIds,
+                snapshotVersionIds, judge, null, null, null, null);
+    }
+
+    /**
+     * 带共享检索引擎的评测入口。
+     *
+     * @param tenantCode 租户
+     * @param kbId       知识库
+     * @param retrieval  共享库内检索引擎；为 null 时退回纯向量
+     * @param candidateChunks 快照内候选检索块（供引擎复用，避免重复查库）
+     */
+    CaseOutcome evaluateCase(EvalCaseEntity evalCase, List<ChunkCandidate> candidates,
+            List<RetrievalChunkEntity> statsChunks, Set<String> snapshotMaterialIds,
+            Set<String> snapshotVersionIds, JudgeSettings judge,
+            String tenantCode, String kbId, LibraryRetrievalEngine retrieval,
+            List<RetrievalChunkEntity> candidateChunks) {
         long started = System.nanoTime();
         CaseOutcome outcome = new CaseOutcome();
         outcome.evalCase = evalCase;
@@ -64,26 +84,52 @@ final class EvaluationCaseScorer {
         }
         outcome.hasExpectedEvidence = !evidence.isEmpty();
         try {
-            double[] queryVector = embedding.embed(evalCase.getQuestion());
+            // 召回走共享的库内混合检索引擎（向量 + BM25 + 图谱 RRF 融合），
+            // 与检索域用同一套口径 —— 评测域自己单算一套 dense 会让指标失真：
+            // 检索域改好了指标也不动，就永远测不出检索质量。
             List<ScoredChunk> scored = new ArrayList<>();
-            for (ChunkCandidate candidate : candidates) {
-                double score = Math.max(0.0d, embedding.cosine(queryVector, candidate.vector));
-                if (score + 1.0e-9 < judge.minScore) {
-                    continue;
+            if (retrieval != null) {
+                LibraryRetrievalEngine.Outcome recalled = retrieval.searchPreloaded(tenantCode,
+                        kbId, evalCase.getQuestion(), HybridLibrarySearcher.Mode.FUSION,
+                        judge.topK, judge.minScore, candidateChunks, snapshotVersionIds);
+                Map<String, RetrievalChunkEntity> chunkById = new HashMap<>();
+                for (RetrievalChunkEntity chunk : candidateChunks) {
+                    chunkById.put(chunk.getChunkId(), chunk);
                 }
-                ScoredChunk hit = new ScoredChunk();
-                hit.chunk = candidate.chunk;
-                hit.score = score;
-                scored.add(hit);
+                for (HybridLibrarySearcher.Hit hit : recalled.getHits()) {
+                    ScoredChunk item = new ScoredChunk();
+                    item.chunk = chunkById.get(hit.getChunkId());
+                    if (item.chunk == null) {
+                        continue;
+                    }
+                    item.score = hit.getScore();
+                    item.rank = hit.getRank();
+                    scored.add(item);
+                }
+            } else {
+                // 无引擎时退回纯向量，保证评测不因装配缺失而整体失败
+                double[] queryVector = embedding.embed(evalCase.getQuestion());
+                for (ChunkCandidate candidate : candidates) {
+                    double score = Math.max(0.0d, embedding.cosine(queryVector, candidate.vector));
+                    if (score + 1.0e-9 < judge.minScore) {
+                        continue;
+                    }
+                    ScoredChunk hit = new ScoredChunk();
+                    hit.chunk = candidate.chunk;
+                    hit.score = score;
+                    scored.add(hit);
+                }
+                scored.sort(Comparator.comparingDouble((ScoredChunk item) -> item.score).reversed()
+                        .thenComparing(item -> text(item.chunk.getChunkId()))
+                        .thenComparing(item -> item.chunk.getOrdinal() == null
+                                ? 0 : item.chunk.getOrdinal()));
+                for (int i = 0; i < scored.size() && i < judge.topK; i++) {
+                    ScoredChunk hit = scored.get(i);
+                    hit.rank = i + 1;
+                }
             }
-            scored.sort(Comparator.comparingDouble((ScoredChunk item) -> item.score).reversed()
-                    .thenComparing(item -> text(item.chunk.getChunkId()))
-                    .thenComparing(item -> item.chunk.getOrdinal() == null
-                            ? 0 : item.chunk.getOrdinal()));
             for (int i = 0; i < scored.size() && i < judge.topK; i++) {
-                ScoredChunk hit = scored.get(i);
-                hit.rank = i + 1;
-                outcome.hits.add(hit);
+                outcome.hits.add(scored.get(i));
             }
             outcome.answerMode = outcome.hits.isEmpty() ? EvalAnswerMode.REFUSED.name()
                     : EvalAnswerMode.EXTRACTIVE_TOP3.name();

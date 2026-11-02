@@ -9,6 +9,9 @@ import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
 import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
 import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
 import com.zifang.z.kb.storage.evaluation.mapper.EvalBadcaseMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMentionMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
+import com.zifang.z.kb.resource.retrieval.LibraryRetrievalEngine;
 import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseMapper;
 import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseResultMapper;
 import com.zifang.z.kb.storage.evaluation.mapper.EvalDatasetMapper;
@@ -60,7 +63,9 @@ public class KbEvaluationAutoConfiguration {
                                                EvalResultMapper evalResultMapper,
                                                KnowledgeBaseProfileMapper profileMapper,
                                                TaskConfigMapper taskConfigMapper,
-                                               CompilationJobMapper compilationJobMapper) {
+                                               CompilationJobMapper compilationJobMapper,
+                                               GraphNodeMapper graphNodeMapper,
+                                               ConceptMentionMapper conceptMentionMapper) {
         LocalHashEmbedding embedding = new LocalHashEmbedding();
         EvaluationSnapshotBuilder snapshotBuilder = new EvaluationSnapshotBuilder(materialMapper,
                 materialVersionMapper, artifactMapper, artifactVersionMapper, retrievalChunkMapper,
@@ -76,10 +81,12 @@ public class KbEvaluationAutoConfiguration {
         EvaluationDatasetManager datasetManager = new EvaluationDatasetManager(resourceService,
                 evalDatasetMapper, evalCaseMapper, evalRunMapper, evalResultMapper, queryAssembler,
                 badcaseManager);
+        LibraryRetrievalEngine retrieval = new LibraryRetrievalEngine(retrievalChunkMapper,
+                materialMapper, graphNodeMapper, conceptMentionMapper);
         EvaluationRunExecutor runExecutor = new EvaluationRunExecutor(resourceService,
                 profileMapper, compilationJobMapper, taskConfigMapper, evalCaseResultMapper,
                 evalRunMapper, embedding, snapshotBuilder, caseScorer, metricCalculator,
-                badcaseManager, datasetManager, queryAssembler);
+                badcaseManager, datasetManager, queryAssembler, retrieval);
         return new DefaultEvaluationService(badcaseManager, datasetManager, queryAssembler,
                 runExecutor);
     }
