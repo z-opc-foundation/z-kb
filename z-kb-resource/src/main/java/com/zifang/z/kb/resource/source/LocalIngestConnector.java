@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.core.source.IngestDocContent;
-import com.zifang.z.***REMOVED***.core.source.IngestDocRef;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
-import com.zifang.z.***REMOVED***.api.source.LocalDirScanPolicy;
-import com.zifang.z.***REMOVED***.api.source.LocalDirScanner;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.core.source.IngestDocContent;
+import com.zifang.z.kb.core.source.IngestDocRef;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
+import com.zifang.z.kb.api.source.LocalDirScanPolicy;
+import com.zifang.z.kb.api.source.LocalDirScanner;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,8 +25,8 @@ import java.util.Map;
  *
  * <p><b>这解决的是「谁把文件放进去」这件事。</b>语雀、Git 这些接入源都要人去网页上
  * 上传或推代码；本地接入源的口径是：<b>文件出现在目录里，就已经在库里了</b>。
- * 桌面端 note 的工作区因此可以直接配成 z-***REMOVED*** 的接入源 —— note 侧负责写文件，
- * z-***REMOVED*** 侧负责吸收成可检索的知识，两边看同一批文件。
+ * 桌面端 note 的工作区因此可以直接配成 z-kb 的接入源 —— note 侧负责写文件，
+ * z-kb 侧负责吸收成可检索的知识，两边看同一批文件。
  *
  * <p><b>增量口径用内容指纹。</b>版本取文件内容的 SHA-256，不用修改时间 ——
  * mtime 在复制文件、同步盘拉取时会变，拿它当版本会让「内容没变」被误判成
@@ -61,14 +61,14 @@ public class LocalIngestConnector implements IngestConnector {
     public void checkScope(KnowledgeBaseSourceAccess source) {
         String dir = dir(source);
         if (dir == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "本地接入源需要填写目录路径");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "本地接入源需要填写目录路径");
         }
         Path root = Paths.get(dir);
         if (!java.nio.file.Files.isDirectory(root)) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "目录不存在或不是目录：" + dir);
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "目录不存在或不是目录：" + dir);
         }
         if (!java.nio.file.Files.isReadable(root)) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "目录不可读：" + dir);
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "目录不可读：" + dir);
         }
     }
 
@@ -83,7 +83,7 @@ public class LocalIngestConnector implements IngestConnector {
     }
 
     @Override
-    public IngestSyncInfo sync(String ***REMOVED***Id, KnowledgeBaseSourceAccess source, ***REMOVED***Caller caller) {
+    public IngestSyncInfo sync(String kbId, KnowledgeBaseSourceAccess source, KbCaller caller) {
         checkScope(source);
         Path root = Paths.get(dir(source)).toAbsolutePath().normalize();
         boolean recursive = recursive(source);
@@ -92,11 +92,11 @@ public class LocalIngestConnector implements IngestConnector {
         try {
             docs = LocalDirScanner.scan(root, recursive, LocalDirScanner.DEFAULT_LIMIT);
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "扫描目录失败：" + e.getMessage());
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "扫描目录失败：" + e.getMessage());
         }
 
-        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(***REMOVED***Id, source, caller);
-        String dirCategoryId = sourceTreeNodes.ensureLocalDirNode(***REMOVED***Id, sourceCategoryId, source,
+        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(kbId, source, caller);
+        String dirCategoryId = sourceTreeNodes.ensureLocalDirNode(kbId, sourceCategoryId, source,
                 root.toString(), caller);
 
         // 文档清单：slug 用相对路径（幂等键），版本用内容指纹。
@@ -114,7 +114,7 @@ public class LocalIngestConnector implements IngestConnector {
             bySlug.put(doc.getRelativePath(), doc);
         }
 
-        return runner.run(***REMOVED***Id, source.getSourceId(), SOURCE_TYPE, SCOPE, refs, versions,
+        return runner.run(kbId, source.getSourceId(), SOURCE_TYPE, SCOPE, refs, versions,
                 ref -> {
                     LocalDirScanner.LocalDoc doc = bySlug.get(ref.getSlug());
                     if (doc == null) {

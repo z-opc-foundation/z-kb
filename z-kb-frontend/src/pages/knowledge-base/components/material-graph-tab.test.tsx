@@ -10,7 +10,7 @@ import { getGraphByMaterial } from '@/services/graph';
 import MaterialGraphTab from './material-graph-tab';
 
 const GRAPH: KnowledgeGraphRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   graphSpaceKey: 'space-1',
   nodeCount: 3,
   edgeCount: 1,

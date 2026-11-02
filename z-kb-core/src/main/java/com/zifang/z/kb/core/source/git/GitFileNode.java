@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.git;
+package com.zifang.z.kb.core.source.git;
 
 /** Git 仓库文件树节点：type 为 blob/tree，id 为 blob 版本（文件内容变化即变化）。 */
 public class GitFileNode {

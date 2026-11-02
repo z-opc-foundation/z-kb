@@ -3,7 +3,7 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSidebarWidth } from './use-sidebar-width';
 
-const STORAGE_KEY = '***REMOVED***.sidebarWidth';
+const STORAGE_KEY = 'kb.sidebarWidth';
 
 function startResize(result: { current: ReturnType<typeof useSidebarWidth> }) {
   act(() => {

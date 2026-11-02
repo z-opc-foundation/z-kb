@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
@@ -354,7 +354,7 @@ public final class YuqueLakeSheetConverter {
             }
             return value.asText();
         }
-        if ("chec***REMOVED***ox".equals(type)) {
+        if ("checkbox".equals(type)) {
             return value.asBoolean(false) ? "✓" : "";
         }
         if ("progress".equals(type)) {

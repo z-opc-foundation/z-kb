@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryNode;
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryService;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.CategoryAddRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.CategoryIdRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.CategoryMoveRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.CategoryUpdateRequest;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.material.MaterialCategoryNode;
+import com.zifang.z.kb.api.material.MaterialCategoryService;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.api.v1.dto.CategoryAddRequest;
+import com.zifang.z.kb.web.api.v1.dto.CategoryIdRequest;
+import com.zifang.z.kb.web.api.v1.dto.CategoryMoveRequest;
+import com.zifang.z.kb.web.api.v1.dto.CategoryUpdateRequest;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,54 +25,54 @@ import java.util.List;
  */
 @Tag(name = "物料-分类")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/materialCategory")
+@RequestMapping("/api/kb/v1/materialCategory")
 public class MaterialCategoryController {
 
     private final MaterialCategoryService categoryService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
     public MaterialCategoryController(MaterialCategoryService categoryService,
-                                      ***REMOVED***CallerResolver callerResolver) {
+                                      KbCallerResolver callerResolver) {
         this.categoryService = categoryService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "分类树")
     @GetMapping("/tree")
-    public ***REMOVED***Result<List<MaterialCategoryNode>> tree(@RequestParam String ***REMOVED***Id,
+    public KbResult<List<MaterialCategoryNode>> tree(@RequestParam String kbId,
                                                      HttpServletRequest request) {
-        return ***REMOVED***Result.ok(categoryService.tree(***REMOVED***Id, callerResolver.resolve(request)));
+        return KbResult.ok(categoryService.tree(kbId, callerResolver.resolve(request)));
     }
 
     @Operation(summary = "新建分类")
     @PostMapping("/add")
-    public ***REMOVED***Result<MaterialCategoryNode> add(@RequestBody CategoryAddRequest body,
+    public KbResult<MaterialCategoryNode> add(@RequestBody CategoryAddRequest body,
                                               HttpServletRequest request) {
-        return ***REMOVED***Result.ok(categoryService.add(body.get***REMOVED***Id(), body.getParentId(),
+        return KbResult.ok(categoryService.add(body.getKbId(), body.getParentId(),
                 body.getName(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "重命名分类")
     @PostMapping("/update")
-    public ***REMOVED***Result<Boolean> update(@RequestBody CategoryUpdateRequest body,
+    public KbResult<Boolean> update(@RequestBody CategoryUpdateRequest body,
                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(categoryService.update(body.getCategoryId(), body.getName(),
+        return KbResult.ok(categoryService.update(body.getCategoryId(), body.getName(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "移动分类")
     @PostMapping("/move")
-    public ***REMOVED***Result<Boolean> move(@RequestBody CategoryMoveRequest body,
+    public KbResult<Boolean> move(@RequestBody CategoryMoveRequest body,
                                   HttpServletRequest request) {
-        return ***REMOVED***Result.ok(categoryService.move(body.getCategoryId(), body.getParentId(),
+        return KbResult.ok(categoryService.move(body.getCategoryId(), body.getParentId(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "删除分类")
     @PostMapping("/remove")
-    public ***REMOVED***Result<Boolean> remove(@RequestBody CategoryIdRequest body,
+    public KbResult<Boolean> remove(@RequestBody CategoryIdRequest body,
                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(categoryService.remove(body.getCategoryId(),
+        return KbResult.ok(categoryService.remove(body.getCategoryId(),
                 callerResolver.resolve(request)));
     }
 }

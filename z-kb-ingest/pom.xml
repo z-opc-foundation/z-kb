@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-ingest</artifactId>
+    <artifactId>z-kb-ingest</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: ingest</name>
+    <name>z-kb :: ingest</name>
     <description>
-        z-***REMOVED*** 多渠道接入管道 — 把企业知识库（语雀/Notion/Confluence/飞书/钉钉/Git/本地目录/Webhook）的内容
+        z-kb 多渠道接入管道 — 把企业知识库（语雀/Notion/Confluence/飞书/钉钉/Git/本地目录/Webhook）的内容
         抽取为标准化的 Markdown 文档流，再交给知识库服务做解析/分块/索引。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,9 +43,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>

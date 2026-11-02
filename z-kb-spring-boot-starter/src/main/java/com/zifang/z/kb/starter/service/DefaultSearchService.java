@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.starter.service;
+package com.zifang.z.kb.starter.service;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.kb.api.KbMetrics;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
+import com.zifang.z.kb.core.search.HybridSearcher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +16,7 @@ public class DefaultSearchService implements SearchService {
 
     private final HybridSearcher hybridSearcher;
     /** 可为 null：下游没带 actuator 时无埋点，其余行为不变 */
-    private final ***REMOVED***Metrics metrics;
+    private final KbMetrics metrics;
 
     public DefaultSearchService(HybridSearcher hybridSearcher) {
         this(hybridSearcher, null);
@@ -25,7 +25,7 @@ public class DefaultSearchService implements SearchService {
     // 组件扫描装配，必须显式指定：埋点加入后本类有两个构造器，
     // Spring 无从判断该用哪个（无参找不到，也不会自动挑参数最多的）
     @org.springframework.beans.factory.annotation.Autowired
-    public DefaultSearchService(HybridSearcher hybridSearcher, ***REMOVED***Metrics metrics) {
+    public DefaultSearchService(HybridSearcher hybridSearcher, KbMetrics metrics) {
         this.hybridSearcher = hybridSearcher;
         this.metrics = metrics;
     }

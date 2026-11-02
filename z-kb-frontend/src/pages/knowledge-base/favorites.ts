@@ -1,4 +1,4 @@
-const FAV_STORAGE_KEY = '***REMOVED***.favorite-***REMOVED***s';
+const FAV_STORAGE_KEY = 'kb.favorite-kbs';
 
 export function readFavorites(): string[] {
   try {
@@ -18,6 +18,6 @@ export function saveFavorites(ids: string[]): void {
   }
 }
 
-export function toggleFavoriteId(ids: string[], ***REMOVED***Id: string): string[] {
-  return ids.includes(***REMOVED***Id) ? ids.filter((item) => item !== ***REMOVED***Id) : [...ids, ***REMOVED***Id];
+export function toggleFavoriteId(ids: string[], kbId: string): string[] {
+  return ids.includes(kbId) ? ids.filter((item) => item !== kbId) : [...ids, kbId];
 }

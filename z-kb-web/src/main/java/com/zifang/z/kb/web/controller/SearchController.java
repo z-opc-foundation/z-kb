@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.web.controller;
+package com.zifang.z.kb.web.controller;
 
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import jakarta.annotation.Resource;
  */
 @Tag(name = "检索")
 @RestController
-@RequestMapping("/api/***REMOVED***/search")
+@RequestMapping("/api/kb/search")
 public class SearchController {
 
     @Resource

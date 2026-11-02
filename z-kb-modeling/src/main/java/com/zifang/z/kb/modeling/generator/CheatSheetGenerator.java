@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.modeling.generator;
+package com.zifang.z.kb.modeling.generator;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.modeling.model.CheatSheet;
-import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
+import com.zifang.z.kb.modeling.model.CheatSheet;
+import com.zifang.z.kb.modeling.model.ProductModel;
 
 /**
  * 把 ProductModel 渲染成 Markdown 小抄。
@@ -211,7 +211,7 @@ public class CheatSheetGenerator {
         if (model.getSourceDocumentIds() != null && !model.getSourceDocumentIds().isEmpty()) {
             sb.append("📚 源文档数：").append(model.getSourceDocumentIds().size()).append("\n");
         }
-        sb.append("🧬 by z-***REMOVED*** modeling\n");
+        sb.append("🧬 by z-kb modeling\n");
     }
 
     private String sanitizeNode(String s) {

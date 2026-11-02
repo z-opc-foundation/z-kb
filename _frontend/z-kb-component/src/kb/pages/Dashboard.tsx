@@ -3,7 +3,7 @@ import { Card, Row, Col, Typography, Tag } from 'antd'
 import { FileTextOutlined, BlockOutlined, ShareAltOutlined, ApartmentOutlined } from '@ant-design/icons'
 import { EmptyState, LoadingState } from '@yuku123/z-frontend-common/ui'
 import { WorkspaceAPI } from '../services/api'
-import type { ***REMOVED***Statistics } from '../types'
+import type { KBStatistics } from '../types'
 
 interface Props { workspace: string }
 
@@ -20,7 +20,7 @@ const StatCard = ({ icon, label, value, color }: any) => (
 )
 
 export default function Dashboard({ workspace }: Props) {
-  const [stats, setStats] = useState<***REMOVED***Statistics | null>(null)
+  const [stats, setStats] = useState<KBStatistics | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function Dashboard({ workspace }: Props) {
 
       <Card style={{ marginTop: 16 }} title="ℹ️ 系统信息">
         <Row gutter={16}>
-          <Col span={8}><strong>总存储:</strong> {(stats.totalSizeBytes / 1024).toFixed(2)} ***REMOVED***</Col>
+          <Col span={8}><strong>总存储:</strong> {(stats.totalSizeBytes / 1024).toFixed(2)} KB</Col>
           <Col span={8}><strong>Embedding:</strong> {stats.embeddingProvider || '-'}</Col>
           <Col span={8}><strong>Chunks:</strong> {stats.chunkCount}</Col>
         </Row>

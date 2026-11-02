@@ -1,16 +1,16 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.overview.OverviewService;
-import com.zifang.z.***REMOVED***.api.overview.OverviewView;
-import com.zifang.z.***REMOVED***.api.overview.WikiPageCounter;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialEntity;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialMapper;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.overview.OverviewService;
+import com.zifang.z.kb.api.overview.OverviewView;
+import com.zifang.z.kb.api.overview.WikiPageCounter;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.material.entity.MaterialEntity;
+import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -52,21 +52,21 @@ public class DefaultOverviewService implements OverviewService {
     }
 
     @Override
-    public OverviewView ***REMOVED***Stats(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        String ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id, caller).get***REMOVED***Id();
+    public OverviewView kbStats(String kbId, KbCaller caller) {
+        String kb = resourceService.requireReadable(kbId, caller).getKbId();
         String tenantCode = caller.getTenantCode();
 
         List<MaterialEntity> materials = materialMapper.selectList(
                 new QueryWrapper<MaterialEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***)
+                        .eq("kb_id", kb)
                         .eq("is_deleted", 0));
         Map<String, String> currentVersions = new HashMap<>();
         for (MaterialEntity material : materials) {
             currentVersions.put(material.getMaterialId(), material.getCurrentVersionId());
         }
 
-        Map<String, String> milestones = currentVersionMilestones(tenantCode, ***REMOVED***, currentVersions);
+        Map<String, String> milestones = currentVersionMilestones(tenantCode, kb, currentVersions);
         long compiled = 0L;
         long partial = 0L;
         for (String milestone : milestones.values()) {
@@ -78,27 +78,27 @@ public class DefaultOverviewService implements OverviewService {
         }
 
         OverviewView view = new OverviewView();
-        view.set***REMOVED***Id(***REMOVED***);
+        view.setKbId(kb);
         view.setFileCount(materials.size());
         view.setCompiledCount(compiled);
         view.setPartialCount(partial);
         view.setNotCompiledCount(Math.max(0L, materials.size() - compiled - partial));
-        view.setWikiCount(wikiCount(tenantCode, ***REMOVED***));
-        view.setRunningTaskCount(countJobs(tenantCode, ***REMOVED***, "QUEUED", "RUNNING"));
-        view.setFailedCount(countJobs(tenantCode, ***REMOVED***, "FAILED"));
-        view.setRecentMaterials(materialService.listRecent(***REMOVED***, RECENT_LIMIT, caller));
+        view.setWikiCount(wikiCount(tenantCode, kb));
+        view.setRunningTaskCount(countJobs(tenantCode, kb, "QUEUED", "RUNNING"));
+        view.setFailedCount(countJobs(tenantCode, kb, "FAILED"));
+        view.setRecentMaterials(materialService.listRecent(kb, RECENT_LIMIT, caller));
         view.setRefreshedAt(Instant.now());
         return view;
     }
 
     /** 每个当前物料版本收敛到的最好里程碑：M2 优先，其次 M1。 */
-    private Map<String, String> currentVersionMilestones(String tenantCode, String ***REMOVED***Id,
+    private Map<String, String> currentVersionMilestones(String tenantCode, String kbId,
                                                          Map<String, String> currentVersions) {
         Map<String, String> result = new LinkedHashMap<>();
         List<CompilationJobEntity> jobs = compilationJobMapper.selectList(
                 new QueryWrapper<CompilationJobEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***Id)
+                        .eq("kb_id", kbId)
                         .eq("is_deleted", 0)
                         .isNotNull("material_id")
                         .orderByDesc("create_time")
@@ -120,19 +120,19 @@ public class DefaultOverviewService implements OverviewService {
         return result;
     }
 
-    private long countJobs(String tenantCode, String ***REMOVED***Id, String... statuses) {
+    private long countJobs(String tenantCode, String kbId, String... statuses) {
         Long total = compilationJobMapper.selectCount(new QueryWrapper<CompilationJobEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .in("run_status", (Object[]) statuses));
         return total == null ? 0L : total;
     }
 
-    private long wikiCount(String tenantCode, String ***REMOVED***Id) {
+    private long wikiCount(String tenantCode, String kbId) {
         long total = 0L;
         for (WikiPageCounter counter : wikiPageCounters) {
-            total += counter.countBy***REMOVED***(tenantCode, ***REMOVED***Id);
+            total += counter.countByKb(tenantCode, kbId);
         }
         return total;
     }

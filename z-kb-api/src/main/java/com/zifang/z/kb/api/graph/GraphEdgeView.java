@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.graph;
+package com.zifang.z.kb.api.graph;
 
 /**
  * 图谱边视图：MENTIONS 或 RELATED_TO。

@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
 
 import java.util.ArrayList;
 import java.util.List;

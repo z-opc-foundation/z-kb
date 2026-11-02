@@ -1,7 +1,7 @@
 import Icon from '@/components/icon';
 import { CompilationJobRecord, listCompilationJobs } from '@/services/compilation';
 import { MaterialRecord, pageMaterial } from '@/services/material';
-import { ***REMOVED***Overview, get***REMOVED***Overview } from '@/services/overview';
+import { KbOverview, getKbOverview } from '@/services/overview';
 import { TaskRecord, pageTasks } from '@/services/task';
 import { formatShortDateTime } from '@/utils/format';
 import dayjs from 'dayjs';
@@ -57,8 +57,8 @@ interface DailyBucket {
   total: number;
 }
 
-export default function ObservabilityTab({ ***REMOVED***Id }: { ***REMOVED***Id: string }) {
-  const [overview, setOverview] = useState<***REMOVED***Overview | null>(null);
+export default function ObservabilityTab({ kbId }: { kbId: string }) {
+  const [overview, setOverview] = useState<KbOverview | null>(null);
   const [materials, setMaterials] = useState<MaterialRecord[]>([]);
   const [tasks, setTasks] = useState<TaskRecord[]>([]);
   const [jobs, setJobs] = useState<CompilationJobRecord[]>([]);
@@ -69,10 +69,10 @@ export default function ObservabilityTab({ ***REMOVED***Id }: { ***REMOVED***Id:
     const load = async () => {
       setLoading(true);
       const [ov, mat, tk, jb] = await Promise.all([
-        get***REMOVED***Overview(***REMOVED***Id),
-        pageMaterial({ ***REMOVED***Id, current: 1, size: 200 }),
-        pageTasks({ ***REMOVED***Id, pageNo: 1, pageSize: 200 }),
-        listCompilationJobs(***REMOVED***Id, undefined, 50),
+        getKbOverview(kbId),
+        pageMaterial({ kbId, current: 1, size: 200 }),
+        pageTasks({ kbId, pageNo: 1, pageSize: 200 }),
+        listCompilationJobs(kbId, undefined, 50),
       ]);
       if (cancelled) {
         return;
@@ -87,7 +87,7 @@ export default function ObservabilityTab({ ***REMOVED***Id }: { ***REMOVED***Id:
     return () => {
       cancelled = true;
     };
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const parsedCount = materials.filter((item) => item.parseStatus === 'READY').length;
 

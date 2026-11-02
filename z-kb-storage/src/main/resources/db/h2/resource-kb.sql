@@ -1,9 +1,9 @@
--- z-***REMOVED*** 资源域 H2 元数据表（MySQL 兼容模式，幂等）
--- 与 db/mysql/resource-***REMOVED***.sql 保持同构；索引用独立语句（MySQL 不支持 CREATE INDEX IF NOT EXISTS）。
+-- z-kb 资源域 H2 元数据表（MySQL 兼容模式，幂等）
+-- 与 db/mysql/resource-kb.sql 保持同构；索引用独立语句（MySQL 不支持 CREATE INDEX IF NOT EXISTS）。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     name VARCHAR(100) NOT NULL,
     code VARCHAR(64) NOT NULL,
@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_***REMOVED***_tenant_code ON ***REMOVED***_knowledge_base (tenant_code, code);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_***REMOVED***_tenant_status ON ***REMOVED***_knowledge_base (tenant_code, status);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_***REMOVED***_owner ON ***REMOVED***_knowledge_base (tenant_code, owner_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_kb_tenant_code ON kb_knowledge_base (tenant_code, code);
+CREATE INDEX IF NOT EXISTS idx_kb_kb_tenant_status ON kb_knowledge_base (tenant_code, status);
+CREATE INDEX IF NOT EXISTS idx_kb_kb_owner ON kb_knowledge_base (tenant_code, owner_id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_acl (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_acl (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     principal_id VARCHAR(64) NOT NULL,
     principal_type VARCHAR(16) NOT NULL,
@@ -40,12 +40,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_acl (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_acl_***REMOVED***_principal ON ***REMOVED***_knowledge_base_acl (tenant_code, ***REMOVED***_id, principal_type, principal_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_acl_principal ON ***REMOVED***_knowledge_base_acl (tenant_code, principal_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_acl_kb_principal ON kb_knowledge_base_acl (tenant_code, kb_id, principal_type, principal_id);
+CREATE INDEX IF NOT EXISTS idx_kb_acl_principal ON kb_knowledge_base_acl (tenant_code, principal_id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_profile (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     type VARCHAR(16) NOT NULL,
     preset_version VARCHAR(32) NULL,
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_profile_***REMOVED*** ON ***REMOVED***_knowledge_base_profile (tenant_code, ***REMOVED***_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_profile_kb ON kb_knowledge_base_profile (tenant_code, kb_id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile_version (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_profile_version (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     version_no INT NOT NULL,
     status VARCHAR(16) NOT NULL,
@@ -92,13 +92,13 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile_version (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_profile_version_no ON ***REMOVED***_knowledge_base_profile_version (tenant_code, ***REMOVED***_id, version_no);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_profile_version_status ON ***REMOVED***_knowledge_base_profile_version (tenant_code, ***REMOVED***_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_profile_version_no ON kb_knowledge_base_profile_version (tenant_code, kb_id, version_no);
+CREATE INDEX IF NOT EXISTS idx_kb_profile_version_status ON kb_knowledge_base_profile_version (tenant_code, kb_id, status);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_audit_log (
+CREATE TABLE IF NOT EXISTS kb_audit_log (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NULL,
+    kb_id VARCHAR(64) NULL,
     actor_id VARCHAR(64) NULL,
     action VARCHAR(64) NOT NULL,
     target_type VARCHAR(32) NULL,
@@ -108,4 +108,4 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_audit_log (
     created_at TIMESTAMP(3) NOT NULL,
     PRIMARY KEY (id)
 );
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_audit_***REMOVED***_day ON ***REMOVED***_audit_log (tenant_code, ***REMOVED***_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_kb_audit_kb_day ON kb_audit_log (tenant_code, kb_id, created_at);

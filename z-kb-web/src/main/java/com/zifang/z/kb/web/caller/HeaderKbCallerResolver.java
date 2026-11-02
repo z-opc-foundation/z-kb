@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.web.caller;
+package com.zifang.z.kb.web.caller;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
+import com.zifang.z.kb.api.resource.KbCaller;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * <p>请求头：{@code X-Tenant-Code}、{@code X-Actor-Id}、{@code X-Actor-Name}。
  * 本地直连（无网关注入）时回落为 {@code default / anonymous}，保证开发态可跑。</p>
  */
-public class Header***REMOVED***CallerResolver implements ***REMOVED***CallerResolver {
+public class HeaderKbCallerResolver implements KbCallerResolver {
 
     public static final String TENANT_HEADER = "X-Tenant-Code";
     public static final String ACTOR_ID_HEADER = "X-Actor-Id";
@@ -19,11 +19,11 @@ public class Header***REMOVED***CallerResolver implements ***REMOVED***CallerRes
     public static final String DEFAULT_ACTOR_ID = "anonymous";
 
     @Override
-    public ***REMOVED***Caller resolve(HttpServletRequest request) {
+    public KbCaller resolve(HttpServletRequest request) {
         String tenant = value(request, TENANT_HEADER, DEFAULT_TENANT);
         String actorId = value(request, ACTOR_ID_HEADER, DEFAULT_ACTOR_ID);
         String actorName = value(request, ACTOR_NAME_HEADER, null);
-        return new ***REMOVED***Caller(tenant, actorId, actorName);
+        return new KbCaller(tenant, actorId, actorName);
     }
 
     private static String value(HttpServletRequest request, String header, String fallback) {

@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalState;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalBadcaseStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalExpectedBehavior;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalScopeType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.RetrievalState;
+import com.zifang.z.kb.api.evaluation.EvalBadcaseStatus;
+import com.zifang.z.kb.api.evaluation.EvalExpectedBehavior;
+import com.zifang.z.kb.api.evaluation.EvalMetricStatus;
+import com.zifang.z.kb.api.evaluation.EvalScopeType;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * 评测内核的共享工具：文本截断与序列化、数值规整、阶段解析与异常消息提取。
  *
- * <p>JSON 读写走 z-util {@link JsonUtil}，与 z-***REMOVED*** 其余域保持一致，不引入 Jackson。</p>
+ * <p>JSON 读写走 z-util {@link JsonUtil}，与 z-kb 其余域保持一致，不引入 Jackson。</p>
  */
 final class EvaluationSupport {
 
@@ -35,8 +35,8 @@ final class EvaluationSupport {
     }
 
     /** 按评测状态码构造业务异常。 */
-    static ***REMOVED***Exception error(EvaluationStatusCode code) {
-        return new ***REMOVED***Exception(code.code(), code.message());
+    static KBException error(EvaluationStatusCode code) {
+        return new KBException(code.code(), code.message());
     }
 
     /** 校验文本非空并去除首尾空白，为空时抛出指定业务状态码异常。 */
@@ -166,7 +166,7 @@ final class EvaluationSupport {
             }
             return builder.toString();
         } catch (Exception exception) {
-            throw new ***REMOVED***Exception(EvaluationStatusCode.EVAL_SNAPSHOT_BUILD_FAILED.code(),
+            throw new KBException(EvaluationStatusCode.EVAL_SNAPSHOT_BUILD_FAILED.code(),
                     EvaluationStatusCode.EVAL_SNAPSHOT_BUILD_FAILED.message());
         }
     }
@@ -214,7 +214,7 @@ final class EvaluationSupport {
         return chunk.getContent() == null ? 0 : chunk.getContent().length();
     }
 
-    /** 判断分块是否已索引；z-***REMOVED*** 的索引态在编译期翻转为 INDEXED，向量按需惰性计算。 */
+    /** 判断分块是否已索引；z-kb 的索引态在编译期翻转为 INDEXED，向量按需惰性计算。 */
     static boolean isIndexed(RetrievalChunkEntity chunk) {
         return RetrievalState.INDEXED.name().equals(chunk.getIndexState());
     }
@@ -245,7 +245,7 @@ final class EvaluationSupport {
         try {
             return EvalScopeType.valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException exception) {
-            throw new ***REMOVED***Exception(EvaluationStatusCode.EVAL_PARAM_INVALID.code(),
+            throw new KBException(EvaluationStatusCode.EVAL_PARAM_INVALID.code(),
                     EvaluationStatusCode.EVAL_PARAM_INVALID.message());
         }
     }
@@ -258,7 +258,7 @@ final class EvaluationSupport {
         try {
             return EvalExpectedBehavior.valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException exception) {
-            throw new ***REMOVED***Exception(EvaluationStatusCode.EVAL_PARAM_INVALID.code(),
+            throw new KBException(EvaluationStatusCode.EVAL_PARAM_INVALID.code(),
                     EvaluationStatusCode.EVAL_PARAM_INVALID.message());
         }
     }
@@ -268,7 +268,7 @@ final class EvaluationSupport {
         try {
             return EvalBadcaseStatus.valueOf(value.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException | NullPointerException exception) {
-            throw new ***REMOVED***Exception(EvaluationStatusCode.EVAL_BADCASE_STATUS_INVALID.code(),
+            throw new KBException(EvaluationStatusCode.EVAL_BADCASE_STATUS_INVALID.code(),
                     EvaluationStatusCode.EVAL_BADCASE_STATUS_INVALID.message());
         }
     }

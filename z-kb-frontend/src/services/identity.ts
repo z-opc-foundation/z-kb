@@ -85,7 +85,7 @@ export interface MemberAuthorization {
   inheritedCodes: MemberInheritedPermission[];
 }
 
-const BASE = '/***REMOVED***/v1/identity';
+const BASE = '/kb/v1/identity';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

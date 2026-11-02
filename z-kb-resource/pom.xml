@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-        <artifactId>z-***REMOVED***</artifactId>
+        <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-resource</artifactId>
+    <artifactId>z-kb-resource</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: resource</name>
+    <name>z-kb :: resource</name>
     <description>
-        z-***REMOVED*** 资源域 — 知识库一等资源：生命周期、配置版本（草稿/校验/发布）、成员 ACL 与活跃度。
+        z-kb 资源域 — 知识库一等资源：生命周期、配置版本（草稿/校验/发布）、成员 ACL 与活跃度。
         元数据落 MySQL（测试用 H2），原始文件走对象存储（W2 起接入）。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,24 +43,24 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-storage</artifactId>
+            <artifactId>z-kb-storage</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-core</artifactId>
+            <artifactId>z-kb-core</artifactId>
         </dependency>
         <!-- z-cognition-client：认知域裸 SDK（零 Spring），用于 z-kb 萃取时向公司级语义真源
              消歧。★ optional=true —— z-cognition-client 尚未发布到 Maven Central，
@@ -108,7 +108,7 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- mybatis-plus 不在此声明：它由 z-***REMOVED***-storage 以 compile 作用域传入。
+        <!-- mybatis-plus 不在此声明：它由 z-kb-storage 以 compile 作用域传入。
              一旦这里再写一条 test 作用域的同坐标，Maven 就近原则会把传递依赖降级成 test，
              主代码里的 QueryWrapper / BaseMapper 就全部编译不过。 -->
         <dependency>

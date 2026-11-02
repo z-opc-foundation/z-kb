@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { request } from '@/services/http';
 import { toast } from '@/utils/toast';
-import { get***REMOVED***Overview } from './overview';
+import { getKbOverview } from './overview';
 
 vi.mock('@/services/http', () => ({ request: vi.fn() }));
 vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
@@ -16,7 +16,7 @@ beforeEach(() => {
 describe('知识库概览接口', () => {
   it('把大整数字段统一转成数字', async () => {
     vi.mocked(request).mockResolvedValueOnce({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       fileCount: '12',
       compiledCount: 8,
       partialCount: '3',
@@ -28,8 +28,8 @@ describe('知识库概览接口', () => {
       refreshedAt: '2026-01-01',
     } as never);
 
-    await expect(get***REMOVED***Overview('***REMOVED***-1')).resolves.toEqual({
-      ***REMOVED***Id: '***REMOVED***-1',
+    await expect(getKbOverview('kb-1')).resolves.toEqual({
+      kbId: 'kb-1',
       fileCount: 12,
       compiledCount: 8,
       partialCount: 3,
@@ -40,21 +40,21 @@ describe('知识库概览接口', () => {
       recentMaterials: [],
       refreshedAt: '2026-01-01',
     });
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/overview/***REMOVED***Stats', {
+    expect(request).toHaveBeenCalledWith('/kb/v1/overview/kbStats', {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
   });
 
   it('空响应保持原样返回', async () => {
     vi.mocked(request).mockResolvedValueOnce(null as never);
-    await expect(get***REMOVED***Overview('***REMOVED***-1')).resolves.toBeNull();
+    await expect(getKbOverview('kb-1')).resolves.toBeNull();
   });
 
   it('失败时提示并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('boom'));
-    await expect(get***REMOVED***Overview('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(getKbOverview('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('请求失败', 'boom', 'error');
   });
 });

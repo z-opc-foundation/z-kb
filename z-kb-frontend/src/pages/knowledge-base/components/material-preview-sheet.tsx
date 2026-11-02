@@ -38,14 +38,14 @@ export default function MaterialPreviewSheet({ blob, csv }: MaterialPreviewSheet
       setError('');
       try {
         const XLSX = await import('@e965/xlsx');
-        const wor***REMOVED***ook = csv
+        const workbook = csv
           ? XLSX.read(await blob.text(), { type: 'string' })
           : XLSX.read(await blob.arrayBuffer(), { type: 'array' });
         if (cancelled) {
           return;
         }
-        const parsed: SheetTab[] = wor***REMOVED***ook.SheetNames.map((name) => {
-          const sheet = wor***REMOVED***ook.Sheets[name];
+        const parsed: SheetTab[] = workbook.SheetNames.map((name) => {
+          const sheet = workbook.Sheets[name];
           const raw = sheet
             ? XLSX.utils.sheet_to_json<unknown[]>(sheet, {
                 header: 1,

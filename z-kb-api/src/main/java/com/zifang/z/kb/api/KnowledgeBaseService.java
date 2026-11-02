@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 import java.io.InputStream;
 import java.util.List;
@@ -76,7 +76,7 @@ public interface KnowledgeBaseService {
     // ==================== 统计 ====================
 
     /** 工作台综合统计 */
-    ***REMOVED***Statistics statistics(String workspace);
+    KBStatistics statistics(String workspace);
 
     // ==================== 资源管理 ====================
 

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.compilation;
+package com.zifang.z.kb.api.compilation;
 
 import java.time.Instant;
 

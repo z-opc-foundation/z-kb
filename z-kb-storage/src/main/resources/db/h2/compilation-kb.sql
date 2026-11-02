@@ -1,12 +1,12 @@
--- z-***REMOVED*** 编译域 H2 元数据表（MySQL 兼容模式，幂等）
--- 与 db/mysql/compilation-***REMOVED***.sql 保持同构；索引用独立语句。
+-- z-kb 编译域 H2 元数据表（MySQL 兼容模式，幂等）
+-- 与 db/mysql/compilation-kb.sql 保持同构；索引用独立语句。
 -- H2 下 TEXT/MEDIUMTEXT 统一用 CLOB，长 JSON 用 VARCHAR(4000)。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_job (
+CREATE TABLE IF NOT EXISTS kb_compilation_job (
     id VARCHAR(64) NOT NULL,
     job_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     name VARCHAR(255) NOT NULL,
     task_type VARCHAR(32) NOT NULL DEFAULT 'COMPILATION',
     scope_type VARCHAR(16) NOT NULL,
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_job (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_job_id ON ***REMOVED***_compilation_job (tenant_code, job_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_job_***REMOVED*** ON ***REMOVED***_compilation_job (tenant_code, ***REMOVED***_id, is_deleted, create_time);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_job_material ON ***REMOVED***_compilation_job (tenant_code, material_id, material_version_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_job_scope ON ***REMOVED***_compilation_job (tenant_code, ***REMOVED***_id, scope_type, run_status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_job_id ON kb_compilation_job (tenant_code, job_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_job_kb ON kb_compilation_job (tenant_code, kb_id, is_deleted, create_time);
+CREATE INDEX IF NOT EXISTS idx_kb_job_material ON kb_compilation_job (tenant_code, material_id, material_version_id);
+CREATE INDEX IF NOT EXISTS idx_kb_job_scope ON kb_compilation_job (tenant_code, kb_id, scope_type, run_status);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_stage (
+CREATE TABLE IF NOT EXISTS kb_compilation_stage (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     job_id VARCHAR(64) NOT NULL,
@@ -68,15 +68,15 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_compilation_stage (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_stage ON ***REMOVED***_compilation_stage (tenant_code, job_id, material_version_id, stage, round_no, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_stage_job ON ***REMOVED***_compilation_stage (tenant_code, job_id, round_no, material_version_id, seq_no);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_stage_version ON ***REMOVED***_compilation_stage (tenant_code, material_version_id, create_time);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_stage ON kb_compilation_stage (tenant_code, job_id, material_version_id, stage, round_no, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_stage_job ON kb_compilation_stage (tenant_code, job_id, round_no, material_version_id, seq_no);
+CREATE INDEX IF NOT EXISTS idx_kb_stage_version ON kb_compilation_stage (tenant_code, material_version_id, create_time);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact (
+CREATE TABLE IF NOT EXISTS kb_artifact (
     id VARCHAR(64) NOT NULL,
     artifact_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     material_id VARCHAR(64) NULL,
     material_version_id VARCHAR(64) NULL,
     artifact_type VARCHAR(32) NOT NULL,
@@ -94,12 +94,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_artifact_id ON ***REMOVED***_artifact (tenant_code, artifact_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_artifact_***REMOVED*** ON ***REMOVED***_artifact (tenant_code, ***REMOVED***_id, artifact_type);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_artifact_material ON ***REMOVED***_artifact (tenant_code, material_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_artifact_version ON ***REMOVED***_artifact (tenant_code, material_version_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_artifact_id ON kb_artifact (tenant_code, artifact_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_artifact_kb ON kb_artifact (tenant_code, kb_id, artifact_type);
+CREATE INDEX IF NOT EXISTS idx_kb_artifact_material ON kb_artifact (tenant_code, material_id);
+CREATE INDEX IF NOT EXISTS idx_kb_artifact_version ON kb_artifact (tenant_code, material_version_id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact_version (
+CREATE TABLE IF NOT EXISTS kb_artifact_version (
     id VARCHAR(64) NOT NULL,
     artifact_version_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -116,14 +116,14 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_artifact_version (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_artifact_version_id ON ***REMOVED***_artifact_version (tenant_code, artifact_version_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_artifact_version ON ***REMOVED***_artifact_version (tenant_code, artifact_id, version_no);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_artifact_version_id ON kb_artifact_version (tenant_code, artifact_version_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_artifact_version ON kb_artifact_version (tenant_code, artifact_id, version_no);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_retrieval_chunk (
+CREATE TABLE IF NOT EXISTS kb_retrieval_chunk (
     id VARCHAR(64) NOT NULL,
     chunk_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     source_type VARCHAR(16) NOT NULL DEFAULT 'MATERIAL',
     source_id VARCHAR(64) NOT NULL DEFAULT '',
     source_version_id VARCHAR(64) NULL,
@@ -148,10 +148,10 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_retrieval_chunk (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_chunk_id ON ***REMOVED***_retrieval_chunk (tenant_code, chunk_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_***REMOVED*** ON ***REMOVED***_retrieval_chunk (tenant_code, ***REMOVED***_id, source_type, source_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_material ON ***REMOVED***_retrieval_chunk (tenant_code, ***REMOVED***_id, material_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_version ON ***REMOVED***_retrieval_chunk (tenant_code, material_version_id, ordinal);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_parent ON ***REMOVED***_retrieval_chunk (tenant_code, parent_chunk_id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_role_state ON ***REMOVED***_retrieval_chunk (tenant_code, ***REMOVED***_id, chunk_role, index_state, indexed_at, material_id, ordinal);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_chunk_artifact ON ***REMOVED***_retrieval_chunk (tenant_code, artifact_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_chunk_id ON kb_retrieval_chunk (tenant_code, chunk_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_kb ON kb_retrieval_chunk (tenant_code, kb_id, source_type, source_id);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_material ON kb_retrieval_chunk (tenant_code, kb_id, material_id);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_version ON kb_retrieval_chunk (tenant_code, material_version_id, ordinal);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_parent ON kb_retrieval_chunk (tenant_code, parent_chunk_id);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_role_state ON kb_retrieval_chunk (tenant_code, kb_id, chunk_role, index_state, indexed_at, material_id, ordinal);
+CREATE INDEX IF NOT EXISTS idx_kb_chunk_artifact ON kb_retrieval_chunk (tenant_code, artifact_id);

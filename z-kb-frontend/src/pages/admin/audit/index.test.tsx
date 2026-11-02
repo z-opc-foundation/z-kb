@@ -21,8 +21,8 @@ const records: AuditLogRecord[] = [
   {
     id: '1',
     tenantCode: 'tenant-a',
-    type: '***REMOVED***',
-    bizRef: '***REMOVED***-1',
+    type: 'KB',
+    bizRef: 'kb-1',
     actorId: 9,
     action: 'MATERIAL_UPLOAD',
     actionDesc: '上传资料',
@@ -91,7 +91,7 @@ describe('系统审计页', () => {
     expect(screen.getByText('归属')).toBeInTheDocument();
     expect(screen.getAllByText('知识库').length).toBeGreaterThan(0);
     expect(screen.getAllByText('系统').length).toBeGreaterThan(0);
-    expect(screen.getByText('***REMOVED***-1')).toBeInTheDocument();
+    expect(screen.getByText('kb-1')).toBeInTheDocument();
     expect(screen.getAllByText('张三')).toHaveLength(2);
     expect(screen.getByText('更新租户')).toBeInTheDocument();
     expect(screen.getByText('租户编码重复')).toBeInTheDocument();

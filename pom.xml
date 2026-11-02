@@ -8,7 +8,7 @@
     <!-- 消费入口统一走 z-boot-parent（1.0.19 起全组织口径）：继承第三方地板 z-boot-dependencies
          （156 条）+ 兄弟仓权威 z-boot-fleet（163 条）+ Java 8 的 pluginManagement。
          迁移前这里**没有** <parent>（根 pom 自包含，16 个版本键自己摊），所以本仓的"换台机器能不能构建"
-         一直靠 ~/.m2 的巧合；对外发布的件是靠 raw pom 原样发出去的（中央上 z-***REMOVED***:1.0.3 的 <parent> 计数 0），
+         一直靠 ~/.m2 的巧合；对外发布的件是靠 raw pom 原样发出去的（中央上 z-kb:1.0.3 的 <parent> 计数 0），
          加了三条 parent 之后必须由本仓自己 flatten 才能保住那个形状（见下面 flatten 那段）。
          relativePath 必须留空：parent 不在磁盘上，在 repo1。 -->
     <parent>
@@ -19,17 +19,17 @@
     </parent>
 
     <groupId>io.github.yuku123</groupId>
-    <artifactId>z-***REMOVED***</artifactId>
+    <artifactId>z-kb</artifactId>
     <packaging>pom</packaging>
     <version>1.1.0</version>
 
-    <name>z-***REMOVED*** :: root</name>
+    <name>z-kb :: root</name>
     <description>
-        z-***REMOVED*** — 自研产品级知识库系统，对标 LightRAG + BookStack/Mindoc + RAGFlow + Anything-LLM 的融合形态。
+        z-kb — 自研产品级知识库系统，对标 LightRAG + BookStack/Mindoc + RAGFlow + Anything-LLM 的融合形态。
         以 z-vector(向量库) + z-graph(图数据库) + z-util(工具集) 为基础设施，
         提供 Markdown 文档管理、混合检索（向量+全文+图谱）、RAG 问答、工作台会话、版本快照、双向链接、知识图谱可视化等能力。
         目标：达到可直接售卖的成熟度。    </description>
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -51,28 +51,28 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
 
     <modules>
-        <module>z-***REMOVED***-api</module>
-        <module>z-***REMOVED***-core</module>
-        <module>z-***REMOVED***-vector</module>
-        <module>z-***REMOVED***-graph</module>
-        <module>z-***REMOVED***-storage</module>
-        <module>z-***REMOVED***-protocol</module>
-        <module>z-***REMOVED***-spring-boot-starter</module>
-        <module>z-***REMOVED***-ingest</module>
-        <module>z-***REMOVED***-modeling</module>
-        <module>z-***REMOVED***-resource</module>
-        <module>z-***REMOVED***-web</module>
-        <!-- 临时排除 z-***REMOVED***-bootstrap（standalone uber-jar 77MB，Maven Central upload broken pipe）；
+        <module>z-kb-api</module>
+        <module>z-kb-core</module>
+        <module>z-kb-vector</module>
+        <module>z-kb-graph</module>
+        <module>z-kb-storage</module>
+        <module>z-kb-protocol</module>
+        <module>z-kb-spring-boot-starter</module>
+        <module>z-kb-ingest</module>
+        <module>z-kb-modeling</module>
+        <module>z-kb-resource</module>
+        <module>z-kb-web</module>
+        <!-- 临时排除 z-kb-bootstrap（standalone uber-jar 77MB，Maven Central upload broken pipe）；
              中央发布场景下其他 10 个核心库已足够，等 Maven Central 文件大小上限放宽后再加 -->
-        <!-- <module>z-***REMOVED***-bootstrap</module> -->
+        <!-- <module>z-kb-bootstrap</module> -->
     </modules>
 
     <properties>
@@ -102,7 +102,7 @@
         <!-- z-vector 抬到 fleet 那一格（1.0.4），本仓原来的 1.0.1 是**发坏的**：中央上
              io.github.yuku123:z-vector:1.0.1 那个根 pom 带着 <parent>com.zifang:z-opc:1.0.0-SNAPSHOT
              （相对路径 ../pom.xml），而那件只在开发机的 ~/.m2 里存在、中央永远没有 ⇒
-             干净机器解析 z-vector-api:1.0.1 必挂（z-***REMOVED*** 的 repo1-only 复跑就挂在这里）。
+             干净机器解析 z-vector-api:1.0.1 必挂（z-kb 的 repo1-only 复跑就挂在这里）。
              1.0.3/1.0.4 的根 pom parent=0、无 com.zifang 痕迹（现读中央 pom 核过），是可用的最低号。
              这里连属性带 3 条 DM 条目一起删：抬到 1.0.4 之后值就等于 fleet 下发的那格，父链供。 -->
 
@@ -116,7 +116,7 @@
         <jsoup.version>1.18.1</jsoup.version>
         <slf4j.version>2.0.13</slf4j.version>
         <junit.version>5.10.2</junit.version>
-        <!-- z-vector-storage 1.0.5：1.1.0 起 ***REMOVED***.vector.storage-type 默认 persistent，
+        <!-- z-vector-storage 1.0.5：1.1.0 起 kb.vector.storage-type 默认 persistent，
              PersistentVectorStore 必须真的在 classpath 上（装不上就启动失败，不静默回落）。
              PersistentVectorStore 落在 **z-vector-storage** 这个坐标里（不在 z-vector-core 里），
              而 z-boot-parent:1.1.0 的 DM 只管 z-vector-api / core / grpc-server / spring-boot-starter
@@ -141,81 +141,81 @@
                  **不动**：字面版本优先级高于任何 DM，它们今天解析成什么、迁移后还是什么。 -->
 
             <!-- ===== 本仓自家 11 个 reactor 坐标钉 ${project.version} =====
-                 不是装饰：继承来的 fleet 把 io.github.yuku123:z-***REMOVED***-* 钉在 repo1 上已发布的 **1.0.3**，
+                 不是装饰：继承来的 fleet 把 io.github.yuku123:z-kb-* 钉在 repo1 上已发布的 **1.0.3**，
                  而"继承来的直接 DM 会改写传递依赖的版本" ⇒ 不钉这格，仓内构建（以及将来任何 fat jar）
-                 可能被旧发布件的字节码反向污染。z-***REMOVED*** 这一格（根 pom 本身）fleet 不管，一并钉上把
+                 可能被旧发布件的字节码反向污染。z-kb 这一格（根 pom 本身）fleet 不管，一并钉上把
                  "自家 reactor"这件事写成一处可读的清单。 -->
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***</artifactId>
+                <artifactId>z-kb</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-api</artifactId>
+                <artifactId>z-kb-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-core</artifactId>
+                <artifactId>z-kb-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-vector</artifactId>
+                <artifactId>z-kb-vector</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-graph</artifactId>
+                <artifactId>z-kb-graph</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-storage</artifactId>
+                <artifactId>z-kb-storage</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-protocol</artifactId>
+                <artifactId>z-kb-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-spring-boot-starter</artifactId>
+                <artifactId>z-kb-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-ingest</artifactId>
+                <artifactId>z-kb-ingest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-modeling</artifactId>
+                <artifactId>z-kb-modeling</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-resource</artifactId>
+                <artifactId>z-kb-resource</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-***REMOVED***-web</artifactId>
+                <artifactId>z-kb-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- ===== 刻意与父链不同值的格：只能写成**直接** DM 条目 =====
                  （import 进来的 BOM 顶不过继承来的直接 DM，README 步骤 5） -->
 
-            <!-- z-util 抬到 1.2.2（去 Jackson 那版）：仓内 4 个数据源 + Chat/Embedding 服务 + z-***REMOVED***-graph/z-***REMOVED***-storage
+            <!-- z-util 抬到 1.2.2（去 Jackson 那版）：仓内 4 个数据源 + Chat/Embedding 服务 + z-kb-graph/z-kb-storage
                  两个 JSON 文件存储改用
                  JsonUtil / JsonCursor 解析各家 API 响应，不再依赖 ObjectMapper。
                  继承来的 z-boot-fleet DM 把它压在 1.0.22（实测 dependency:tree），
                  而 parse / toPlainValue / JsonCursor 是 1.2.x 才有的 API。
-                 1.2.6 起 parser-json 另带 @JsonSerialize(nonNull=true) —— z-***REMOVED*** 的 IngestItemSummary
+                 1.2.6 起 parser-json 另带 @JsonSerialize(nonNull=true) —— z-kb 的 IngestItemSummary
                  靠它逐字段丢掉空的 error 键, 从而摘掉 Jackson 的 @JsonInclude(NON_NULL)。
                  ⚠ dsl-kernel 必须同笔钉：parser-json 1.2.2 的 pom 依赖 dsl-kernel 1.2.2，
                  而 DM 对**传递依赖**同样生效，只钉 parser-json 会被 fleet 压回 1.0.22
@@ -288,7 +288,7 @@
 
             <!-- log4j2 2.22.1（地板把 api/core/jul/slf4j-impl 四条**直接**钉在 2.25.4）。
                  本仓 tree 里只有 log4j-api 这一格是传递进来的（log4j-core / log4j-slf4j2-impl 在
-                 z-***REMOVED***-vector / z-***REMOVED***-core 里被显式 exclusion 掉了），所以只按坐标钉 api 一条 —— 量出来的，
+                 z-kb-vector / z-kb-core 里被显式 exclusion 掉了），所以只按坐标钉 api 一条 —— 量出来的，
                  不是照抄 z-cache 那四条。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -296,7 +296,7 @@
                 <version>${log4j2.version}</version>
             </dependency>
 
-            <!-- MySQL 8.0.33（地板 8.4.0）。z-***REMOVED***-storage 那条直接依赖写的是字面 ${mysql.version}，
+            <!-- MySQL 8.0.33（地板 8.4.0）。z-kb-storage 那条直接依赖写的是字面 ${mysql.version}，
                  这条 DM 条目管的是任何传递位置，缺了就会被抬成 8.4.0。
                  ⚠ exclusion 是照抄 spring-boot-dependencies 自己那条受管项的：它对本坐标排掉了
                  protobuf-java，而迁移删掉 Boot 的 BOM import 会连带删掉那条形体 —— 只写版本的
@@ -393,8 +393,8 @@
                  （z-boot-parent/pom.xml:257-264，它自己用 resolveCiFriendliesOnly），**不下发**给消费仓，
                  所以加了 <parent> 之后必须本仓自己把 pom 扁平掉。
                  判据是"与本仓中央那一版逐字对得上"，实测（repo1 ranged GET）：
-                   io.github.yuku123:z-***REMOVED***:1.0.3 的中央 pom `<parent>` 计数 = 0（自包含 raw pom）
-                   io.github.yuku123:z-***REMOVED***-core:1.0.3 的中央 pom `<parent>` 计数 = 1（指向 z-***REMOVED***:1.0.3）
+                   io.github.yuku123:z-kb:1.0.3 的中央 pom `<parent>` 计数 = 0（自包含 raw pom）
+                   io.github.yuku123:z-kb-core:1.0.3 的中央 pom `<parent>` 计数 = 1（指向 z-kb:1.0.3）
                  即本仓对外一直是"自包含/仓内闭环"的形状，不是那种刻意带 parent 链的扁平 pom
                  （z-skill 那种）⇒ 按 z-cache 的口径补 flatten `oss`，且**常开**。
                  常开（不挂 central profile）：挂 profile 时 `mvn install` 不带 -P central，

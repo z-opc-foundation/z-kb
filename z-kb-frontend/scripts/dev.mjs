@@ -1,9 +1,9 @@
 import os from 'node:os';
 import { createServer } from 'vite';
 
-// --dev-backend：强制走 dev 后端（忽略 shell 里导出的 ***REMOVED***API_TARGET），用于本地登录联调
+// --dev-backend：强制走 dev 后端（忽略 shell 里导出的 KB_API_TARGET），用于本地登录联调
 if (process.argv.includes('--dev-backend')) {
-  delete process.env.***REMOVED***API_TARGET;
+  delete process.env.KB_API_TARGET;
 }
 
 const port = 5173;

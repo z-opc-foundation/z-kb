@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +31,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 萃取 / 概念 / 图谱三个 v1 REST 域的集成测试：编译 P4 落库后由接口读回。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-extraction-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-extraction-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/extraction-api-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/extraction-api-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/extraction-api-repo",
+        "kb.storage.path=target/test-kb/extraction-api-kb.json",
+        "kb.material.storage.root=target/test-kb/extraction-api-original",
+        "kb.material.repo.root=target/test-kb/extraction-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -68,11 +68,11 @@ class ExtractionConceptGraphApiIntegrationTest {
     @Test
     @DisplayName("编译 P4 后萃取产物/概念模型/图谱均可读回，且跨物料概念合并为已确认")
     void extractionConceptGraphHappyPath() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***();
-        String materialId = registerText(***REMOVED***Id, "萃取接口物料", DOC);
-        compilationService.run(materialId, null, ***REMOVED***Caller.of(TENANT, ACTOR));
+        String kbId = createKb();
+        String materialId = registerText(kbId, "萃取接口物料", DOC);
+        compilationService.run(materialId, null, KbCaller.of(TENANT, ACTOR));
 
-        MvcResult extracted = mvc.perform(get("/api/***REMOVED***/v1/extraction/queryByMaterial")
+        MvcResult extracted = mvc.perform(get("/api/kb/v1/extraction/queryByMaterial")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -96,8 +96,8 @@ class ExtractionConceptGraphApiIntegrationTest {
         assertTrue(data.path("counts").path("graphNode").asInt() >= 2);
         assertTrue(data.path("counts").path("graphEdge").asInt() >= 2);
 
-        MvcResult concepts = mvc.perform(get("/api/***REMOVED***/v1/concept/listBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        MvcResult concepts = mvc.perform(get("/api/kb/v1/concept/listByKb")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -120,16 +120,16 @@ class ExtractionConceptGraphApiIntegrationTest {
                 target.path("graphNodeId").asText());
         String conceptId = target.path("conceptId").asText();
 
-        mvc.perform(get("/api/***REMOVED***/v1/concept/listBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/concept/listByKb")
+                        .param("kbId", kbId)
                         .param("keyword", "不存在的关键词")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/concept/queryById")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/concept/queryById")
+                        .param("kbId", kbId)
                         .param("conceptId", conceptId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -141,13 +141,13 @@ class ExtractionConceptGraphApiIntegrationTest {
                 .andExpect(jsonPath("$.data.mentions[0].materialTitle").value("萃取接口物料.md"))
                 .andExpect(jsonPath("$.data.mentions[0].chunkOrdinal").value(1));
 
-        MvcResult graph = mvc.perform(get("/api/***REMOVED***/v1/graph/queryBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        MvcResult graph = mvc.perform(get("/api/kb/v1/graph/queryByKb")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.***REMOVED***Id").value(***REMOVED***Id))
-                .andExpect(jsonPath("$.data.graphSpaceKey").value("***REMOVED***:" + ***REMOVED***Id))
+                .andExpect(jsonPath("$.data.kbId").value(kbId))
+                .andExpect(jsonPath("$.data.graphSpaceKey").value("kb:" + kbId))
                 .andExpect(jsonPath("$.data.truncated").value(false))
                 .andReturn();
         JsonNode graphView = data(graph);
@@ -174,12 +174,12 @@ class ExtractionConceptGraphApiIntegrationTest {
         assertTrue(hasConceptNode);
         assertTrue(hasMentionsEdge);
 
-        MvcResult byMaterial = mvc.perform(get("/api/***REMOVED***/v1/graph/queryByMaterial")
+        MvcResult byMaterial = mvc.perform(get("/api/kb/v1/graph/queryByMaterial")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.***REMOVED***Id").value(***REMOVED***Id))
+                .andExpect(jsonPath("$.data.kbId").value(kbId))
                 .andReturn();
         JsonNode materialGraph = data(byMaterial);
         assertEquals(materialGraph.path("nodeCount").asInt(),
@@ -188,12 +188,12 @@ class ExtractionConceptGraphApiIntegrationTest {
             assertEquals(materialId, node.path("materialId").asText());
         }
 
-        String secondMaterialId = registerText(***REMOVED***Id, "萃取接口物料二",
+        String secondMaterialId = registerText(kbId, "萃取接口物料二",
                 "# 检索增强\n\n检索增强需要图谱支撑。图谱由节点与边组成。");
-        compilationService.run(secondMaterialId, null, ***REMOVED***Caller.of(TENANT, ACTOR));
+        compilationService.run(secondMaterialId, null, KbCaller.of(TENANT, ACTOR));
 
-        MvcResult merged = mvc.perform(get("/api/***REMOVED***/v1/concept/listBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        MvcResult merged = mvc.perform(get("/api/kb/v1/concept/listByKb")
+                        .param("kbId", kbId)
                         .param("keyword", "检索增强")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -205,8 +205,8 @@ class ExtractionConceptGraphApiIntegrationTest {
         assertEquals("CONFIRMED", mergedList.get(0).path("status").asText());
         assertEquals(conceptId, mergedList.get(0).path("conceptId").asText());
 
-        mvc.perform(get("/api/***REMOVED***/v1/concept/queryById")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/concept/queryById")
+                        .param("kbId", kbId)
                         .param("conceptId", conceptId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -214,13 +214,13 @@ class ExtractionConceptGraphApiIntegrationTest {
                 .andExpect(jsonPath("$.data.mentions.length()").value(2))
                 .andExpect(jsonPath("$.data.concept.status").value("CONFIRMED"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/graph/queryBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/graph/queryByKb")
+                        .param("kbId", kbId)
                         .param("materialId", secondMaterialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.***REMOVED***Id").value(***REMOVED***Id))
+                .andExpect(jsonPath("$.data.kbId").value(kbId))
                 .andExpect(jsonPath("$.data.nodes[*].materialId")
                         .value(org.hamcrest.Matchers.everyItem(
                                 org.hamcrest.Matchers.is(secondMaterialId))));
@@ -229,7 +229,7 @@ class ExtractionConceptGraphApiIntegrationTest {
     @Test
     @DisplayName("错误映射：空参数 400、物料不存在 404、概念不存在 404、知识库不存在 404")
     void errorStatusMapping() throws Exception {
-        mvc.perform(get("/api/***REMOVED***/v1/extraction/queryByMaterial")
+        mvc.perform(get("/api/kb/v1/extraction/queryByMaterial")
                         .param("materialId", " ")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -237,37 +237,37 @@ class ExtractionConceptGraphApiIntegrationTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("物料参数不合法"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/extraction/queryByMaterial")
+        mvc.perform(get("/api/kb/v1/extraction/queryByMaterial")
                         .param("materialId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false));
 
-        mvc.perform(get("/api/***REMOVED***/v1/graph/queryByMaterial")
+        mvc.perform(get("/api/kb/v1/graph/queryByMaterial")
                         .param("materialId", " ")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("物料参数不合法"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/graph/queryBy***REMOVED***")
-                        .param("***REMOVED***Id", " ")
+        mvc.perform(get("/api/kb/v1/graph/queryByKb")
+                        .param("kbId", " ")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("知识库参数不合法"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/graph/queryBy***REMOVED***")
-                        .param("***REMOVED***Id", "missing-" + UUID.randomUUID())
+        mvc.perform(get("/api/kb/v1/graph/queryByKb")
+                        .param("kbId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false));
 
-        String ***REMOVED***Id = create***REMOVED***();
-        mvc.perform(get("/api/***REMOVED***/v1/concept/queryById")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        String kbId = createKb();
+        mvc.perform(get("/api/kb/v1/concept/queryById")
+                        .param("kbId", kbId)
                         .param("conceptId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -275,8 +275,8 @@ class ExtractionConceptGraphApiIntegrationTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("概念不存在"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/concept/listBy***REMOVED***")
-                        .param("***REMOVED***Id", "missing-" + UUID.randomUUID())
+        mvc.perform(get("/api/kb/v1/concept/listByKb")
+                        .param("kbId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
@@ -288,19 +288,19 @@ class ExtractionConceptGraphApiIntegrationTest {
         return objectMapper.readTree(new String(bytes, StandardCharsets.UTF_8)).path("data");
     }
 
-    private String create***REMOVED***() {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("萃取接口库");
-        ***REMOVED***.setCode("extapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        KnowledgeBaseView view = resourceService.create(***REMOVED***, ***REMOVED***Caller.of(TENANT, ACTOR));
-        assertFalse(view.get***REMOVED***Id().isEmpty());
-        return view.get***REMOVED***Id();
+    private String createKb() {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("萃取接口库");
+        kb.setCode("extapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        KnowledgeBaseView view = resourceService.create(kb, KbCaller.of(TENANT, ACTOR));
+        assertFalse(view.getKbId().isEmpty());
+        return view.getKbId();
     }
 
-    private String registerText(String ***REMOVED***Id, String title, String content) {
-        MaterialUploadItem item = materialService.registerText(***REMOVED***Id, title, null, content,
-                ***REMOVED***Caller.of(TENANT, ACTOR));
+    private String registerText(String kbId, String title, String content) {
+        MaterialUploadItem item = materialService.registerText(kbId, title, null, content,
+                KbCaller.of(TENANT, ACTOR));
         assertTrue(item.isSuccess(), item.getMessage());
         return item.getMaterialId();
     }

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.extraction;
+package com.zifang.z.kb.api.extraction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +8,19 @@ import java.util.List;
  */
 public class ExtractionInput {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String materialTitle;
     private String draftId;
     private List<ExtractionChunk> chunks = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

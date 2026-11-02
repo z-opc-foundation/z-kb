@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 绑定在某个接入源上的物料摘要。同步据此定位“这篇文档上次登记成了哪条物料”。

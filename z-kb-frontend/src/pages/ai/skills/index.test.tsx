@@ -103,7 +103,7 @@ vi.mock('@/pages/ai/shared', async () => {
                 'label',
                 { key: option.code },
                 h('input', {
-                  type: 'chec***REMOVED***ox',
+                  type: 'checkbox',
                   checked: value.includes(option.code),
                   onChange: () =>
                     onChange(
@@ -307,7 +307,7 @@ describe('AiSkillsPage', () => {
       { target: { value: '请引用来源' } },
     );
     fireEvent.click(
-      screen.getByRole('chec***REMOVED***ox', { name: /知识库检索/ }),
+      screen.getByRole('checkbox', { name: /知识库检索/ }),
     );
     fireEvent.click(screen.getByRole('button', { name: /创建草稿/ }));
 

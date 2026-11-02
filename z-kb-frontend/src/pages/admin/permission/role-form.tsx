@@ -81,7 +81,7 @@ export default function RoleFormModal({
               className="input mono"
               value={roleCode}
               disabled={editing}
-              placeholder="如 ***REMOVED***_operator"
+              placeholder="如 kb_operator"
               onChange={(event) => setRoleCode(event.target.value)}
             />
             <span className="help">编码是授权与绑定的业务键，创建后不可修改</span>

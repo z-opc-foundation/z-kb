@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 一次接入源同步的回执与计数。
  *
- * <p>z-***REMOVED*** 没有独立任务内核，同步在请求内跑完；scopeId 为本次同步的运行标识，
+ * <p>z-kb 没有独立任务内核，同步在请求内跑完；scopeId 为本次同步的运行标识，
  * reusing 保留参考契约的形状（同源并发时由实现决定是否复用）。</p>
  */
 public class KnowledgeBaseSourceSyncView {

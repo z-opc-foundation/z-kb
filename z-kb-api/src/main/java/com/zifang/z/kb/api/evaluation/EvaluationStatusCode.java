@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
- * 知识评测域错误码。枚举名即 {@code ***REMOVED***Exception} 的错误码，web 层据此映射 HTTP 状态。
+ * 知识评测域错误码。枚举名即 {@code KBException} 的错误码，web 层据此映射 HTTP 状态。
  */
 public enum EvaluationStatusCode {
 

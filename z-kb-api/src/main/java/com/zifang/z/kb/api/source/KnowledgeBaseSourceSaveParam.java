@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,15 +8,15 @@ import java.util.List;
  */
 public class KnowledgeBaseSourceSaveParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private List<KnowledgeBaseSourceParam> sources = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public List<KnowledgeBaseSourceParam> getSources() {

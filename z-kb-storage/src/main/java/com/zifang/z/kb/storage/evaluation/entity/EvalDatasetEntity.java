@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测 QA 集合（***REMOVED***_eval_dataset）：单库单份、可版本化。
+ * 评测 QA 集合（kb_eval_dataset）：单库单份、可版本化。
  */
-@TableName("***REMOVED***_eval_dataset")
+@TableName("kb_eval_dataset")
 public class EvalDatasetEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String datasetId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private Integer versionNo;
     private String status;
@@ -54,12 +54,12 @@ public class EvalDatasetEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

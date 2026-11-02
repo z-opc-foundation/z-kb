@@ -1,6 +1,6 @@
 {
   "datasetVersion": "v2-llm-generated",
-  "knowledgeVersion": "***REMOVED***-llm-corpus-2026-10-18",
+  "knowledgeVersion": "kb-llm-corpus-2026-10-18",
   "cases": [
     {
       "caseId": "redis-cache-paraphrase-1",

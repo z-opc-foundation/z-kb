@@ -42,7 +42,7 @@ function PropRow(props: FulldataPropPanelProps & { name: string; cnName: string 
     <div className="lc-fd-prop-row">
       <label className="lc-fd-prop-item">
         <input
-          type="chec***REMOVED***ox"
+          type="checkbox"
           checked={checked}
           onChange={(e) => props.onToggleProp(props.name, e.target.checked)}
         />
@@ -96,7 +96,7 @@ export function FulldataPropPanel(props: FulldataPropPanelProps) {
       <div className="lc-fd-prop-hide-divider" />
       <label className="lc-fd-prop-hide-row">
         <input
-          type="chec***REMOVED***ox"
+          type="checkbox"
           checked={props.hidden}
           onChange={(e) => props.onHiddenChange(e.target.checked)}
         />

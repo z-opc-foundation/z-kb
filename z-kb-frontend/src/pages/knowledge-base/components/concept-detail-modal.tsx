@@ -4,7 +4,7 @@ import { ConceptDetailRecord, getConcept } from '@/services/concept';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  ***REMOVED***Id: string;
+  kbId: string;
   conceptId: string;
   onClose: () => void;
   onOpenMaterial?: (materialId: string) => void;
@@ -37,7 +37,7 @@ function evidenceChunk(evidence?: string | null): string {
 }
 
 export default function ConceptDetailModal({
-  ***REMOVED***Id,
+  kbId,
   conceptId,
   onClose,
   onOpenMaterial,
@@ -50,7 +50,7 @@ export default function ConceptDetailModal({
     let cancelled = false;
     setDetail(null);
     setLoading(true);
-    void getConcept(***REMOVED***Id, conceptId).then((result) => {
+    void getConcept(kbId, conceptId).then((result) => {
       if (cancelled) {
         return;
       }
@@ -62,7 +62,7 @@ export default function ConceptDetailModal({
     return () => {
       cancelled = true;
     };
-  }, [***REMOVED***Id, conceptId]);
+  }, [kbId, conceptId]);
 
   return (
     <AppModal

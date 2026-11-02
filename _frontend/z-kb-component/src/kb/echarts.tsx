@@ -1,12 +1,12 @@
 /**
- * z-***REMOVED***-component 的 echarts 统一入口 —— tree-shaken（2026-10-22 包体优化）。
+ * z-kb-component 的 echarts 统一入口 —— tree-shaken（2026-10-22 包体优化）。
  *
  * **改之前**：`GraphPage.tsx` 直接 `import ReactECharts from 'echarts-for-react'`，
- * 而该入口内部静态引全量 `echarts`（1,549.5 ***REMOVED*** raw / 422.7 ***REMOVED*** gzip，190+ 图表类型）。
+ * 而该入口内部静态引全量 `echarts`（1,549.5 KB raw / 422.7 KB gzip，190+ 图表类型）。
  * 宿主主壳为一张关系图（graph series）付出全量 echarts 的带宽。
  *
  * **改之后**：`echarts-for-react/lib/core`（由 prop 注入 echarts 实例）
- * + `echarts/core` 按需注册 ⇒ 实测 843.7 ***REMOVED*** raw / 229.7 ***REMOVED*** gzip。
+ * + `echarts/core` 按需注册 ⇒ 实测 843.7 KB raw / 229.7 KB gzip。
  *
  * ⚠ 本包实际只用到 **graph** 一种 series（知识图谱页的关系图），
  *   组件用到 grid / legend / tooltip。bar / line 也一并注册着 ——

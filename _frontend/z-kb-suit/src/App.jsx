@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout, ErrorBoundary } from '@yuku123/z-frontend-common'
-import { menuItems, routes, HomePage, LoginPage } from '@yuku123/z-***REMOVED***-component/pages'
+import { menuItems, routes, HomePage, LoginPage } from '@yuku123/z-kb-component/pages'
 import { Result, Button } from 'antd'
 
 function NotFound() {
@@ -10,7 +10,7 @@ function NotFound() {
             status="404"
             title="页面不存在"
             subTitle="路由表里没有这条路径。"
-            extra={<Button type="primary" onClick={() => { window.location.href = '/z-***REMOVED***/home' }}>去首页</Button>}
+            extra={<Button type="primary" onClick={() => { window.location.href = '/z-kb/home' }}>去首页</Button>}
         />
     )
 }
@@ -36,7 +36,7 @@ function ProtectedShell() {
 
     useEffect(() => {
         if (!localStorage.getItem('token')) {
-            window.location.replace('/z-***REMOVED***/login')
+            window.location.replace('/z-kb/login')
             return
         }
         const raw = localStorage.getItem('userInfo')
@@ -49,10 +49,10 @@ function ProtectedShell() {
     return (
         <AppLayout
             menuItems={menuItems}
-            appTitle="z-***REMOVED*** 知识库"
+            appTitle="z-kb 知识库"
             appVersion="0.1.0"
             appUser={user}
-            appIcon={{ icon: <img src="/icon.png" alt="z-***REMOVED*** 知识库" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />, color: '#d97706', label: 'z-***REMOVED*** 知识库' }}
+            appIcon={{ icon: <img src="/icon.png" alt="z-kb 知识库" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />, color: '#d97706', label: 'z-kb 知识库' }}
         />
     )
 }
@@ -63,7 +63,7 @@ export default function App() {
         <ErrorBoundary>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/z-***REMOVED***/login" element={<LoginRoute />} />
+                    <Route path="/z-kb/login" element={<LoginRoute />} />
                     <Route element={<ProtectedShell />}>
                         <Route path="/" element={<Navigate to={menuItems[0].key} replace />} />
                         {routes.map((r) => (

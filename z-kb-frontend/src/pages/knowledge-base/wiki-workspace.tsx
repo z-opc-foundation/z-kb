@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatShortDateTime } from '@/utils/format';
 
 interface Props {
-  ***REMOVED***Id: string;
+  kbId: string;
   canManage: boolean;
   initialWikiId?: string;
   onChanged?: () => void;
@@ -45,7 +45,7 @@ function flattenCategories(nodes: CategoryNode[], map = new Map<string, string>(
   return map;
 }
 
-export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiId, onChanged }: Props) {
+export default function WikiWorkspace({ kbId, canManage, initialWikiId, onChanged }: Props) {
   const [pages, setPages] = useState<WikiPageRecord[]>([]);
   const [materials, setMaterials] = useState<MaterialRecord[]>([]);
   const [categories, setCategories] = useState<Map<string, string>>(new Map());
@@ -66,7 +66,7 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
   const loadPages = useCallback(
     async (nextKeyword?: string) => {
       setLoading(true);
-      const result = await listWikiPages(***REMOVED***Id, nextKeyword || undefined, WIKI_LIST_LIMIT);
+      const result = await listWikiPages(kbId, nextKeyword || undefined, WIKI_LIST_LIMIT);
       setLoading(false);
       if (!result) {
         return;
@@ -74,13 +74,13 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
       setPages(result);
       setSelectedId((prev) => (result.some((page) => page.wikiId === prev) ? prev : ''));
     },
-    [***REMOVED***Id],
+    [kbId],
   );
 
   const loadSupport = useCallback(async () => {
     const [materialResult, tree] = await Promise.all([
-      pageMaterial({ ***REMOVED***Id, current: 1, size: 100 }),
-      getCategoryTree(***REMOVED***Id),
+      pageMaterial({ kbId, current: 1, size: 100 }),
+      getCategoryTree(kbId),
     ]);
     if (materialResult) {
       setMaterials(materialResult.records || []);
@@ -88,7 +88,7 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
     if (tree) {
       setCategories(flattenCategories(tree));
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void loadPages();
@@ -153,7 +153,7 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
       return;
     }
     setGenBusy(true);
-    const result = await generateWiki(***REMOVED***Id, genSelected);
+    const result = await generateWiki(kbId, genSelected);
     setGenBusy(false);
     if (!result) {
       return;
@@ -349,7 +349,7 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
         <div className="btn-group">
           <span className="tag green">v{detail.page.versionNo}</span>
           <AgentAskButton
-            ***REMOVED***Id={***REMOVED***Id}
+            kbId={kbId}
             className="btn xs ghost"
             label="问 AI"
             question={wikiAskQuestion}
@@ -445,25 +445,25 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
         ) : null}
         {detailTab === 'graph' ? (
           <WikiGraphTab
-            ***REMOVED***Id={***REMOVED***Id}
+            kbId={kbId}
             sourceMaterialIds={detail.sources.map((source) => source.materialId)}
           />
         ) : null}
         {detailTab === 'lineage' ? (
           lineage && lineage.wikiId === detail.page.wikiId ? (
             <div>
-              <div className="***REMOVED***-facts" style={{ borderTop: 0, paddingTop: 0 }}>
-                <div className="***REMOVED***-fact">
+              <div className="kb-facts" style={{ borderTop: 0, paddingTop: 0 }}>
+                <div className="kb-fact">
                   <Icon name="file-text" size={13} />
                   来源资料 <b>{lineage.sourceCount}</b>
                 </div>
                 <span className="sep"></span>
-                <div className="***REMOVED***-fact">
+                <div className="kb-fact">
                   <Icon name="git-branch" size={13} />
                   关系 <b>{lineage.edges.length}</b>
                 </div>
                 <span className="sep"></span>
-                <div className="***REMOVED***-fact">
+                <div className="kb-fact">
                   <Icon name="share" size={13} />
                   同源图谱 <b>{lineage.graphNodeCount}</b>
                 </div>
@@ -686,7 +686,7 @@ export default function WikiWorkspace({ ***REMOVED***Id, canManage, initialWikiI
                       style={{ cursor: ready ? 'pointer' : 'default', opacity: ready ? 1 : 0.6 }}
                     >
                       <input
-                        type="chec***REMOVED***ox"
+                        type="checkbox"
                         disabled={!ready}
                         checked={genSelected.includes(item.materialId)}
                         onChange={() =>

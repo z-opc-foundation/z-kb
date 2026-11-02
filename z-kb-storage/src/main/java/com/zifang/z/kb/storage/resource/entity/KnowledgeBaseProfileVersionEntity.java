@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.resource.entity;
+package com.zifang.z.kb.storage.resource.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,14 +7,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库配置版本（***REMOVED***_knowledge_base_profile_version）：草稿 / 生效 / 历史。
+ * 知识库配置版本（kb_knowledge_base_profile_version）：草稿 / 生效 / 历史。
  */
-@TableName("***REMOVED***_knowledge_base_profile_version")
+@TableName("kb_knowledge_base_profile_version")
 public class KnowledgeBaseProfileVersionEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String tenantCode;
     private Integer versionNo;
     private String status;
@@ -44,12 +44,12 @@ public class KnowledgeBaseProfileVersionEntity {
         this.id = id;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTenantCode() {

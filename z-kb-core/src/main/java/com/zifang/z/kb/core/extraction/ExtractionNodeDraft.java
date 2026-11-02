@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
 /**
  * 未落库的图谱节点草稿：物料节点或概念节点。

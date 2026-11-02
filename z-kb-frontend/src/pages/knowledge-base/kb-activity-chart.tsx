@@ -1,5 +1,5 @@
 import React, { useId, useMemo } from 'react';
-import type { ***REMOVED***ActivityDay } from '@/services/***REMOVED***Activity';
+import type { KbActivityDay } from '@/services/kbActivity';
 
 export const ACTIVITY_WEEKS = 24;
 
@@ -35,7 +35,7 @@ export interface ActivitySeries {
  * 窗口外的日期与未来日期都不计入。
  */
 export function buildSeries(
-  days: ***REMOVED***ActivityDay[] | undefined,
+  days: KbActivityDay[] | undefined,
   weeks: number,
 ): ActivitySeries {
   const counts = new Map<string, number>();
@@ -117,22 +117,22 @@ function shortDay(key: string) {
   return key.slice(5);
 }
 
-interface ***REMOVED***ActivityChartProps {
-  days?: ***REMOVED***ActivityDay[];
+interface KbActivityChartProps {
+  days?: KbActivityDay[];
   pending?: boolean;
   /** 活跃度接口失败时不再用「0 次」冒充无操作 */
   unavailable?: boolean;
   weeks?: number;
 }
 
-export default function ***REMOVED***ActivityChart({
+export default function KbActivityChart({
   days,
   pending = false,
   unavailable = false,
   weeks = ACTIVITY_WEEKS,
-}: ***REMOVED***ActivityChartProps) {
+}: KbActivityChartProps) {
   const series = useMemo(() => buildSeries(days, weeks), [days, weeks]);
-  const gradientId = `***REMOVED***-act-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const gradientId = `kb-act-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const label = unavailable
     ? '活跃度数据暂不可用'
     : pending
@@ -146,7 +146,7 @@ export default function ***REMOVED***ActivityChart({
 
   return (
     <span
-      className={`***REMOVED***-chart${empty ? ' is-empty' : ''}${pending ? ' pending' : ''}`}
+      className={`kb-chart${empty ? ' is-empty' : ''}${pending ? ' pending' : ''}`}
       title={label}
     >
       <svg
@@ -195,7 +195,7 @@ export default function ***REMOVED***ActivityChart({
           </rect>
         ))}
       </svg>
-      <span className="***REMOVED***-chart-meta">{meta}</span>
+      <span className="kb-chart-meta">{meta}</span>
     </span>
   );
 }

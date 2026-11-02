@@ -7,22 +7,22 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-spring-boot-starter</artifactId>
+    <artifactId>z-kb-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: spring-boot-starter</name>
+    <name>z-kb :: spring-boot-starter</name>
     <description>
-        z-***REMOVED*** Spring Boot 自动装配 — 通过 spring.factories 注册，
-        提供 ***REMOVED***Properties 配置属性和 ***REMOVED*** AutoConfiguration。
-        用户引入 starter 后，配置 ***REMOVED***.* 即可使用全部能力。
+        z-kb Spring Boot 自动装配 — 通过 spring.factories 注册，
+        提供 KBProperties 配置属性和 KB AutoConfiguration。
+        用户引入 starter 后，配置 kb.* 即可使用全部能力。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -44,9 +44,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,7 +55,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-core</artifactId>
+            <artifactId>z-kb-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
@@ -64,15 +64,15 @@
 
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-vector</artifactId>
+            <artifactId>z-kb-vector</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-graph</artifactId>
+            <artifactId>z-kb-graph</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-storage</artifactId>
+            <artifactId>z-kb-storage</artifactId>
         </dependency>
 
         <dependency>

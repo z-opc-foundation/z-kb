@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.concept;
+package com.zifang.z.kb.api.concept;
 
 import java.util.ArrayList;
 import java.util.List;

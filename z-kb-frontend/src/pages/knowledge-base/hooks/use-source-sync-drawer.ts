@@ -59,7 +59,7 @@ function toPayload(
 }
 
 /** 资料树上按接入源节点打开「同步范围」抽屉：勾知识库、展开挑文章，确认后保存并触发一次同步。 */
-export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerController {
+export function useSourceSyncDrawer(kbId: string): SourceSyncDrawerController {
   const [target, setTarget] = useState<SourceSyncTarget | null>(null);
   const [source, setSource] = useState<KnowledgeBaseSourceRecord | null>(null);
   const [sources, setSources] = useState<KnowledgeBaseSourceRecord[]>([]);
@@ -104,7 +104,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
       setSources([]);
 
       void (async () => {
-        const records = await listKnowledgeBaseSources(***REMOVED***Id);
+        const records = await listKnowledgeBaseSources(kbId);
         const found = records?.find((item) => item.sourceId === sourceId);
         if (!records || !found) {
           setLoading(false);
@@ -116,7 +116,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
         setSources(records);
         setSource(found);
         setSelection(readSelection(found.scope));
-        const result = await loadYuqueCatalog(***REMOVED***Id, toPayload(found, found.scope || {}));
+        const result = await loadYuqueCatalog(kbId, toPayload(found, found.scope || {}));
         setLoading(false);
         if (!result) {
           return;
@@ -127,7 +127,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
         }
       })();
     },
-    [***REMOVED***Id],
+    [kbId],
   );
 
   const toggleBook = useCallback((namespace: string, name: string) => {
@@ -172,7 +172,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
       setDocCache((cache) => ({ ...cache, [bookScope]: { loading: true, docs: [] } }));
       void (async () => {
         const result = await loadYuqueCatalogDocs(
-          ***REMOVED***Id,
+          kbId,
           toPayload(current, current.scope || {}),
           bookScope,
         );
@@ -187,7 +187,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
         }
       })();
     },
-    [docCache, expandedBook, ***REMOVED***Id, source],
+    [docCache, expandedBook, kbId, source],
   );
 
   const saveAndSync = useCallback(() => {
@@ -207,12 +207,12 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
     );
     setSaving(true);
     void (async () => {
-      const saved = await saveKnowledgeBaseSources(***REMOVED***Id, payloads);
+      const saved = await saveKnowledgeBaseSources(kbId, payloads);
       if (!saved) {
         setSaving(false);
         return;
       }
-      const result = await syncKnowledgeBaseSource(***REMOVED***Id, current.sourceId);
+      const result = await syncKnowledgeBaseSource(kbId, current.sourceId);
       setSaving(false);
       if (!result) {
         return;
@@ -226,7 +226,7 @@ export function useSourceSyncDrawer(***REMOVED***Id: string): SourceSyncDrawerCo
       );
       close();
     })();
-  }, [close, ***REMOVED***Id, selection, source, sources, target]);
+  }, [close, kbId, selection, source, sources, target]);
 
   return {
     target,

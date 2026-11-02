@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 检索域 v1 REST 集成测试：真起 Spring 容器 + H2，钉住参考实现的路径、信封与错误码。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-retrieval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-retrieval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.vector.storage-type=in-memory",
-        "***REMOVED***.graph.engine=json",
-        "***REMOVED***.graph.path=target/test-***REMOVED***/retrieval-api-graph",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-api-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-api-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-api-repo",
+        "kb.vector.storage-type=in-memory",
+        "kb.graph.engine=json",
+        "kb.graph.path=target/test-kb/retrieval-api-graph",
+        "kb.storage.path=target/test-kb/retrieval-api-kb.json",
+        "kb.material.storage.root=target/test-kb/retrieval-api-original",
+        "kb.material.repo.root=target/test-kb/retrieval-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -56,19 +56,19 @@ class KnowledgeRetrievalApiIntegrationTest {
     @Test
     @DisplayName("库内检索：命中带分数与解释，参数错误按 400 返回")
     void retrieveReturnsExplainedHits() throws Exception {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("检索接口库");
-        ***REMOVED***.setCode("retapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        KnowledgeBaseView view = resourceService.create(***REMOVED***, caller);
-        String ***REMOVED***Id = view.get***REMOVED***Id();
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("检索接口库");
+        kb.setCode("retapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        KnowledgeBaseView view = resourceService.create(kb, caller);
+        String kbId = view.getKbId();
         String content = "# 检索接口\n\nElasticsearch 负责全文检索，Qdrant 负责向量召回。"
                 + "检索说明。".repeat(200);
-        var item = materialService.registerText(***REMOVED***Id, "检索接口", null, content, caller);
+        var item = materialService.registerText(kbId, "检索接口", null, content, caller);
         assertTrue(item.isSuccess(), item.getMessage());
 
-        mvc.perform(post("/api/***REMOVED***/v1/compilation/run")
+        mvc.perform(post("/api/kb/v1/compilation/run")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,11 +76,11 @@ class KnowledgeRetrievalApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.runStatus").value("COMPLETED"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/retrieve")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"query\":\"Elasticsearch 检索\","
+                        .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Elasticsearch 检索\","
                                 + "\"topK\":2,\"minScore\":0.0}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -93,30 +93,30 @@ class KnowledgeRetrievalApiIntegrationTest {
                 .andExpect(jsonPath("$.data.hits[0].explanation")
                         .value(org.hamcrest.Matchers.startsWith("向量余弦 ")));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/retrieve")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"query\":\"Elasticsearch\",\"mode\":\"bm25\"}"))
+                        .content("{\"kbId\":\"" + kbId + "\",\"query\":\"Elasticsearch\",\"mode\":\"bm25\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("当前只开放向量（dense）检索"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/retrieve")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\"}"))
+                        .content("{\"kbId\":\"" + kbId + "\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("检索参数不合法"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/retrieve")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/retrieve")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"missing-" + UUID.randomUUID() + "\",\"query\":\"Elasticsearch\"}"))
+                        .content("{\"kbId\":\"missing-" + UUID.randomUUID() + "\",\"query\":\"Elasticsearch\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false));
-        assertFalse(***REMOVED***Id.isEmpty());
+        assertFalse(kbId.isEmpty());
     }
 }

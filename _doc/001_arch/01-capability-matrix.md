@@ -1,20 +1,20 @@
-# 能力对标矩阵：参考实现 → z-***REMOVED***（我方）
+# 能力对标矩阵：参考实现 → z-kb（我方）
 
 > 日期：2026-10-31｜参考物：`~/Downloads/参考实现_20261031_141924`（后端 + 前端，已脱敏归档）
 > 口径：**只认真实落地代码**（参考仓 README 自述「模块存在不等于能力可用」），逐项核到 Controller / Service / 实体类。
 
 ## 1. 规模对照（一手实测）
 
-| 项 | 参考 future-***REMOVED*** | 我方 z-***REMOVED*** | 差 |
+| 项 | 参考 future-kb | 我方 z-kb | 差 |
 |---|---|---|---|
 | REST Controller | 20 个 | 7 个 | 13 |
 | REST 端点 | 98 | ≈40 | ≈58 |
 | 主源码类 | 513 | 136（含全仓） | — |
 | 领域子域 | 13（compilation / concept / evaluation / extraction / graph / ingest / knowledgebase / material / overview / retrieval / taskconfig / taskmonitor / wiki） | 7（documents / search / graph / ingest / modeling / chat / workspaces） | 6+ |
-| 持久化 | MySQL（MyBatis DO/Mapper） | JSON 文件 / 内存（z-***REMOVED***-storage）+ z-vector + z-graph | — |
+| 持久化 | MySQL（MyBatis DO/Mapper） | JSON 文件 / 内存（z-kb-storage）+ z-vector + z-graph | — |
 | 权限 | 租户隔离 + 库级 ACL（`KnowledgeBaseAclDO` / `KnowledgeBaseMember*` 已实现） | **无**（无 tenant / acl / member 概念） | 全缺 |
 
-参考仓「只有骨架、不算能力」的部分（不纳入覆盖目标）：`future-ontology`、`future-ai` 底座、`future-schedule`、`future-sso` 自研实现、`future-task`。其中本体域与我方 `z-ontology` 重叠，按仓归属由 z-ontology 承担，不在 z-***REMOVED*** 内重复造。
+参考仓「只有骨架、不算能力」的部分（不纳入覆盖目标）：`future-ontology`、`future-ai` 底座、`future-schedule`、`future-sso` 自研实现、`future-task`。其中本体域与我方 `z-ontology` 重叠，按仓归属由 z-ontology 承担，不在 z-kb 内重复造。
 
 ## 2. 能力域对标
 
@@ -44,7 +44,7 @@
 |---|---|---|
 | 五模式检索 | `SearchMode` = VECTOR / KEYWORD / GRAPH / HYBRID / FUSION | 参考仓只有 dense 为主，其余标注「后续」；我方这层更强，要保留并在新契约里显式暴露 |
 | 离线 embedding | `TfIdfEmbeddingProvider`（无外部依赖可跑） | 参考仓依赖远端 embedding 服务；我方保留离线兜底 |
-| 知识建模 | `z-***REMOVED***-modeling`（产品拆解 / 因果链 / 小抄） | 参考仓对应本体建模，但依赖外部图库；我方这块保留自研 |
+| 知识建模 | `z-kb-modeling`（产品拆解 / 因果链 / 小抄） | 参考仓对应本体建模，但依赖外部图库；我方这块保留自研 |
 | 9 种接入源 | Confluence / 钉钉 / 飞书 / Git / 本地目录 / Notion / URL / Webhook / 语雀 | 参考仓 source provider 为 YUQUE / GIT / OSS / SMB / JDBC；我方这层更宽，需保留并把 provider 收敛成可配置实体 |
 | RAG 问答 | `DefaultChatService` + 会话 | 参考仓走 AI 底座（其底座是骨架）；我方自研可独立运行 |
 
@@ -61,15 +61,15 @@
 | 弹窗/确认框 | `components/app-modal/`、`components/confirm/` | 自研 Promise 化确认 |
 | 文档预览器 | `components/material-preview-{pdf,docx,pptx,sheet,text}.tsx` + `material-preview-kind.ts` | 与后端无关，只吃 Blob；改下载 URL 即用 |
 | Markdown 渲染 | `material-draft-markdown.tsx`、`pages/ai/markdown.tsx`（MarkdownLite） | 自研、安全、不用 innerHTML |
-| 活跃度图 | `***REMOVED***-activity-chart.tsx` | 手写 SVG 面积图，零图表库 |
+| 活跃度图 | `kb-activity-chart.tsx` | 手写 SVG 面积图，零图表库 |
 | G6 图谱引擎 | `components/ontology-graph/`（use-g6-graph 932 + styles 903 + types 64 行） | 纯前端引擎，换数据源即可；我方现用 echarts，可评估替换/并存 |
 | 壳层与路由骨架 | `components/app-shell/`（984 行，含 ⌘K 命令面板、租户切换、侧栏拖拽）、`App.tsx`、`routes/index.tsx`、`with-app-shell`、`RouteAccess` | 结构照搬，权限码换我方 |
-| 枚举→中文 label/tag 映射表 | `material-status.ts`、`***REMOVED***-meta.ts`、`graph-meta.tsx` | 直接抄 |
+| 枚举→中文 label/tag 映射表 | `material-status.ts`、`kb-meta.ts`、`graph-meta.tsx` | 直接抄 |
 
 ### 4.2 必须重写（与后端契约/平台强耦合）
 
-* 全部 `src/services/*.ts`（51 个文件）：路径 `/***REMOVED***/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
-* `services/http.ts`：baseURL `/kapi`、错误码 `101012001`、登录失效跳转 —— 换我方 `/api/***REMOVED***` + 我方鉴权。
+* 全部 `src/services/*.ts`（51 个文件）：路径 `/kb/v1/...`、`ApiEnvelope` 解包、`PageResult{records,total,size,current}`、`X-Tenant-Code` 语义。
+* `services/http.ts`：baseURL `/kapi`、错误码 `101012001`、登录失效跳转 —— 换我方 `/api/kb` + 我方鉴权。
 * 鉴权/权限体系：`AuthProvider`、`canAccess`、apex 登录跳转 —— 我方走主壳 SSO 体系。
 * SSE 问答：`streamAiChat` 事件协议（meta/token/tool_result/done/error）—— 我方 `ChatController` 是同步返回，需先定是否改流式。
 * 编译流水线 UI：`task-manager.tsx`（1511 行）、`observability.tsx`、`material-compilation-section.tsx`、`task-config-panel.tsx` 绑定参考仓 P0–P4 阶段模型与 M1/M2 里程碑 —— 我方要先有自己的阶段模型。
@@ -85,4 +85,4 @@
 1. 参考仓 `doc/coding-standards.md` 引用的 `src/components/use-resizable-columns.ts` **不存在**；`AGENTS.md` 列的 `src/types/domain.ts`、`src/layout/`、`src/pages/mobile/` 也**不存在** —— 文档与代码已脱节。
 2. 参考仓 `services/` 的租户头是**每个 service 手写** `tenantHeaders()`，抄的时候极易漏；我方应在拦截器统一注入。
 3. 参考前端无全局状态库（无 redux/zustand/react-query），靠页面级 controller hook + CustomEvent + localStorage —— 这个「每页一个 controller hook」的模式值得照抄，与我方后端改造耦合最低。
-4. 我方 `_doc/001_arch/00-overview.md` 写的技术栈（Java 8 / Spring Boot 2.7.18 / z-***REMOVED*** 1.0.7 / React 18 + antd 5）**已过期**，实际为 Java 17 / Spring Boot 3.3.13 / 1.1.0 / React 19 + antd 6 —— 本轮一并订正。
+4. 我方 `_doc/001_arch/00-overview.md` 写的技术栈（Java 8 / Spring Boot 2.7.18 / z-kb 1.0.7 / React 18 + antd 5）**已过期**，实际为 Java 17 / Spring Boot 3.3.13 / 1.1.0 / React 19 + antd 6 —— 本轮一并订正。

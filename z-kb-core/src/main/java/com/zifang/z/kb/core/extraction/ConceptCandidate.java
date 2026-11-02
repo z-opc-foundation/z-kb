@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
 /**
  * 概念候选：由概念节点涌现，术语条目命中时补上释义、条目 ID、块序号与出现次数。

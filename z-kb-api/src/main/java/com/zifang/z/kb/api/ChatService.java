@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
  * RAG 问答服务 — 基于检索增强的对话生成。

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.wiki.entity;
+package com.zifang.z.kb.storage.wiki.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * Wiki 页面来源资料（***REMOVED***_wiki_page_source）：只记证据关系，不代表物料归属 Wiki。
+ * Wiki 页面来源资料（kb_wiki_page_source）：只记证据关系，不代表物料归属 Wiki。
  */
-@TableName("***REMOVED***_wiki_page_source")
+@TableName("kb_wiki_page_source")
 public class WikiPageSourceEntity {
 
     @TableId(type = IdType.INPUT)

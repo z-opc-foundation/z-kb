@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 /**
  * 库级动作码（角色-动作矩阵的取值）。
  */
 public enum KnowledgeBaseAction {
-    ***REMOVED***READ("***REMOVED***.read"),
-    ***REMOVED***MANAGE("***REMOVED***.manage"),
+    KB_READ("kb.read"),
+    KB_MANAGE("kb.manage"),
     MEMBER_MANAGE("member.manage"),
     MATERIAL_WRITE("material.write"),
     MATERIAL_REVIEW("material.review"),

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,10 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 内容快照成员清单（***REMOVED***_***REMOVED***_snapshot_item）。
+ * 内容快照成员清单（kb_kb_snapshot_item）。
  */
-@TableName("***REMOVED***_***REMOVED***_snapshot_item")
-public class ***REMOVED***SnapshotItemEntity {
+@TableName("kb_kb_snapshot_item")
+public class KbSnapshotItemEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;

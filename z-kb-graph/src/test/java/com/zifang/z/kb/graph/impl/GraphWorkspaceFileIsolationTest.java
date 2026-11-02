@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.graph.impl;
+package com.zifang.z.kb.graph.impl;
 
-import com.zifang.z.***REMOVED***.api.Entity;
+import com.zifang.z.kb.api.Entity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +52,7 @@ class GraphWorkspaceFileIsolationTest {
     @Test
     @DisplayName("对照组：workspace 名本身合法时，各写各的文件、重启后都在")
     void legalNamesAreIsolatedAcrossRestart() throws IOException {
-        Path dir = Files.createTempDirectory("***REMOVED***-graph-legal");
+        Path dir = Files.createTempDirectory("kb-graph-legal");
         JsonFileKnowledgeGraphStore store = new JsonFileKnowledgeGraphStore(dir.toString());
         store.upsertEntity(entity("team_a", "alpha"));
         store.upsertEntity(entity("team-b", "beta"));
@@ -76,7 +76,7 @@ class GraphWorkspaceFileIsolationTest {
     @Test
     @DisplayName("两个不同的中文工作台名不得算出同一个文件名")
     void distinctCjkWorkspacesMustNotCollideOnDisk() throws IOException {
-        Path dir = Files.createTempDirectory("***REMOVED***-graph-cjk");
+        Path dir = Files.createTempDirectory("kb-graph-cjk");
         // 两个名字长度相同、每个字符都被 safeName 压成一个下划线 ⇒ 规范化结果完全一样
         JsonFileKnowledgeGraphStore store = new JsonFileKnowledgeGraphStore(dir.toString());
         store.upsertEntity(entity("默认空间", "alpha"));
@@ -102,7 +102,7 @@ class GraphWorkspaceFileIsolationTest {
     @Test
     @DisplayName("ASCII 下一个分隔符就足以撞车")
     void asciiSeparatorCollision() throws IOException {
-        Path dir = Files.createTempDirectory("***REMOVED***-graph-ascii");
+        Path dir = Files.createTempDirectory("kb-graph-ascii");
         JsonFileKnowledgeGraphStore store = new JsonFileKnowledgeGraphStore(dir.toString());
         store.upsertEntity(entity("a.b", "alpha"));
         store.upsertEntity(entity("a:b", "beta"));
@@ -121,14 +121,14 @@ class GraphWorkspaceFileIsolationTest {
     /**
      * 向后兼容护栏：本来就能当文件名的 workspace，编码后必须<b>一字不变</b>。
      * 这条不是走过场——修法若换成"一律加哈希后缀"，存量用户的
-     * {@code ~/.***REMOVED***/graph/team_a.json} 就会变成没人再更新的孤儿文件，
+     * {@code ~/.kb/graph/team_a.json} 就会变成没人再更新的孤儿文件，
      * 而 {@code load()} 按文件内容里的 workspace 字段建 key，新旧两份会被同时加载，
      * 后读到的赢 ⇒ 可能读回陈旧数据。
      */
     @Test
     @DisplayName("合法 workspace 名编码后必须一字不变（存量文件继续原地读写）")
     void legalNamesSurviveEncodingUnchanged() throws IOException {
-        Path dir = Files.createTempDirectory("***REMOVED***-graph-compat");
+        Path dir = Files.createTempDirectory("kb-graph-compat");
         // 先用旧规则写一份存量文件
         Files.write(dir.resolve("team_a.json"),
                 ("{\"workspace\":\"team_a\",\"entities\":{\"legacy\":"

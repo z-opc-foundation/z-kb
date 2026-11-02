@@ -45,7 +45,7 @@ describe('RoleFormModal', () => {
 
   it('新建时校验角色编码格式', () => {
     renderForm();
-    fill('如 ***REMOVED***_operator', '1 bad');
+    fill('如 kb_operator', '1 bad');
     fill('如 知识库运营', '运营角色');
 
     fireEvent.click(screen.getByRole('button', { name: /保存/ }));
@@ -58,7 +58,7 @@ describe('RoleFormModal', () => {
 
   it('新建角色提交完整表单并回传保存结果', async () => {
     const { onSaved } = renderForm();
-    fill('如 ***REMOVED***_operator', '***REMOVED***_operator');
+    fill('如 kb_operator', 'kb_operator');
     fill('如 知识库运营', '知识库运营');
     fill('角色职责说明，便于审计', '负责知识库日常运营');
 
@@ -72,7 +72,7 @@ describe('RoleFormModal', () => {
     await waitFor(() =>
       expect(saveRole).toHaveBeenCalledWith({
         id: undefined,
-        roleCode: '***REMOVED***_operator',
+        roleCode: 'kb_operator',
         roleName: '知识库运营',
         description: '负责知识库日常运营',
         enabled: false,
@@ -82,7 +82,7 @@ describe('RoleFormModal', () => {
     await waitFor(() =>
       expect(onSaved).toHaveBeenCalledWith({
         id: 9,
-        roleCode: '***REMOVED***_operator',
+        roleCode: 'kb_operator',
         roleName: '知识库运营',
         description: '负责知识库日常运营',
         type: undefined,
@@ -91,7 +91,7 @@ describe('RoleFormModal', () => {
     );
     expect(toast).toHaveBeenCalledWith(
       '角色已创建',
-      '知识库运营 · ***REMOVED***_operator',
+      '知识库运营 · kb_operator',
       'success',
     );
   });
@@ -99,7 +99,7 @@ describe('RoleFormModal', () => {
   it('编辑已有角色时编码只读，保存携带角色 ID', async () => {
     const role: AuthRole = {
       id: 3,
-      roleCode: '***REMOVED***_admin',
+      roleCode: 'kb_admin',
       roleName: '知识库管理员',
       description: '管理员',
       type: 4,
@@ -108,14 +108,14 @@ describe('RoleFormModal', () => {
     const { onSaved } = renderForm(role);
 
     expect(screen.getByText('编辑角色 · 知识库管理员')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('如 ***REMOVED***_operator')).toBeDisabled();
+    expect(screen.getByPlaceholderText('如 kb_operator')).toBeDisabled();
     fill('如 知识库运营', '知识库主管');
     fireEvent.click(screen.getByRole('button', { name: /保存/ }));
 
     await waitFor(() =>
       expect(saveRole).toHaveBeenCalledWith({
         id: 3,
-        roleCode: '***REMOVED***_admin',
+        roleCode: 'kb_admin',
         roleName: '知识库主管',
         description: '管理员',
         enabled: true,
@@ -123,11 +123,11 @@ describe('RoleFormModal', () => {
       }),
     );
     expect(onSaved).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 9, roleCode: '***REMOVED***_admin', roleName: '知识库主管' }),
+      expect.objectContaining({ id: 9, roleCode: 'kb_admin', roleName: '知识库主管' }),
     );
     expect(toast).toHaveBeenCalledWith(
       '角色已更新',
-      '知识库主管 · ***REMOVED***_admin',
+      '知识库主管 · kb_admin',
       'success',
     );
   });
@@ -144,7 +144,7 @@ describe('RoleFormModal', () => {
   it('保存失败在表单内展示错误信息', async () => {
     vi.mocked(saveRole).mockRejectedValueOnce(new Error('Apex 不可用'));
     const { onSaved } = renderForm();
-    fill('如 ***REMOVED***_operator', '***REMOVED***_operator');
+    fill('如 kb_operator', 'kb_operator');
     fill('如 知识库运营', '知识库运营');
 
     fireEvent.click(screen.getByRole('button', { name: /保存/ }));

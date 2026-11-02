@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.wiki.entity;
+package com.zifang.z.kb.storage.wiki.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * Wiki 页面产物（***REMOVED***_wiki_page）。规则生成一物料一页；Agent 编译按 pageSlug 一物料多页。
+ * Wiki 页面产物（kb_wiki_page）。规则生成一物料一页；Agent 编译按 pageSlug 一物料多页。
  */
-@TableName("***REMOVED***_wiki_page")
+@TableName("kb_wiki_page")
 public class WikiPageEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String wikiId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String artifactId;
@@ -61,12 +61,12 @@ public class WikiPageEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

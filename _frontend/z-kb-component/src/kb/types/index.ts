@@ -97,7 +97,7 @@ export interface Workspace {
   embeddingProvider?: string;
 }
 
-export interface ***REMOVED***Statistics {
+export interface KBStatistics {
   workspace: string;
   documentCount: number;
   chunkCount: number;

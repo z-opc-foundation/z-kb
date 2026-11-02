@@ -21,7 +21,7 @@ vi.mock('./material-original-preview', () => ({
 const DETAIL: MaterialDetailRecord = {
   material: {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '排班管理制度',
     sourceType: 'LOCAL',
@@ -74,7 +74,7 @@ const TREE: CategoryNode[] = [{ categoryId: 'cat-1', name: '护理制度', sortN
 
 const JOB: CompilationJobRecord = {
   jobId: 'job-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialId: 'mat-1',
   materialVersionId: 'v-1',
   pipelineType: 'DOCUMENT',
@@ -90,7 +90,7 @@ const JOB: CompilationJobRecord = {
 function createCtrl(overrides: Partial<Record<string, unknown>> = {}) {
   const versionInputRef = { current: { click: vi.fn() } };
   return {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     tree: TREE,
     canWrite: true,
     canCompile: true,
@@ -135,7 +135,7 @@ describe('资料详情面板', () => {
     expect(screen.getAllByText('mat-1')).toHaveLength(2);
     expect(screen.getByText('排班管理制度.md')).toBeTruthy();
     expect(screen.getByText('文档')).toBeTruthy();
-    expect(screen.getByText('2.0 ***REMOVED***')).toBeTruthy();
+    expect(screen.getByText('2.0 KB')).toBeTruthy();
     expect(screen.getByText('本地上传')).toBeTruthy();
     expect(screen.getByText('护理制度')).toBeTruthy();
     expect(screen.getByText('10-26 09:00')).toBeTruthy();
@@ -156,7 +156,7 @@ describe('资料详情面板', () => {
 
     expect(screen.getByText('文件版本')).toBeTruthy();
     expect(screen.getByText('当前')).toBeTruthy();
-    expect(screen.getByText('4.0 ***REMOVED***')).toBeTruthy();
+    expect(screen.getByText('4.0 KB')).toBeTruthy();
     expect(screen.getByText('已登记')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '对比版本' }));

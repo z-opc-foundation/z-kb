@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
-import com.zifang.z.***REMOVED***.core.chunker.Chunker;
-import com.zifang.z.***REMOVED***.core.embedding.TfIdfEmbeddingProvider;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
-import com.zifang.z.***REMOVED***.core.parser.MarkdownParser;
-import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
+import com.zifang.z.kb.core.chunker.Chunker;
+import com.zifang.z.kb.core.embedding.TfIdfEmbeddingProvider;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
+import com.zifang.z.kb.core.parser.MarkdownParser;
+import com.zifang.z.kb.core.search.Bm25Searcher;
+import com.zifang.z.kb.core.search.HybridSearcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * chunk 级 expectedChunkIds。标注只依赖「哪份文档回答了这个问题」，不依赖任何一路检索的排序
  * 输出，因此不会形成自我循环的假高分；分块策略改了也不用重标。
  */
-class ***REMOVED***RetrievalAblationTest {
+class KbRetrievalAblationTest {
 
     private static final String WORKSPACE = "eval";
     private static final String[] DOC_KEYS = {"mysql", "k8s", "nacos"};
@@ -136,9 +136,9 @@ class ***REMOVED***RetrievalAblationTest {
     void vectorRouteIsNotSilentlyEmpty() {
         RetrievalEvalReport fusion = run(SearchMode.FUSION, 10, 5);
 
-        assertTrue(vectorStore.probedCollections.contains("***REMOVED***_eval_" + ChunkVectorStore.DEFAULT_CHUNK_COLLECTION),
+        assertTrue(vectorStore.probedCollections.contains("kb_eval_" + ChunkVectorStore.DEFAULT_CHUNK_COLLECTION),
                 "检索侧未探测到写入侧使用的物理 collection，实际探测: " + vectorStore.probedCollections);
-        assertFalse(vectorStore.probedCollections.contains("***REMOVED***_eval_***REMOVED***_chunks"),
+        assertFalse(vectorStore.probedCollections.contains("kb_eval_kb_chunks"),
                 "检索侧仍在探测修复前的错名 collection");
         assertEquals(0, fusion.getEmptyResultCases(), "存在召回完全为空的用例");
         assertTrue(fusion.getOverall().hitRate > 0, "FUSION 模式下向量路贡献为 0，HitRate 应为 0");
@@ -208,7 +208,7 @@ class ***REMOVED***RetrievalAblationTest {
     }
 
     private static String readResource(String path) {
-        try (InputStream in = ***REMOVED***RetrievalAblationTest.class.getResourceAsStream(path)) {
+        try (InputStream in = KbRetrievalAblationTest.class.getResourceAsStream(path)) {
             if (in == null) {
                 throw new IllegalStateException("缺少测试资源: " + path);
             }

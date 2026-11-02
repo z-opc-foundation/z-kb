@@ -35,7 +35,7 @@ export interface AuditStats {
   byDay: AuditStatDay[];
   byAction: AuditStatBucket[];
   byActor: AuditStatBucket[];
-  byType: { sys: number; ***REMOVED***: number };
+  byType: { sys: number; kb: number };
 }
 
 function average(values: number[]): number | null {
@@ -117,7 +117,7 @@ function aggregate(rows: AuditLogRecord[], total: number): AuditStats {
     byDay: Array.from(days.values()),
     byAction: toBuckets(actionCounts),
     byActor: toBuckets(actorCounts),
-    byType: { sys, ***REMOVED***: rows.length - sys },
+    byType: { sys, kb: rows.length - sys },
   };
 }
 

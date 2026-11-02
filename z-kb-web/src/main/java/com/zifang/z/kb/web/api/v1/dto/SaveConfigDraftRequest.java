@@ -1,25 +1,25 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseProfileVersion;
+import com.zifang.z.kb.api.resource.KnowledgeBaseProfileVersion;
 
 import java.util.LinkedHashMap;
 
 /**
- * 保存配置草稿请求：扁平承载版本字段 + ***REMOVED***Id，前端一次提交一屏配置。
+ * 保存配置草稿请求：扁平承载版本字段 + kbId，前端一次提交一屏配置。
  */
 public class SaveConfigDraftRequest extends KnowledgeBaseProfileVersion {
 
-    private String ***REMOVED***Id;
+    private String kbId;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
-    /** 草稿模型本体（去掉 ***REMOVED***Id 后的纯版本字段视图）。 */
+    /** 草稿模型本体（去掉 kbId 后的纯版本字段视图）。 */
     public KnowledgeBaseProfileVersion toDraft() {
         KnowledgeBaseProfileVersion draft = new KnowledgeBaseProfileVersion();
         draft.setPresetVersion(getPresetVersion());

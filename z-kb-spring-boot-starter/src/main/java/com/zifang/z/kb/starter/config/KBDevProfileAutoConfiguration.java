@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.starter.config;
+package com.zifang.z.kb.starter.config;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Paths;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.graph.impl.JsonFileKnowledgeGraphStore;
+import com.zifang.z.kb.api.KbPaths;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.graph.impl.JsonFileKnowledgeGraphStore;
 import com.zifang.z.vector.api.VectorStore;
 import com.zifang.z.vector.core.InMemoryVectorStore;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Profile;
  *   <li>图谱走 z-graph 引擎（进程内）。</li>
  * </ul>
  *
- * <p>dev profile 下则整套回落成 <b>内存向量 + JSON 图谱</b> —— 也就是 z-***REMOVED*** 1.0.x 的默认口径，
+ * <p>dev profile 下则整套回落成 <b>内存向量 + JSON 图谱</b> —— 也就是 z-kb 1.0.x 的默认口径，
  * 与 z-lc 的 dev H2 家族惯例一致：本地零外部依赖启动，脏数据不落到共享目录。
  *
  * <p>为什么要单独一个类而不是把判断塞进两个模块的自动装配：
@@ -37,11 +37,11 @@ import org.springframework.context.annotation.Profile;
 @AutoConfiguration
 @Profile("dev")
 @org.springframework.boot.autoconfigure.AutoConfigureBefore(name = {
-        "com.zifang.z.***REMOVED***.vector.autoconfigure.ChunkVectorStoreAutoConfiguration",
-        "com.zifang.z.***REMOVED***.graph.autoconfigure.KnowledgeGraphStoreAutoConfiguration"})
-public class ***REMOVED***DevProfileAutoConfiguration {
+        "com.zifang.z.kb.vector.autoconfigure.ChunkVectorStoreAutoConfiguration",
+        "com.zifang.z.kb.graph.autoconfigure.KnowledgeGraphStoreAutoConfiguration"})
+public class KBDevProfileAutoConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(***REMOVED***DevProfileAutoConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(KBDevProfileAutoConfiguration.class);
 
     /** 宿主自带 z-vector 自动装配时的类名 —— 宿主有向量实现时，dev 回落不跟它抢。 */
     static final String HOST_VECTOR_AUTO_CONFIG = "com.zifang.z.vector.starter.autoconfigure.ZVectorAutoConfiguration";
@@ -61,7 +61,7 @@ public class ***REMOVED***DevProfileAutoConfiguration {
         @ConditionalOnMissingBean(VectorStore.class)
         public VectorStore devVectorStore() {
             VectorStore store = new InMemoryVectorStore();
-            log.info("z-***REMOVED*** dev profile 生效：向量存储回落为 {}（内存向量，重启不保留）",
+            log.info("z-kb dev profile 生效：向量存储回落为 {}（内存向量，重启不保留）",
                     store.getClass().getName());
             return store;
         }
@@ -70,11 +70,11 @@ public class ***REMOVED***DevProfileAutoConfiguration {
     /** dev 回落：JSON 图谱（保留 1.0.x 的文件持久化口径，便于本地复现线上数据形状）。 */
     @Bean(destroyMethod = "close")
     @ConditionalOnMissingBean(KnowledgeGraphStore.class)
-    public KnowledgeGraphStore devGraphStore(@Value("${***REMOVED***.graph.path:#{null}}") String path) {
+    public KnowledgeGraphStore devGraphStore(@Value("${kb.graph.path:#{null}}") String path) {
         String dir = (path == null || path.trim().isEmpty())
-                ? ***REMOVED***Paths.graphDir() : ***REMOVED***Paths.expand(path);
+                ? KbPaths.graphDir() : KbPaths.expand(path);
         KnowledgeGraphStore store = new JsonFileKnowledgeGraphStore(dir);
-        log.info("z-***REMOVED*** dev profile 生效：图谱存储回落为 {}（JSON 文件持久化, dir={}）",
+        log.info("z-kb dev profile 生效：图谱存储回落为 {}（JSON 文件持久化, dir={}）",
                 store.getClass().getName(), dir);
         return store;
     }

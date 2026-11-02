@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.ingest.pipeline;
+package com.zifang.z.kb.ingest.pipeline;
 
-import com.zifang.z.***REMOVED***.api.IndexRequest;
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.api.IngestResult;
+import com.zifang.z.kb.api.IndexRequest;
+import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.api.IngestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class IngestPipeline {
 
     private static final Logger log = LoggerFactory.getLogger(IngestPipeline.class);
 
-    private final KnowledgeBaseService ***REMOVED***Service;
+    private final KnowledgeBaseService kbService;
     private final DataSourceRegistry registry;
 
     /** 幂等去重：记录已见过的 requestId */
@@ -39,13 +39,13 @@ public class IngestPipeline {
     private long totalRelations;
     private long totalMillis;
 
-    public IngestPipeline(KnowledgeBaseService ***REMOVED***Service, DataSourceRegistry registry) {
-        this.***REMOVED***Service = ***REMOVED***Service;
+    public IngestPipeline(KnowledgeBaseService kbService, DataSourceRegistry registry) {
+        this.kbService = kbService;
         this.registry = registry;
     }
 
-    public IngestPipeline(KnowledgeBaseService ***REMOVED***Service) {
-        this(***REMOVED***Service, new DataSourceRegistry().installDefaults());
+    public IngestPipeline(KnowledgeBaseService kbService) {
+        this(kbService, new DataSourceRegistry().installDefaults());
     }
 
     /** 按 sourceId 拉取 + 入库 */
@@ -102,7 +102,7 @@ public class IngestPipeline {
             result.log("已标准化为 Markdown，准备索引");
 
             // 委托给 KnowledgeBaseService — 用 Document 承载内容
-            com.zifang.z.***REMOVED***.api.Document doc = com.zifang.z.***REMOVED***.api.Document.builder()
+            com.zifang.z.kb.api.Document doc = com.zifang.z.kb.api.Document.builder()
                     .title(req.getTitle() != null ? req.getTitle() : "未命名文档")
                     .content(req.getContent())
                     .workspace(req.getWorkspace())
@@ -118,7 +118,7 @@ public class IngestPipeline {
             idx.setDocument(doc);
             idx.setWorkspace(req.getWorkspace());
 
-            com.zifang.z.***REMOVED***.api.ImportResult kr = ***REMOVED***Service.indexDocument(idx);
+            com.zifang.z.kb.api.ImportResult kr = kbService.indexDocument(idx);
             result.setDocumentId(kr.getDocumentId());
             result.setChunkCount(kr.getChunkCount());
             result.setEntityCount(kr.getEntityCount());

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
  * RAG 问答请求。

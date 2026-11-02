@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Button} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
 import {ErrorState, ListTable, LoadingState} from '@yuku123/z-frontend-common/ui'
-import {***REMOVED***Api} from '../services/api'
+import {kbApi} from '../services/api'
 
 export default function WorkspaceListPage() {
     const [workspaces, setWorkspaces] = useState([])
@@ -13,7 +13,7 @@ export default function WorkspaceListPage() {
         setLoading(true)
         setError(null)
         try {
-            const data = await ***REMOVED***Api.listWorkspaces()
+            const data = await kbApi.listWorkspaces()
             setWorkspaces(Array.isArray(data) ? data : [])
         } catch (e) {
             setError(e.message)
@@ -32,7 +32,7 @@ export default function WorkspaceListPage() {
                 <ErrorState
                     error={error}
                     title="工作空间列表加载失败"
-                    description="确认 z-***REMOVED*** 后端已启动且 /api/***REMOVED***/workspaces 可达。"
+                    description="确认 z-kb 后端已启动且 /api/kb/workspaces 可达。"
                     onRetry={load}
                 />
             ) : loading ? (

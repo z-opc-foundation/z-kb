@@ -1,30 +1,30 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogQuery;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogService;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.overview.OverviewService;
-import com.zifang.z.***REMOVED***.api.overview.OverviewView;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberAdminService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.api.taskconfig.***REMOVED***TaskConfigService;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemParam;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPanelView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPublishParam;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigService;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorPageView;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorService;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorSummaryView;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.audit.AuditLogQuery;
+import com.zifang.z.kb.api.audit.AuditLogService;
+import com.zifang.z.kb.api.audit.AuditLogView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.overview.OverviewService;
+import com.zifang.z.kb.api.overview.OverviewView;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberAdminService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.api.taskconfig.KbTaskConfigService;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemView;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPanelView;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPublishParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigService;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorPageView;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorService;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorSummaryView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +45,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 任务与观测域集成测试：概览、审计日志、任务配置（租户/库）与任务监控，真起 H2。
  */
-@SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-observability;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbResourceTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-observability;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/observability-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/observability-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/observability-repo",
+        "kb.storage.path=target/test-kb/observability-kb.json",
+        "kb.material.storage.root=target/test-kb/observability-original",
+        "kb.material.repo.root=target/test-kb/observability-repo",
         "spring.main.banner-mode=off"
 })
 class TaskObservabilityIntegrationTest {
@@ -73,7 +73,7 @@ class TaskObservabilityIntegrationTest {
     private TaskConfigService taskConfigService;
 
     @Autowired
-    private ***REMOVED***TaskConfigService ***REMOVED***TaskConfigService;
+    private KbTaskConfigService kbTaskConfigService;
 
     @Autowired
     private TaskMonitorService taskMonitorService;
@@ -87,7 +87,7 @@ class TaskObservabilityIntegrationTest {
     @Test
     @DisplayName("租户任务配置：首访落 2026.10 三性质，发布升到 r2/r3，缺项与越界被拒")
     void tenantTaskConfigSeedsAndPublishes() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-obs-tenant-cfg", "u-owner");
+        KbCaller caller = KbCaller.of("t-obs-tenant-cfg", "u-owner");
 
         TaskConfigPanelView initial = taskConfigService.query(caller);
         assertEquals("2026.10", initial.getVersion());
@@ -116,24 +116,24 @@ class TaskObservabilityIntegrationTest {
         assertEquals("2026.10-r3", next.getVersion());
         assertEquals("二版-executor", next.getItems().get(1).getExecutor());
 
-        ***REMOVED***Exception missing = assertThrows(***REMOVED***Exception.class, () -> taskConfigService.publish(
+        KBException missing = assertThrows(KBException.class, () -> taskConfigService.publish(
                 params("COMPILE", "WIKI"), caller));
         assertEquals("TASK_CONFIG_NATURE_MISSING", missing.getCode());
         assertEquals("任务配置必须覆盖全部三类任务性质", missing.getMessage());
 
-        ***REMOVED***Exception duplicate = assertThrows(***REMOVED***Exception.class, () -> taskConfigService.publish(
+        KBException duplicate = assertThrows(KBException.class, () -> taskConfigService.publish(
                 params("COMPILE", "COMPILE", "WIKI"), caller));
         assertEquals("TASK_CONFIG_NATURE_MISSING", duplicate.getCode());
 
-        ***REMOVED***Exception timeout = assertThrows(***REMOVED***Exception.class, () -> taskConfigService.publish(
+        KBException timeout = assertThrows(KBException.class, () -> taskConfigService.publish(
                 panel(("坏-"), 0, 1), caller));
         assertEquals("TASK_CONFIG_PARAM_INVALID", timeout.getCode());
 
-        ***REMOVED***Exception retry = assertThrows(***REMOVED***Exception.class, () -> taskConfigService.publish(
+        KBException retry = assertThrows(KBException.class, () -> taskConfigService.publish(
                 panel(("坏-"), 300, 6), caller));
         assertEquals("TASK_CONFIG_PARAM_INVALID", retry.getCode());
 
-        ***REMOVED***Exception blankExecutor = assertThrows(***REMOVED***Exception.class, () -> {
+        KBException blankExecutor = assertThrows(KBException.class, () -> {
             TaskConfigPublishParam broken = panel(("坏-"), 300, 1);
             broken.getItems().get(0).setExecutor(" ");
             taskConfigService.publish(broken, caller);
@@ -143,41 +143,41 @@ class TaskObservabilityIntegrationTest {
 
     @Test
     @DisplayName("库任务配置：未覆盖回落租户版本，发布后独立升版，只读成员不能发布")
-    void ***REMOVED***TaskConfigFallsBackAndOverrides() {
-        ***REMOVED***Caller owner = ***REMOVED***Caller.of("t-obs-***REMOVED***-cfg", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***("库任务配置", owner);
+    void kbTaskConfigFallsBackAndOverrides() {
+        KbCaller owner = KbCaller.of("t-obs-kb-cfg", "u-owner");
+        KnowledgeBaseView kb = createKb("库任务配置", owner);
 
-        TaskConfigPanelView fallback = ***REMOVED***TaskConfigService.query(***REMOVED***.get***REMOVED***Id(), owner);
+        TaskConfigPanelView fallback = kbTaskConfigService.query(kb.getKbId(), owner);
         assertEquals("2026.10", fallback.getVersion());
         assertEquals("u-owner", fallback.getPublishedBy());
 
-        TaskConfigPanelView published = ***REMOVED***TaskConfigService.publish(***REMOVED***.get***REMOVED***Id(),
+        TaskConfigPanelView published = kbTaskConfigService.publish(kb.getKbId(),
                 panel(("库级-"), 900, 2), owner);
         assertEquals("2026.10-r2", published.getVersion());
         assertEquals("库级-executor", published.getItems().get(0).getExecutor());
 
-        TaskConfigPanelView ***REMOVED***Panel = ***REMOVED***TaskConfigService.query(***REMOVED***.get***REMOVED***Id(), owner);
-        assertEquals("2026.10-r2", ***REMOVED***Panel.getVersion());
-        assertEquals("库级-WIKI", ***REMOVED***Panel.getItems().get(1).getAgentCode());
+        TaskConfigPanelView kbPanel = kbTaskConfigService.query(kb.getKbId(), owner);
+        assertEquals("2026.10-r2", kbPanel.getVersion());
+        assertEquals("库级-WIKI", kbPanel.getItems().get(1).getAgentCode());
         assertEquals("2026.10", taskConfigService.query(owner).getVersion());
 
-        ***REMOVED***Caller reader = ***REMOVED***Caller.of("t-obs-***REMOVED***-cfg", "u-reader");
-        memberAdminService.grant(***REMOVED***.get***REMOVED***Id(), "u-reader", "READER", owner);
-        assertEquals("2026.10-r2", ***REMOVED***TaskConfigService.query(***REMOVED***.get***REMOVED***Id(), reader).getVersion());
-        ***REMOVED***Exception forbidden = assertThrows(***REMOVED***Exception.class,
-                () -> ***REMOVED***TaskConfigService.publish(***REMOVED***.get***REMOVED***Id(), panel(("库级-"), 900, 2), reader));
-        assertEquals("***REMOVED***ACTION_FORBIDDEN", forbidden.getCode());
+        KbCaller reader = KbCaller.of("t-obs-kb-cfg", "u-reader");
+        memberAdminService.grant(kb.getKbId(), "u-reader", "READER", owner);
+        assertEquals("2026.10-r2", kbTaskConfigService.query(kb.getKbId(), reader).getVersion());
+        KBException forbidden = assertThrows(KBException.class,
+                () -> kbTaskConfigService.publish(kb.getKbId(), panel(("库级-"), 900, 2), reader));
+        assertEquals("KB_ACTION_FORBIDDEN", forbidden.getCode());
     }
 
     @Test
     @DisplayName("任务监控：编译阶段按类型/状态分页，摘要区分组别与单任务计数")
     void taskMonitorPagesStagesAndSummarizes() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-obs-monitor", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***("任务监控", caller);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "编译监控物料", caller);
+        KbCaller caller = KbCaller.of("t-obs-monitor", "u-owner");
+        KnowledgeBaseView kb = createKb("任务监控", caller);
+        String materialId = registerText(kb.getKbId(), "编译监控物料", caller);
         compilationService.run(materialId, null, caller);
 
-        TaskMonitorPageView page = taskMonitorService.page(***REMOVED***.get***REMOVED***Id(), null, null, 1, 20, caller);
+        TaskMonitorPageView page = taskMonitorService.page(kb.getKbId(), null, null, 1, 20, caller);
         assertEquals(5, page.getTotal());
         assertEquals(1, page.getPageNo());
         assertEquals(20, page.getPageSize());
@@ -190,35 +190,35 @@ class TaskObservabilityIntegrationTest {
         assertNotNull(page.getRecords().get(0).getBizKey());
         assertNotNull(page.getRecords().get(0).getCreateTime());
 
-        TaskMonitorPageView parse = taskMonitorService.page(***REMOVED***.get***REMOVED***Id(), "parse", "succeeded",
+        TaskMonitorPageView parse = taskMonitorService.page(kb.getKbId(), "parse", "succeeded",
                 1, 20, caller);
         assertEquals(1, parse.getTotal());
         assertEquals("PARSE", parse.getRecords().get(0).getTaskType());
 
-        TaskMonitorSummaryView summary = taskMonitorService.summary(***REMOVED***.get***REMOVED***Id(), caller);
+        TaskMonitorSummaryView summary = taskMonitorService.summary(kb.getKbId(), caller);
         assertEquals(1, summary.getJobTotal());
         assertEquals(0, summary.getGroupTotal());
         assertEquals(5, summary.getTaskTotal());
 
-        ***REMOVED***Exception badStatus = assertThrows(***REMOVED***Exception.class,
-                () -> taskMonitorService.page(***REMOVED***.get***REMOVED***Id(), null, "DONE", 1, 20, caller));
-        assertEquals("***REMOVED***PARAM_INVALID", badStatus.getCode());
-        ***REMOVED***Exception blank***REMOVED*** = assertThrows(***REMOVED***Exception.class,
+        KBException badStatus = assertThrows(KBException.class,
+                () -> taskMonitorService.page(kb.getKbId(), null, "DONE", 1, 20, caller));
+        assertEquals("KB_PARAM_INVALID", badStatus.getCode());
+        KBException blankKb = assertThrows(KBException.class,
                 () -> taskMonitorService.summary(" ", caller));
-        assertEquals("***REMOVED***PARAM_INVALID", blank***REMOVED***.getCode());
+        assertEquals("KB_PARAM_INVALID", blankKb.getCode());
     }
 
     @Test
     @DisplayName("概览：物料/已编译/未编译计数与最近物料，非成员不可见")
-    void overviewAggregates***REMOVED***Stats() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-obs-overview", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***("概览统计", caller);
-        String first = registerText(***REMOVED***.get***REMOVED***Id(), "概览已编译", caller);
-        registerText(***REMOVED***.get***REMOVED***Id(), "概览未编译", caller);
+    void overviewAggregatesKbStats() {
+        KbCaller caller = KbCaller.of("t-obs-overview", "u-owner");
+        KnowledgeBaseView kb = createKb("概览统计", caller);
+        String first = registerText(kb.getKbId(), "概览已编译", caller);
+        registerText(kb.getKbId(), "概览未编译", caller);
         compilationService.run(first, null, caller);
 
-        OverviewView view = overviewService.***REMOVED***Stats(***REMOVED***.get***REMOVED***Id(), caller);
-        assertEquals(***REMOVED***.get***REMOVED***Id(), view.get***REMOVED***Id());
+        OverviewView view = overviewService.kbStats(kb.getKbId(), caller);
+        assertEquals(kb.getKbId(), view.getKbId());
         assertEquals(2, view.getFileCount());
         assertEquals(1, view.getCompiledCount());
         assertEquals(0, view.getPartialCount());
@@ -229,42 +229,42 @@ class TaskObservabilityIntegrationTest {
         assertEquals(2, view.getRecentMaterials().size());
         assertNotNull(view.getRefreshedAt());
 
-        ***REMOVED***Exception invisible = assertThrows(***REMOVED***Exception.class,
-                () -> overviewService.***REMOVED***Stats(***REMOVED***.get***REMOVED***Id(),
-                        ***REMOVED***Caller.of("t-obs-overview", "u-stranger")));
-        assertEquals("***REMOVED***FORBIDDEN", invisible.getCode());
+        KBException invisible = assertThrows(KBException.class,
+                () -> overviewService.kbStats(kb.getKbId(),
+                        KbCaller.of("t-obs-overview", "u-stranger")));
+        assertEquals("KB_FORBIDDEN", invisible.getCode());
     }
 
     @Test
     @DisplayName("审计日志：租户隔离、类型/关键词/操作人过滤、分页与按主键详情")
     void auditLogPagesFiltersAndGets() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-obs-audit", "u-auditor");
-        KnowledgeBaseView first = create***REMOVED***("审计一", caller);
-        KnowledgeBaseView second = create***REMOVED***("审计二", caller);
-        resourceService.archive(second.get***REMOVED***Id(), caller);
-        resourceService.remove(second.get***REMOVED***Id(), caller);
+        KbCaller caller = KbCaller.of("t-obs-audit", "u-auditor");
+        KnowledgeBaseView first = createKb("审计一", caller);
+        KnowledgeBaseView second = createKb("审计二", caller);
+        resourceService.archive(second.getKbId(), caller);
+        resourceService.remove(second.getKbId(), caller);
 
-        PageResult<AuditLogView> by***REMOVED*** = auditLogService.page(query(q -> {
-            q.setType("***REMOVED***");
-            q.setBizRef(first.get***REMOVED***Id());
+        PageResult<AuditLogView> byKb = auditLogService.page(query(q -> {
+            q.setType("kb");
+            q.setBizRef(first.getKbId());
         }), caller);
-        assertEquals(1, by***REMOVED***.getTotal());
-        AuditLogView created = by***REMOVED***.getRecords().get(0);
-        assertEquals("***REMOVED***.create", created.getAction());
-        assertEquals("***REMOVED***", created.getType());
+        assertEquals(1, byKb.getTotal());
+        AuditLogView created = byKb.getRecords().get(0);
+        assertEquals("kb.create", created.getAction());
+        assertEquals("KB", created.getType());
         assertEquals("u-auditor", created.getActorId());
         assertEquals(1, created.getSuccess());
         assertNotNull(created.getCreateTime());
         assertNull(created.getRequestUri());
 
         PageResult<AuditLogView> keyword = auditLogService.page(
-                query(q -> q.setKeyword("***REMOVED***.create")), caller);
+                query(q -> q.setKeyword("kb.create")), caller);
         assertEquals(2, keyword.getTotal());
 
         PageResult<AuditLogView> sys = auditLogService.page(
                 query(q -> q.setType("SYS")), caller);
         assertEquals(1, sys.getTotal());
-        assertEquals("***REMOVED***.remove", sys.getRecords().get(0).getAction());
+        assertEquals("kb.remove", sys.getRecords().get(0).getAction());
         assertNull(sys.getRecords().get(0).getBizRef());
 
         PageResult<AuditLogView> actor = auditLogService.page(
@@ -281,13 +281,13 @@ class TaskObservabilityIntegrationTest {
 
         AuditLogView detail = auditLogService.get(created.getId(), caller);
         assertNotNull(detail);
-        assertEquals("***REMOVED***.create", detail.getAction());
+        assertEquals("kb.create", detail.getAction());
         assertNull(auditLogService.get(created.getId(),
-                ***REMOVED***Caller.of("t-obs-other-tenant", "u-auditor")));
+                KbCaller.of("t-obs-other-tenant", "u-auditor")));
         assertNull(auditLogService.get("missing-" + UUID.randomUUID(), caller));
 
         assertEquals(0, auditLogService.page(null,
-                ***REMOVED***Caller.of("t-obs-empty-tenant", "u-nobody")).getTotal());
+                KbCaller.of("t-obs-empty-tenant", "u-nobody")).getTotal());
     }
 
     private TaskConfigPublishParam panel(String prefix, int timeoutSeconds, int retryLimit) {
@@ -339,16 +339,16 @@ class TaskObservabilityIntegrationTest {
         return query;
     }
 
-    private KnowledgeBaseView create***REMOVED***(String name, ***REMOVED***Caller caller) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName(name);
-        ***REMOVED***.setCode("obs_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        return resourceService.create(***REMOVED***, caller);
+    private KnowledgeBaseView createKb(String name, KbCaller caller) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName(name);
+        kb.setCode("obs_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        return resourceService.create(kb, caller);
     }
 
-    private String registerText(String ***REMOVED***Id, String title, ***REMOVED***Caller caller) {
-        MaterialUploadItem item = materialService.registerText(***REMOVED***Id, title, null,
+    private String registerText(String kbId, String title, KbCaller caller) {
+        MaterialUploadItem item = materialService.registerText(kbId, title, null,
                 "# " + title + "\n\n用于观测域测试的正文。" + "正文。".repeat(60), caller);
         assertTrue(item.isSuccess(), item.getMessage());
         assertEquals("READY", item.getParseStatus());

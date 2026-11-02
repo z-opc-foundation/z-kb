@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.compilation;
+package com.zifang.z.kb.api.compilation;
 
 /**
  * 产物与检索块的索引状态。

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 /**
  * 接入源供应商，决定连通探测与同步执行方式。

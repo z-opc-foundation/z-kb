@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core;
+package com.zifang.z.kb.core;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -187,9 +187,9 @@ class ReadmeClaimsTest {
         return count;
     }
 
-    /** z-***REMOVED***-bootstrap/src/main/resources/application.yml 里的 server.port。 */
+    /** z-kb-bootstrap/src/main/resources/application.yml 里的 server.port。 */
     private static int bootstrapServerPort() {
-        Path yml = repoRoot().resolve("z-***REMOVED***-bootstrap/src/main/resources/application.yml");
+        Path yml = repoRoot().resolve("z-kb-bootstrap/src/main/resources/application.yml");
         if (!Files.isRegularFile(yml)) {
             throw new AssertionError("找不到 application.yml：" + yml);
         }
@@ -292,7 +292,7 @@ class ReadmeClaimsTest {
 
     /**
      * 定位 README 结构树里的节点行（树形前缀 + 节点名），并把它后面紧跟的续行（│ 开头）并入同一块。
-     * 节点名带终止条件，避免 z-***REMOVED***-core 误配 z-***REMOVED***-core-extra。
+     * 节点名带终止条件，避免 z-kb-core 误配 z-kb-core-extra。
      */
     private static Block treeNodeBlock(String readme, String nodeName, String label) {
         List<String> all = lines(readme);
@@ -340,28 +340,28 @@ class ReadmeClaimsTest {
     private static List<Claim> claims() {
         List<Claim> list = new ArrayList<>();
 
-        // 1. 项目结构树：z-***REMOVED***-api 的类数
-        list.add(new Claim("z-***REMOVED***-api 类数",
-                (readme, label) -> treeNodeBlock(readme, "z-***REMOVED***-api/", label),
+        // 1. 项目结构树：z-kb-api 的类数
+        list.add(new Claim("z-kb-api 类数",
+                (readme, label) -> treeNodeBlock(readme, "z-kb-api/", label),
                 Pattern.compile("(\\d+)\\s*个类"),
-                () -> String.valueOf(countJavaFiles("z-***REMOVED***-api/src/main/java"))));
+                () -> String.valueOf(countJavaFiles("z-kb-api/src/main/java"))));
 
-        // 2. 项目结构树：z-***REMOVED***-web 的 Controller 数
-        list.add(new Claim("z-***REMOVED***-web Controller 数",
-                (readme, label) -> treeNodeBlock(readme, "z-***REMOVED***-web/", label),
+        // 2. 项目结构树：z-kb-web 的 Controller 数
+        list.add(new Claim("z-kb-web Controller 数",
+                (readme, label) -> treeNodeBlock(readme, "z-kb-web/", label),
                 Pattern.compile("(\\d+)\\s*个\\s*Controller"),
-                () -> String.valueOf(countFilesEndingWith("z-***REMOVED***-web/src/main/java", "Controller.java"))));
+                () -> String.valueOf(countFilesEndingWith("z-kb-web/src/main/java", "Controller.java"))));
 
-        // 3. 项目结构树：z-***REMOVED***-ingest 的数据源数
-        list.add(new Claim("z-***REMOVED***-ingest 数据源数",
-                (readme, label) -> treeNodeBlock(readme, "z-***REMOVED***-ingest/", label),
+        // 3. 项目结构树：z-kb-ingest 的数据源数
+        list.add(new Claim("z-kb-ingest 数据源数",
+                (readme, label) -> treeNodeBlock(readme, "z-kb-ingest/", label),
                 Pattern.compile("(\\d+)\\s*种数据源"),
-                () -> String.valueOf(countDataSourceImplementations("z-***REMOVED***-ingest/src/main/java"))));
+                () -> String.valueOf(countDataSourceImplementations("z-kb-ingest/src/main/java"))));
 
         // 4. 基本信息表：Maven 坐标的版本号
         list.add(new Claim("根 POM 版本号",
                 (readme, label) -> uniqueLine(readme, Pattern.compile("\\*\\*Maven 坐标\\*\\*"), label),
-                Pattern.compile("`io\\.github\\.yuku123:z-***REMOVED***:([^`]+)`"),
+                Pattern.compile("`io\\.github\\.yuku123:z-kb:([^`]+)`"),
                 ReadmeClaimsTest::rootPomVersion));
 
         // 5. 基本信息表：默认端口
@@ -380,20 +380,20 @@ class ReadmeClaimsTest {
         list.add(new Claim("能力清单内置 DataSource 种类数",
                 (readme, label) -> uniqueLine(readme, Pattern.compile("^\\|\\s*多源接入\\s*\\|"), label),
                 Pattern.compile("内置\\s*(\\d+)\\s*种"),
-                () -> String.valueOf(countDataSourceImplementations("z-***REMOVED***-ingest/src/main/java"))));
+                () -> String.valueOf(countDataSourceImplementations("z-kb-ingest/src/main/java"))));
 
         // 8. 能力清单：REST 层 Controller 数
         list.add(new Claim("能力清单 REST Controller 数",
                 (readme, label) -> uniqueLine(readme, Pattern.compile("^\\|\\s*REST API \\+ 在线文档\\s*\\|"), label),
                 Pattern.compile("(\\d+)\\s*个\\s*Controller"),
-                () -> String.valueOf(countFilesEndingWith("z-***REMOVED***-web/src/main/java", "Controller.java"))));
+                () -> String.valueOf(countFilesEndingWith("z-kb-web/src/main/java", "Controller.java"))));
 
         // 9. 开篇标语里的「9 种数据源」—— 它与主张 3 是同一个数的**第二处表述**。
         //    少了这一条，结构树那行改了、标语不改，就成了没人管的一句旧话。
         list.add(new Claim("开篇标语数据源数",
                 (readme, label) -> uniqueLine(readme, Pattern.compile("^>\\s*知识库服务"), label),
                 Pattern.compile("接入（(\\d+)\\s*种数据源）"),
-                () -> String.valueOf(countDataSourceImplementations("z-***REMOVED***-ingest/src/main/java"))));
+                () -> String.valueOf(countDataSourceImplementations("z-kb-ingest/src/main/java"))));
 
         return list;
     }

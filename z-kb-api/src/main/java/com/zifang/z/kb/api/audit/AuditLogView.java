@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.api.audit;
+package com.zifang.z.kb.api.audit;
 
 import java.time.Instant;
 
 /**
  * 审计日志视图（对齐参考实现 AuditLogResponse）。
  *
- * <p>z-***REMOVED*** 只落成功写操作的服务端摘要，参考实现里由切面捕获的
+ * <p>z-kb 只落成功写操作的服务端摘要，参考实现里由切面捕获的
  * targetClass / requestUri / 出入参等列在本实现中保持为 null。</p>
  */
 public class AuditLogView {

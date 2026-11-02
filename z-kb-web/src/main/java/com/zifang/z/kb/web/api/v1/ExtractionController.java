@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionMaterialView;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionService;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.extraction.ExtractionMaterialView;
+import com.zifang.z.kb.api.extraction.ExtractionService;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "本地规则萃取")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/extraction")
+@RequestMapping("/api/kb/v1/extraction")
 public class ExtractionController {
 
     private final ExtractionService extractionService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
     public ExtractionController(ExtractionService extractionService,
-                                ***REMOVED***CallerResolver callerResolver) {
+                                KbCallerResolver callerResolver) {
         this.extractionService = extractionService;
         this.callerResolver = callerResolver;
     }
@@ -32,9 +32,9 @@ public class ExtractionController {
     @Operation(summary = "按物料查询萃取产物",
             description = "摘要/问句/术语/FAQ 与图谱计数均来自本地规则，不调用 LLM")
     @GetMapping("/queryByMaterial")
-    public ***REMOVED***Result<ExtractionMaterialView> queryByMaterial(@RequestParam String materialId,
+    public KbResult<ExtractionMaterialView> queryByMaterial(@RequestParam String materialId,
                                                             HttpServletRequest request) {
-        return ***REMOVED***Result.ok(extractionService.queryByMaterial(materialId,
+        return KbResult.ok(extractionService.queryByMaterial(materialId,
                 callerResolver.resolve(request)));
     }
 }

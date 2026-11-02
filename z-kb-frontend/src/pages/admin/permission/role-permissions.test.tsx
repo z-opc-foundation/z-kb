@@ -18,7 +18,7 @@ vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const role: AuthRole = {
   id: 7,
-  roleCode: '***REMOVED***_admin',
+  roleCode: 'kb_admin',
   roleName: '知识库管理员',
   enabled: true,
 };
@@ -26,7 +26,7 @@ const role: AuthRole = {
 const catalog: PermissionCatalogItem[] = [
   { code: 'menu.space', name: '知识空间', type: 'MENU', typeCode: 1, order: 40 },
   {
-    code: 'menu.***REMOVED***',
+    code: 'menu.kb',
     name: '知识库',
     type: 'MENU',
     typeCode: 1,
@@ -34,32 +34,32 @@ const catalog: PermissionCatalogItem[] = [
     order: 41,
   },
   {
-    code: '***REMOVED***.create',
+    code: 'kb.create',
     name: '新建知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 101,
   },
   {
-    code: '***REMOVED***.delete',
+    code: 'kb.delete',
     name: '删除知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 103,
   },
 ];
 
-const granted = ['menu.space', 'menu.***REMOVED***', '***REMOVED***.create'];
+const granted = ['menu.space', 'menu.kb', 'kb.create'];
 
-function treeChec***REMOVED***ox(label: string): HTMLElement {
+function treeCheckbox(label: string): HTMLElement {
   const node = screen.getByText(label).closest('.ant-tree-treenode');
-  const chec***REMOVED***ox = node?.querySelector('.ant-tree-chec***REMOVED***ox');
-  if (!chec***REMOVED***ox) {
+  const checkbox = node?.querySelector('.ant-tree-checkbox');
+  if (!checkbox) {
     throw new Error(`未找到树节点复选框 ${label}`);
   }
-  return chec***REMOVED***ox as HTMLElement;
+  return checkbox as HTMLElement;
 }
 
 function renderPanel(props: Partial<Parameters<typeof RolePermissions>[0]> = {}) {
@@ -102,9 +102,9 @@ describe('RolePermissions', () => {
 
     expect(await screen.findByText(/目录 4 项/)).toBeInTheDocument();
     await waitFor(() =>
-      expect(treeChec***REMOVED***ox('新建知识库')).toHaveClass('ant-tree-chec***REMOVED***ox-checked'),
+      expect(treeCheckbox('新建知识库')).toHaveClass('ant-tree-checkbox-checked'),
     );
-    expect(treeChec***REMOVED***ox('删除知识库')).not.toHaveClass('ant-tree-chec***REMOVED***ox-checked');
+    expect(treeCheckbox('删除知识库')).not.toHaveClass('ant-tree-checkbox-checked');
     expect(screen.getByRole('button', { name: '保存授权' })).toBeDisabled();
   });
 
@@ -112,13 +112,13 @@ describe('RolePermissions', () => {
     renderPanel();
     await screen.findByText(/目录 4 项/);
 
-    fireEvent.click(treeChec***REMOVED***ox('删除知识库'));
+    fireEvent.click(treeCheckbox('删除知识库'));
     expect(screen.getByText(/待提交：新增 1 · 回收 0/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '保存授权' }));
 
     await waitFor(() =>
       expect(updateRolePermissions).toHaveBeenCalledWith(7, {
-        addCodes: ['***REMOVED***.delete'],
+        addCodes: ['kb.delete'],
         removeCodes: [],
       }),
     );
@@ -130,21 +130,21 @@ describe('RolePermissions', () => {
     renderPanel();
     await screen.findByText(/目录 4 项/);
 
-    fireEvent.click(treeChec***REMOVED***ox('新建知识库'));
+    fireEvent.click(treeCheckbox('新建知识库'));
     expect(screen.getByText(/待提交：新增 0 · 回收 1/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '还原' }));
     await waitFor(() =>
-      expect(treeChec***REMOVED***ox('新建知识库')).toHaveClass('ant-tree-chec***REMOVED***ox-checked'),
+      expect(treeCheckbox('新建知识库')).toHaveClass('ant-tree-checkbox-checked'),
     );
     expect(screen.getByRole('button', { name: '保存授权' })).toBeDisabled();
 
-    fireEvent.click(treeChec***REMOVED***ox('新建知识库'));
+    fireEvent.click(treeCheckbox('新建知识库'));
     fireEvent.click(screen.getByRole('button', { name: '保存授权' }));
     await waitFor(() =>
       expect(updateRolePermissions).toHaveBeenCalledWith(7, {
         addCodes: [],
-        removeCodes: ['***REMOVED***.create'],
+        removeCodes: ['kb.create'],
       }),
     );
   });
@@ -163,7 +163,7 @@ describe('RolePermissions', () => {
     renderPanel();
     await screen.findByText(/目录 4 项/);
 
-    fireEvent.click(treeChec***REMOVED***ox('删除知识库'));
+    fireEvent.click(treeCheckbox('删除知识库'));
     fireEvent.click(screen.getByRole('button', { name: '保存授权' }));
 
     await waitFor(() =>

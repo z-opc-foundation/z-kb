@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +31,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 编译域 v1 REST 集成测试：真起 Spring 容器 + H2，按参考实现的路径与信封钉契约。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-compilation-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-compilation-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.vector.storage-type=in-memory",
-        "***REMOVED***.graph.engine=json",
-        "***REMOVED***.graph.path=target/test-***REMOVED***/compilation-api-graph",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/compilation-api-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/compilation-api-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/compilation-api-repo",
+        "kb.vector.storage-type=in-memory",
+        "kb.graph.engine=json",
+        "kb.graph.path=target/test-kb/compilation-api-graph",
+        "kb.storage.path=target/test-kb/compilation-api-kb.json",
+        "kb.material.storage.root=target/test-kb/compilation-api-original",
+        "kb.material.repo.root=target/test-kb/compilation-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -65,12 +65,12 @@ class CompilationApiIntegrationTest {
     @Test
     @DisplayName("单文件编译→查询→检索块→关键词检索→重跑→取消：全链路信封带 data")
     void compileQueryChunksAndRetry() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***();
+        String kbId = createKb();
         String content = "# 编译契约\n\n编译域 REST 用 Elasticsearch 做词法检索。\n\n"
                 + "## 细节\n\n分块与索引在同一次请求内完成。" + "重复段落。".repeat(60);
-        String materialId = registerText(***REMOVED***Id, "编译契约", content);
+        String materialId = registerText(kbId, "编译契约", content);
 
-        MvcResult runResult = mvc.perform(post("/api/***REMOVED***/v1/compilation/run")
+        MvcResult runResult = mvc.perform(post("/api/kb/v1/compilation/run")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,14 +90,14 @@ class CompilationApiIntegrationTest {
         String jobId = job.get("jobId").asText();
         assertTrue(job.get("chunkCount").asInt() > 0);
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/queryByMaterial")
+        mvc.perform(get("/api/kb/v1/compilation/queryByMaterial")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.jobId").value(jobId));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/queryByJob")
+        mvc.perform(get("/api/kb/v1/compilation/queryByJob")
                         .param("jobId", jobId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -105,30 +105,30 @@ class CompilationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.jobId").value(jobId))
                 .andExpect(jsonPath("$.data.stages.length()").value(5));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/listChunks")
+        mvc.perform(get("/api/kb/v1/compilation/listChunks")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].indexState").value("INDEXED"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/search")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/compilation/search")
+                        .param("kbId", kbId)
                         .param("keyword", "Elasticsearch")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].content").value(org.hamcrest.Matchers.containsString("Elasticsearch")));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/listBy***REMOVED***")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/compilation/listByKb")
+                        .param("kbId", kbId)
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1));
 
-        mvc.perform(post("/api/***REMOVED***/v1/compilation/retry")
+        mvc.perform(post("/api/kb/v1/compilation/retry")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ class CompilationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.stages[2].status").value("SUCCEEDED"))
                 .andExpect(jsonPath("$.data.artifact.versionNo").value(2));
 
-        mvc.perform(post("/api/***REMOVED***/v1/compilation/cancel")
+        mvc.perform(post("/api/kb/v1/compilation/cancel")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,15 +151,15 @@ class CompilationApiIntegrationTest {
     @Test
     @DisplayName("组别：创建→查询→列表→分页→运行锁")
     void batchCreateQueryListAndPage() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***();
-        String first = registerText(***REMOVED***Id, "组别一", "# 一\n\n组别编译第一份。" + "正文。".repeat(80));
-        String second = registerText(***REMOVED***Id, "组别二", "# 二\n\n组别编译第二份。" + "正文。".repeat(80));
+        String kbId = createKb();
+        String first = registerText(kbId, "组别一", "# 一\n\n组别编译第一份。" + "正文。".repeat(80));
+        String second = registerText(kbId, "组别二", "# 二\n\n组别编译第二份。" + "正文。".repeat(80));
 
-        MvcResult created = mvc.perform(post("/api/***REMOVED***/v1/compilation/createBatch")
+        MvcResult created = mvc.perform(post("/api/kb/v1/compilation/createBatch")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"scopeType\":\"WORKSPACE\",\"materialIds\":[\""
+                        .content("{\"kbId\":\"" + kbId + "\",\"scopeType\":\"WORKSPACE\",\"materialIds\":[\""
                                 + first + "\",\"" + second + "\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("COMPLETED"))
@@ -171,23 +171,23 @@ class CompilationApiIntegrationTest {
                 .andReturn();
         String batchId = data(created).get("batchId").asText();
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/queryBatch")
+        mvc.perform(get("/api/kb/v1/compilation/queryBatch")
                         .param("batchId", batchId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.members.length()").value(2));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/listBatches")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/compilation/listBatches")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].members.length()").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/pageBatches")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/compilation/pageBatches")
+                        .param("kbId", kbId)
                         .param("pageNo", "1")
                         .param("pageSize", "10")
                         .header("X-Tenant-Code", TENANT)
@@ -197,8 +197,8 @@ class CompilationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.pageNo").value(1))
                 .andExpect(jsonPath("$.data.records[0].batchId").value(batchId));
 
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/hasRunningBatch")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/compilation/hasRunningBatch")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -208,7 +208,7 @@ class CompilationApiIntegrationTest {
     @Test
     @DisplayName("错误映射：任务不存在 404、范围非法 400、组别不存在 404")
     void errorStatusMapping() throws Exception {
-        mvc.perform(get("/api/***REMOVED***/v1/compilation/queryByJob")
+        mvc.perform(get("/api/kb/v1/compilation/queryByJob")
                         .param("jobId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -216,12 +216,12 @@ class CompilationApiIntegrationTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("编译任务不存在"));
 
-        String ***REMOVED***Id = create***REMOVED***();
-        MvcResult scope = mvc.perform(post("/api/***REMOVED***/v1/compilation/createBatch")
+        String kbId = createKb();
+        MvcResult scope = mvc.perform(post("/api/kb/v1/compilation/createBatch")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"scopeType\":\"SINGLE\",\"materialIds\":[\"m-1\"]}"))
+                        .content("{\"kbId\":\"" + kbId + "\",\"scopeType\":\"SINGLE\",\"materialIds\":[\"m-1\"]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andReturn();
@@ -229,7 +229,7 @@ class CompilationApiIntegrationTest {
                 objectMapper.readTree(scope.getResponse().getContentAsString(StandardCharsets.UTF_8))
                         .path("message").asText());
 
-        mvc.perform(post("/api/***REMOVED***/v1/compilation/cancelBatch")
+        mvc.perform(post("/api/kb/v1/compilation/cancelBatch")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -244,18 +244,18 @@ class CompilationApiIntegrationTest {
         return root.path("data");
     }
 
-    private String create***REMOVED***() {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("编译接口库");
-        ***REMOVED***.setCode("cmpapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        KnowledgeBaseView view = resourceService.create(***REMOVED***, ***REMOVED***Caller.of(TENANT, ACTOR));
-        assertFalse(view.get***REMOVED***Id().isEmpty());
-        return view.get***REMOVED***Id();
+    private String createKb() {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("编译接口库");
+        kb.setCode("cmpapi_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        KnowledgeBaseView view = resourceService.create(kb, KbCaller.of(TENANT, ACTOR));
+        assertFalse(view.getKbId().isEmpty());
+        return view.getKbId();
     }
 
-    private String registerText(String ***REMOVED***Id, String title, String content) {
-        var item = materialService.registerText(***REMOVED***Id, title, null, content, ***REMOVED***Caller.of(TENANT, ACTOR));
+    private String registerText(String kbId, String title, String content) {
+        var item = materialService.registerText(kbId, title, null, content, KbCaller.of(TENANT, ACTOR));
         assertTrue(item.isSuccess(), item.getMessage());
         return item.getMaterialId();
     }

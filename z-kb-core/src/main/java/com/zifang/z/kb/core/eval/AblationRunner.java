@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.SearchMode;
+import com.zifang.z.kb.api.SearchMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,9 +1,9 @@
--- z-***REMOVED*** 资源域 MySQL 元数据表（幂等，可重复执行）
+-- z-kb 资源域 MySQL 元数据表（幂等，可重复执行）
 -- 原始文件走对象存储，这里只放元数据。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base (
     id VARCHAR(64) NOT NULL COMMENT '主键',
-    ***REMOVED***_id VARCHAR(64) NOT NULL COMMENT '知识库业务标识',
+    kb_id VARCHAR(64) NOT NULL COMMENT '知识库业务标识',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
     name VARCHAR(100) NOT NULL COMMENT '名称',
     code VARCHAR(64) NOT NULL COMMENT '租户内唯一编码',
@@ -19,18 +19,18 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_***REMOVED***_tenant_code (tenant_code, code),
-    KEY idx_***REMOVED***_***REMOVED***_tenant_status (tenant_code, status),
-    KEY idx_***REMOVED***_***REMOVED***_owner (tenant_code, owner_id)
+    UNIQUE KEY uk_kb_kb_tenant_code (tenant_code, code),
+    KEY idx_kb_kb_tenant_status (tenant_code, status),
+    KEY idx_kb_kb_owner (tenant_code, owner_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_acl (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_acl (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     principal_id VARCHAR(64) NOT NULL COMMENT '主体标识',
     principal_type VARCHAR(16) NOT NULL COMMENT 'USER/GROUP/SERVICE',
-    role VARCHAR(16) NOT NULL COMMENT '***REMOVED***ADMIN/EDITOR/CONTRIBUTOR/REVIEWER/READER',
+    role VARCHAR(16) NOT NULL COMMENT 'KB_ADMIN/EDITOR/CONTRIBUTOR/REVIEWER/READER',
     granted_by VARCHAR(64) NULL,
     granted_at DATETIME(3) NULL,
     expires_at DATETIME(3) NULL,
@@ -39,13 +39,13 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_acl (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_acl_***REMOVED***_principal (tenant_code, ***REMOVED***_id, principal_type, principal_id),
-    KEY idx_***REMOVED***_acl_principal (tenant_code, principal_id)
+    UNIQUE KEY uk_kb_acl_kb_principal (tenant_code, kb_id, principal_type, principal_id),
+    KEY idx_kb_acl_principal (tenant_code, principal_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库 ACL';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_profile (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     type VARCHAR(16) NOT NULL,
     preset_version VARCHAR(32) NULL,
@@ -64,12 +64,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_profile_***REMOVED*** (tenant_code, ***REMOVED***_id)
+    UNIQUE KEY uk_kb_profile_kb (tenant_code, kb_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库配置档案';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile_version (
+CREATE TABLE IF NOT EXISTS kb_knowledge_base_profile_version (
     id VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     version_no INT NOT NULL,
     status VARCHAR(16) NOT NULL COMMENT 'DRAFT/CURRENT/SUPERSEDED',
@@ -91,14 +91,14 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_knowledge_base_profile_version (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_profile_version_no (tenant_code, ***REMOVED***_id, version_no),
-    KEY idx_***REMOVED***_profile_version_status (tenant_code, ***REMOVED***_id, status)
+    UNIQUE KEY uk_kb_profile_version_no (tenant_code, kb_id, version_no),
+    KEY idx_kb_profile_version_status (tenant_code, kb_id, status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库配置版本';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_audit_log (
+CREATE TABLE IF NOT EXISTS kb_audit_log (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NULL,
+    kb_id VARCHAR(64) NULL,
     actor_id VARCHAR(64) NULL,
     action VARCHAR(64) NOT NULL,
     target_type VARCHAR(32) NULL,
@@ -107,5 +107,5 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_audit_log (
     detail VARCHAR(1000) NULL,
     created_at DATETIME(3) NOT NULL,
     PRIMARY KEY (id),
-    KEY idx_***REMOVED***_audit_***REMOVED***_day (tenant_code, ***REMOVED***_id, created_at)
+    KEY idx_kb_audit_kb_day (tenant_code, kb_id, created_at)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库审计日志';

@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-web</artifactId>
+    <artifactId>z-kb-web</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: web</name>
+    <name>z-kb :: web</name>
     <description>
-        z-***REMOVED*** Web 层 — REST 控制器、Knife4j API 文档、跨域、统一异常处理。
-        提供 /api/***REMOVED***/* 接口：文档管理、检索、问答、图谱查询、会话管理。
+        z-kb Web 层 — REST 控制器、Knife4j API 文档、跨域、统一异常处理。
+        提供 /api/kb/* 接口：文档管理、检索、问答、图谱查询、会话管理。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,9 +43,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -54,27 +54,27 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-protocol</artifactId>
+            <artifactId>z-kb-protocol</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-spring-boot-starter</artifactId>
+            <artifactId>z-kb-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-ingest</artifactId>
+            <artifactId>z-kb-ingest</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-modeling</artifactId>
+            <artifactId>z-kb-modeling</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-resource</artifactId>
+            <artifactId>z-kb-resource</artifactId>
         </dependency>
 
         <!-- Swagger 注解（2026-10-30 起是 io.swagger.core.v3 的 @Schema/@Operation/@Tag，
@@ -89,8 +89,8 @@
              2026-10-30 从 knife4j-openapi2（springfox 2.10.5）换成 springdoc 2.6.0 —— 老的
              springfox 类里引用 javax/servlet，SB3 容器只有 jakarta，SwaggerConfig 一被扫到就
              NoClassDefFoundError。仍保持 optional：宿主 z-opc 自带 springdoc + knife4j-openapi3-jakarta，
-             本 jar 不该把第二套文档面塞进宿主；z-***REMOVED***-web 自己编译/单跑时它就在 classpath 上。
-             自动装配不扫 SwaggerConfig（见 ***REMOVED***WebAutoConfiguration），只在 standalone 生效。 -->
+             本 jar 不该把第二套文档面塞进宿主；z-kb-web 自己编译/单跑时它就在 classpath 上。
+             自动装配不扫 SwaggerConfig（见 KbWebAutoConfiguration），只在 standalone 生效。 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

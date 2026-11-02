@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react';
 import { datasetStatusMeta, fmtTime, StatusTag } from './shared';
 
 interface RunCreateModalProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   overview?: EvalOverview | null;
   knownRuns: EvalRunRecord[];
   defaultBaselineRunId?: string;
@@ -20,7 +20,7 @@ interface RunCreateModalProps {
 }
 
 export default function RunCreateModal({
-  ***REMOVED***Id,
+  kbId,
   overview,
   knownRuns,
   defaultBaselineRunId,
@@ -47,7 +47,7 @@ export default function RunCreateModal({
     }
     setSubmitting(true);
     const result = await createEvalRun({
-      ***REMOVED***Id,
+      kbId,
       ...(datasetVersion ? { datasetVersionNo: datasetVersion } : {}),
       ...(baselineRunId ? { baselineRunId } : {}),
       allowReuse: true,
@@ -164,7 +164,7 @@ export default function RunCreateModal({
           <div className="mt-16">
             <dl className="kv">
               <dt>知识库</dt>
-              <dd className="mono">{***REMOVED***Id}</dd>
+              <dd className="mono">{kbId}</dd>
               <dt>数据集</dt>
               <dd className="mono">{datasetVersion || '—'}</dd>
               <dt>数据集状态</dt>

@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.vector.impl;
+package com.zifang.z.kb.vector.impl;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
 import com.zifang.z.vector.core.InMemoryVectorStore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 守住 score 方向语义。
  *
- * <p>z-vector 返回的是距离（越小越近），z-***REMOVED*** 契约要求越大越近。曾经直接透传，
+ * <p>z-vector 返回的是距离（越小越近），z-kb 契约要求越大越近。曾经直接透传，
  * 实测症状是向量路首位恒为「该工作台第一篇文档」——因为距离最大的那条排在最前，
  * 而 minScore 阈值又把真正相关的低距离命中全滤掉了。
  *

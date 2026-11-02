@@ -4,12 +4,12 @@ import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
 /** 操作审计（sys_audit_log）查询，与后端 /v1/auditLog 对齐。 */
-const BASE = '/***REMOVED***/v1/auditLog';
+const BASE = '/kb/v1/auditLog';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
-/** 日志类型：SYS-系统级 ***REMOVED***-知识库级 */
-export type AuditLogType = 'SYS' | '***REMOVED***';
+/** 日志类型：SYS-系统级 KB-知识库级 */
+export type AuditLogType = 'SYS' | 'KB';
 
 export interface AuditLogQuery {
   current?: number;
@@ -18,7 +18,7 @@ export interface AuditLogQuery {
   keyword?: string;
   /** 日志类型；为空表示不限 */
   type?: AuditLogType;
-  /** 类型下的业务指向键，***REMOVED*** 日志为知识库编码 */
+  /** 类型下的业务指向键，KB 日志为知识库编码 */
   bizRef?: string;
   actorId?: number;
   /** 1-成功 0-异常 */
@@ -34,7 +34,7 @@ export interface AuditLogRecord {
   id: string;
   tenantCode: string;
   type?: AuditLogType;
-  /** 类型下的业务指向键，***REMOVED*** 日志为知识库编码 */
+  /** 类型下的业务指向键，KB 日志为知识库编码 */
   bizRef?: string | null;
   actorId?: number | null;
   action: string;

@@ -68,14 +68,14 @@ describe('AI 智能体接口', () => {
     vi.mocked(request).mockResolvedValue(agents as never);
 
     await expect(listAiAgents({ keyword: '助', status: 'draft' })).resolves.toBe(agents);
-    expect(request).toHaveBeenNthCalledWith(1, '/***REMOVED***/v1/ai/agent/list', {
+    expect(request).toHaveBeenNthCalledWith(1, '/kb/v1/ai/agent/list', {
       method: 'get',
       params: { keyword: '助', status: 'draft' },
       headers,
     });
 
     await getAiAgent('a1');
-    expect(request).toHaveBeenNthCalledWith(2, '/***REMOVED***/v1/ai/agent/detail', {
+    expect(request).toHaveBeenNthCalledWith(2, '/kb/v1/ai/agent/detail', {
       method: 'get',
       params: { code: 'a1' },
       headers,
@@ -89,7 +89,7 @@ describe('AI 智能体接口', () => {
     const payload = { code: 'a1', name: '助手', skillCodes: [], toolCodes: [] };
     vi.mocked(request).mockResolvedValue({} as never);
     await fn(payload);
-    expect(request).toHaveBeenCalledWith(`/***REMOVED***/v1/ai/agent${suffix}`, {
+    expect(request).toHaveBeenCalledWith(`/kb/v1/ai/agent${suffix}`, {
       method: 'post',
       data: payload,
       headers,
@@ -104,7 +104,7 @@ describe('AI 智能体接口', () => {
   ] as const)('%s 只提交 code', async (_name, fn, suffix) => {
     vi.mocked(request).mockResolvedValue(true as never);
     await fn('a1');
-    expect(request).toHaveBeenCalledWith(`/***REMOVED***/v1/ai${suffix}`, {
+    expect(request).toHaveBeenCalledWith(`/kb/v1/ai${suffix}`, {
       method: 'post',
       data: { code: 'a1' },
       headers,
@@ -117,7 +117,7 @@ describe('AI 技能与工具接口', () => {
     vi.mocked(request).mockResolvedValue({} as never);
 
     await listAiSkills();
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/list', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/list', {
       method: 'get',
       params: {},
       headers,
@@ -125,35 +125,35 @@ describe('AI 技能与工具接口', () => {
 
     const payload = { code: 's1', name: '技能', toolCodes: ['t1'] };
     await createAiSkill(payload);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/add', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/add', {
       method: 'post',
       data: payload,
       headers,
     });
 
     await updateAiSkill(payload);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/update', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/update', {
       method: 'post',
       data: payload,
       headers,
     });
 
     await publishAiSkill('s1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/publish', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/publish', {
       method: 'post',
       data: { code: 's1' },
       headers,
     });
 
     await removeAiSkill('s1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/remove', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/remove', {
       method: 'post',
       data: { code: 's1' },
       headers,
     });
 
     await getAiSkillUsage('s1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/skill/usedBy', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/skill/usedBy', {
       method: 'get',
       params: { code: 's1' },
       headers,
@@ -164,7 +164,7 @@ describe('AI 技能与工具接口', () => {
     vi.mocked(request).mockResolvedValue({} as never);
 
     await listAiTools({ status: 'published' });
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/list', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/list', {
       method: 'get',
       params: { status: 'published' },
       headers,
@@ -172,36 +172,36 @@ describe('AI 技能与工具接口', () => {
 
     const tool = { code: 't1', name: '检索', risk: 'low', parameters: [] };
     await registerAiTool(tool);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/register', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/register', {
       method: 'post',
       data: tool,
       headers,
     });
 
     await changeAiToolStatus('t1', 'paused');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/changeStatus', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/changeStatus', {
       method: 'post',
       data: { code: 't1', status: 'paused' },
       headers,
     });
 
     await removeAiTool('t1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/remove', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/remove', {
       method: 'post',
       data: { code: 't1' },
       headers,
     });
 
     await getAiToolUsage('t1');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/usedBy', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/usedBy', {
       method: 'get',
       params: { code: 't1' },
       headers,
     });
 
-    const invoke = { code: 't1', ***REMOVED***Id: '***REMOVED***-1', arguments: { q: '你好' } };
+    const invoke = { code: 't1', kbId: 'kb-1', arguments: { q: '你好' } };
     await invokeAiTool(invoke);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/ai/tool/invoke', {
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/ai/tool/invoke', {
       method: 'post',
       data: invoke,
       headers,
@@ -211,7 +211,7 @@ describe('AI 技能与工具接口', () => {
   it('中断问答只提交智能体与会话编号', async () => {
     vi.mocked(request).mockResolvedValue(true as never);
     await interruptAiChat('a1', 'c1');
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/ai/chat/interrupt', {
+    expect(request).toHaveBeenCalledWith('/kb/v1/ai/chat/interrupt', {
       method: 'post',
       data: { agentCode: 'a1', conversationId: 'c1' },
       headers,
@@ -224,7 +224,7 @@ describe('AI 问答流', () => {
     agentCode: 'a1',
     conversationId: 'c1',
     userInput: '你好',
-    context: { view: '***REMOVED***' },
+    context: { view: 'kb' },
   };
 
   it('跨块解析 SSE 事件，忽略心跳与非法片段', async () => {
@@ -253,7 +253,7 @@ describe('AI 问答流', () => {
     expect(onEvent).toHaveBeenNthCalledWith(2, { type: 'done', data: null });
 
     const [url, init] = vi.mocked(fetch).mock.calls[0];
-    expect(url).toBe('/kapi/***REMOVED***/v1/ai/chat/stream');
+    expect(url).toBe('/kapi/kb/v1/ai/chat/stream');
     expect(init).toMatchObject({
       method: 'POST',
       credentials: 'include',

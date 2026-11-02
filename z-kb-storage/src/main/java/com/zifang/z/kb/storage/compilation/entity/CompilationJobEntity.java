@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.compilation.entity;
+package com.zifang.z.kb.storage.compilation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 编译作业（***REMOVED***_compilation_job）。单文件任务与多文件组别共用一表，靠 scope_type 区分。
+ * 编译作业（kb_compilation_job）。单文件任务与多文件组别共用一表，靠 scope_type 区分。
  */
-@TableName("***REMOVED***_compilation_job")
+@TableName("kb_compilation_job")
 public class CompilationJobEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String jobId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String taskType;
     private String scopeType;
@@ -72,12 +72,12 @@ public class CompilationJobEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

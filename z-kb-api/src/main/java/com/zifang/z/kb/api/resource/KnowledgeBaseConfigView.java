@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.List;
  */
 public class KnowledgeBaseConfigView {
 
-    private String ***REMOVED***Id;
-    private String ***REMOVED***Name;
+    private String kbId;
+    private String kbName;
     private KnowledgeBaseType type;
     private String embeddingModel;
     private boolean canManage;
@@ -21,20 +21,20 @@ public class KnowledgeBaseConfigView {
     private ConfigImpact impact = new ConfigImpact();
     private ConfigValidation validation = new ConfigValidation();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
-    public String get***REMOVED***Name() {
-        return ***REMOVED***Name;
+    public String getKbName() {
+        return kbName;
     }
 
-    public void set***REMOVED***Name(String ***REMOVED***Name) {
-        this.***REMOVED***Name = ***REMOVED***Name;
+    public void setKbName(String kbName) {
+        this.kbName = kbName;
     }
 
     public KnowledgeBaseType getType() {

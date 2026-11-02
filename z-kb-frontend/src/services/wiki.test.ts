@@ -14,7 +14,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/wiki';
+const BASE = '/kb/v1/wiki';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -23,26 +23,26 @@ beforeEach(() => {
 
 describe('Wiki 接口', () => {
   it('生成 Wiki 提交知识库与资料', async () => {
-    await generateWiki('***REMOVED***-1', ['m1', 'm2']);
+    await generateWiki('kb-1', ['m1', 'm2']);
     expect(request).toHaveBeenCalledWith(`${BASE}/generate`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1', materialIds: ['m1', 'm2'] },
+      data: { kbId: 'kb-1', materialIds: ['m1', 'm2'] },
       headers,
     });
   });
 
   it('Wiki 列表默认限制 50 条，空关键字不传', async () => {
-    await listWikiPages('***REMOVED***-1');
+    await listWikiPages('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/list`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', keyword: undefined, limit: 50 },
+      params: { kbId: 'kb-1', keyword: undefined, limit: 50 },
       headers,
     });
 
-    await listWikiPages('***REMOVED***-1', '手册', 10);
+    await listWikiPages('kb-1', '手册', 10);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/list`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', keyword: '手册', limit: 10 },
+      params: { kbId: 'kb-1', keyword: '手册', limit: 10 },
       headers,
     });
   });
@@ -62,10 +62,10 @@ describe('Wiki 接口', () => {
       headers,
     });
 
-    await getWikiLineage({ ***REMOVED***Id: '***REMOVED***-1' });
+    await getWikiLineage({ kbId: 'kb-1' });
     expect(request).toHaveBeenLastCalledWith(`${BASE}/lineage`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
@@ -79,7 +79,7 @@ describe('Wiki 接口', () => {
 
   it('失败时提示并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('boom'));
-    await expect(listWikiPages('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(listWikiPages('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('请求失败', 'boom', 'error');
   });
 });

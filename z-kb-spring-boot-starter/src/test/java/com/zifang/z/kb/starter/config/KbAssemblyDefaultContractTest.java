@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.starter.config;
+package com.zifang.z.kb.starter.config;
 
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
 import com.zifang.z.vector.api.VectorStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * z-***REMOVED*** 1.1.0 装配口径的<b>契约测试</b>（TASK-20261012-023）。
+ * z-kb 1.1.0 装配口径的<b>契约测试</b>（TASK-20261012-023）。
  *
  * <p>三条口径：
  * <ol>
@@ -39,22 +39,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 走不到自动装配的<b>排序</b>（dev 回落配置要排在模块自动装配之前才生效），
  * 测出来的就不是线上真实路径。
  */
-class ***REMOVED***AssemblyDefaultContractTest {
+class KbAssemblyDefaultContractTest {
 
     private static final String PERSISTENT_VECTOR_STORE = "com.zifang.z.vector.storage.PersistentVectorStore";
     private static final String IN_MEMORY_VECTOR_STORE = "com.zifang.z.vector.core.InMemoryVectorStore";
-    private static final String ZGRAPH_STORE = "com.zifang.z.***REMOVED***.graph.impl.ZGraphKnowledgeGraphStore";
-    private static final String JSON_GRAPH_STORE = "com.zifang.z.***REMOVED***.graph.impl.JsonFileKnowledgeGraphStore";
-    private static final String JSON_DOC_REPOSITORY = "com.zifang.z.***REMOVED***.storage.impl.JsonFileDocumentRepository";
+    private static final String ZGRAPH_STORE = "com.zifang.z.kb.graph.impl.ZGraphKnowledgeGraphStore";
+    private static final String JSON_GRAPH_STORE = "com.zifang.z.kb.graph.impl.JsonFileKnowledgeGraphStore";
+    private static final String JSON_DOC_REPOSITORY = "com.zifang.z.kb.storage.impl.JsonFileDocumentRepository";
 
-    /** 隔离用的临时 home —— 默认路径（~/.***REMOVED***/...）都落在它下面，不污染真实 home。 */
+    /** 隔离用的临时 home —— 默认路径（~/.kb/...）都落在它下面，不污染真实 home。 */
     private Path tempHome;
     private String originalUserHome;
 
     @BeforeEach
     void isolateHome() throws Exception {
         originalUserHome = System.getProperty("user.home");
-        tempHome = Files.createTempDirectory("***REMOVED***-contract-home");
+        tempHome = Files.createTempDirectory("kb-contract-home");
         System.setProperty("user.home", tempHome.toString());
     }
 
@@ -107,7 +107,7 @@ class ***REMOVED***AssemblyDefaultContractTest {
         }
 
         Exception failure = assertThrows(Exception.class,
-                () -> boot("***REMOVED***.vector.data-dir=" + dataDir),
+                () -> boot("kb.vector.data-dir=" + dataDir),
                 "data-dir 不可用却启动成功了（说明在静默回落）");
         String text = stackTrace(failure);
         System.out.println("READING-FAILFAST " + firstCauseMessage(failure));
@@ -139,11 +139,11 @@ class ***REMOVED***AssemblyDefaultContractTest {
     @DisplayName("非法 storage-type / graph.engine：启动报错并带修复指引")
     void illegalValuesFailFastWithGuidance() {
         Exception vectorFailure = assertThrows(Exception.class,
-                () -> boot("***REMOVED***.vector.storage-type=bogus"), "非法 storage-type 未报错");
+                () -> boot("kb.vector.storage-type=bogus"), "非法 storage-type 未报错");
         assertTrue(stackTrace(vectorFailure).contains("修复指引"));
 
         Exception graphFailure = assertThrows(Exception.class,
-                () -> boot("***REMOVED***.graph.engine=bogus"), "非法 graph.engine 未报错");
+                () -> boot("kb.graph.engine=bogus"), "非法 graph.engine 未报错");
         assertTrue(stackTrace(graphFailure).contains("修复指引"));
     }
 
@@ -151,8 +151,8 @@ class ***REMOVED***AssemblyDefaultContractTest {
     @DisplayName("显式回旧档：storage-type=in-memory + graph.engine=json 都能落回 1.0.x 口径")
     void explicitLegacyConfigStillWorks() {
         try (ConfigurableApplicationContext ctx = boot(
-                "***REMOVED***.vector.storage-type=in-memory",
-                "***REMOVED***.graph.engine=json")) {
+                "kb.vector.storage-type=in-memory",
+                "kb.graph.engine=json")) {
             assertEquals(IN_MEMORY_VECTOR_STORE, ctx.getBean(VectorStore.class).getClass().getName());
             assertEquals(JSON_GRAPH_STORE, ctx.getBean(KnowledgeGraphStore.class).getClass().getName());
         }

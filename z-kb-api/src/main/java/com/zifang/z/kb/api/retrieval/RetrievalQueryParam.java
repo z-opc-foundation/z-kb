@@ -1,22 +1,22 @@
-package com.zifang.z.***REMOVED***.api.retrieval;
+package com.zifang.z.kb.api.retrieval;
 
 /**
  * 库内检索入参。范围固定当前库，模式当前只开放 dense。
  */
 public class RetrievalQueryParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String query;
     private Integer topK;
     private Double minScore;
     private String mode;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getQuery() {

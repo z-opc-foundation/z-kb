@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogQuery;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogService;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogView;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.storage.resource.entity.***REMOVED***AuditLogEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.***REMOVED***AuditLogMapper;
+import com.zifang.z.kb.api.audit.AuditLogQuery;
+import com.zifang.z.kb.api.audit.AuditLogService;
+import com.zifang.z.kb.api.audit.AuditLogView;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.storage.resource.entity.KbAuditLogEntity;
+import com.zifang.z.kb.storage.resource.mapper.KbAuditLogMapper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 审计日志查询：全部条件叠加租户，列表只带摘要列，详情按主键读取。
  *
- * <p>z-***REMOVED*** 的审计只记录成功写操作，因此 success 恒为 1；参考实现里由切面捕获的
+ * <p>z-kb 的审计只记录成功写操作，因此 success 恒为 1；参考实现里由切面捕获的
  * 方法名、请求路径、出入参等列在本实现中为空。</p>
  */
 public class DefaultAuditLogService implements AuditLogService {
@@ -25,48 +25,48 @@ public class DefaultAuditLogService implements AuditLogService {
 
     private static final long MAX_SIZE = 200L;
 
-    private static final String TYPE_***REMOVED*** = "***REMOVED***";
+    private static final String TYPE_KB = "KB";
 
     private static final String TYPE_SYS = "SYS";
 
-    private final ***REMOVED***AuditLogMapper auditLogMapper;
+    private final KbAuditLogMapper auditLogMapper;
 
-    public DefaultAuditLogService(***REMOVED***AuditLogMapper auditLogMapper) {
+    public DefaultAuditLogService(KbAuditLogMapper auditLogMapper) {
         this.auditLogMapper = auditLogMapper;
     }
 
     @Override
-    public PageResult<AuditLogView> page(AuditLogQuery query, ***REMOVED***Caller caller) {
+    public PageResult<AuditLogView> page(AuditLogQuery query, KbCaller caller) {
         AuditLogQuery q = query == null ? new AuditLogQuery() : query;
         long current = Math.max(1L, q.getCurrent());
         long size = q.getSize() <= 0 ? DEFAULT_SIZE : Math.min(q.getSize(), MAX_SIZE);
 
-        QueryWrapper<***REMOVED***AuditLogEntity> wrapper = filters(q, caller.getTenantCode());
+        QueryWrapper<KbAuditLogEntity> wrapper = filters(q, caller.getTenantCode());
         Long total = auditLogMapper.selectCount(wrapper);
         long count = total == null ? 0L : total;
 
         wrapper.orderByDesc("created_at").orderByDesc("id")
                 .last("LIMIT " + size + " OFFSET " + (current - 1) * size);
         List<AuditLogView> records = new ArrayList<>();
-        for (***REMOVED***AuditLogEntity entity : auditLogMapper.selectList(wrapper)) {
+        for (KbAuditLogEntity entity : auditLogMapper.selectList(wrapper)) {
             records.add(toView(entity));
         }
         return new PageResult<>(records, count, current, size);
     }
 
     @Override
-    public AuditLogView get(String id, ***REMOVED***Caller caller) {
+    public AuditLogView get(String id, KbCaller caller) {
         if (id == null || id.trim().isEmpty()) {
             return null;
         }
-        ***REMOVED***AuditLogEntity entity = auditLogMapper.selectOne(new QueryWrapper<***REMOVED***AuditLogEntity>()
+        KbAuditLogEntity entity = auditLogMapper.selectOne(new QueryWrapper<KbAuditLogEntity>()
                 .eq("tenant_code", caller.getTenantCode())
                 .eq("id", id.trim()));
         return entity == null ? null : toView(entity);
     }
 
-    private QueryWrapper<***REMOVED***AuditLogEntity> filters(AuditLogQuery query, String tenantCode) {
-        QueryWrapper<***REMOVED***AuditLogEntity> wrapper = new QueryWrapper<>();
+    private QueryWrapper<KbAuditLogEntity> filters(AuditLogQuery query, String tenantCode) {
+        QueryWrapper<KbAuditLogEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("tenant_code", tenantCode);
 
         String keyword = trimToNull(query.getKeyword());
@@ -82,15 +82,15 @@ public class DefaultAuditLogService implements AuditLogService {
         }
         String type = trimToNull(query.getType());
         if (type != null) {
-            if (TYPE_***REMOVED***.equalsIgnoreCase(type)) {
-                wrapper.isNotNull("***REMOVED***_id");
+            if (TYPE_KB.equalsIgnoreCase(type)) {
+                wrapper.isNotNull("kb_id");
             } else if (TYPE_SYS.equalsIgnoreCase(type)) {
-                wrapper.isNull("***REMOVED***_id");
+                wrapper.isNull("kb_id");
             }
         }
         String bizRef = trimToNull(query.getBizRef());
         if (bizRef != null) {
-            wrapper.eq("***REMOVED***_id", bizRef);
+            wrapper.eq("kb_id", bizRef);
         }
         if (query.getSuccess() != null) {
             wrapper.eq("success", query.getSuccess() != 0);
@@ -106,12 +106,12 @@ public class DefaultAuditLogService implements AuditLogService {
         return wrapper;
     }
 
-    private AuditLogView toView(***REMOVED***AuditLogEntity entity) {
+    private AuditLogView toView(KbAuditLogEntity entity) {
         AuditLogView view = new AuditLogView();
         view.setId(entity.getId());
         view.setTenantCode(entity.getTenantCode());
-        view.setType(entity.get***REMOVED***Id() == null ? TYPE_SYS : TYPE_***REMOVED***);
-        view.setBizRef(entity.get***REMOVED***Id());
+        view.setType(entity.getKbId() == null ? TYPE_SYS : TYPE_KB);
+        view.setBizRef(entity.getKbId());
         view.setActorId(entity.getActorId());
         view.setAction(entity.getAction());
         view.setActionDesc(entity.getDetail());

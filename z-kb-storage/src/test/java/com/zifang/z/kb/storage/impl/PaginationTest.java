@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.storage.impl;
+package com.zifang.z.kb.storage.impl;
 
-import com.zifang.z.***REMOVED***.api.Document;
+import com.zifang.z.kb.api.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -114,7 +114,7 @@ class PaginationTest {
         // 构造时会立刻 persist() 落盘，故给一个独立的临时路径；
         // 其 persistExecutor 是 daemon 线程，不需要也不能手动关闭（类上没有该方法）。
         JsonFileDocumentRepository repo = new JsonFileDocumentRepository(
-                tmpDir.resolve("***REMOVED***-store.json").toString());
+                tmpDir.resolve("kb-store.json").toString());
         for (int i = 0; i < 5; i++) repo.save(doc("d" + i));
 
         assertEquals(5, repo.countByWorkspace("default"));

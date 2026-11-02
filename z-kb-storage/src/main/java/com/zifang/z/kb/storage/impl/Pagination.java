@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.impl;
+package com.zifang.z.kb.storage.impl;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ final class Pagination {
      *       右边是 int 运算。{@code offset=2} 且 {@code limit=Integer.MAX_VALUE} 时和溢出成
      *       -2147483647，{@code Math.min} 取到负的 {@code to}，
      *       {@code subList(2, -2147483647)} 抛 {@code IllegalArgumentException}。
-     *       HTTP 上 {@code GET /api/***REMOVED***/documents/{ws}?offset=2&limit=2147483647}
+     *       HTTP 上 {@code GET /api/kb/documents/{ws}?offset=2&limit=2147483647}
      *       （"给我第 2 条起的全部"）即可触发，控制器对 limit 无任何上界校验。
      *       这里先升到 long 再相加。</li>
      *   <li><b>{@code limit <= 0}</b>：原实现用 {@code Math.max(1, limit)} 把 0 和负数

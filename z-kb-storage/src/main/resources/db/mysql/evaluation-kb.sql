@@ -1,13 +1,13 @@
--- z-***REMOVED*** 评估域 MySQL 元数据表（幂等，可重复执行）
--- 与 db/h2/evaluation-***REMOVED***.sql 保持同构；索引随建表内联。
+-- z-kb 评估域 MySQL 元数据表（幂等，可重复执行）
+-- 与 db/h2/evaluation-kb.sql 保持同构；索引随建表内联。
 -- id 由应用生成（UUID 字符串），QA 集合按库单份、可版本化；跑批固定集合版本、
--- 配置版本与 Judge 版本，并用 ***REMOVED***_***REMOVED***_snapshot 钉住当时的物料、产物与检索块。
+-- 配置版本与 Judge 版本，并用 kb_kb_snapshot 钉住当时的物料、产物与检索块。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_dataset (
+CREATE TABLE IF NOT EXISTS kb_eval_dataset (
     id VARCHAR(64) NOT NULL COMMENT '主键',
     dataset_id VARCHAR(64) NOT NULL COMMENT 'QA 集合业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
-    ***REMOVED***_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
+    kb_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
     name VARCHAR(128) NOT NULL COMMENT '集合名称',
     version_no INT NOT NULL COMMENT '集合版本号，按库递增',
     status VARCHAR(16) NOT NULL COMMENT '状态：DRAFT/FROZEN/ARCHIVED',
@@ -21,12 +21,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_dataset (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_dataset_version (tenant_code, ***REMOVED***_id, version_no, is_deleted),
-    UNIQUE KEY uk_***REMOVED***_eval_dataset_id (tenant_code, dataset_id, is_deleted),
-    KEY idx_***REMOVED***_eval_dataset_status (tenant_code, ***REMOVED***_id, status)
+    UNIQUE KEY uk_kb_eval_dataset_version (tenant_code, kb_id, version_no, is_deleted),
+    UNIQUE KEY uk_kb_eval_dataset_id (tenant_code, dataset_id, is_deleted),
+    KEY idx_kb_eval_dataset_status (tenant_code, kb_id, status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评测 QA 集合，单库单份可版本化';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case (
+CREATE TABLE IF NOT EXISTS kb_eval_case (
     id VARCHAR(64) NOT NULL,
     case_id VARCHAR(64) NOT NULL COMMENT '题目业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
@@ -47,16 +47,16 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_case_id (tenant_code, case_id, is_deleted),
-    KEY idx_***REMOVED***_eval_case_dataset (tenant_code, dataset_pk),
-    KEY idx_***REMOVED***_eval_case_no (tenant_code, dataset_pk, case_no)
+    UNIQUE KEY uk_kb_eval_case_id (tenant_code, case_id, is_deleted),
+    KEY idx_kb_eval_case_dataset (tenant_code, dataset_pk),
+    KEY idx_kb_eval_case_no (tenant_code, dataset_pk, case_no)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评测题目';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_run (
+CREATE TABLE IF NOT EXISTS kb_eval_run (
     id VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL COMMENT '跑批业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     dataset_pk VARCHAR(64) NOT NULL COMMENT 'QA 集合主键',
     dataset_id VARCHAR(64) NOT NULL COMMENT 'QA 集合业务标识',
     dataset_version_no INT NOT NULL COMMENT 'QA 集合版本号',
@@ -91,12 +91,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_run (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_run_id (tenant_code, run_id, is_deleted),
-    KEY idx_***REMOVED***_eval_run_***REMOVED*** (tenant_code, ***REMOVED***_id, id),
-    KEY idx_***REMOVED***_eval_run_fingerprint (tenant_code, ***REMOVED***_id, input_fingerprint, status, finished_at, id)
+    UNIQUE KEY uk_kb_eval_run_id (tenant_code, run_id, is_deleted),
+    KEY idx_kb_eval_run_kb (tenant_code, kb_id, id),
+    KEY idx_kb_eval_run_fingerprint (tenant_code, kb_id, input_fingerprint, status, finished_at, id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评测跑批';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_result (
+CREATE TABLE IF NOT EXISTS kb_eval_result (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL COMMENT '跑批业务标识',
@@ -117,11 +117,11 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_result (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_result_metric (tenant_code, run_id, metric_code, is_deleted),
-    KEY idx_***REMOVED***_eval_result_run (tenant_code, run_id, metric_layer)
+    UNIQUE KEY uk_kb_eval_result_metric (tenant_code, run_id, metric_code, is_deleted),
+    KEY idx_kb_eval_result_run (tenant_code, run_id, metric_layer)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评测指标结果';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case_result (
+CREATE TABLE IF NOT EXISTS kb_eval_case_result (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL COMMENT '跑批业务标识',
@@ -141,14 +141,14 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case_result (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_case_result (tenant_code, run_id, case_id, is_deleted),
-    KEY idx_***REMOVED***_eval_case_result_run (tenant_code, run_id)
+    UNIQUE KEY uk_kb_eval_case_result (tenant_code, run_id, case_id, is_deleted),
+    KEY idx_kb_eval_case_result_run (tenant_code, run_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '逐题评测结果';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_badcase (
+CREATE TABLE IF NOT EXISTS kb_eval_badcase (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
+    kb_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
     case_id VARCHAR(64) NOT NULL COMMENT '题目业务标识',
     stage_code VARCHAR(16) NOT NULL COMMENT '归因阶段：S1–S8',
     category VARCHAR(64) NOT NULL COMMENT '归因类别',
@@ -166,15 +166,15 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_badcase (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_eval_badcase (tenant_code, ***REMOVED***_id, case_id, stage_code, is_deleted),
-    KEY idx_***REMOVED***_eval_badcase_status (tenant_code, ***REMOVED***_id, status)
+    UNIQUE KEY uk_kb_eval_badcase (tenant_code, kb_id, case_id, stage_code, is_deleted),
+    KEY idx_kb_eval_badcase_status (tenant_code, kb_id, status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '评测坏例台账';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot (
+CREATE TABLE IF NOT EXISTS kb_kb_snapshot (
     id VARCHAR(64) NOT NULL,
     snapshot_id VARCHAR(64) NOT NULL COMMENT '内容快照业务标识（UUID）',
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
+    kb_id VARCHAR(64) NOT NULL COMMENT '所属知识库业务标识',
     config_version VARCHAR(64) NOT NULL COMMENT '库配置版本',
     ontology_version VARCHAR(64) NOT NULL COMMENT '本体定义版本或图谱空间标识',
     index_generation VARCHAR(128) NOT NULL COMMENT '索引代际',
@@ -190,12 +190,12 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_snapshot_id (tenant_code, snapshot_id, is_deleted),
-    KEY idx_***REMOVED***_snapshot_***REMOVED*** (tenant_code, ***REMOVED***_id, id),
-    KEY idx_***REMOVED***_snapshot_fingerprint (tenant_code, ***REMOVED***_id, fingerprint, index_generation, status)
+    UNIQUE KEY uk_kb_snapshot_id (tenant_code, snapshot_id, is_deleted),
+    KEY idx_kb_snapshot_kb (tenant_code, kb_id, id),
+    KEY idx_kb_snapshot_fingerprint (tenant_code, kb_id, fingerprint, index_generation, status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '知识库内容快照，只在跑批等时刻生成';
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot_item (
+CREATE TABLE IF NOT EXISTS kb_kb_snapshot_item (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     snapshot_id VARCHAR(64) NOT NULL COMMENT '内容快照业务标识',
@@ -213,6 +213,6 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot_item (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_snapshot_item (tenant_code, snapshot_id, item_key, is_deleted),
-    KEY idx_***REMOVED***_snapshot_item_version (tenant_code, material_version_id)
+    UNIQUE KEY uk_kb_snapshot_item (tenant_code, snapshot_id, item_key, is_deleted),
+    KEY idx_kb_snapshot_item_version (tenant_code, material_version_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '内容快照成员清单';

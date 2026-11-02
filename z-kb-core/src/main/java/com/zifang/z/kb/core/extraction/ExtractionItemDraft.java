@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
 /**
  * 未落库的萃取条目草稿：类型、序号、标题、正文与证据 JSON。

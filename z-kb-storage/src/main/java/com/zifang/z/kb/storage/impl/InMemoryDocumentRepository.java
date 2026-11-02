@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.storage.impl;
+package com.zifang.z.kb.storage.impl;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.DocumentStatus;
-import com.zifang.z.***REMOVED***.api.Workspace;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.DocumentStatus;
+import com.zifang.z.kb.api.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
  * 实体类型 — 简化分类，兼容 NER 通用标签集。

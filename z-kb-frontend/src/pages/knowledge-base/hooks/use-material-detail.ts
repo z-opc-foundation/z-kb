@@ -23,7 +23,7 @@ import { resolveMaterialDetailTab, type MaterialDetailTab } from '../material-de
 import { JOB_STATUS } from '../material-status';
 
 interface UseMaterialDetailParams {
-  ***REMOVED***Id: string;
+  kbId: string;
   initialMaterialId?: string;
   initialDetailTab?: MaterialDetailTab | 'compile';
   onDetailClosed?: () => void;
@@ -31,7 +31,7 @@ interface UseMaterialDetailParams {
 }
 
 export function useMaterialDetail({
-  ***REMOVED***Id,
+  kbId,
   initialMaterialId,
   initialDetailTab,
   onDetailClosed,
@@ -226,7 +226,7 @@ export function useMaterialDetail({
       return;
     }
     setVersionUploading(true);
-    const result = await reviseMaterial(***REMOVED***Id, detailId, file);
+    const result = await reviseMaterial(kbId, detailId, file);
     setVersionUploading(false);
     if (!result) {
       return;

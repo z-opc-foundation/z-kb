@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 /**
  * 可授权的成员候选。

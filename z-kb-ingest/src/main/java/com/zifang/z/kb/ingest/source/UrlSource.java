@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.ingest.source;
+package com.zifang.z.kb.ingest.source;
 
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.util.HtmlToMarkdown;
-import com.zifang.z.***REMOVED***.ingest.util.HttpHelper;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.util.HtmlToMarkdown;
+import com.zifang.z.kb.ingest.util.HttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class UrlSource implements DataSource {
         String forcedTitle = (String) config.get("title");
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", "Mozilla/5.0 (z-***REMOVED***/1.0) KnowledgeBot");
+        headers.put("User-Agent", "Mozilla/5.0 (z-kb/1.0) KnowledgeBot");
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9");
 
         HttpHelper.Response resp = HttpHelper.get(url, headers);

@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.compilation;
+package com.zifang.z.kb.core.compilation;
 
-import com.zifang.z.***REMOVED***.api.compilation.ChunkRole;
+import com.zifang.z.kb.api.compilation.ChunkRole;
 
 import java.util.ArrayList;
 import java.util.List;

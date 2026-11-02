@@ -8,7 +8,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/taskMonitor';
+const BASE = '/kb/v1/taskMonitor';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -18,7 +18,7 @@ describe('调度任务接口', () => {
   it('分页查询透传筛选条件与租户头', async () => {
     const page = { records: [], total: 0, pageNo: 1, pageSize: 20 };
     vi.mocked(request).mockResolvedValue(page as never);
-    const query = { ***REMOVED***Id: '***REMOVED***-1', taskType: 'COMPILE', status: 'RUNNING', pageNo: 2, pageSize: 10 };
+    const query = { kbId: 'kb-1', taskType: 'COMPILE', status: 'RUNNING', pageNo: 2, pageSize: 10 };
 
     await expect(pageTasks(query)).resolves.toBe(page);
     expect(request).toHaveBeenCalledWith(`${BASE}/page`, {
@@ -30,25 +30,25 @@ describe('调度任务接口', () => {
 
   it('分页失败时提示并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('boom'));
-    await expect(pageTasks({ ***REMOVED***Id: '***REMOVED***-1' })).resolves.toBeUndefined();
+    await expect(pageTasks({ kbId: 'kb-1' })).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('调度任务加载失败', 'boom', 'error');
   });
 
   it('角标统计失败静默返回 undefined', async () => {
     vi.mocked(request).mockResolvedValueOnce({ groupTotal: 1, jobTotal: 2, taskTotal: 3 } as never);
-    await expect(getTaskSummary('***REMOVED***-1')).resolves.toEqual({
+    await expect(getTaskSummary('kb-1')).resolves.toEqual({
       groupTotal: 1,
       jobTotal: 2,
       taskTotal: 3,
     });
     expect(request).toHaveBeenCalledWith(`${BASE}/summary`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
     vi.mocked(request).mockRejectedValueOnce(new Error('offline'));
-    await expect(getTaskSummary('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(getTaskSummary('kb-1')).resolves.toBeUndefined();
     expect(toast).not.toHaveBeenCalled();
   });
 });

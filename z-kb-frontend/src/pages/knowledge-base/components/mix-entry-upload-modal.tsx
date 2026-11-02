@@ -14,7 +14,7 @@ interface MixFolderOption {
 }
 
 interface MixEntryUploadModalProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   folders: MixFolderOption[];
   defaultFolderId: string;
   onClose: () => void;
@@ -22,7 +22,7 @@ interface MixEntryUploadModalProps {
 }
 
 export default function MixEntryUploadModal({
-  ***REMOVED***Id,
+  kbId,
   folders,
   defaultFolderId,
   onClose,
@@ -54,7 +54,7 @@ export default function MixEntryUploadModal({
       return;
     }
     setUploading(true);
-    const result = await uploadMaterials(***REMOVED***Id, folderId || undefined, files);
+    const result = await uploadMaterials(kbId, folderId || undefined, files);
     setUploading(false);
     if (!result) {
       return;

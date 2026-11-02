@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-api</artifactId>
+    <artifactId>z-kb-api</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: api</name>
+    <name>z-kb :: api</name>
     <description>
-        z-***REMOVED*** 公共 API 与数据模型。定义 Document/Chunk/Entity/Relation/SearchQuery 等核心契约。
+        z-kb 公共 API 与数据模型。定义 Document/Chunk/Entity/Relation/SearchQuery 等核心契约。
         不依赖任何业务模块，可被 core/vector/graph/storage/web 等下游模块共享。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,9 +43,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 

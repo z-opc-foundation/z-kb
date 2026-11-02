@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionChunk;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionInput;
+import com.zifang.z.kb.api.extraction.ExtractionChunk;
+import com.zifang.z.kb.api.extraction.ExtractionInput;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -96,7 +96,7 @@ class ExtractionEngineTest {
     @DisplayName("多处章节时问句、FAQ 与术语都截断到各自上限")
     void extractRespectsCaps() {
         ExtractionInput input = new ExtractionInput();
-        input.set***REMOVED***Id("***REMOVED***-1");
+        input.setKbId("kb-1");
         input.setMaterialId("mat-1");
         input.setMaterialVersionId("ver-1");
         input.setMaterialTitle("上限检验");
@@ -137,17 +137,17 @@ class ExtractionEngineTest {
         assertEquals("vectorindex", ConceptNames.normalize("Vector\tIndex"));
         assertEquals("", ConceptNames.normalize(null));
 
-        String id = ConceptNames.conceptIdOf("t1", "***REMOVED***1", "向量索引");
+        String id = ConceptNames.conceptIdOf("t1", "kb1", "向量索引");
         assertTrue(id.startsWith("cpt_"));
         assertEquals(28, id.length());
-        assertEquals(id, ConceptNames.conceptIdOf("t1", "***REMOVED***1", "向量索引"));
-        assertFalse(id.equals(ConceptNames.conceptIdOf("t1", "***REMOVED***2", "向量索引")));
+        assertEquals(id, ConceptNames.conceptIdOf("t1", "kb1", "向量索引"));
+        assertFalse(id.equals(ConceptNames.conceptIdOf("t1", "kb2", "向量索引")));
     }
 
     @Test
-    @DisplayName("图谱空间键与边标识：spaceKey 为 ***REMOVED***:{***REMOVED***Id}，边标识由源/目标/类型哈希")
+    @DisplayName("图谱空间键与边标识：spaceKey 为 kb:{kbId}，边标识由源/目标/类型哈希")
     void identifiers() {
-        assertEquals("***REMOVED***:***REMOVED***-1", ExtractionEngine.graphSpaceKey("***REMOVED***-1"));
+        assertEquals("kb:kb-1", ExtractionEngine.graphSpaceKey("kb-1"));
         String edge = ExtractionEngine.edgeId("material:m1", "concept:c1",
                 ExtractionEngine.EDGE_MENTIONS);
         assertTrue(edge.startsWith("edge:"));
@@ -160,7 +160,7 @@ class ExtractionEngineTest {
 
     private ExtractionInput sampleInput() {
         ExtractionInput input = new ExtractionInput();
-        input.set***REMOVED***Id("***REMOVED***-1");
+        input.setKbId("kb-1");
         input.setMaterialId("mat-1");
         input.setMaterialVersionId("ver-1");
         input.setMaterialTitle("知识库设计.md");

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.extraction;
+package com.zifang.z.kb.api.extraction;
 
 import java.util.ArrayList;
 import java.util.List;

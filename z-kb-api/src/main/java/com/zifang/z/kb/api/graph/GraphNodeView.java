@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.graph;
+package com.zifang.z.kb.api.graph;
 
 /**
  * 图谱节点视图：物料节点或概念节点。

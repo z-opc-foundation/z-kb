@@ -3,7 +3,7 @@ import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
 export type KnowledgeBaseRole =
-  | '***REMOVED***ADMIN'
+  | 'KB_ADMIN'
   | 'EDITOR'
   | 'CONTRIBUTOR'
   | 'REVIEWER'
@@ -30,18 +30,18 @@ export interface KnowledgeBaseMemberCandidateRecord {
 }
 
 export interface KnowledgeBaseEffectiveRecord {
-  ***REMOVED***Id: string;
+  kbId: string;
   actorId: number;
   role: KnowledgeBaseRole | string;
   owner: boolean;
   canEnter: boolean;
-  canManage***REMOVED***: boolean;
+  canManageKb: boolean;
   canManageDoc: boolean;
   canReview: boolean;
   actions: string[];
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBase/member';
+const BASE = '/kb/v1/knowledgeBase/member';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -54,51 +54,51 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
   }
 }
 
-export function listMembers(***REMOVED***Id: string) {
+export function listMembers(kbId: string) {
   return call(() =>
     request<KnowledgeBaseMemberRecord[]>(`${BASE}/list`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function searchMemberCandidates(***REMOVED***Id: string, keyword?: string) {
+export function searchMemberCandidates(kbId: string, keyword?: string) {
   return call(() =>
     request<KnowledgeBaseMemberCandidateRecord[]>(`${BASE}/candidates`, {
       method: 'post',
-      data: { ***REMOVED***Id, keyword: keyword || '' },
+      data: { kbId, keyword: keyword || '' },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function grantMember(***REMOVED***Id: string, principalId: number, role: string) {
+export function grantMember(kbId: string, principalId: number, role: string) {
   return call(() =>
     request<KnowledgeBaseMemberRecord>(`${BASE}/grant`, {
       method: 'post',
-      data: { ***REMOVED***Id, principalId, role },
+      data: { kbId, principalId, role },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function revokeMember(***REMOVED***Id: string, principalId: number) {
+export function revokeMember(kbId: string, principalId: number) {
   return call(() =>
     request<boolean>(`${BASE}/revoke`, {
       method: 'post',
-      data: { ***REMOVED***Id, principalId },
+      data: { kbId, principalId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function getEffectiveAccess(***REMOVED***Id: string) {
+export function getEffectiveAccess(kbId: string) {
   return call(() =>
     request<KnowledgeBaseEffectiveRecord>(`${BASE}/effective`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
@@ -108,7 +108,7 @@ export const ROLE_META: Record<
   string,
   { label: string; hint: string; tag: 'violet' | 'green' | 'gray' | 'blue' | 'amber' }
 > = {
-  ***REMOVED***ADMIN: {
+  KB_ADMIN: {
     label: '知识库管理员',
     hint: '设置、成员、内容与审核全量动作',
     tag: 'violet',
@@ -136,7 +136,7 @@ export const ROLE_META: Record<
 };
 
 export const ROLE_ORDER: KnowledgeBaseRole[] = [
-  '***REMOVED***ADMIN',
+  'KB_ADMIN',
   'EDITOR',
   'CONTRIBUTOR',
   'REVIEWER',

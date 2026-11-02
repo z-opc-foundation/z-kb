@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 取消编译请求。

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * <p>设计要点：
  * <ul>
- *   <li>{@code workspace} 作为 Collection 命名空间（***REMOVED***_<workspace>_<name>）</li>
+ *   <li>{@code workspace} 作为 Collection 命名空间（kb_<workspace>_<name>）</li>
  *   <li>{@link #upsert} 幂等（同 ID 覆盖）</li>
  *   <li>{@link #search} 返回 ANN topK + 过滤</li>
  *   <li>{@link #deleteByDocument} 级联删除某文档的全部块向量</li>

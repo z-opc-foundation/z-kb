@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchCreateParam;
+import com.zifang.z.kb.api.compilation.CompilationBatchCreateParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class CompilationBatchCreateRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String scopeType;
     private String scopeId;
@@ -18,7 +18,7 @@ public class CompilationBatchCreateRequest {
 
     public CompilationBatchCreateParam toParam() {
         CompilationBatchCreateParam param = new CompilationBatchCreateParam();
-        param.set***REMOVED***Id(***REMOVED***Id);
+        param.setKbId(kbId);
         param.setName(name);
         param.setScopeType(scopeType);
         param.setScopeId(scopeId);
@@ -26,12 +26,12 @@ public class CompilationBatchCreateRequest {
         return param;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

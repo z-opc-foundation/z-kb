@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.graph.impl;
+package com.zifang.z.kb.graph.impl;
 
 import com.zifang.z.graph.api.Edge;
 import com.zifang.z.graph.api.GraphStore;
 import com.zifang.z.graph.api.Node;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.EntityType;
-import com.zifang.z.***REMOVED***.api.GraphQueryResult;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.api.Relation;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.EntityType;
+import com.zifang.z.kb.api.GraphQueryResult;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

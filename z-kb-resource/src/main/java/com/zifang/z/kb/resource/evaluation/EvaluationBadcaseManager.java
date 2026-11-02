@@ -1,23 +1,23 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.evaluation.BadcaseCountInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalBadcaseInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalBadcaseListInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalBadcaseStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalBadcaseUpdateParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalScopeType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalBadcaseEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalRunEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalBadcaseMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalCaseMapper;
+import com.zifang.z.kb.api.evaluation.BadcaseCountInfo;
+import com.zifang.z.kb.api.evaluation.EvalBadcaseInfo;
+import com.zifang.z.kb.api.evaluation.EvalBadcaseListInfo;
+import com.zifang.z.kb.api.evaluation.EvalBadcaseStatus;
+import com.zifang.z.kb.api.evaluation.EvalBadcaseUpdateParam;
+import com.zifang.z.kb.api.evaluation.EvalScopeType;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.storage.evaluation.entity.EvalBadcaseEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalRunEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalBadcaseMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.error;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.failingStages;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseBadcaseStatus;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.requireText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.truncate;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.error;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.failingStages;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseBadcaseStatus;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.requireText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.truncate;
 
 /**
  * 坏例台账：按失败阶段登记、累加与回归，维护处理状态、负责人与备注。
@@ -51,10 +51,10 @@ final class EvaluationBadcaseManager {
     }
 
     /** 列出知识库坏例台账，支持按处理状态与失败阶段过滤，传 ALL 表示不限制状态。 */
-    EvalBadcaseListInfo listBadcases(String ***REMOVED***Id, String status, String stageCode, ***REMOVED***Caller caller) {
+    EvalBadcaseListInfo listBadcases(String kbId, String status, String stageCode, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
-        String key = requireText(***REMOVED***Id, EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(key, caller);
+        String key = requireText(kbId, EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireReadable(key, caller);
         String statusFilter = null;
         if (hasText(status) && !"ALL".equalsIgnoreCase(status.trim())) {
             statusFilter = parseBadcaseStatus(status).name();
@@ -69,7 +69,7 @@ final class EvaluationBadcaseManager {
         }
         QueryWrapper<EvalBadcaseEntity> query = new QueryWrapper<EvalBadcaseEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+                .eq("kb_id", kb.getKbId())
                 .eq("is_deleted", 0)
                 .orderByDesc("id");
         if (statusFilter != null) {
@@ -89,15 +89,15 @@ final class EvaluationBadcaseManager {
     }
 
     /** 统计知识库坏例的待处理、已修复与回归数量。 */
-    BadcaseCountInfo countBadcases(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        String key = requireText(***REMOVED***Id, EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(key, caller);
-        return countBadcasesInternal(caller.getTenantCode(), ***REMOVED***.get***REMOVED***Id());
+    BadcaseCountInfo countBadcases(String kbId, KbCaller caller) {
+        String key = requireText(kbId, EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireReadable(key, caller);
+        return countBadcasesInternal(caller.getTenantCode(), kb.getKbId());
     }
 
     /** 更新坏例状态、负责人与备注；标记为已修复时记录最后一次出现的运行。 */
     @Transactional(rollbackFor = Exception.class)
-    EvalBadcaseInfo updateBadcase(EvalBadcaseUpdateParam param, ***REMOVED***Caller caller) {
+    EvalBadcaseInfo updateBadcase(EvalBadcaseUpdateParam param, KbCaller caller) {
         if (param == null || !hasText(param.getBadcaseId())) {
             throw error(EvaluationStatusCode.EVAL_PARAM_INVALID);
         }
@@ -109,7 +109,7 @@ final class EvaluationBadcaseManager {
         if (badcase == null) {
             throw error(EvaluationStatusCode.EVAL_BADCASE_NOT_FOUND);
         }
-        resourceService.requireActionable(badcase.get***REMOVED***Id(), KnowledgeBaseAction.MATERIAL_REVIEW,
+        resourceService.requireActionable(badcase.getKbId(), KnowledgeBaseAction.MATERIAL_REVIEW,
                 caller);
         if (hasText(param.getStatus())) {
             EvalBadcaseStatus status = parseBadcaseStatus(param.getStatus());
@@ -141,7 +141,7 @@ final class EvaluationBadcaseManager {
             EvalBadcaseEntity badcase = badcaseMapper.selectOne(
                     new QueryWrapper<EvalBadcaseEntity>()
                             .eq("tenant_code", tenantCode)
-                            .eq("***REMOVED***_id", run.get***REMOVED***Id())
+                            .eq("kb_id", run.getKbId())
                             .eq("case_id", outcome.evalCase.getCaseId())
                             .eq("stage_code", stageCode)
                             .eq("is_deleted", 0));
@@ -150,7 +150,7 @@ final class EvaluationBadcaseManager {
                 badcase = new EvalBadcaseEntity();
                 badcase.setId(UUID.randomUUID().toString());
                 badcase.setTenantCode(tenantCode);
-                badcase.set***REMOVED***Id(run.get***REMOVED***Id());
+                badcase.setKbId(run.getKbId());
                 badcase.setCaseId(outcome.evalCase.getCaseId());
                 badcase.setStageCode(stageCode);
                 badcase.setCategory(stageCategory(stageCode));
@@ -180,14 +180,14 @@ final class EvaluationBadcaseManager {
     }
 
     /** 统计知识库坏例在待处理、已修复、已回归三种状态下的数量。 */
-    BadcaseCountInfo countBadcasesInternal(String tenantCode, String ***REMOVED***Id) {
+    BadcaseCountInfo countBadcasesInternal(String tenantCode, String kbId) {
         BadcaseCountInfo info = new BadcaseCountInfo();
         long open = 0L;
         long fixed = 0L;
         long regressed = 0L;
         for (EvalBadcaseEntity row : badcaseMapper.selectList(new QueryWrapper<EvalBadcaseEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0))) {
             if (EvalBadcaseStatus.FIXED.name().equals(row.getStatus())) {
                 fixed++;
@@ -204,10 +204,10 @@ final class EvaluationBadcaseManager {
     }
 
     /** 统计知识库下待处理的坏例数量。 */
-    long countOpen(String tenantCode, String ***REMOVED***Id) {
+    long countOpen(String tenantCode, String kbId) {
         Long count = badcaseMapper.selectCount(new QueryWrapper<EvalBadcaseEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("status", EvalBadcaseStatus.OPEN.name())
                 .eq("is_deleted", 0));
         return count == null ? 0L : count;

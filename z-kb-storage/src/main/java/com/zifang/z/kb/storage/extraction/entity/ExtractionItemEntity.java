@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.extraction.entity;
+package com.zifang.z.kb.storage.extraction.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 本地规则萃取条目（***REMOVED***_extraction_item）：摘要/问句/术语/FAQ 各占一行。
+ * 本地规则萃取条目（kb_extraction_item）：摘要/问句/术语/FAQ 各占一行。
  */
-@TableName("***REMOVED***_extraction_item")
+@TableName("kb_extraction_item")
 public class ExtractionItemEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String itemId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String itemType;
@@ -54,12 +54,12 @@ public class ExtractionItemEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

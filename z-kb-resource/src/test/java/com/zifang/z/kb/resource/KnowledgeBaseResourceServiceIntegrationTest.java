@@ -1,20 +1,20 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseActivityPoint;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseEffective;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMember;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberAdminService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseQuery;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseRole;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseStatus;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseActivityPoint;
+import com.zifang.z.kb.api.resource.KnowledgeBaseEffective;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMember;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberAdminService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseQuery;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseRole;
+import com.zifang.z.kb.api.resource.KnowledgeBaseStatus;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.resource.PageResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +35,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 知识库资源域集成测试：H2(MySQL 模式) 真跑 SQL，钉住生命周期、可见范围、ACL 与活跃度。
  */
-@SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-resource;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbResourceTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-resource;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/resource-***REMOVED***.json",
+        "kb.storage.path=target/test-kb/resource-kb.json",
         "spring.main.banner-mode=off"
 })
 class KnowledgeBaseResourceServiceIntegrationTest {
@@ -51,21 +51,21 @@ class KnowledgeBaseResourceServiceIntegrationTest {
     @Autowired
     private KnowledgeBaseMemberAdminService memberService;
 
-    private ***REMOVED***Caller owner(String tenant) {
-        return ***REMOVED***Caller.of(tenant, "u-owner");
+    private KbCaller owner(String tenant) {
+        return KbCaller.of(tenant, "u-owner");
     }
 
     private KnowledgeBase draft(String code) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("测试知识库-" + code);
-        ***REMOVED***.setCode(code);
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        ***REMOVED***.setDescription("集成测试");
-        return ***REMOVED***;
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("测试知识库-" + code);
+        kb.setCode(code);
+        kb.setType(KnowledgeBaseType.FILE);
+        kb.setDescription("集成测试");
+        return kb;
     }
 
     private String uniqueCode() {
-        return "***REMOVED***_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return "kb_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
     }
 
     private String uniqueTenant() {
@@ -79,23 +79,23 @@ class KnowledgeBaseResourceServiceIntegrationTest {
         String code = uniqueCode();
         KnowledgeBaseView view = resourceService.create(draft(code), owner(tenant));
 
-        assertNotNull(view.get***REMOVED***Id());
+        assertNotNull(view.getKbId());
         assertEquals(KnowledgeBaseStatus.ACTIVE, view.getStatus());
         assertEquals("tfidf", view.getEmbeddingModel());
         assertEquals("u-owner", view.getOwnerId());
-        assertEquals(KnowledgeBaseRole.***REMOVED***ADMIN.name(), view.getRole());
+        assertEquals(KnowledgeBaseRole.KB_ADMIN.name(), view.getRole());
         assertTrue(view.isCanManage());
         assertTrue(view.isCanManageDoc());
         assertTrue(view.isCanReview());
         assertEquals(9, view.getActions().size());
         assertTrue(view.getActions().contains(KnowledgeBaseAction.MEMBER_MANAGE.getCode()));
 
-        KnowledgeBaseView reloaded = resourceService.detail(view.get***REMOVED***Id(), owner(tenant));
+        KnowledgeBaseView reloaded = resourceService.detail(view.getKbId(), owner(tenant));
         assertEquals(code, reloaded.getCode());
 
         Map<String, List<KnowledgeBaseActivityPoint>> activity = resourceService.heatmap(
-                Collections.singletonList(view.get***REMOVED***Id()), 7, owner(tenant));
-        List<KnowledgeBaseActivityPoint> points = activity.get(view.get***REMOVED***Id());
+                Collections.singletonList(view.getKbId()), 7, owner(tenant));
+        List<KnowledgeBaseActivityPoint> points = activity.get(view.getKbId());
         assertNotNull(points);
         assertFalse(points.isEmpty());
         assertEquals(1L, points.get(points.size() - 1).getCount());
@@ -108,23 +108,23 @@ class KnowledgeBaseResourceServiceIntegrationTest {
         String code = uniqueCode();
         resourceService.create(draft(code), owner(tenant));
 
-        ***REMOVED***Exception duplicate = assertThrows(***REMOVED***Exception.class,
+        KBException duplicate = assertThrows(KBException.class,
                 () -> resourceService.create(draft(code), owner(tenant)));
-        assertEquals("***REMOVED***CODE_DUPLICATE", duplicate.getCode());
+        assertEquals("KB_CODE_DUPLICATE", duplicate.getCode());
 
-        ***REMOVED***Exception invalidCode = assertThrows(***REMOVED***Exception.class,
+        KBException invalidCode = assertThrows(KBException.class,
                 () -> resourceService.create(draft("1bad"), owner(tenant)));
-        assertEquals("***REMOVED***CODE_INVALID", invalidCode.getCode());
+        assertEquals("KB_CODE_INVALID", invalidCode.getCode());
 
         KnowledgeBase tooLong = draft(uniqueCode());
         tooLong.setName(repeat('名', 101));
-        ***REMOVED***Exception invalidName = assertThrows(***REMOVED***Exception.class,
+        KBException invalidName = assertThrows(KBException.class,
                 () -> resourceService.create(tooLong, owner(tenant)));
-        assertEquals("***REMOVED***NAME_INVALID", invalidName.getCode());
+        assertEquals("KB_NAME_INVALID", invalidName.getCode());
 
         // 编码唯一性只在租户内成立
         String otherTenant = uniqueTenant();
-        assertNotNull(resourceService.create(draft(code), owner(otherTenant)).get***REMOVED***Id());
+        assertNotNull(resourceService.create(draft(code), owner(otherTenant)).getKbId());
     }
 
     @Test
@@ -132,8 +132,8 @@ class KnowledgeBaseResourceServiceIntegrationTest {
     void pageRespectsAclVisibility() {
         String tenant = uniqueTenant();
         String code = uniqueCode();
-        KnowledgeBaseView ***REMOVED*** = resourceService.create(draft(code), owner(tenant));
-        ***REMOVED***Caller stranger = ***REMOVED***Caller.of(tenant, "u-stranger");
+        KnowledgeBaseView kb = resourceService.create(draft(code), owner(tenant));
+        KbCaller stranger = KbCaller.of(tenant, "u-stranger");
 
         PageResult<KnowledgeBaseView> ownerPage = resourceService.page(new KnowledgeBaseQuery(), owner(tenant));
         assertEquals(1, ownerPage.getTotal());
@@ -141,11 +141,11 @@ class KnowledgeBaseResourceServiceIntegrationTest {
 
         PageResult<KnowledgeBaseView> strangerPage = resourceService.page(new KnowledgeBaseQuery(), stranger);
         assertEquals(0, strangerPage.getTotal());
-        ***REMOVED***Exception forbidden = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.detail(***REMOVED***.get***REMOVED***Id(), stranger));
-        assertEquals("***REMOVED***FORBIDDEN", forbidden.getCode());
+        KBException forbidden = assertThrows(KBException.class,
+                () -> resourceService.detail(kb.getKbId(), stranger));
+        assertEquals("KB_FORBIDDEN", forbidden.getCode());
 
-        memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-stranger", "EDITOR", owner(tenant));
+        memberService.grant(kb.getKbId(), "u-stranger", "EDITOR", owner(tenant));
 
         PageResult<KnowledgeBaseView> grantedPage = resourceService.page(new KnowledgeBaseQuery(), stranger);
         assertEquals(1, grantedPage.getTotal());
@@ -154,14 +154,14 @@ class KnowledgeBaseResourceServiceIntegrationTest {
         assertFalse(granted.isCanManage());
         assertTrue(granted.isCanManageDoc());
 
-        ***REMOVED***Exception cannotManage = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.update(***REMOVED***.get***REMOVED***Id(), "改名", null, stranger));
-        assertEquals("***REMOVED***ACTION_FORBIDDEN", cannotManage.getCode());
+        KBException cannotManage = assertThrows(KBException.class,
+                () -> resourceService.update(kb.getKbId(), "改名", null, stranger));
+        assertEquals("KB_ACTION_FORBIDDEN", cannotManage.getCode());
 
-        // 其他租户即便知道 ***REMOVED***Id 也查不到（租户谓词先于 ACL）
-        ***REMOVED***Exception crossTenant = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.detail(***REMOVED***.get***REMOVED***Id(), owner(uniqueTenant())));
-        assertEquals("***REMOVED***NOT_FOUND", crossTenant.getCode());
+        // 其他租户即便知道 kbId 也查不到（租户谓词先于 ACL）
+        KBException crossTenant = assertThrows(KBException.class,
+                () -> resourceService.detail(kb.getKbId(), owner(uniqueTenant())));
+        assertEquals("KB_NOT_FOUND", crossTenant.getCode());
     }
 
     @Test
@@ -169,97 +169,97 @@ class KnowledgeBaseResourceServiceIntegrationTest {
     void lifecycleFollowsStatusMachine() {
         String tenant = uniqueTenant();
         String code = uniqueCode();
-        KnowledgeBaseView ***REMOVED*** = resourceService.create(draft(code), owner(tenant));
+        KnowledgeBaseView kb = resourceService.create(draft(code), owner(tenant));
 
-        KnowledgeBaseView updated = resourceService.update(***REMOVED***.get***REMOVED***Id(), "新名字", "新描述", owner(tenant));
+        KnowledgeBaseView updated = resourceService.update(kb.getKbId(), "新名字", "新描述", owner(tenant));
         assertEquals("新名字", updated.getName());
         assertEquals("新描述", updated.getDescription());
 
-        assertTrue(resourceService.archive(***REMOVED***.get***REMOVED***Id(), owner(tenant)));
+        assertTrue(resourceService.archive(kb.getKbId(), owner(tenant)));
         assertEquals(KnowledgeBaseStatus.ARCHIVED,
-                resourceService.detail(***REMOVED***.get***REMOVED***Id(), owner(tenant)).getStatus());
+                resourceService.detail(kb.getKbId(), owner(tenant)).getStatus());
 
         assertEquals(0, resourceService.page(new KnowledgeBaseQuery(), owner(tenant)).getTotal());
         KnowledgeBaseQuery includeArchived = new KnowledgeBaseQuery();
         includeArchived.setIncludeArchived(true);
         assertEquals(1, resourceService.page(includeArchived, owner(tenant)).getTotal());
 
-        ***REMOVED***Exception archivedUpdate = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.update(***REMOVED***.get***REMOVED***Id(), "再改", null, owner(tenant)));
-        assertEquals("***REMOVED***STATUS_INVALID", archivedUpdate.getCode());
+        KBException archivedUpdate = assertThrows(KBException.class,
+                () -> resourceService.update(kb.getKbId(), "再改", null, owner(tenant)));
+        assertEquals("KB_STATUS_INVALID", archivedUpdate.getCode());
 
-        assertTrue(resourceService.restore(***REMOVED***.get***REMOVED***Id(), owner(tenant)));
+        assertTrue(resourceService.restore(kb.getKbId(), owner(tenant)));
         assertEquals(KnowledgeBaseStatus.ACTIVE,
-                resourceService.detail(***REMOVED***.get***REMOVED***Id(), owner(tenant)).getStatus());
-        assertNull(resourceService.detail(***REMOVED***.get***REMOVED***Id(), owner(tenant)).getArchivedAt());
+                resourceService.detail(kb.getKbId(), owner(tenant)).getStatus());
+        assertNull(resourceService.detail(kb.getKbId(), owner(tenant)).getArchivedAt());
 
-        ***REMOVED***Exception activeRemove = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.remove(***REMOVED***.get***REMOVED***Id(), owner(tenant)));
-        assertEquals("***REMOVED***STATUS_INVALID", activeRemove.getCode());
+        KBException activeRemove = assertThrows(KBException.class,
+                () -> resourceService.remove(kb.getKbId(), owner(tenant)));
+        assertEquals("KB_STATUS_INVALID", activeRemove.getCode());
 
-        resourceService.archive(***REMOVED***.get***REMOVED***Id(), owner(tenant));
-        assertTrue(resourceService.remove(***REMOVED***.get***REMOVED***Id(), owner(tenant)));
-        ***REMOVED***Exception gone = assertThrows(***REMOVED***Exception.class,
-                () -> resourceService.detail(***REMOVED***.get***REMOVED***Id(), owner(tenant)));
-        assertEquals("***REMOVED***NOT_FOUND", gone.getCode());
+        resourceService.archive(kb.getKbId(), owner(tenant));
+        assertTrue(resourceService.remove(kb.getKbId(), owner(tenant)));
+        KBException gone = assertThrows(KBException.class,
+                () -> resourceService.detail(kb.getKbId(), owner(tenant)));
+        assertEquals("KB_NOT_FOUND", gone.getCode());
     }
 
     @Test
     @DisplayName("成员：仅管理员可管、创建者不可降级/移除、角色校验、授权后可读")
     void memberAdminProtectsOwnerAndValidatesRole() {
         String tenant = uniqueTenant();
-        KnowledgeBaseView ***REMOVED*** = resourceService.create(draft(uniqueCode()), owner(tenant));
+        KnowledgeBaseView kb = resourceService.create(draft(uniqueCode()), owner(tenant));
 
-        ***REMOVED***Exception stranger = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-bob", "READER",
-                        ***REMOVED***Caller.of(tenant, "u-bob")));
-        assertEquals("***REMOVED***FORBIDDEN", stranger.getCode());
+        KBException stranger = assertThrows(KBException.class,
+                () -> memberService.grant(kb.getKbId(), "u-bob", "READER",
+                        KbCaller.of(tenant, "u-bob")));
+        assertEquals("KB_FORBIDDEN", stranger.getCode());
 
-        memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-bob", "READER", owner(tenant));
-        ***REMOVED***Exception notManager = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-carol", "READER",
-                        ***REMOVED***Caller.of(tenant, "u-bob")));
-        assertEquals("***REMOVED***ACTION_FORBIDDEN", notManager.getCode());
+        memberService.grant(kb.getKbId(), "u-bob", "READER", owner(tenant));
+        KBException notManager = assertThrows(KBException.class,
+                () -> memberService.grant(kb.getKbId(), "u-carol", "READER",
+                        KbCaller.of(tenant, "u-bob")));
+        assertEquals("KB_ACTION_FORBIDDEN", notManager.getCode());
 
-        ***REMOVED***Exception badRole = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-bob", "SUPERUSER", owner(tenant)));
-        assertEquals("***REMOVED***MEMBER_ROLE_INVALID", badRole.getCode());
+        KBException badRole = assertThrows(KBException.class,
+                () -> memberService.grant(kb.getKbId(), "u-bob", "SUPERUSER", owner(tenant)));
+        assertEquals("KB_MEMBER_ROLE_INVALID", badRole.getCode());
 
-        ***REMOVED***Exception ownerDowngrade = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-owner", "READER", owner(tenant)));
-        assertEquals("***REMOVED***MEMBER_OWNER_PROTECTED", ownerDowngrade.getCode());
+        KBException ownerDowngrade = assertThrows(KBException.class,
+                () -> memberService.grant(kb.getKbId(), "u-owner", "READER", owner(tenant)));
+        assertEquals("KB_MEMBER_OWNER_PROTECTED", ownerDowngrade.getCode());
 
-        KnowledgeBaseMember granted = memberService.grant(***REMOVED***.get***REMOVED***Id(), "u-bob", "REVIEWER", owner(tenant));
+        KnowledgeBaseMember granted = memberService.grant(kb.getKbId(), "u-bob", "REVIEWER", owner(tenant));
         assertEquals(KnowledgeBaseRole.REVIEWER, granted.getRole());
         assertFalse(granted.isOwner());
 
-        List<KnowledgeBaseMember> members = memberService.listMembers(***REMOVED***.get***REMOVED***Id(), owner(tenant));
+        List<KnowledgeBaseMember> members = memberService.listMembers(kb.getKbId(), owner(tenant));
         assertEquals(2, members.size());
         assertTrue(members.get(0).isOwner());
         assertEquals("u-bob", members.get(1).getPrincipalId());
 
         // 未接身份目录时候选为空，但授权/移除照常工作
-        assertTrue(memberService.searchCandidates(***REMOVED***.get***REMOVED***Id(), null, owner(tenant)).isEmpty());
+        assertTrue(memberService.searchCandidates(kb.getKbId(), null, owner(tenant)).isEmpty());
 
-        ***REMOVED***Caller reviewer = ***REMOVED***Caller.of(tenant, "u-bob");
-        KnowledgeBaseEffective effective = memberService.effective(***REMOVED***.get***REMOVED***Id(), reviewer);
+        KbCaller reviewer = KbCaller.of(tenant, "u-bob");
+        KnowledgeBaseEffective effective = memberService.effective(kb.getKbId(), reviewer);
         assertEquals(KnowledgeBaseRole.REVIEWER.name(), effective.getRole());
         assertTrue(effective.isCanEnter());
-        assertFalse(effective.isCanManage***REMOVED***());
+        assertFalse(effective.isCanManageKb());
         assertTrue(effective.isCanReview());
         assertTrue(effective.getActions().contains(KnowledgeBaseAction.MATERIAL_REVIEW.getCode()));
         assertFalse(effective.getActions().contains(KnowledgeBaseAction.MATERIAL_WRITE.getCode()));
 
-        ***REMOVED***Exception ownerRevoke = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.revoke(***REMOVED***.get***REMOVED***Id(), "u-owner", owner(tenant)));
-        assertEquals("***REMOVED***MEMBER_OWNER_PROTECTED", ownerRevoke.getCode());
+        KBException ownerRevoke = assertThrows(KBException.class,
+                () -> memberService.revoke(kb.getKbId(), "u-owner", owner(tenant)));
+        assertEquals("KB_MEMBER_OWNER_PROTECTED", ownerRevoke.getCode());
 
-        ***REMOVED***Exception notMember = assertThrows(***REMOVED***Exception.class,
-                () -> memberService.revoke(***REMOVED***.get***REMOVED***Id(), "u-nobody", owner(tenant)));
-        assertEquals("***REMOVED***MEMBER_NOT_FOUND", notMember.getCode());
+        KBException notMember = assertThrows(KBException.class,
+                () -> memberService.revoke(kb.getKbId(), "u-nobody", owner(tenant)));
+        assertEquals("KB_MEMBER_NOT_FOUND", notMember.getCode());
 
-        assertTrue(memberService.revoke(***REMOVED***.get***REMOVED***Id(), "u-bob", owner(tenant)));
-        assertEquals(1, memberService.listMembers(***REMOVED***.get***REMOVED***Id(), owner(tenant)).size());
+        assertTrue(memberService.revoke(kb.getKbId(), "u-bob", owner(tenant)));
+        assertEquals(1, memberService.listMembers(kb.getKbId(), owner(tenant)).size());
     }
 
     private static String repeat(char ch, int count) {

@@ -84,11 +84,11 @@ vi.mock('@/pages/ai/shared', async () => {
       realModel: false,
     }),
     useKnowledgeBaseOptions: () => ({
-      ***REMOVED***s: [{ ***REMOVED***Id: '***REMOVED***_1', code: '***REMOVED***_1', name: '测试知识库' }],
+      kbs: [{ kbId: 'kb_1', code: 'kb_1', name: '测试知识库' }],
       loading: false,
       reload: vi.fn(),
     }),
-    ***REMOVED***Select: ({
+    KbSelect: ({
       value,
       onChange,
       options,
@@ -96,7 +96,7 @@ vi.mock('@/pages/ai/shared', async () => {
     }: {
       value: string;
       onChange: (next: string) => void;
-      options: { ***REMOVED***Id: string; code: string; name: string }[];
+      options: { kbId: string; code: string; name: string }[];
       loading?: boolean;
     }) =>
       h(
@@ -112,11 +112,11 @@ vi.mock('@/pages/ai/shared', async () => {
           { value: '' },
           loading ? '正在加载知识库…' : '未选择知识库',
         ),
-        options.map((***REMOVED***) =>
+        options.map((kb) =>
           h(
             'option',
-            { key: ***REMOVED***.***REMOVED***Id, value: ***REMOVED***.***REMOVED***Id },
-            `${***REMOVED***.name}（${***REMOVED***.code}）`,
+            { key: kb.kbId, value: kb.kbId },
+            `${kb.name}（${kb.code}）`,
           ),
         ),
       ),
@@ -322,7 +322,7 @@ describe('AiToolsPage', () => {
     fireEvent.change(screen.getAllByPlaceholderText('参数说明')[0], {
       target: { value: '订单号' },
     });
-    fireEvent.click(screen.getAllByRole('chec***REMOVED***ox')[0]);
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
 
     fireEvent.click(screen.getByRole('button', { name: /添加参数/ }));
     fireEvent.change(screen.getAllByPlaceholderText('参数名，如 query')[1], {
@@ -420,7 +420,7 @@ describe('AiToolsPage', () => {
     ).toBeInTheDocument();
 
     fireEvent.change(within(dialog).getByRole('combobox'), {
-      target: { value: '***REMOVED***_1' },
+      target: { value: 'kb_1' },
     });
     fireEvent.click(within(dialog).getByRole('button', { name: /执行调用/ }));
     expect(within(dialog).getByText('参数 query 必填')).toBeInTheDocument();
@@ -436,7 +436,7 @@ describe('AiToolsPage', () => {
     await waitFor(() =>
       expect(invokeAiTool).toHaveBeenCalledWith({
         code: 'knowledge_search',
-        ***REMOVED***Id: '***REMOVED***_1',
+        kbId: 'kb_1',
         arguments: { query: '排班', topK: 5 },
       }),
     );
@@ -486,7 +486,7 @@ describe('AiToolsPage', () => {
     await waitFor(() =>
       expect(invokeAiTool).toHaveBeenLastCalledWith({
         code: 'custom_op',
-        ***REMOVED***Id: undefined,
+        kbId: undefined,
         arguments: {},
       }),
     );
@@ -510,7 +510,7 @@ describe('AiToolsPage', () => {
     await waitFor(() =>
       expect(invokeAiTool).toHaveBeenLastCalledWith({
         code: 'custom_op',
-        ***REMOVED***Id: undefined,
+        kbId: undefined,
         arguments: { dryRun: true, payload: { a: 1 } },
       }),
     );
@@ -538,7 +538,7 @@ describe('AiToolsPage', () => {
     expect(within(dialog).getByText('时间服务不可用')).toBeInTheDocument();
     expect(invokeAiTool).toHaveBeenCalledWith({
       code: 'current_time',
-      ***REMOVED***Id: undefined,
+      kbId: undefined,
       arguments: {},
     });
   });

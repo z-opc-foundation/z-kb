@@ -1,38 +1,38 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.compilation.TaskRunStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalDatasetStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalRunCreateParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalRunStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalScopeType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.api.evaluation.RunSummaryInfo;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskNature;
-import com.zifang.z.***REMOVED***.core.retrieval.LocalHashEmbedding;
-import com.zifang.z.***REMOVED***.resource.evaluation.EvaluationCaseScorer.ChunkCandidate;
-import com.zifang.z.***REMOVED***.resource.evaluation.EvaluationMetricCalculator.MetricComputation;
-import com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSnapshotBuilder.SnapshotBuild;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseResultEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalDatasetEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalRunEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotItemEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalCaseResultMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalRunMapper;
-import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
-import com.zifang.z.***REMOVED***.storage.taskconfig.entity.TaskConfigEntity;
-import com.zifang.z.***REMOVED***.storage.taskconfig.mapper.TaskConfigMapper;
+import com.zifang.z.kb.api.compilation.TaskRunStatus;
+import com.zifang.z.kb.api.evaluation.EvalDatasetStatus;
+import com.zifang.z.kb.api.evaluation.EvalRunCreateParam;
+import com.zifang.z.kb.api.evaluation.EvalRunStatus;
+import com.zifang.z.kb.api.evaluation.EvalScopeType;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.api.evaluation.RunSummaryInfo;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.taskconfig.TaskNature;
+import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.resource.evaluation.EvaluationCaseScorer.ChunkCandidate;
+import com.zifang.z.kb.resource.evaluation.EvaluationMetricCalculator.MetricComputation;
+import com.zifang.z.kb.resource.evaluation.EvaluationSnapshotBuilder.SnapshotBuild;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseResultEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalDatasetEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalRunEntity;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotEntity;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotItemEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseResultMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalRunMapper;
+import com.zifang.z.kb.storage.resource.entity.KnowledgeBaseProfileEntity;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileMapper;
+import com.zifang.z.kb.storage.taskconfig.entity.TaskConfigEntity;
+import com.zifang.z.kb.storage.taskconfig.mapper.TaskConfigMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -45,36 +45,36 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.DEFAULT_MIN_SCORE;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.JUDGE_MODE;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.JUDGE_VERSION;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_CASES;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_SCAN;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_STATS_CHUNKS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.PARSE_SUCCESS_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.RECALL_FLOOR_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.REASON_INDEX_LOW;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.REASON_PARSE_LOW;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.REASON_RECALL_LOW;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.REASON_TRUNCATED;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.REUSE_WINDOW_HOURS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.TOP_K;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.clamp01;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.error;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.messageOf;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parsePlain;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseScope;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.requireText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.sha256;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.toJson;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.truncate;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.DEFAULT_MIN_SCORE;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.JUDGE_MODE;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.JUDGE_VERSION;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_CASES;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_SCAN;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_STATS_CHUNKS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.PARSE_SUCCESS_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.RECALL_FLOOR_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.REASON_INDEX_LOW;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.REASON_PARSE_LOW;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.REASON_RECALL_LOW;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.REASON_TRUNCATED;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.REUSE_WINDOW_HOURS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.TOP_K;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.clamp01;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.error;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.messageOf;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parsePlain;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseScope;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.requireText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.sha256;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.toJson;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.truncate;
 
 /**
  * 评测运行执行：指纹复用判断、快照成员内逐题评测、逐题结果与坏例落库、指标持久化。
  *
- * <p>z-***REMOVED*** 编译期不算向量，候选块在评测时按正文现算本地哈希向量，只做内存计算不回写检索块。</p>
+ * <p>z-kb 编译期不算向量，候选块在评测时按正文现算本地哈希向量，只做内存计算不回写检索块。</p>
  */
 final class EvaluationRunExecutor {
 
@@ -134,14 +134,14 @@ final class EvaluationRunExecutor {
 
     /** 创建并同步执行一次评测运行，含快照构建、指纹复用判断、逐题评测、指标落库与坏例更新。 */
     @Transactional(rollbackFor = Exception.class)
-    RunSummaryInfo createRun(EvalRunCreateParam param, ***REMOVED***Caller caller) {
+    RunSummaryInfo createRun(EvalRunCreateParam param, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
         String actorId = caller.getActorId();
         if (param == null) {
             throw error(EvaluationStatusCode.EVAL_PARAM_INVALID);
         }
-        String key = requireText(param.get***REMOVED***Id(), EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(key,
+        String key = requireText(param.getKbId(), EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireActionable(key,
                 KnowledgeBaseAction.COMPILATION_RUN, caller);
         EvalScopeType scope = parseScope(param.getScopeType());
         EvaluationStage stage = null;
@@ -152,9 +152,9 @@ final class EvaluationRunExecutor {
             }
         }
         EvalDatasetEntity dataset = param.getDatasetVersionNo() != null
-                ? datasetManager.selectByVersion(tenantCode, ***REMOVED***.get***REMOVED***Id(),
+                ? datasetManager.selectByVersion(tenantCode, kb.getKbId(),
                 param.getDatasetVersionNo())
-                : datasetManager.selectLatestFrozen(tenantCode, ***REMOVED***.get***REMOVED***Id());
+                : datasetManager.selectLatestFrozen(tenantCode, kb.getKbId());
         if (dataset == null) {
             throw error(EvaluationStatusCode.EVAL_DATASET_NOT_FOUND);
         }
@@ -170,7 +170,7 @@ final class EvaluationRunExecutor {
         }
         Long busy = jobMapper.selectCount(new QueryWrapper<CompilationJobEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+                .eq("kb_id", kb.getKbId())
                 .in("run_status", TaskRunStatus.QUEUED.name(), TaskRunStatus.RUNNING.name())
                 .eq("is_deleted", 0));
         if (busy != null && busy > 0) {
@@ -179,14 +179,14 @@ final class EvaluationRunExecutor {
         KnowledgeBaseProfileEntity profile = profileMapper.selectOne(
                 new QueryWrapper<KnowledgeBaseProfileEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+                        .eq("kb_id", kb.getKbId())
                         .last("LIMIT 1"));
         String configVersion = profile == null || profile.getConfigVersion() == null
                 ? "1" : String.valueOf(profile.getConfigVersion()).trim();
         TaskConfigEntity taskConfig = taskConfigMapper.selectOne(
                 new QueryWrapper<TaskConfigEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+                        .eq("kb_id", kb.getKbId())
                         .eq("task_type", TaskNature.EVALUATION.name())
                         .eq("is_deleted", 0)
                         .orderByDesc("published_at")
@@ -194,17 +194,17 @@ final class EvaluationRunExecutor {
         String taskConfigVersion = taskConfig == null || !hasText(taskConfig.getConfigVersion())
                 ? "1" : taskConfig.getConfigVersion().trim();
         JudgeSettings judge = judgeSettings(taskConfig);
-        String ontologyVersion = hasText(***REMOVED***.getPrimaryGraphSpaceKey())
-                ? ***REMOVED***.getPrimaryGraphSpaceKey()
+        String ontologyVersion = hasText(kb.getPrimaryGraphSpaceKey())
+                ? kb.getPrimaryGraphSpaceKey()
                 : (profile != null && hasText(profile.getPresetVersion())
                         ? profile.getPresetVersion() : "default");
-        SnapshotBuild snapshot = snapshotBuilder.buildSnapshot(tenantCode, ***REMOVED***.get***REMOVED***Id(),
+        SnapshotBuild snapshot = snapshotBuilder.buildSnapshot(tenantCode, kb.getKbId(),
                 configVersion, ontologyVersion, actorId);
-        String fingerprint = runFingerprint(***REMOVED***.get***REMOVED***Id(), dataset, configVersion,
+        String fingerprint = runFingerprint(kb.getKbId(), dataset, configVersion,
                 snapshot.snapshot, scope, stage);
         boolean allowReuse = param.getAllowReuse() == null || param.getAllowReuse();
         if (allowReuse) {
-            EvalRunEntity reusable = selectReusableByFingerprint(tenantCode, ***REMOVED***.get***REMOVED***Id(),
+            EvalRunEntity reusable = selectReusableByFingerprint(tenantCode, kb.getKbId(),
                     fingerprint, Instant.now().minus(REUSE_WINDOW_HOURS, ChronoUnit.HOURS));
             if (reusable != null) {
                 return queryAssembler.toRunSummary(reusable, true);
@@ -214,7 +214,7 @@ final class EvaluationRunExecutor {
                 ? param.getBaselineRunId().trim() : null;
         if (baselineRunId != null) {
             EvalRunEntity baseline = queryAssembler.selectRunByRunId(tenantCode, baselineRunId);
-            if (baseline == null || !***REMOVED***.get***REMOVED***Id().equals(baseline.get***REMOVED***Id())) {
+            if (baseline == null || !kb.getKbId().equals(baseline.getKbId())) {
                 throw error(EvaluationStatusCode.EVAL_RUN_NOT_FOUND);
             }
         }
@@ -223,7 +223,7 @@ final class EvaluationRunExecutor {
         run.setId(UUID.randomUUID().toString());
         run.setRunId(UUID.randomUUID().toString());
         run.setTenantCode(tenantCode);
-        run.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+        run.setKbId(kb.getKbId());
         run.setDatasetPk(dataset.getId());
         run.setDatasetId(dataset.getDatasetId());
         run.setDatasetVersionNo(dataset.getVersionNo());
@@ -287,10 +287,10 @@ final class EvaluationRunExecutor {
     private RunExecution executeRun(String tenantCode, EvalRunEntity run, List<EvalCaseEntity> cases,
             SnapshotBuild snapshot, EvalScopeType scope, EvaluationStage stage,
             JudgeSettings judge, String actorId) {
-        List<***REMOVED***SnapshotItemEntity> items = snapshot.items;
+        List<KbSnapshotItemEntity> items = snapshot.items;
         Set<String> materialVersionIds = new LinkedHashSet<>();
         Set<String> materialIds = new LinkedHashSet<>();
-        for (***REMOVED***SnapshotItemEntity item : items) {
+        for (KbSnapshotItemEntity item : items) {
             if (hasText(item.getMaterialVersionId())) {
                 materialVersionIds.add(item.getMaterialVersionId());
             }
@@ -394,11 +394,11 @@ final class EvaluationRunExecutor {
     }
 
     /** 查询 2 小时内同指纹且成功的可复用运行。 */
-    private EvalRunEntity selectReusableByFingerprint(String tenantCode, String ***REMOVED***Id,
+    private EvalRunEntity selectReusableByFingerprint(String tenantCode, String kbId,
             String fingerprint, Instant since) {
         return runMapper.selectOne(new QueryWrapper<EvalRunEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("input_fingerprint", fingerprint)
                 .eq("status", EvalRunStatus.SUCCEEDED.name())
                 .ge("finished_at", since)
@@ -452,9 +452,9 @@ final class EvaluationRunExecutor {
     }
 
     /** 计算运行输入指纹，覆盖知识库、数据集、配置、Judge 版本、快照、范围与阶段，用于判断运行能否复用。 */
-    private String runFingerprint(String ***REMOVED***Id, EvalDatasetEntity dataset, String configVersion,
-            ***REMOVED***SnapshotEntity snapshot, EvalScopeType scope, EvaluationStage stage) {
-        return sha256(***REMOVED***Id + "|" + dataset.getId() + "|" + configVersion + "|" + JUDGE_VERSION
+    private String runFingerprint(String kbId, EvalDatasetEntity dataset, String configVersion,
+            KbSnapshotEntity snapshot, EvalScopeType scope, EvaluationStage stage) {
+        return sha256(kbId + "|" + dataset.getId() + "|" + configVersion + "|" + JUDGE_VERSION
                 + "|" + snapshot.getFingerprint() + "|" + scope.name() + "|"
                 + (stage == null ? "" : stage.name()));
     }

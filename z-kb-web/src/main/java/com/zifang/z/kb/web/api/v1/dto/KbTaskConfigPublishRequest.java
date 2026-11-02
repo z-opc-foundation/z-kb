@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemParam;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPublishParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPublishParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * 知识库级任务配置整版发布请求。
  */
-public class ***REMOVED***TaskConfigPublishRequest {
+public class KbTaskConfigPublishRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private List<TaskConfigPublishItemRequest> items = new ArrayList<>();
 
     public TaskConfigPublishParam toParam() {
@@ -24,12 +24,12 @@ public class ***REMOVED***TaskConfigPublishRequest {
         return param;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public List<TaskConfigPublishItemRequest> getItems() {

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -19,8 +19,8 @@ public final class ConceptNames {
     }
 
     /** 由租户、知识库与归一化名称的哈希生成稳定的概念 ID。 */
-    public static String conceptIdOf(String tenantCode, String ***REMOVED***Id, String normalizedName) {
-        return "cpt_" + sha256Hex(tenantCode + "|" + ***REMOVED***Id + "|" + normalizedName).substring(0, 24);
+    public static String conceptIdOf(String tenantCode, String kbId, String normalizedName) {
+        return "cpt_" + sha256Hex(tenantCode + "|" + kbId + "|" + normalizedName).substring(0, 24);
     }
 
     /** 计算字符串的 SHA-256 十六进制摘要。 */

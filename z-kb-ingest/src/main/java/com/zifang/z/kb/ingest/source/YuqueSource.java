@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.ingest.source;
+package com.zifang.z.kb.ingest.source;
 
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.util.HttpHelper;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.util.HttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class YuqueSource implements DataSource {
         int limit = (int) config.getOrDefault("limit", 100);
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", "z-***REMOVED***/1.0");
+        headers.put("User-Agent", "z-kb/1.0");
         headers.put("X-Auth-Token", token);
 
         // 1) 拉取文档列表

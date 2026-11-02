@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.parser;
+package com.zifang.z.kb.core.parser;
 
-import com.zifang.z.***REMOVED***.api.Document;
+import com.zifang.z.kb.api.Document;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Safelist;
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Markdown 解析器 — z-***REMOVED*** 主入口。
+ * Markdown 解析器 — z-kb 主入口。
  *
  * <p>职责：
  * <ul>

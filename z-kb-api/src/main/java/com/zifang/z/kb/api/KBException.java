@@ -1,29 +1,29 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
- * z-***REMOVED*** 顶层异常。带错误码，web 层据此填充统一响应信封。
+ * z-kb 顶层异常。带错误码，web 层据此填充统一响应信封。
  */
-public class ***REMOVED***Exception extends RuntimeException {
+public class KBException extends RuntimeException {
 
     private final String code;
 
-    public ***REMOVED***Exception(String message) {
-        this("***REMOVED***ERROR", message, null);
+    public KBException(String message) {
+        this("KB_ERROR", message, null);
     }
 
-    public ***REMOVED***Exception(String message, Throwable cause) {
-        this("***REMOVED***ERROR", message, cause);
+    public KBException(String message, Throwable cause) {
+        this("KB_ERROR", message, cause);
     }
 
-    public ***REMOVED***Exception(Throwable cause) {
-        this("***REMOVED***ERROR", cause == null ? null : cause.getMessage(), cause);
+    public KBException(Throwable cause) {
+        this("KB_ERROR", cause == null ? null : cause.getMessage(), cause);
     }
 
-    public ***REMOVED***Exception(String code, String message) {
+    public KBException(String code, String message) {
         this(code, message, null);
     }
 
-    public ***REMOVED***Exception(String code, String message, Throwable cause) {
+    public KBException(String code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
     }
@@ -33,27 +33,27 @@ public class ***REMOVED***Exception extends RuntimeException {
     }
 
     /** 不存在异常 */
-    public static ***REMOVED***Exception notFound(String entityType, String id) {
-        return new ***REMOVED***Exception("***REMOVED***NOT_FOUND", entityType + " not found: " + id);
+    public static KBException notFound(String entityType, String id) {
+        return new KBException("KB_NOT_FOUND", entityType + " not found: " + id);
     }
 
     /** 已存在异常 */
-    public static ***REMOVED***Exception alreadyExists(String entityType, String key) {
-        return new ***REMOVED***Exception("***REMOVED***ALREADY_EXISTS", entityType + " already exists: " + key);
+    public static KBException alreadyExists(String entityType, String key) {
+        return new KBException("KB_ALREADY_EXISTS", entityType + " already exists: " + key);
     }
 
     /** 参数错误 */
-    public static ***REMOVED***Exception badRequest(String message) {
-        return new ***REMOVED***Exception("***REMOVED***BAD_REQUEST", "Bad request: " + message);
+    public static KBException badRequest(String message) {
+        return new KBException("KB_BAD_REQUEST", "Bad request: " + message);
     }
 
     /** 无权限 */
-    public static ***REMOVED***Exception forbidden(String message) {
-        return new ***REMOVED***Exception("***REMOVED***FORBIDDEN", message);
+    public static KBException forbidden(String message) {
+        return new KBException("KB_FORBIDDEN", message);
     }
 
     /** 状态/唯一性冲突 */
-    public static ***REMOVED***Exception conflict(String message) {
-        return new ***REMOVED***Exception("***REMOVED***CONFLICT", message);
+    public static KBException conflict(String message) {
+        return new KBException("KB_CONFLICT", message);
     }
 }

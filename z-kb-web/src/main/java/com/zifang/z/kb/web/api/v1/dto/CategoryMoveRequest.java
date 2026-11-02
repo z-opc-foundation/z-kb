@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 移动分类请求；parentId 为空表示移到根层级。

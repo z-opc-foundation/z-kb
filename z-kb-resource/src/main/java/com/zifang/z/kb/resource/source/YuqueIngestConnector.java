@@ -1,20 +1,20 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.core.source.IngestDocContent;
-import com.zifang.z.***REMOVED***.core.source.IngestDocRef;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
-import com.zifang.z.***REMOVED***.core.source.YuqueSelection;
-import com.zifang.z.***REMOVED***.core.source.YuqueTocRefs;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiClient;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiException;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueDoc;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueDocContent;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueDocReader;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.core.source.IngestDocContent;
+import com.zifang.z.kb.core.source.IngestDocRef;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
+import com.zifang.z.kb.core.source.YuqueSelection;
+import com.zifang.z.kb.core.source.YuqueTocRefs;
+import com.zifang.z.kb.core.source.yuque.YuqueApiClient;
+import com.zifang.z.kb.core.source.yuque.YuqueApiException;
+import com.zifang.z.kb.core.source.yuque.YuqueDoc;
+import com.zifang.z.kb.core.source.yuque.YuqueDocContent;
+import com.zifang.z.kb.core.source.yuque.YuqueDocReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class YuqueIngestConnector implements IngestConnector {
     public void checkScope(KnowledgeBaseSourceAccess source) {
         if (YuqueSelection.books(source).isEmpty()
                 || source.resolveSecret() == null || source.resolveSecret().trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID",
+            throw new KBException("KB_SOURCE_CONFIG_INVALID",
                     "语雀接入源需要至少一个知识库和访问令牌");
         }
     }
@@ -91,24 +91,24 @@ public class YuqueIngestConnector implements IngestConnector {
     }
 
     @Override
-    public IngestSyncInfo sync(String ***REMOVED***Id, KnowledgeBaseSourceAccess source, ***REMOVED***Caller caller) {
+    public IngestSyncInfo sync(String kbId, KnowledgeBaseSourceAccess source, KbCaller caller) {
         checkScope(source);
         String token = source.resolveSecret();
         YuqueApiClient client = yuqueApiClient.withBaseUrl(source.scopeValue("apiBaseUrl"));
         List<YuqueSelection.Book> books = YuqueSelection.books(source);
-        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(***REMOVED***Id, source, caller);
+        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(kbId, source, caller);
 
         List<IngestDocRef> refs = new ArrayList<>();
         Map<String, String> versions = new LinkedHashMap<>();
         boolean readable = true;
         for (YuqueSelection.Book book : books) {
-            String categoryId = sourceTreeNodes.ensureBookNode(***REMOVED***Id, sourceCategoryId, source,
+            String categoryId = sourceTreeNodes.ensureBookNode(kbId, sourceCategoryId, source,
                     book, caller);
             if (!appendBook(refs, versions, client, token, book, categoryId)) {
                 readable = false;
             }
         }
-        return runner.run(***REMOVED***Id, source.getSourceId(), SOURCE_TYPE, books.get(0).getBook(), refs,
+        return runner.run(kbId, source.getSourceId(), SOURCE_TYPE, books.get(0).getBook(), refs,
                 versions, readable, ref -> read(client, ref.getBookScope(), token, ref), caller);
     }
 

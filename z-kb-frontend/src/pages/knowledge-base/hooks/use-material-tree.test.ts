@@ -46,7 +46,7 @@ const TREE: CategoryNode[] = [
 function material(id: string, categoryId: string | null): MaterialRecord {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: `资料 ${id}`,
     sourceType: 'UPLOAD',
@@ -61,7 +61,7 @@ function material(id: string, categoryId: string | null): MaterialRecord {
 
 function setup(overrides: Partial<Parameters<typeof useMaterialTree>[0]> = {}) {
   const params = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     canWrite: true,
     categoryId: '',
     setBusy: vi.fn(),
@@ -101,8 +101,8 @@ describe('useMaterialTree', () => {
 
     await waitFor(() => expect(result.current.tree).toHaveLength(1));
     await waitFor(() => expect(result.current.treeMaterials).toHaveLength(2));
-    expect(getCategoryTree).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(pageMaterial).toHaveBeenCalledWith({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 200 });
+    expect(getCategoryTree).toHaveBeenCalledWith('kb-1');
+    expect(pageMaterial).toHaveBeenCalledWith({ kbId: 'kb-1', current: 1, size: 200 });
     expect(result.current.materialsByCategory.get('cat-1')?.map((item) => item.materialId)).toEqual(['m1']);
     expect(result.current.materialsByCategory.get('')).toHaveLength(1);
     expect(result.current.categoryCounts.get('cat-1')).toBe(1);
@@ -130,7 +130,7 @@ describe('useMaterialTree', () => {
     await act(async () => {
       await result.current.submitCategory();
     });
-    expect(createCategory).toHaveBeenCalledWith('***REMOVED***-1', '护理', 'cat-1');
+    expect(createCategory).toHaveBeenCalledWith('kb-1', '护理', 'cat-1');
     expect(result.current.categoryModal.open).toBe(false);
     expect(getCategoryTree).toHaveBeenCalledTimes(2);
   });
@@ -191,7 +191,7 @@ describe('useMaterialTree', () => {
       result.current.dropProps('cat-2').onDrop(materialDrop);
       await Promise.resolve();
     });
-    expect(updateMaterialCategory).toHaveBeenCalledWith('***REMOVED***-1', ['m1'], 'cat-2');
+    expect(updateMaterialCategory).toHaveBeenCalledWith('kb-1', ['m1'], 'cat-2');
     expect(params.setBusy).toHaveBeenCalledWith(true);
     expect(params.setBusy).toHaveBeenCalledWith(false);
     expect(params.onMaterialsChanged).toHaveBeenCalled();
@@ -209,7 +209,7 @@ describe('useMaterialTree', () => {
       result.current.rootDropProps.onDrop(rootDrop);
       await Promise.resolve();
     });
-    expect(updateMaterialCategory).toHaveBeenLastCalledWith('***REMOVED***-1', ['m1'], undefined);
+    expect(updateMaterialCategory).toHaveBeenLastCalledWith('kb-1', ['m1'], undefined);
   });
 
   it('拖动分类到根目录时调用移动接口', async () => {
@@ -222,7 +222,7 @@ describe('useMaterialTree', () => {
       currentTarget: 'root',
       dataTransfer: {
         getData: vi.fn((type: string) =>
-          type === 'application/x-***REMOVED***-category' ? 'cat-2' : '',
+          type === 'application/x-kb-category' ? 'cat-2' : '',
         ),
         dropEffect: '',
       },

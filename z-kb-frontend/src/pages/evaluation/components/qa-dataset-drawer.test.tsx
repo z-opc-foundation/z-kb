@@ -54,8 +54,8 @@ const DATASET: EvalDatasetDetail = {
 
 function renderDrawer() {
   const props = {
-    ***REMOVED***Id: '***REMOVED***-1',
-    ***REMOVED***Name: '护理知识库',
+    kbId: 'kb-1',
+    kbName: '护理知识库',
     onClose: vi.fn(),
     onChanged: vi.fn(),
   };
@@ -92,7 +92,7 @@ describe('QaDatasetDrawer', () => {
     expect(screen.getByText('作答')).toBeInTheDocument();
     expect(screen.getByText('拒答')).toBeInTheDocument();
     expect(screen.getByText('分级')).toBeInTheDocument();
-    expect(queryMock).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(queryMock).toHaveBeenCalledWith('kb-1');
   });
 
   it('尚无题目时从空态创建草稿', async () => {
@@ -139,7 +139,7 @@ describe('QaDatasetDrawer', () => {
     fireEvent.click(screen.getByRole('button', { name: /保存草稿/ }));
     await waitFor(() => expect(saveMock).toHaveBeenCalledTimes(1));
     expect(saveMock).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       name: '护理评测集',
       description: '季度回归用',
       cases: [
@@ -230,7 +230,7 @@ describe('QaDatasetDrawer', () => {
     fireEvent.click(screen.getByRole('button', { name: '确认发布' }));
     await waitFor(() => expect(publishMock).toHaveBeenCalledTimes(1));
     expect(publishMock).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       expectedVersionNo: 'v3',
     });
     await waitFor(() => expect(props.onChanged).toHaveBeenCalledTimes(1));

@@ -20,7 +20,7 @@ vi.mock('@/services/http', () => ({ request: vi.fn() }));
 vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/identity';
+const BASE = '/kb/v1/identity';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -44,9 +44,9 @@ describe('登录权限视图接口', () => {
   });
 
   it('校验权限点并编码查询参数', async () => {
-    vi.mocked(request).mockResolvedValueOnce({ code: '***REMOVED***.create', allowed: true } as never);
-    await expect(checkPermission('***REMOVED***.create')).resolves.toBe(true);
-    expect(request).toHaveBeenLastCalledWith(`${BASE}/auth/check?code=***REMOVED***.create`, {
+    vi.mocked(request).mockResolvedValueOnce({ code: 'kb.create', allowed: true } as never);
+    await expect(checkPermission('kb.create')).resolves.toBe(true);
+    expect(request).toHaveBeenLastCalledWith(`${BASE}/auth/check?code=kb.create`, {
       silent: true,
       headers,
     });

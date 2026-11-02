@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.overview.OverviewService;
-import com.zifang.z.***REMOVED***.api.overview.OverviewView;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.overview.OverviewService;
+import com.zifang.z.kb.api.overview.OverviewView;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,21 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "知识库概览")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/overview")
+@RequestMapping("/api/kb/v1/overview")
 public class OverviewController {
 
     private final OverviewService overviewService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
-    public OverviewController(OverviewService overviewService, ***REMOVED***CallerResolver callerResolver) {
+    public OverviewController(OverviewService overviewService, KbCallerResolver callerResolver) {
         this.overviewService = overviewService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "知识库概览统计", description = "只读聚合；未接入领域按 0 返回并标注口径")
-    @GetMapping("/***REMOVED***Stats")
-    public ***REMOVED***Result<OverviewView> ***REMOVED***Stats(@RequestParam String ***REMOVED***Id,
+    @GetMapping("/kbStats")
+    public KbResult<OverviewView> kbStats(@RequestParam String kbId,
                                           HttpServletRequest request) {
-        return ***REMOVED***Result.ok(overviewService.***REMOVED***Stats(***REMOVED***Id, callerResolver.resolve(request)));
+        return KbResult.ok(overviewService.kbStats(kbId, callerResolver.resolve(request)));
     }
 }

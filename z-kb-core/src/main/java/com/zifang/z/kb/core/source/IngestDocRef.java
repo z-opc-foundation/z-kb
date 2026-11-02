@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
 /**
  * 目录树里的一个可同步文档节点。

@@ -26,9 +26,9 @@ const snapshot: MonitorSnapshot = {
   ],
   services: [
     {
-      key: '***REMOVED***',
+      key: 'kb',
       name: '知识库服务',
-      code: '***REMOVED***-service',
+      code: 'kb-service',
       group: '业务服务',
       status: 'degraded',
       instances: '5 / 6',
@@ -62,7 +62,7 @@ const snapshot: MonitorSnapshot = {
     {
       key: 'retrieve',
       method: 'POST',
-      path: '/kapi/***REMOVED***/retrieve',
+      path: '/kapi/kb/retrieve',
       qps: 5.2,
       p95Ms: 504,
       errorRate: 0.16,
@@ -113,7 +113,7 @@ describe('SystemMonitorPage', () => {
     expect(screen.getByText('知识库服务')).toBeInTheDocument();
     expect(screen.getByText('降级')).toBeInTheDocument();
     expect(screen.getByText('5 / 6')).toBeInTheDocument();
-    expect(screen.getByText('/kapi/***REMOVED***/retrieve')).toBeInTheDocument();
+    expect(screen.getByText('/kapi/kb/retrieve')).toBeInTheDocument();
     expect(
       screen.getByText('编译任务积压 12 条，高于 10 条阈值'),
     ).toBeInTheDocument();

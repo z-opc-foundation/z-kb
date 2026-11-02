@@ -8,7 +8,7 @@
      boundary（知识库外，应当拒答）。
   3. 标注写到文档粒度（expectedDocIds），与检索排序输出无关，不会自我循环。
 
-用法: python3 gen_corpus.py --out ../z-***REMOVED***-core/src/test/resources/eval2
+用法: python3 gen_corpus.py --out ../z-kb-core/src/test/resources/eval2
 """
 import argparse
 import json
@@ -160,7 +160,7 @@ def main():
     cases.extend(unanswerable)
     dataset = {
         "datasetVersion": "v2-llm-generated",
-        "knowledgeVersion": "***REMOVED***-llm-corpus-2026-10-18",
+        "knowledgeVersion": "kb-llm-corpus-2026-10-18",
         "cases": cases,
     }
     with open(os.path.join(args.out, "golden-set-v2.json"), "w", encoding="utf-8") as f:

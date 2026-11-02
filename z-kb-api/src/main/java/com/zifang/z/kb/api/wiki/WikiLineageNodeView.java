@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 /**
  * 血缘节点：WIKI / MATERIAL / CONCEPT 等类型。

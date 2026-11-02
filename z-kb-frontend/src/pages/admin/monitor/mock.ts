@@ -118,7 +118,7 @@ const SERVICE_PROFILES: ServiceProfile[] = [
   {
     key: 'gateway',
     name: '接入网关',
-    code: '***REMOVED***-gateway',
+    code: 'kb-gateway',
     group: '接入层',
     version: 'v2.31.0',
     totalInstances: 4,
@@ -128,9 +128,9 @@ const SERVICE_PROFILES: ServiceProfile[] = [
     downRate: 0.004,
   },
   {
-    key: '***REMOVED***',
+    key: 'kb',
     name: '知识库服务',
-    code: '***REMOVED***-service',
+    code: 'kb-service',
     group: '业务服务',
     version: 'v2.31.0',
     totalInstances: 6,
@@ -142,7 +142,7 @@ const SERVICE_PROFILES: ServiceProfile[] = [
   {
     key: 'retrieval',
     name: '检索服务',
-    code: '***REMOVED***-retrieval',
+    code: 'kb-retrieval',
     group: '业务服务',
     version: 'v2.30.4',
     totalInstances: 4,
@@ -202,7 +202,7 @@ const SERVICE_PROFILES: ServiceProfile[] = [
   {
     key: 'mysql',
     name: '元数据库',
-    code: 'mysql-***REMOVED***',
+    code: 'mysql-kb',
     group: '数据层',
     version: '8.0.36',
     totalInstances: 2,
@@ -226,7 +226,7 @@ const ENDPOINT_PROFILES: EndpointProfile[] = [
   {
     key: 'retrieve',
     method: 'POST',
-    path: '/kapi/***REMOVED***/retrieve',
+    path: '/kapi/kb/retrieve',
     weight: 0.3,
     p50: 180,
     errorRate: 0.16,
@@ -240,9 +240,9 @@ const ENDPOINT_PROFILES: EndpointProfile[] = [
     errorRate: 0.52,
   },
   {
-    key: '***REMOVED***-page',
+    key: 'kb-page',
     method: 'GET',
-    path: '/kapi/***REMOVED***/page',
+    path: '/kapi/kb/page',
     weight: 0.22,
     p50: 92,
     errorRate: 0.05,

@@ -19,7 +19,7 @@ describe('format', () => {
 
   it('按单位格式化文件大小', () => {
     expect(formatFileSize(512)).toBe('512 B');
-    expect(formatFileSize(2048)).toBe('2.0 ***REMOVED***');
+    expect(formatFileSize(2048)).toBe('2.0 KB');
     expect(formatFileSize(5 * 1024 * 1024)).toBe('5.00 MB');
     expect(formatFileSize(2 * 1024 * 1024 * 1024)).toBe('2.00 GB');
   });

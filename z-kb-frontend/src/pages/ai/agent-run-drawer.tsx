@@ -12,7 +12,7 @@ import {
 import {
   AiRuntimeTag,
   AiStatusTag,
-  ***REMOVED***Select,
+  KbSelect,
   asRecord,
   textOf,
   useKnowledgeBaseOptions,
@@ -24,7 +24,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 /** 知识库问答的默认智能体编码；A-01 种子数据中的已发布智能体。 */
-export const AI_QA_AGENT_CODE = '***REMOVED***_qa_assistant';
+export const AI_QA_AGENT_CODE = 'kb_qa_assistant';
 
 interface ChatActivity {
   id: string;
@@ -210,7 +210,7 @@ export function AgentRunDrawer({
   skills,
   tools,
   runtime,
-  initial***REMOVED***Id,
+  initialKbId,
   initialQuestion,
   title = '试运行',
   onClose,
@@ -219,14 +219,14 @@ export function AgentRunDrawer({
   skills: AiSkillRecord[];
   tools: AiToolRecord[];
   runtime?: AiRuntimeStatus;
-  initial***REMOVED***Id?: string;
+  initialKbId?: string;
   initialQuestion?: string;
   title?: string;
   onClose: () => void;
 }) {
-  const { ***REMOVED***s, loading: ***REMOVED***Loading } = useKnowledgeBaseOptions();
-  const [***REMOVED***Choice, set***REMOVED***Choice] = useState(
-    initial***REMOVED***Id || agent.***REMOVED***Id || '',
+  const { kbs, loading: kbLoading } = useKnowledgeBaseOptions();
+  const [kbChoice, setKbChoice] = useState(
+    initialKbId || agent.kbId || '',
   );
   const [conversationId, setConversationId] = useState('');
   const [turns, setTurns] = useState<ChatTurn[]>([]);
@@ -239,11 +239,11 @@ export function AgentRunDrawer({
   const threadRef = useRef<HTMLDivElement | null>(null);
   const stickToBottomRef = useRef(true);
 
-  const requires***REMOVED*** = agent.toolCodes.includes('knowledge_search');
+  const requiresKb = agent.toolCodes.includes('knowledge_search');
   // 从某个知识库页面打开时范围就是那个库，不再给下拉；试运行没有指定库时才让用户选。
-  const scopeLocked = !!initial***REMOVED***Id;
-  const locked***REMOVED***Name =
-    ***REMOVED***s.find((***REMOVED***) => ***REMOVED***.***REMOVED***Id === initial***REMOVED***Id)?.name || initial***REMOVED***Id || '';
+  const scopeLocked = !!initialKbId;
+  const lockedKbName =
+    kbs.find((kb) => kb.kbId === initialKbId)?.name || initialKbId || '';
   const skillNames = useMemo(() => {
     const map = new Map<string, string>();
     skills.forEach((item) => map.set(item.code, item.name));
@@ -398,7 +398,7 @@ export function AgentRunDrawer({
     if (!question || streaming) {
       return;
     }
-    if (requires***REMOVED*** && !***REMOVED***Choice) {
+    if (requiresKb && !kbChoice) {
       return;
     }
     const stamp = Date.now() + counterRef.current++;
@@ -431,7 +431,7 @@ export function AgentRunDrawer({
       {
         agentCode: agent.code,
         conversationId: conversationRef.current || undefined,
-        ***REMOVED***Id: ***REMOVED***Choice || undefined,
+        kbId: kbChoice || undefined,
         userInput: question,
       },
       {
@@ -497,7 +497,7 @@ export function AgentRunDrawer({
     setRunMeta(null);
   };
 
-  const canSend = !!input.trim() && !streaming && (!requires***REMOVED*** || !!***REMOVED***Choice);
+  const canSend = !!input.trim() && !streaming && (!requiresKb || !!kbChoice);
 
   // 抽屉挂在 body 上：入口可能位于带 z-index 的容器里，留在原地会盖不住同层的兄弟节点
   return createPortal(
@@ -599,22 +599,22 @@ export function AgentRunDrawer({
             <label>知识库范围</label>
             {scopeLocked ? (
               <>
-                <b className="ai-run-scope-value">{locked***REMOVED***Name}</b>
+                <b className="ai-run-scope-value">{lockedKbName}</b>
                 <span className="note">当前知识库，不跨库检索</span>
               </>
             ) : (
               <>
-                <***REMOVED***Select
-                  value={***REMOVED***Choice}
-                  onChange={set***REMOVED***Choice}
-                  options={***REMOVED***s}
-                  loading={***REMOVED***Loading}
+                <KbSelect
+                  value={kbChoice}
+                  onChange={setKbChoice}
+                  options={kbs}
+                  loading={kbLoading}
                   disabled={streaming}
                 />
-                {requires***REMOVED*** && !***REMOVED***Choice ? (
+                {requiresKb && !kbChoice ? (
                   <span className="tag red sm">knowledge_search 必须选择库</span>
                 ) : null}
-                {!***REMOVED***Loading && !***REMOVED***s.length ? (
+                {!kbLoading && !kbs.length ? (
                   <span className="note">
                     当前租户没有知识库，请先在「知识库」创建并上传资料。
                   </span>
@@ -631,7 +631,7 @@ export function AgentRunDrawer({
                     className="ai-sample"
                     type="button"
                     key={question}
-                    disabled={requires***REMOVED*** && !***REMOVED***Choice}
+                    disabled={requiresKb && !kbChoice}
                     onClick={() => send(question)}
                   >
                     {question}
@@ -717,7 +717,7 @@ export function AgentRunDrawer({
             className="textarea"
             value={input}
             placeholder={
-              requires***REMOVED*** && !***REMOVED***Choice
+              requiresKb && !kbChoice
                 ? '请先选择知识库，再输入问题'
                 : '输入问题，Enter 发送，Shift+Enter 换行'
             }

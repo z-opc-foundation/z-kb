@@ -178,7 +178,7 @@ interface EditorState {
 }
 
 interface SourceConfigPanelProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   canManage: boolean;
 }
 
@@ -288,7 +288,7 @@ function scopeSummary(draft: SourceDraft): string {
   return parts.length ? parts.join(' · ') : '—';
 }
 
-export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: SourceConfigPanelProps) {
+export default function SourceConfigPanel({ kbId, canManage }: SourceConfigPanelProps) {
   const [items, setItems] = useState<SourceDraft[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -308,7 +308,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
-    const result = await listKnowledgeBaseSources(***REMOVED***Id);
+    const result = await listKnowledgeBaseSources(kbId);
     setLoading(false);
     if (!result) {
       setError('接入源加载失败');
@@ -317,7 +317,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
     setItems(result.map(toDraft));
     setResults({});
     setDirty(false);
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void load();
@@ -366,7 +366,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
     }
     setSaving(true);
     const result = await saveKnowledgeBaseSources(
-      ***REMOVED***Id,
+      kbId,
       items.map(toPayload),
     );
     setSaving(false);
@@ -385,7 +385,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
       return;
     }
     setTestingKey(draft.localKey);
-    const result = await testKnowledgeBaseSource(***REMOVED***Id, toPayload(draft));
+    const result = await testKnowledgeBaseSource(kbId, toPayload(draft));
     setTestingKey('');
     if (!result) {
       return;
@@ -416,7 +416,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
       return;
     }
     setSyncingKey(draft.localKey);
-    const result = await syncKnowledgeBaseSource(***REMOVED***Id, draft.sourceId);
+    const result = await syncKnowledgeBaseSource(kbId, draft.sourceId);
     setSyncingKey('');
     if (!result) {
       return;
@@ -581,7 +581,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
       ...current,
       [bookScope]: { loading: true, docs: [] },
     }));
-    const result = await loadYuqueCatalogDocs(***REMOVED***Id, toPayload(editing.draft), bookScope);
+    const result = await loadYuqueCatalogDocs(kbId, toPayload(editing.draft), bookScope);
     setDocCache((current) => ({
       ...current,
       [bookScope]: result
@@ -611,7 +611,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
       setExpandedBook('');
     }
     setCatalogLoading(true);
-    const result = await loadYuqueCatalog(***REMOVED***Id, toPayload(draft));
+    const result = await loadYuqueCatalog(kbId, toPayload(draft));
     setCatalogLoading(false);
     if (!result) {
       return;
@@ -633,7 +633,7 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
       return;
     }
     setEditorTesting(true);
-    const result = await testKnowledgeBaseSource(***REMOVED***Id, toPayload(editing.draft));
+    const result = await testKnowledgeBaseSource(kbId, toPayload(editing.draft));
     setEditorTesting(false);
     if (result) {
       setEditorResult(result);
@@ -1025,8 +1025,8 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
                         <div className="scope-book" key={book.namespace}>
                           <div className="scope-book-row">
                             <input
-                              className="chec***REMOVED***ox"
-                              type="chec***REMOVED***ox"
+                              className="checkbox"
+                              type="checkbox"
                               checked={!!picked}
                               aria-label={`同步知识库 ${book.name}`}
                               onChange={() => toggleBook(book)}
@@ -1062,8 +1062,8 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
                               {(cache?.docs ?? []).map((doc) => (
                                 <label className="scope-doc" key={doc.slug}>
                                   <input
-                                    className="chec***REMOVED***ox"
-                                    type="chec***REMOVED***ox"
+                                    className="checkbox"
+                                    type="checkbox"
                                     checked={picked.docs.some((entry) => entry.slug === doc.slug)}
                                     onChange={() => toggleDoc(book.namespace, doc)}
                                   />
@@ -1168,9 +1168,9 @@ export default function SourceConfigPanel({ ***REMOVED***Id, canManage }: Source
 
               <div className="row mt-16">
                 <input
-                  className="chec***REMOVED***ox"
+                  className="checkbox"
                   id="source-enabled"
-                  type="chec***REMOVED***ox"
+                  type="checkbox"
                   checked={editing.draft.enabled}
                   onChange={(event) => patchEditor({ enabled: event.target.checked })}
                 />

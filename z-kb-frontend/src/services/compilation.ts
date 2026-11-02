@@ -40,7 +40,7 @@ export interface CompilationArtifactRecord {
 
 export interface CompilationJobRecord {
   jobId: string;
-  ***REMOVED***Id: string;
+  kbId: string;
   materialId: string;
   materialVersionId: string;
   pipelineType: string;
@@ -81,7 +81,7 @@ export interface CompilationBatchMemberRecord {
 
 export interface CompilationBatchRecord {
   batchId: string;
-  ***REMOVED***Id: string;
+  kbId: string;
   name: string;
   taskType: string;
   scopeType: string;
@@ -120,7 +120,7 @@ export interface RetrievalChunkRecord {
   indexedAt?: string;
 }
 
-const BASE = '/***REMOVED***/v1/compilation';
+const BASE = '/kb/v1/compilation';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -201,11 +201,11 @@ export function getCompilationByJob(jobId: string) {
   );
 }
 
-export function listCompilationJobs(***REMOVED***Id: string, materialId?: string, limit = 20) {
+export function listCompilationJobs(kbId: string, materialId?: string, limit = 20) {
   return call(() =>
-    request<CompilationJobRecord[]>(`${BASE}/listBy***REMOVED***`, {
+    request<CompilationJobRecord[]>(`${BASE}/listByKb`, {
       method: 'get',
-      params: materialId ? { ***REMOVED***Id, materialId, limit } : { ***REMOVED***Id, limit },
+      params: materialId ? { kbId, materialId, limit } : { kbId, limit },
       headers: tenantHeaders(),
     }),
   );
@@ -222,7 +222,7 @@ export function listCompilationChunks(materialId: string, versionId?: string, li
 }
 
 export function createCompilationBatch(payload: {
-  ***REMOVED***Id: string;
+  kbId: string;
   name?: string;
   scopeType?: string;
   scopeId?: string;
@@ -238,21 +238,21 @@ export function createCompilationBatch(payload: {
   );
 }
 
-export function listCompilationBatches(***REMOVED***Id: string, limit = 20) {
+export function listCompilationBatches(kbId: string, limit = 20) {
   return call(() =>
     request<CompilationBatchRecord[]>(`${BASE}/listBatches`, {
       method: 'get',
-      params: { ***REMOVED***Id, limit },
+      params: { kbId, limit },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function pageCompilationBatches(***REMOVED***Id: string, pageNo = 1, pageSize = 20) {
+export function pageCompilationBatches(kbId: string, pageNo = 1, pageSize = 20) {
   return call(() =>
     request<CompilationBatchPageRecord>(`${BASE}/pageBatches`, {
       method: 'get',
-      params: { ***REMOVED***Id, pageNo, pageSize },
+      params: { kbId, pageNo, pageSize },
       headers: tenantHeaders(),
     }),
   );
@@ -268,21 +268,21 @@ export function getCompilationBatch(batchId: string) {
   );
 }
 
-export function hasRunningCompilationBatch(***REMOVED***Id: string) {
+export function hasRunningCompilationBatch(kbId: string) {
   return call(() =>
     request<boolean>(`${BASE}/hasRunningBatch`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function searchCompilationChunks(***REMOVED***Id: string, keyword?: string, limit = 20) {
+export function searchCompilationChunks(kbId: string, keyword?: string, limit = 20) {
   return call(() =>
     request<RetrievalChunkRecord[]>(`${BASE}/search`, {
       method: 'get',
-      params: keyword ? { ***REMOVED***Id, keyword, limit } : { ***REMOVED***Id, limit },
+      params: keyword ? { kbId, keyword, limit } : { kbId, limit },
       headers: tenantHeaders(),
     }),
   );

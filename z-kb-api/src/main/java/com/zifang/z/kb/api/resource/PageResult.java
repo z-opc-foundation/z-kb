@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.util.ArrayList;
 import java.util.List;

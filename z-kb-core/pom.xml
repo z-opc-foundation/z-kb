@@ -7,17 +7,17 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-core</artifactId>
+    <artifactId>z-kb-core</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: core</name>
+    <name>z-kb :: core</name>
     <description>
-        z-***REMOVED*** 核心引擎:
+        z-kb 核心引擎:
         - parser: Markdown 解析 (frontmatter / wikilink / 标题 / 代码块 / 表格)
         - chunker: 标题感知 + Token 感知智能分块
         - extractor: 基于规则 + 共现窗口的实体关系抽取
@@ -25,7 +25,7 @@
         - search: BM25 全文检索
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -47,9 +47,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -58,7 +58,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
 
         <!-- z-util 1.0.13：本仓的 z-util.version 键已删（fleet 面值逐字节相同），版本由仓根

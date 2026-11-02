@@ -48,9 +48,9 @@ function formFrom(version: ProfileVersionRecord | null): FormState {
 }
 
 export default function VersionManagementPage() {
-  const params = useParams<{ ***REMOVED***Id?: string }>();
+  const params = useParams<{ kbId?: string }>();
   const navigate = useNavigate();
-  const ***REMOVED***Id = params.***REMOVED***Id || '';
+  const kbId = params.kbId || '';
   const [config, setConfig] = useState<KnowledgeBaseConfigRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -68,13 +68,13 @@ export default function VersionManagementPage() {
   const [discardOpen, setDiscardOpen] = useState(false);
 
   const load = useCallback(async () => {
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       setLoading(false);
       setNotFound(true);
       return;
     }
     setLoading(true);
-    const result = await getKnowledgeBaseConfig(***REMOVED***Id);
+    const result = await getKnowledgeBaseConfig(kbId);
     setLoading(false);
     if (!result) {
       setNotFound(true);
@@ -93,7 +93,7 @@ export default function VersionManagementPage() {
       setEditing(false);
       setSelectedVersion(result.current);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void load();
@@ -129,7 +129,7 @@ export default function VersionManagementPage() {
     }
     setBusy('save');
     const result = await saveConfigDraft({
-      ***REMOVED***Id: config.***REMOVED***Id,
+      kbId: config.kbId,
       presetVersion: form.presetVersion,
       parserPolicy: form.parserPolicy,
       chunkingPolicy: form.chunkingPolicy,
@@ -154,7 +154,7 @@ export default function VersionManagementPage() {
       return;
     }
     setBusy('validate');
-    const result = await validateConfigDraft(config.***REMOVED***Id);
+    const result = await validateConfigDraft(config.kbId);
     setBusy('');
     if (result === undefined) {
       return;
@@ -172,7 +172,7 @@ export default function VersionManagementPage() {
       return;
     }
     setBusy('publish');
-    const result = await publishConfig(config.***REMOVED***Id, publishRemark.trim() || undefined);
+    const result = await publishConfig(config.kbId, publishRemark.trim() || undefined);
     setBusy('');
     if (result === undefined) {
       return;
@@ -189,7 +189,7 @@ export default function VersionManagementPage() {
       return;
     }
     setBusy('rebuild');
-    const result = await submitFullRebuild(config.***REMOVED***Id);
+    const result = await submitFullRebuild(config.kbId);
     setBusy('');
     if (result === undefined) {
       return;
@@ -206,7 +206,7 @@ export default function VersionManagementPage() {
       return;
     }
     setBusy('discard');
-    const result = await discardConfigDraft(config.***REMOVED***Id);
+    const result = await discardConfigDraft(config.kbId);
     setBusy('');
     setDiscardOpen(false);
     if (result === undefined) {
@@ -250,13 +250,13 @@ export default function VersionManagementPage() {
         <span className="bar-title">
           <Icon name="git-branch" size={13} />
           版本管理
-          <span className="muted">· {config.***REMOVED***Name}</span>
+          <span className="muted">· {config.kbName}</span>
         </span>
         <span className="spacer" />
         <button
           className="btn sm ghost"
           type="button"
-          onClick={() => navigate(`/knowledge-bases/${config.***REMOVED***Id}/settings`)}
+          onClick={() => navigate(`/knowledge-bases/${config.kbId}/settings`)}
         >
           <Icon name="arrow-left" size={12} />
           返回设置
@@ -264,7 +264,7 @@ export default function VersionManagementPage() {
         <button
           className="btn sm"
           type="button"
-          onClick={() => navigate(`/knowledge-bases/${config.***REMOVED***Id}`)}
+          onClick={() => navigate(`/knowledge-bases/${config.kbId}`)}
         >
           返回知识库
         </button>
@@ -715,7 +715,7 @@ export default function VersionManagementPage() {
                         type="button"
                         style={{ marginLeft: 4 }}
                         onClick={() =>
-                          navigate(`/knowledge-bases/${config.***REMOVED***Id}/governance`)
+                          navigate(`/knowledge-bases/${config.kbId}/governance`)
                         }
                       >
                         任务管理
@@ -742,7 +742,7 @@ export default function VersionManagementPage() {
       {publishOpen ? (
         <AppModal
           icon="send"
-          title={`发布配置 · ${config.***REMOVED***Name}`}
+          title={`发布配置 · ${config.kbName}`}
           sub="发布配置"
           width={680}
           onClose={() => setPublishOpen(false)}
@@ -841,7 +841,7 @@ export default function VersionManagementPage() {
               </div>
               <label className="check-item mt-16" style={{ cursor: 'pointer' }}>
                 <input
-                  type="chec***REMOVED***ox"
+                  type="checkbox"
                   checked={confirmed}
                   onChange={(event) => setConfirmed(event.target.checked)}
                 />
@@ -857,7 +857,7 @@ export default function VersionManagementPage() {
       {rebuildOpen ? (
         <AppModal
           icon="refresh"
-          title={`申请全量重建 · ${config.***REMOVED***Name}`}
+          title={`申请全量重建 · ${config.kbName}`}
           sub="全量重建"
           width={600}
           onClose={() => setRebuildOpen(false)}
@@ -900,7 +900,7 @@ export default function VersionManagementPage() {
               </dl>
               <label className="check-item mt-16" style={{ cursor: 'pointer' }}>
                 <input
-                  type="chec***REMOVED***ox"
+                  type="checkbox"
                   checked={rebuildConfirmed}
                   onChange={(event) => setRebuildConfirmed(event.target.checked)}
                 />

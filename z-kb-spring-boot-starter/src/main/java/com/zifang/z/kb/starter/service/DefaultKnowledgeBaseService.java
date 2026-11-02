@@ -1,29 +1,29 @@
-package com.zifang.z.***REMOVED***.starter.service;
+package com.zifang.z.kb.starter.service;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.DocumentStatus;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.GraphQueryResult;
-import com.zifang.z.***REMOVED***.api.ImportResult;
-import com.zifang.z.***REMOVED***.api.IndexRequest;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Statistics;
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.api.Relation;
-import com.zifang.z.***REMOVED***.api.Workspace;
-import com.zifang.z.***REMOVED***.core.chunker.Chunker;
-import com.zifang.z.***REMOVED***.core.embedding.TfIdfEmbeddingProvider;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
-import com.zifang.z.***REMOVED***.core.extractor.RelationExtractor;
-import com.zifang.z.***REMOVED***.core.parser.MarkdownParser;
-import com.zifang.z.***REMOVED***.core.parser.WikilinkExtractor;
-import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
-import com.zifang.z.***REMOVED***.api.EmbeddingProvider;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.KbMetrics;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.DocumentStatus;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.GraphQueryResult;
+import com.zifang.z.kb.api.ImportResult;
+import com.zifang.z.kb.api.IndexRequest;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.KBStatistics;
+import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.Relation;
+import com.zifang.z.kb.api.Workspace;
+import com.zifang.z.kb.core.chunker.Chunker;
+import com.zifang.z.kb.core.embedding.TfIdfEmbeddingProvider;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
+import com.zifang.z.kb.core.extractor.RelationExtractor;
+import com.zifang.z.kb.core.parser.MarkdownParser;
+import com.zifang.z.kb.core.parser.WikilinkExtractor;
+import com.zifang.z.kb.core.search.Bm25Searcher;
+import com.zifang.z.kb.api.EmbeddingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
     private final KnowledgeGraphStore graphStore;
     private final DocumentRepository documentRepository;
     private final Bm25Searcher bm25Searcher;
-    private final ***REMOVED***Metrics metrics;
+    private final KbMetrics metrics;
 
     public DefaultKnowledgeBaseService(MarkdownParser parser, Chunker chunker,
                                          EntityExtractor entityExtractor, RelationExtractor relationExtractor,
@@ -74,7 +74,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
                                          EntityExtractor entityExtractor, RelationExtractor relationExtractor,
                                          EmbeddingProvider embeddingProvider, ChunkVectorStore vectorStore,
                                          KnowledgeGraphStore graphStore, DocumentRepository documentRepository,
-                                         Bm25Searcher bm25Searcher, ***REMOVED***Metrics metrics) {
+                                         Bm25Searcher bm25Searcher, KbMetrics metrics) {
         this.parser = parser;
         this.chunker = chunker;
         this.entityExtractor = entityExtractor;
@@ -411,7 +411,7 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
                         }
                     });
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("Failed to walk directory: " + e.getMessage(), e);
+            throw new KBException("Failed to walk directory: " + e.getMessage(), e);
         }
         return results;
     }
@@ -542,8 +542,8 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
     }
 
     @Override
-    public ***REMOVED***Statistics statistics(String workspace) {
-        ***REMOVED***Statistics stats = new ***REMOVED***Statistics();
+    public KBStatistics statistics(String workspace) {
+        KBStatistics stats = new KBStatistics();
         stats.setWorkspace(workspace);
         stats.setDocumentCount(documentRepository.countByWorkspace(workspace));
         List<Document> docs = documentRepository.listByWorkspace(workspace, 0, Integer.MAX_VALUE);
@@ -572,9 +572,9 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         Map<String, Long> entityTypeDist = new LinkedHashMap<>();
         try {
             // 用 listAllEntities 一次拉全量，比 listEntitiesByType 循环更快
-            java.util.List<com.zifang.z.***REMOVED***.api.Entity> allEnts = graphStore.listAllEntities(workspace, 10000);
+            java.util.List<com.zifang.z.kb.api.Entity> allEnts = graphStore.listAllEntities(workspace, 10000);
             if (allEnts != null) {
-                for (com.zifang.z.***REMOVED***.api.Entity e : allEnts) {
+                for (com.zifang.z.kb.api.Entity e : allEnts) {
                     String t = e.getType() == null ? "UNKNOWN" : e.getType().name();
                     entityTypeDist.merge(t, 1L, Long::sum);
                 }
@@ -582,8 +582,8 @@ public class DefaultKnowledgeBaseService implements KnowledgeBaseService {
         } catch (Throwable ignore) {
             // 旧 graph store 可能未实现 listAllEntities，回退到 listEntitiesByType 循环
             try {
-                for (com.zifang.z.***REMOVED***.api.EntityType t : com.zifang.z.***REMOVED***.api.EntityType.values()) {
-                    java.util.List<com.zifang.z.***REMOVED***.api.Entity> ents = graphStore.listEntitiesByType(workspace, t, 10000);
+                for (com.zifang.z.kb.api.EntityType t : com.zifang.z.kb.api.EntityType.values()) {
+                    java.util.List<com.zifang.z.kb.api.Entity> ents = graphStore.listEntitiesByType(workspace, t, 10000);
                     if (ents != null && !ents.isEmpty()) {
                         entityTypeDist.put(t.name(), (long) ents.size());
                     }

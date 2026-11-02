@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +37,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 评测域 v1 REST 集成测试：QA 集合版本、同步跑批、四层指标、坏例台账与错误码映射。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-eval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-eval-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/eval-api-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/eval-api-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/eval-api-repo",
+        "kb.storage.path=target/test-kb/eval-api-kb.json",
+        "kb.material.storage.root=target/test-kb/eval-api-original",
+        "kb.material.repo.root=target/test-kb/eval-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -74,21 +74,21 @@ class EvaluationApiIntegrationTest {
     @Test
     @DisplayName("全链路：草稿→发布→跑批→复用→详情→逐题→可信证据→概览")
     void datasetRunAndQueryFlow() throws Exception {
-        String ***REMOVED***Id = compiled***REMOVED***("评测全链路库");
+        String kbId = compiledKb("评测全链路库");
 
         Map<String, Object> answerCase = new LinkedHashMap<>();
         answerCase.put("question", "检索增强依赖什么");
         answerCase.put("expectedAnswer", "向量索引");
         answerCase.put("expectedBehavior", "ANSWER");
         answerCase.put("expectedEvidence", Map.of("materialIds",
-                List.of(materialIdOf(***REMOVED***Id))));
+                List.of(materialIdOf(kbId))));
         Map<String, Object> refuseCase = new LinkedHashMap<>();
         refuseCase.put("question", "火星表面的平均温度是多少");
         refuseCase.put("expectedBehavior", "REFUSE");
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/saveDatasetDraft")
+        mvc.perform(post("/api/kb/v1/evaluation/saveDatasetDraft")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "name", "评测 QA 集合",
+                        .content(json(Map.of("kbId", kbId, "name", "评测 QA 集合",
                                 "cases", List.of(answerCase, refuseCase))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -99,17 +99,17 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.status").value("DRAFT"))
                 .andExpect(jsonPath("$.data.caseCount").value(2));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/publishDataset")
+        mvc.perform(post("/api/kb/v1/evaluation/publishDataset")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "expectedVersionNo", 1)))
+                        .content(json(Map.of("kbId", kbId, "expectedVersionNo", 1)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("FROZEN"))
                 .andExpect(jsonPath("$.data.versionNo").value(1));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryDataset")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/queryDataset")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -120,20 +120,20 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.cases[0].expectedBehavior").value("ANSWER"))
                 .andExpect(jsonPath("$.data.cases[1].expectedBehavior").value("REFUSE"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryOverview")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/queryOverview")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.***REMOVED***Id").value(***REMOVED***Id))
+                .andExpect(jsonPath("$.data.kbId").value(kbId))
                 .andExpect(jsonPath("$.data.dataset.versionNo").value(1))
                 .andExpect(jsonPath("$.data.lastRun").doesNotExist())
                 .andExpect(jsonPath("$.data.badcaseCounts.open").value(0))
                 .andExpect(jsonPath("$.data.notConnected.length()").value(4));
 
-        MvcResult created = mvc.perform(post("/api/***REMOVED***/v1/evaluation/createRun")
+        MvcResult created = mvc.perform(post("/api/kb/v1/evaluation/createRun")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -151,16 +151,16 @@ class EvaluationApiIntegrationTest {
         assertTrue(createdData.path("resultUsable").asBoolean(),
                 "同口径全绿的跑批应可用：" + createdData.path("unusableReason").asText());
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/createRun")
+        mvc.perform(post("/api/kb/v1/evaluation/createRun")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.reused").value(true))
                 .andExpect(jsonPath("$.data.runId").value(runId));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryRun")
+        mvc.perform(get("/api/kb/v1/evaluation/queryRun")
                         .param("runId", runId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -176,7 +176,7 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.badcaseCounts.open").value(0))
                 .andExpect(jsonPath("$.data.evidence.length()").value(5));
 
-        MvcResult casePage = mvc.perform(post("/api/***REMOVED***/v1/evaluation/pageCaseResults")
+        MvcResult casePage = mvc.perform(post("/api/kb/v1/evaluation/pageCaseResults")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("runId", runId)))
                         .header("X-Tenant-Code", TENANT)
@@ -195,7 +195,7 @@ class EvaluationApiIntegrationTest {
         assertEquals("REFUSED", byCaseNo.get(2).path("answerMode").asText());
         assertFalse(byCaseNo.get(1).path("answer").asText().isEmpty());
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/pageCaseResults")
+        mvc.perform(post("/api/kb/v1/evaluation/pageCaseResults")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("runId", runId, "onlyBad", true)))
                         .header("X-Tenant-Code", TENANT)
@@ -203,7 +203,7 @@ class EvaluationApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.total").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryTrustEvidence")
+        mvc.perform(get("/api/kb/v1/evaluation/queryTrustEvidence")
                         .param("runId", runId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -214,12 +214,12 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.items[3].code").value("CASE_TRACE"))
                 .andExpect(jsonPath("$.data.items[3].status").value("READY"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/pageKnowledgeBase")
+        mvc.perform(get("/api/kb/v1/evaluation/pageKnowledgeBase")
                         .param("keyword", "评测全链路库")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.records[0].***REMOVED***Id").value(***REMOVED***Id))
+                .andExpect(jsonPath("$.data.records[0].kbId").value(kbId))
                 .andExpect(jsonPath("$.data.records[0].datasetVersion").value(1))
                 .andExpect(jsonPath("$.data.records[0].datasetStatus").value("FROZEN"))
                 .andExpect(jsonPath("$.data.records[0].lastRunId").value(runId))
@@ -227,8 +227,8 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.records[0].coreTotal").value(6))
                 .andExpect(jsonPath("$.data.records[0].openBadcaseCount").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/listBadcases")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/listBadcases")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -239,7 +239,7 @@ class EvaluationApiIntegrationTest {
     @Test
     @DisplayName("坏例台账：失败阶段归因、状态流转与统计")
     void badcaseLifecycle() throws Exception {
-        String ***REMOVED***Id = compiled***REMOVED***("评测坏例库");
+        String kbId = compiledKb("评测坏例库");
 
         Map<String, Object> brokenCase = new LinkedHashMap<>();
         brokenCase.put("question", "检索增强依赖什么");
@@ -250,13 +250,13 @@ class EvaluationApiIntegrationTest {
         healthyCase.put("question", "知识库需要什么");
         healthyCase.put("expectedAnswer", "图谱");
         healthyCase.put("expectedEvidence", Map.of("materialIds",
-                List.of(materialIdOf(***REMOVED***Id))));
+                List.of(materialIdOf(kbId))));
 
-        saveAndPublish(***REMOVED***Id, List.of(brokenCase, healthyCase));
-        String runId = createRun(***REMOVED***Id);
+        saveAndPublish(kbId, List.of(brokenCase, healthyCase));
+        String runId = createRun(kbId);
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/listBadcases")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/listBadcases")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -265,8 +265,8 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.records[0].occurrenceCount").value(1))
                 .andExpect(jsonPath("$.data.records[0].question").value("检索增强依赖什么"));
 
-        MvcResult listed = mvc.perform(get("/api/***REMOVED***/v1/evaluation/listBadcases")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        MvcResult listed = mvc.perform(get("/api/kb/v1/evaluation/listBadcases")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -277,15 +277,15 @@ class EvaluationApiIntegrationTest {
         assertFalse(badcaseId.isEmpty());
         assertFalse(stageCode.isEmpty());
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/listBadcases")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/listBadcases")
+                        .param("kbId", kbId)
                         .param("stageCode", stageCode)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.records[0].stageCode").value(stageCode));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/updateBadcase")
+        mvc.perform(post("/api/kb/v1/evaluation/updateBadcase")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("badcaseId", badcaseId, "status", "FIXED",
                                 "owner", ACTOR, "note", "已补资料")))
@@ -297,16 +297,16 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.owner").value(ACTOR))
                 .andExpect(jsonPath("$.data.note").value("已补资料"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/listBadcases")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/listBadcases")
+                        .param("kbId", kbId)
                         .param("status", "FIXED")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.total").value(1));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryOverview")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/queryOverview")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -316,7 +316,7 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.data.badcaseCounts.fixed").value(1))
                 .andExpect(jsonPath("$.data.badcaseCounts.regressed").value(0));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/updateBadcase")
+        mvc.perform(post("/api/kb/v1/evaluation/updateBadcase")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("badcaseId", "missing-" + UUID.randomUUID(),
                                 "status", "FIXED")))
@@ -326,7 +326,7 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("坏例不存在"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/updateBadcase")
+        mvc.perform(post("/api/kb/v1/evaluation/updateBadcase")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("badcaseId", badcaseId, "status", "UNKNOWN")))
                         .header("X-Tenant-Code", TENANT)
@@ -338,9 +338,9 @@ class EvaluationApiIntegrationTest {
     @Test
     @DisplayName("错误码映射：参数 400、资源 404、状态 409")
     void errorCodeMapping() throws Exception {
-        String ***REMOVED***Id = compiled***REMOVED***("评测错误码库");
+        String kbId = compiledKb("评测错误码库");
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryRun")
+        mvc.perform(get("/api/kb/v1/evaluation/queryRun")
                         .param("runId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -348,41 +348,41 @@ class EvaluationApiIntegrationTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("评测跑批不存在"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/createRun")
+        mvc.perform(post("/api/kb/v1/evaluation/createRun")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "scopeType", "STAGE",
+                        .content(json(Map.of("kbId", kbId, "scopeType", "STAGE",
                                 "stageCode", "S9")))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("评测阶段不合法"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/createRun")
+        mvc.perform(post("/api/kb/v1/evaluation/createRun")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("评测数据集不存在"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/saveDatasetDraft")
+        mvc.perform(post("/api/kb/v1/evaluation/saveDatasetDraft")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "cases", List.of())))
+                        .content(json(Map.of("kbId", kbId, "cases", List.of())))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("评测数据集没有可用题目"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/publishDataset")
+        mvc.perform(post("/api/kb/v1/evaluation/publishDataset")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("评测数据集不存在"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/evaluation/queryDataset")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/evaluation/queryDataset")
+                        .param("kbId", kbId)
                         .param("versionNo", "9")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -392,11 +392,11 @@ class EvaluationApiIntegrationTest {
         Map<String, Object> oneCase = new LinkedHashMap<>();
         oneCase.put("question", "知识库需要什么");
         oneCase.put("expectedAnswer", "图谱");
-        saveAndPublish(***REMOVED***Id, List.of(oneCase));
+        saveAndPublish(kbId, List.of(oneCase));
 
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/publishDataset")
+        mvc.perform(post("/api/kb/v1/evaluation/publishDataset")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
@@ -405,30 +405,30 @@ class EvaluationApiIntegrationTest {
 
     // ------------------------------------------------------------------ 辅助
 
-    private String compiled***REMOVED***(String name) {
-        String ***REMOVED***Id = create***REMOVED***(name);
-        materialService.registerText(***REMOVED***Id, "检索增强资料.md", null, CONTENT,
-                ***REMOVED***Caller.of(TENANT, ACTOR));
-        compilationService.run(materialIdOf(***REMOVED***Id), null, ***REMOVED***Caller.of(TENANT, ACTOR));
-        return ***REMOVED***Id;
+    private String compiledKb(String name) {
+        String kbId = createKb(name);
+        materialService.registerText(kbId, "检索增强资料.md", null, CONTENT,
+                KbCaller.of(TENANT, ACTOR));
+        compilationService.run(materialIdOf(kbId), null, KbCaller.of(TENANT, ACTOR));
+        return kbId;
     }
 
-    private String create***REMOVED***(String name) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName(name);
-        ***REMOVED***.setCode("eval_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        KnowledgeBaseView view = resourceService.create(***REMOVED***, ***REMOVED***Caller.of(TENANT, ACTOR));
-        assertFalse(view.get***REMOVED***Id().isEmpty());
-        return view.get***REMOVED***Id();
+    private String createKb(String name) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName(name);
+        kb.setCode("eval_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        KnowledgeBaseView view = resourceService.create(kb, KbCaller.of(TENANT, ACTOR));
+        assertFalse(view.getKbId().isEmpty());
+        return view.getKbId();
     }
 
-    private String materialIdOf(String ***REMOVED***Id) {
+    private String materialIdOf(String kbId) {
         List<String> ids = new ArrayList<>();
         try {
-            MvcResult result = mvc.perform(post("/api/***REMOVED***/v1/material/page")
+            MvcResult result = mvc.perform(post("/api/kb/v1/material/page")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                            .content(json(Map.of("kbId", kbId)))
                             .header("X-Tenant-Code", TENANT)
                             .header("X-Actor-Id", ACTOR))
                     .andExpect(status().isOk())
@@ -443,27 +443,27 @@ class EvaluationApiIntegrationTest {
         return ids.get(0);
     }
 
-    private void saveAndPublish(String ***REMOVED***Id, List<Map<String, Object>> cases) throws Exception {
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/saveDatasetDraft")
+    private void saveAndPublish(String kbId, List<Map<String, Object>> cases) throws Exception {
+        mvc.perform(post("/api/kb/v1/evaluation/saveDatasetDraft")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "cases", cases)))
+                        .content(json(Map.of("kbId", kbId, "cases", cases)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("DRAFT"));
-        mvc.perform(post("/api/***REMOVED***/v1/evaluation/publishDataset")
+        mvc.perform(post("/api/kb/v1/evaluation/publishDataset")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("FROZEN"));
     }
 
-    private String createRun(String ***REMOVED***Id) throws Exception {
-        MvcResult result = mvc.perform(post("/api/***REMOVED***/v1/evaluation/createRun")
+    private String createRun(String kbId) throws Exception {
+        MvcResult result = mvc.perform(post("/api/kb/v1/evaluation/createRun")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id)))
+                        .content(json(Map.of("kbId", kbId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())

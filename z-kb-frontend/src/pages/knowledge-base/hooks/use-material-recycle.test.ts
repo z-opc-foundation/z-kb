@@ -21,7 +21,7 @@ import { useMaterialRecycle } from './use-material-recycle';
 function material(id: string): MaterialRecord {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: `已删除 ${id}`,
     sourceType: 'UPLOAD',
@@ -39,7 +39,7 @@ function page(records: MaterialRecord[], total = records.length, current = 1) {
 
 function setup(overrides: Partial<Parameters<typeof useMaterialRecycle>[0]> = {}) {
   const params = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     canWrite: true,
     materialType: 'DOCUMENT' as const,
     onChanged: vi.fn(),
@@ -68,7 +68,7 @@ describe('useMaterialRecycle', () => {
     expect(pageDeletedMaterials).toHaveBeenCalledWith({
       current: 1,
       size: 1,
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       materialType: 'DOCUMENT',
     });
   });
@@ -141,7 +141,7 @@ describe('useMaterialRecycle', () => {
     await act(async () => {
       await result.current.restore(result.current.selected);
     });
-    expect(restoreMaterials).toHaveBeenCalledWith('***REMOVED***-1', ['m1']);
+    expect(restoreMaterials).toHaveBeenCalledWith('kb-1', ['m1']);
     expect(toast).toHaveBeenCalledWith('取回完成', '1/1 份资料已恢复', 'success');
     expect(params.onChanged).toHaveBeenCalled();
 
@@ -149,7 +149,7 @@ describe('useMaterialRecycle', () => {
     await act(async () => {
       await result.current.purge(result.current.selected);
     });
-    expect(purgeMaterials).toHaveBeenCalledWith('***REMOVED***-1', ['m1']);
+    expect(purgeMaterials).toHaveBeenCalledWith('kb-1', ['m1']);
     expect(toast).toHaveBeenCalledWith('彻底删除完成', '1/1 份资料已清除', 'success');
     expect(params.onChanged).toHaveBeenCalledTimes(2);
   });

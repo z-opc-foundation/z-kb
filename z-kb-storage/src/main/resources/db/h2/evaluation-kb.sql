@@ -1,13 +1,13 @@
--- z-***REMOVED*** 评估域 H2 元数据表（MySQL 兼容模式，幂等）
--- 与 db/mysql/evaluation-***REMOVED***.sql 保持同构；索引用独立语句。
+-- z-kb 评估域 H2 元数据表（MySQL 兼容模式，幂等）
+-- 与 db/mysql/evaluation-kb.sql 保持同构；索引用独立语句。
 -- id 由应用生成（UUID 字符串），QA 集合按库单份、可版本化；跑批固定集合版本、
--- 配置版本与 Judge 版本，并用 ***REMOVED***_***REMOVED***_snapshot 钉住当时的物料、产物与检索块。
+-- 配置版本与 Judge 版本，并用 kb_kb_snapshot 钉住当时的物料、产物与检索块。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_dataset (
+CREATE TABLE IF NOT EXISTS kb_eval_dataset (
     id VARCHAR(64) NOT NULL,
     dataset_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     name VARCHAR(128) NOT NULL,
     version_no INT NOT NULL,
     status VARCHAR(16) NOT NULL,
@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_dataset (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_dataset_version ON ***REMOVED***_eval_dataset (tenant_code, ***REMOVED***_id, version_no, is_deleted);
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_dataset_id ON ***REMOVED***_eval_dataset (tenant_code, dataset_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_dataset_status ON ***REMOVED***_eval_dataset (tenant_code, ***REMOVED***_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_dataset_version ON kb_eval_dataset (tenant_code, kb_id, version_no, is_deleted);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_dataset_id ON kb_eval_dataset (tenant_code, dataset_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_dataset_status ON kb_eval_dataset (tenant_code, kb_id, status);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case (
+CREATE TABLE IF NOT EXISTS kb_eval_case (
     id VARCHAR(64) NOT NULL,
     case_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
@@ -48,15 +48,15 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_case_id ON ***REMOVED***_eval_case (tenant_code, case_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_case_dataset ON ***REMOVED***_eval_case (tenant_code, dataset_pk);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_case_no ON ***REMOVED***_eval_case (tenant_code, dataset_pk, case_no);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_case_id ON kb_eval_case (tenant_code, case_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_case_dataset ON kb_eval_case (tenant_code, dataset_pk);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_case_no ON kb_eval_case (tenant_code, dataset_pk, case_no);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_run (
+CREATE TABLE IF NOT EXISTS kb_eval_run (
     id VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     dataset_pk VARCHAR(64) NOT NULL,
     dataset_id VARCHAR(64) NOT NULL,
     dataset_version_no INT NOT NULL,
@@ -92,11 +92,11 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_run (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_run_id ON ***REMOVED***_eval_run (tenant_code, run_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_run_***REMOVED*** ON ***REMOVED***_eval_run (tenant_code, ***REMOVED***_id, id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_run_fingerprint ON ***REMOVED***_eval_run (tenant_code, ***REMOVED***_id, input_fingerprint, status, finished_at, id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_run_id ON kb_eval_run (tenant_code, run_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_run_kb ON kb_eval_run (tenant_code, kb_id, id);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_run_fingerprint ON kb_eval_run (tenant_code, kb_id, input_fingerprint, status, finished_at, id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_result (
+CREATE TABLE IF NOT EXISTS kb_eval_result (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL,
@@ -118,10 +118,10 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_result (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_result_metric ON ***REMOVED***_eval_result (tenant_code, run_id, metric_code, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_result_run ON ***REMOVED***_eval_result (tenant_code, run_id, metric_layer);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_result_metric ON kb_eval_result (tenant_code, run_id, metric_code, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_result_run ON kb_eval_result (tenant_code, run_id, metric_layer);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case_result (
+CREATE TABLE IF NOT EXISTS kb_eval_case_result (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     run_id VARCHAR(64) NOT NULL,
@@ -142,13 +142,13 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_case_result (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_case_result ON ***REMOVED***_eval_case_result (tenant_code, run_id, case_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_case_result_run ON ***REMOVED***_eval_case_result (tenant_code, run_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_case_result ON kb_eval_case_result (tenant_code, run_id, case_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_case_result_run ON kb_eval_case_result (tenant_code, run_id);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_badcase (
+CREATE TABLE IF NOT EXISTS kb_eval_badcase (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     case_id VARCHAR(64) NOT NULL,
     stage_code VARCHAR(16) NOT NULL,
     category VARCHAR(64) NOT NULL,
@@ -167,14 +167,14 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_eval_badcase (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_eval_badcase ON ***REMOVED***_eval_badcase (tenant_code, ***REMOVED***_id, case_id, stage_code, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_eval_badcase_status ON ***REMOVED***_eval_badcase (tenant_code, ***REMOVED***_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_eval_badcase ON kb_eval_badcase (tenant_code, kb_id, case_id, stage_code, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_eval_badcase_status ON kb_eval_badcase (tenant_code, kb_id, status);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot (
+CREATE TABLE IF NOT EXISTS kb_kb_snapshot (
     id VARCHAR(64) NOT NULL,
     snapshot_id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL,
+    kb_id VARCHAR(64) NOT NULL,
     config_version VARCHAR(64) NOT NULL,
     ontology_version VARCHAR(64) NOT NULL,
     index_generation VARCHAR(128) NOT NULL,
@@ -191,11 +191,11 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_snapshot_id ON ***REMOVED***_***REMOVED***_snapshot (tenant_code, snapshot_id, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_snapshot_***REMOVED*** ON ***REMOVED***_***REMOVED***_snapshot (tenant_code, ***REMOVED***_id, id);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_snapshot_fingerprint ON ***REMOVED***_***REMOVED***_snapshot (tenant_code, ***REMOVED***_id, fingerprint, index_generation, status);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_snapshot_id ON kb_kb_snapshot (tenant_code, snapshot_id, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_snapshot_kb ON kb_kb_snapshot (tenant_code, kb_id, id);
+CREATE INDEX IF NOT EXISTS idx_kb_snapshot_fingerprint ON kb_kb_snapshot (tenant_code, kb_id, fingerprint, index_generation, status);
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot_item (
+CREATE TABLE IF NOT EXISTS kb_kb_snapshot_item (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
     snapshot_id VARCHAR(64) NOT NULL,
@@ -214,5 +214,5 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_***REMOVED***_snapshot_item (
     update_time TIMESTAMP(3) NULL,
     PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS uk_***REMOVED***_snapshot_item ON ***REMOVED***_***REMOVED***_snapshot_item (tenant_code, snapshot_id, item_key, is_deleted);
-CREATE INDEX IF NOT EXISTS idx_***REMOVED***_snapshot_item_version ON ***REMOVED***_***REMOVED***_snapshot_item (tenant_code, material_version_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_kb_snapshot_item ON kb_kb_snapshot_item (tenant_code, snapshot_id, item_key, is_deleted);
+CREATE INDEX IF NOT EXISTS idx_kb_snapshot_item_version ON kb_kb_snapshot_item (tenant_code, material_version_id);

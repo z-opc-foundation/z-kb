@@ -16,7 +16,7 @@ export interface CategoryNode {
   children?: CategoryNode[];
 }
 
-const BASE = '/***REMOVED***/v1/materialCategory';
+const BASE = '/kb/v1/materialCategory';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -29,21 +29,21 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
   }
 }
 
-export function getCategoryTree(***REMOVED***Id: string) {
+export function getCategoryTree(kbId: string) {
   return call(() =>
     request<CategoryNode[]>(`${BASE}/tree`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function createCategory(***REMOVED***Id: string, name: string, parentId?: string) {
+export function createCategory(kbId: string, name: string, parentId?: string) {
   return call(() =>
     request<CategoryNode>(`${BASE}/add`, {
       method: 'post',
-      data: { ***REMOVED***Id, name, parentId },
+      data: { kbId, name, parentId },
       headers: tenantHeaders(),
     }),
   );

@@ -81,8 +81,8 @@ export default function SourceSyncDrawer({ sync }: SourceSyncDrawerProps) {
               <div className="scope-book" key={book.namespace}>
                 <div className="scope-book-row">
                   <input
-                    className="chec***REMOVED***ox"
-                    type="chec***REMOVED***ox"
+                    className="checkbox"
+                    type="checkbox"
                     checked={!!picked}
                     aria-label={`同步知识库 ${book.name}`}
                     onChange={() => toggleBook(book.namespace, book.name)}
@@ -118,8 +118,8 @@ export default function SourceSyncDrawer({ sync }: SourceSyncDrawerProps) {
                     {(cache?.docs ?? []).map((doc) => (
                       <label className="scope-doc" key={doc.slug}>
                         <input
-                          className="chec***REMOVED***ox"
-                          type="chec***REMOVED***ox"
+                          className="checkbox"
+                          type="checkbox"
                           checked={picked.docs.some((entry) => entry.slug === doc.slug)}
                           onChange={() => toggleDoc(book.namespace, doc)}
                         />

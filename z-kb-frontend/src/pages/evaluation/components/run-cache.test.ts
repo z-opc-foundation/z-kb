@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { EvalRunRecord } from '@/services/evaluation';
 import { mergeRunRecords, readKnownRuns, writeKnownRuns } from './run-cache';
 
-const KEY = '***REMOVED***.eval-runs.***REMOVED***_demo.***REMOVED***-1';
+const KEY = 'kb.eval-runs.kb_demo.kb-1';
 
 function run(
   runId: string,
@@ -19,12 +19,12 @@ beforeEach(() => {
 
 describe('run-cache 会话缓存', () => {
   it('未写入时返回空数组', () => {
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([]);
+    expect(readKnownRuns('kb-1')).toEqual([]);
   });
 
   it('写入后可读回同一批跑批记录', () => {
-    writeKnownRuns('***REMOVED***-1', [run('run-1', '2026-10-20T10:00:00')]);
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([
+    writeKnownRuns('kb-1', [run('run-1', '2026-10-20T10:00:00')]);
+    expect(readKnownRuns('kb-1')).toEqual([
       { runId: 'run-1', finishedAt: '2026-10-20T10:00:00' },
     ]);
   });
@@ -33,29 +33,29 @@ describe('run-cache 会话缓存', () => {
     const runs = Array.from({ length: 35 }, (_, index) =>
       run(`run-${index}`, `2026-10-01T00:00:${String(index).padStart(2, '0')}`),
     );
-    writeKnownRuns('***REMOVED***-1', runs);
-    expect(readKnownRuns('***REMOVED***-1')).toHaveLength(30);
-    expect(readKnownRuns('***REMOVED***-1')[0].runId).toBe('run-0');
+    writeKnownRuns('kb-1', runs);
+    expect(readKnownRuns('kb-1')).toHaveLength(30);
+    expect(readKnownRuns('kb-1')[0].runId).toBe('run-0');
   });
 
   it('损坏 JSON 或非数组内容回退为空数组', () => {
     sessionStorage.setItem(KEY, '{bad json');
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([]);
+    expect(readKnownRuns('kb-1')).toEqual([]);
 
     sessionStorage.setItem(KEY, JSON.stringify({ runId: 'x' }));
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([]);
+    expect(readKnownRuns('kb-1')).toEqual([]);
   });
 
   it('按租户与知识库隔离', () => {
-    writeKnownRuns('***REMOVED***-1', [run('run-1')]);
-    localStorage.setItem('***REMOVED***.tenant-code', 'other_hospital');
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([]);
+    writeKnownRuns('kb-1', [run('run-1')]);
+    localStorage.setItem('kb.tenant-code', 'other_hospital');
+    expect(readKnownRuns('kb-1')).toEqual([]);
 
-    writeKnownRuns('***REMOVED***-1', [run('run-2')]);
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([{ runId: 'run-2' }]);
+    writeKnownRuns('kb-1', [run('run-2')]);
+    expect(readKnownRuns('kb-1')).toEqual([{ runId: 'run-2' }]);
 
-    localStorage.setItem('***REMOVED***.tenant-code', '***REMOVED***_demo');
-    expect(readKnownRuns('***REMOVED***-1')).toEqual([{ runId: 'run-1' }]);
+    localStorage.setItem('kb.tenant-code', 'kb_demo');
+    expect(readKnownRuns('kb-1')).toEqual([{ runId: 'run-1' }]);
   });
 });
 

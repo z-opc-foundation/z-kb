@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.ingest.util;
+package com.zifang.z.kb.ingest.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

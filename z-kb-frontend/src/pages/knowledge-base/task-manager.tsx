@@ -133,7 +133,7 @@ function statusOf(
 }
 
 interface TaskManagerProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   canManage: boolean;
   canCompile?: boolean;
   focusBatchId?: string;
@@ -142,7 +142,7 @@ interface TaskManagerProps {
 }
 
 export default function TaskManager({
-  ***REMOVED***Id,
+  kbId,
   canManage,
   canCompile = canManage,
   focusBatchId,
@@ -184,21 +184,21 @@ export default function TaskManager({
   const [newMaterialId, setNewMaterialId] = useState('');
 
   const loadSummary = useCallback(async () => {
-    const data = await getTaskSummary(***REMOVED***Id);
+    const data = await getTaskSummary(kbId);
     if (data) {
       setGroupTotal(Number(data.groupTotal) || 0);
       setJobTotal(Number(data.jobTotal) || 0);
       setTaskTotal(Number(data.taskTotal) || 0);
       setSummaryReady(true);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const loadGroups = useCallback(async (silent = false) => {
     if (!silent) {
       setGroupLoading(true);
     }
     try {
-      const data = await pageCompilationBatches(***REMOVED***Id, groupPage, GROUP_PAGE_SIZE);
+      const data = await pageCompilationBatches(kbId, groupPage, GROUP_PAGE_SIZE);
       if (data) {
         setGroups(data.records);
         setGroupTotal(Number(data.total) || 0);
@@ -208,7 +208,7 @@ export default function TaskManager({
         setGroupLoading(false);
       }
     }
-  }, [***REMOVED***Id, groupPage]);
+  }, [kbId, groupPage]);
 
   const loadJobs = useCallback(async (silent = false) => {
     if (!silent) {
@@ -216,8 +216,8 @@ export default function TaskManager({
     }
     try {
       const [jobData, materialData] = await Promise.all([
-        listCompilationJobs(***REMOVED***Id, undefined, 50),
-        pageMaterial({ ***REMOVED***Id, current: 1, size: 100 }),
+        listCompilationJobs(kbId, undefined, 50),
+        pageMaterial({ kbId, current: 1, size: 100 }),
       ]);
       if (jobData) {
         setJobs(jobData);
@@ -230,7 +230,7 @@ export default function TaskManager({
         setLoading(false);
       }
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const loadTasks = useCallback(async (silent = false) => {
     if (!silent) {
@@ -238,7 +238,7 @@ export default function TaskManager({
     }
     try {
       const data = await pageTasks({
-        ***REMOVED***Id,
+        kbId,
         taskType: taskType || undefined,
         status: taskStatus || undefined,
         pageNo: taskPage,
@@ -253,7 +253,7 @@ export default function TaskManager({
         setTaskLoading(false);
       }
     }
-  }, [***REMOVED***Id, taskPage, taskStatus, taskType]);
+  }, [kbId, taskPage, taskStatus, taskType]);
 
   useEffect(() => {
     void loadSummary();
@@ -576,7 +576,7 @@ export default function TaskManager({
       </div>
 
       {tab === 'obs' ? (
-        <ObservabilityTab ***REMOVED***Id={***REMOVED***Id} />
+        <ObservabilityTab kbId={kbId} />
       ) : listLoading ? (
         <section className="panel">
           <div className="empty">
@@ -612,7 +612,7 @@ export default function TaskManager({
               </p>
               <a
                 className="btn mt-12"
-                href={`#/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace`}
+                href={`#/knowledge-bases/${encodeURIComponent(kbId)}/workspace`}
               >
                 去知识工作台
                 <Icon name="arrow-right" size={13} />

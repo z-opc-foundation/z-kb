@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 /**
  * 知识库类型（对齐参考实现 knowledgeBase.type）。

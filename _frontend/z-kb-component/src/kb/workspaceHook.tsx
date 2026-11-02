@@ -1,10 +1,10 @@
-/** 工作区选择 hook + 页面包装器（原 z-***REMOVED***-frontend App.tsx 的 currentWs 状态抽离）。 */
+/** 工作区选择 hook + 页面包装器（原 z-kb-frontend App.tsx 的 currentWs 状态抽离）。 */
 import {useEffect, useState} from 'react'
 import {WorkspaceAPI} from './services/api'
 
-const WS_KEY = '***REMOVED***_workspace'
+const WS_KEY = 'kb_workspace'
 
-export function use***REMOVED***Workspace() {
+export function useKbWorkspace() {
     const [workspaces, setWorkspaces] = useState([])
     const [workspace, setWorkspace] = useState(
         (typeof window !== 'undefined' && window.localStorage.getItem(WS_KEY)) || 'default')
@@ -26,10 +26,10 @@ export function use***REMOVED***Workspace() {
     return {workspaces, workspace, setWorkspace}
 }
 
-/** 页面包装器：***REMOVED*** 页面都吃 {workspace} prop。 */
-export function with***REMOVED***Workspace(Page) {
-    return function ***REMOVED***WorkspacePage() {
-        const {workspace} = use***REMOVED***Workspace()
+/** 页面包装器：kb 页面都吃 {workspace} prop。 */
+export function withKbWorkspace(Page) {
+    return function KbWorkspacePage() {
+        const {workspace} = useKbWorkspace()
         return <Page workspace={workspace}/>
     }
 }

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库内容快照（***REMOVED***_***REMOVED***_snapshot）：只在跑批等时刻生成。
+ * 知识库内容快照（kb_kb_snapshot）：只在跑批等时刻生成。
  */
-@TableName("***REMOVED***_***REMOVED***_snapshot")
-public class ***REMOVED***SnapshotEntity {
+@TableName("kb_kb_snapshot")
+public class KbSnapshotEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String snapshotId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String configVersion;
     private String ontologyVersion;
     private String indexGeneration;
@@ -56,12 +56,12 @@ public class ***REMOVED***SnapshotEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getConfigVersion() {

@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseActivityPoint;
-import com.zifang.z.***REMOVED***.storage.resource.entity.***REMOVED***AuditLogEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.***REMOVED***ActivityRow;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.***REMOVED***AuditLogMapper;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseActivityPoint;
+import com.zifang.z.kb.storage.resource.entity.KbAuditLogEntity;
+import com.zifang.z.kb.storage.resource.mapper.KbActivityRow;
+import com.zifang.z.kb.storage.resource.mapper.KbAuditLogMapper;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -20,27 +20,27 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 知识库审计与活跃度：成功写操作落 ***REMOVED***_audit_log，热力图按库 + 自然日聚合。
+ * 知识库审计与活跃度：成功写操作落 kb_audit_log，热力图按库 + 自然日聚合。
  */
-public class ***REMOVED***AuditService {
+public class KbAuditService {
 
     private static final int DEFAULT_DAYS = 168;
     private static final int MAX_DAYS = 365;
     private static final int MAX_DETAIL_LENGTH = 1000;
 
-    private final ***REMOVED***AuditLogMapper auditLogMapper;
+    private final KbAuditLogMapper auditLogMapper;
 
-    public ***REMOVED***AuditService(***REMOVED***AuditLogMapper auditLogMapper) {
+    public KbAuditService(KbAuditLogMapper auditLogMapper) {
         this.auditLogMapper = auditLogMapper;
     }
 
     /** 记录一次成功写操作（失败操作不落库，避免污染活跃度）。 */
-    public void record(***REMOVED***Caller caller, String ***REMOVED***Id, String action,
+    public void record(KbCaller caller, String kbId, String action,
                        String targetType, String targetId, String detail) {
-        ***REMOVED***AuditLogEntity entity = new ***REMOVED***AuditLogEntity();
+        KbAuditLogEntity entity = new KbAuditLogEntity();
         entity.setId(UUID.randomUUID().toString());
         entity.setTenantCode(caller.getTenantCode());
-        entity.set***REMOVED***Id(***REMOVED***Id);
+        entity.setKbId(kbId);
         entity.setActorId(caller.getActorId());
         entity.setAction(action);
         entity.setTargetType(targetType);
@@ -54,8 +54,8 @@ public class ***REMOVED***AuditService {
 
     /** 批量聚合近 days 天每日操作次数，结果按日期升序；days ≤ 0 默认 168，上限 365。 */
     public Map<String, List<KnowledgeBaseActivityPoint>> heatmap(String tenantCode,
-                                                                 List<String> ***REMOVED***Ids, int days) {
-        List<String> ids = normalizeIds(***REMOVED***Ids);
+                                                                 List<String> kbIds, int days) {
+        List<String> ids = normalizeIds(kbIds);
         if (ids.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -64,11 +64,11 @@ public class ***REMOVED***AuditService {
         Instant start = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         Map<String, List<KnowledgeBaseActivityPoint>> result = new LinkedHashMap<>();
-        for (***REMOVED***ActivityRow row : auditLogMapper.countByDay(tenantCode, ids, start)) {
-            if (row.get***REMOVED***Id() == null || row.getActDate() == null) {
+        for (KbActivityRow row : auditLogMapper.countByDay(tenantCode, ids, start)) {
+            if (row.getKbId() == null || row.getActDate() == null) {
                 continue;
             }
-            result.computeIfAbsent(row.get***REMOVED***Id(), key -> new ArrayList<>())
+            result.computeIfAbsent(row.getKbId(), key -> new ArrayList<>())
                     .add(new KnowledgeBaseActivityPoint(row.getActDate().toString(),
                             row.getTotal() == null ? 0L : row.getTotal()));
         }
@@ -78,14 +78,14 @@ public class ***REMOVED***AuditService {
         return result;
     }
 
-    private List<String> normalizeIds(List<String> ***REMOVED***Ids) {
-        if (***REMOVED***Ids == null || ***REMOVED***Ids.isEmpty()) {
+    private List<String> normalizeIds(List<String> kbIds) {
+        if (kbIds == null || kbIds.isEmpty()) {
             return Collections.emptyList();
         }
         Set<String> unique = new LinkedHashSet<>();
-        for (String ***REMOVED***Id : ***REMOVED***Ids) {
-            if (***REMOVED***Id != null && !***REMOVED***Id.trim().isEmpty()) {
-                unique.add(***REMOVED***Id.trim());
+        for (String kbId : kbIds) {
+            if (kbId != null && !kbId.trim().isEmpty()) {
+                unique.add(kbId.trim());
             }
         }
         return new ArrayList<>(unique);

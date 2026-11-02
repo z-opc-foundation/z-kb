@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
  * 数据集发布参数：带期望版本号做乐观校验。
  */
 public class EvalDatasetPublishParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private Integer expectedVersionNo;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public Integer getExpectedVersionNo() {

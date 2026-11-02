@@ -1,8 +1,8 @@
 /**
- * z-***REMOVED*** 协议层 —— REST 接口的数据契约。
+ * z-kb 协议层 —— REST 接口的数据契约。
  *
  * <p>本包只放**跨模块共享的传输对象**：请求体、响应体、以及错误信封。
- * 领域模型（{@code com.zifang.z.***REMOVED***.api.*}）归 api 模块，运行时编排归各实现模块，
+ * 领域模型（{@code com.zifang.z.kb.api.*}）归 api 模块，运行时编排归各实现模块，
  * 这里一概不放 —— 协议层一旦渗进领域逻辑，就会被业务实现反向污染。
  *
  * <p>划分依据是"原先用裸 {@code Map<String,Object>} 收发的那几条边"。
@@ -17,4 +17,4 @@
  *       建模等于把实现细节抄一遍；它只出现在一个 GET 上，Swagger 读反射即可。</li>
  * </ul>
  */
-package com.zifang.z.***REMOVED***.protocol;
+package com.zifang.z.kb.protocol;

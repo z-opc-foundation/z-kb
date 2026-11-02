@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.resource.retrieval;
+package com.zifang.z.kb.resource.retrieval;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.retrieval.KnowledgeRetrievalService;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalHitView;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalQueryParam;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalResultView;
-import com.zifang.z.***REMOVED***.core.retrieval.LocalHashEmbedding;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialEntity;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.retrieval.KnowledgeRetrievalService;
+import com.zifang.z.kb.api.retrieval.RetrievalHitView;
+import com.zifang.z.kb.api.retrieval.RetrievalQueryParam;
+import com.zifang.z.kb.api.retrieval.RetrievalResultView;
+import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.storage.material.entity.MaterialEntity;
+import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -57,11 +57,11 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
     }
 
     @Override
-    public RetrievalResultView retrieve(RetrievalQueryParam param, ***REMOVED***Caller caller) {
-        if (param == null || !hasText(param.get***REMOVED***Id()) || !hasText(param.getQuery())) {
+    public RetrievalResultView retrieve(RetrievalQueryParam param, KbCaller caller) {
+        if (param == null || !hasText(param.getKbId()) || !hasText(param.getQuery())) {
             throw paramInvalid();
         }
-        String ***REMOVED***Id = param.get***REMOVED***Id().trim();
+        String kbId = param.getKbId().trim();
         String query = param.getQuery().trim();
         if (query.length() > MAX_QUERY_LENGTH) {
             throw paramInvalid();
@@ -69,7 +69,7 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         String mode = hasText(param.getMode())
                 ? param.getMode().trim().toLowerCase(Locale.ROOT) : MODE_DENSE;
         if (!MODE_DENSE.equals(mode)) {
-            throw new ***REMOVED***Exception("***REMOVED***RETRIEVAL_MODE_UNSUPPORTED", "当前只开放向量（dense）检索");
+            throw new KBException("KB_RETRIEVAL_MODE_UNSUPPORTED", "当前只开放向量（dense）检索");
         }
         int topK = param.getTopK() == null ? DEFAULT_TOP_K : param.getTopK();
         if (topK < 1 || topK > MAX_TOP_K) {
@@ -79,10 +79,10 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         if (minScore < 0.0d || minScore > 1.0d) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id, caller);
+        resourceService.requireReadable(kbId, caller);
 
         long started = System.currentTimeMillis();
-        List<RetrievalChunkEntity> raw = listIndexedBy***REMOVED***(caller.getTenantCode(), ***REMOVED***Id, MAX_SCAN + 1);
+        List<RetrievalChunkEntity> raw = listIndexedByKb(caller.getTenantCode(), kbId, MAX_SCAN + 1);
         boolean truncated = raw.size() > MAX_SCAN;
         if (truncated) {
             raw = new ArrayList<>(raw.subList(0, MAX_SCAN));
@@ -162,7 +162,7 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         attachSectionContext(caller.getTenantCode(), hits);
 
         RetrievalResultView result = new RetrievalResultView();
-        result.set***REMOVED***Id(***REMOVED***Id);
+        result.setKbId(kbId);
         result.setQuery(query);
         result.setMode(MODE_DENSE);
         result.setEmbeddingModel(embedding.model());
@@ -177,10 +177,10 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         return result;
     }
 
-    private List<RetrievalChunkEntity> listIndexedBy***REMOVED***(String tenantCode, String ***REMOVED***Id, int limit) {
+    private List<RetrievalChunkEntity> listIndexedByKb(String tenantCode, String kbId, int limit) {
         QueryWrapper<RetrievalChunkEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("chunk_role", "PASSAGE")
                 .eq("index_state", "INDEXED")
                 .eq("is_deleted", 0)
@@ -206,7 +206,7 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         return result;
     }
 
-    private void backfillEmbedding(RetrievalChunkEntity chunk, double[] vector, ***REMOVED***Caller caller) {
+    private void backfillEmbedding(RetrievalChunkEntity chunk, double[] vector, KbCaller caller) {
         String encoded = embedding.encode(vector);
         UpdateWrapper<RetrievalChunkEntity> update = new UpdateWrapper<>();
         update.eq("tenant_code", caller.getTenantCode())
@@ -270,8 +270,8 @@ public class DefaultKnowledgeRetrievalService implements KnowledgeRetrievalServi
         return value != null && !value.trim().isEmpty();
     }
 
-    private static ***REMOVED***Exception paramInvalid() {
-        return new ***REMOVED***Exception("***REMOVED***RETRIEVAL_PARAM_INVALID", "检索参数不合法");
+    private static KBException paramInvalid() {
+        return new KBException("KB_RETRIEVAL_PARAM_INVALID", "检索参数不合法");
     }
 
     private record ScoredChunk(RetrievalChunkEntity chunk, double score) {

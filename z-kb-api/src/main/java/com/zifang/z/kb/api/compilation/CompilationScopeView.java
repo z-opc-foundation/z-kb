@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.compilation;
+package com.zifang.z.kb.api.compilation;
 
 /**
  * 作业冻结的输入条目，多文件作业用它展示成员。

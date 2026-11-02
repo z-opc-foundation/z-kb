@@ -46,7 +46,7 @@ import { useMaterialDetail } from './use-material-detail';
 
 const MATERIAL: MaterialRecord = {
   materialId: 'm1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialType: 'DOCUMENT',
   title: '护理制度',
   sourceType: 'UPLOAD',
@@ -89,7 +89,7 @@ function detail(overrides: Partial<MaterialDetailRecord> = {}): MaterialDetailRe
 function job(overrides: Partial<CompilationJobRecord> = {}): CompilationJobRecord {
   return {
     jobId: 'job-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'm1',
     materialVersionId: 'v1',
     pipelineType: 'M1',
@@ -120,7 +120,7 @@ function setup(
   overrides: Partial<Parameters<typeof useMaterialDetail>[0]> = {},
 ) {
   const params = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     onMaterialsChanged: vi.fn(),
     ...overrides,
   };
@@ -282,7 +282,7 @@ describe('useMaterialDetail', () => {
       await result.current.submitRevise(file);
     });
 
-    expect(reviseMaterial).toHaveBeenCalledWith('***REMOVED***-1', 'm1', file);
+    expect(reviseMaterial).toHaveBeenCalledWith('kb-1', 'm1', file);
     expect(toast).toHaveBeenCalledWith('新版本已登记', '新版本已登记', 'success');
     expect(result.current.versionUploading).toBe(false);
     expect(result.current.detail?.material.title).toBe('护理制度（修订）');

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.compilation.entity;
+package com.zifang.z.kb.storage.compilation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 产物登记簿（***REMOVED***_artifact）。一件产物一行，内容仍在各自结构表。
+ * 产物登记簿（kb_artifact）。一件产物一行，内容仍在各自结构表。
  */
-@TableName("***REMOVED***_artifact")
+@TableName("kb_artifact")
 public class ArtifactEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String artifactId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String artifactType;
@@ -57,12 +57,12 @@ public class ArtifactEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

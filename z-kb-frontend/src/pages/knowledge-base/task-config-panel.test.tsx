@@ -1,13 +1,13 @@
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderAt } from '@/test/render';
-import { get***REMOVED***TaskConfig, publish***REMOVED***TaskConfig } from '@/services/taskConfig';
+import { getKbTaskConfig, publishKbTaskConfig } from '@/services/taskConfig';
 import { toast } from '@/utils/toast';
 import TaskConfigPanel from './task-config-panel';
 
 vi.mock('@/services/taskConfig', () => ({
-  get***REMOVED***TaskConfig: vi.fn(),
-  publish***REMOVED***TaskConfig: vi.fn(),
+  getKbTaskConfig: vi.fn(),
+  publishKbTaskConfig: vi.fn(),
 }));
 
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
@@ -46,13 +46,13 @@ const PANEL = {
 };
 
 function renderPanel(canManage = true) {
-  return renderAt(<TaskConfigPanel ***REMOVED***Id="***REMOVED***-1" canManage={canManage} />, { route: '/settings' });
+  return renderAt(<TaskConfigPanel kbId="kb-1" canManage={canManage} />, { route: '/settings' });
 }
 
 describe('库级任务配置面板', () => {
   beforeEach(() => {
-    vi.mocked(get***REMOVED***TaskConfig).mockResolvedValue(PANEL);
-    vi.mocked(publish***REMOVED***TaskConfig).mockResolvedValue({
+    vi.mocked(getKbTaskConfig).mockResolvedValue(PANEL);
+    vi.mocked(publishKbTaskConfig).mockResolvedValue({
       ...PANEL,
       version: '2026.10-r3',
       items: PANEL.items,
@@ -70,7 +70,7 @@ describe('库级任务配置面板', () => {
     expect(screen.getByText('正在加载任务配置…')).toBeTruthy();
 
     expect(await screen.findByText('版本 2026.10-r2')).toBeTruthy();
-    expect(get***REMOVED***TaskConfig).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getKbTaskConfig).toHaveBeenCalledWith('kb-1');
     expect(screen.getByText(/操作者 42/)).toBeTruthy();
     expect(screen.getByText(/可编辑并发布新版本/)).toBeTruthy();
     expect(screen.getByText(/只对本库生效/)).toBeTruthy();
@@ -95,7 +95,7 @@ describe('库级任务配置面板', () => {
   });
 
   it('加载失败显示错误并可重试恢复', async () => {
-    vi.mocked(get***REMOVED***TaskConfig).mockResolvedValueOnce(undefined);
+    vi.mocked(getKbTaskConfig).mockResolvedValueOnce(undefined);
 
     renderPanel();
 
@@ -103,7 +103,7 @@ describe('库级任务配置面板', () => {
     fireEvent.click(screen.getByRole('button', { name: /重试/ }));
 
     expect(await screen.findByText('文档编译')).toBeTruthy();
-    expect(get***REMOVED***TaskConfig).toHaveBeenCalledTimes(2);
+    expect(getKbTaskConfig).toHaveBeenCalledTimes(2);
   });
 
   it('查看抽屉展示完整配置并可关闭', async () => {
@@ -144,9 +144,9 @@ describe('库级任务配置面板', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /保存并发布/ }));
 
-    await waitFor(() => expect(publish***REMOVED***TaskConfig).toHaveBeenCalledTimes(1));
-    const [***REMOVED***Id, items] = vi.mocked(publish***REMOVED***TaskConfig).mock.calls[0];
-    expect(***REMOVED***Id).toBe('***REMOVED***-1');
+    await waitFor(() => expect(publishKbTaskConfig).toHaveBeenCalledTimes(1));
+    const [kbId, items] = vi.mocked(publishKbTaskConfig).mock.calls[0];
+    expect(kbId).toBe('kb-1');
     expect(items).toHaveLength(2);
     expect(items[0]).toEqual({
       taskNature: 'COMPILE',
@@ -186,7 +186,7 @@ describe('库级任务配置面板', () => {
     fireEvent.change(executor, { target: { value: '   ' } });
     fireEvent.click(screen.getByRole('button', { name: /保存并发布/ }));
     expect(toast).toHaveBeenCalledWith('不能发布', '执行器不能为空', 'warn');
-    expect(publish***REMOVED***TaskConfig).not.toHaveBeenCalled();
+    expect(publishKbTaskConfig).not.toHaveBeenCalled();
 
     fireEvent.change(executor, { target: { value: 'compile-worker' } });
     fireEvent.change(screen.getByDisplayValue('600'), { target: { value: '90000' } });
@@ -197,7 +197,7 @@ describe('库级任务配置面板', () => {
     fireEvent.change(screen.getByDisplayValue('2'), { target: { value: '6' } });
     fireEvent.click(screen.getByRole('button', { name: /保存并发布/ }));
     expect(toast).toHaveBeenCalledWith('不能发布', '重试次数需在 0–5 之间', 'warn');
-    expect(publish***REMOVED***TaskConfig).not.toHaveBeenCalled();
+    expect(publishKbTaskConfig).not.toHaveBeenCalled();
   });
 
   it('取消编辑不提交', async () => {
@@ -210,7 +210,7 @@ describe('库级任务配置面板', () => {
     fireEvent.click(screen.getByRole('button', { name: '取消' }));
 
     await waitFor(() => expect(screen.queryByText('编辑 · 效果测评')).toBeNull());
-    expect(publish***REMOVED***TaskConfig).not.toHaveBeenCalled();
+    expect(publishKbTaskConfig).not.toHaveBeenCalled();
     expect(screen.getByText('qa-worker')).toBeTruthy();
   });
 });

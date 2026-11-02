@@ -1,23 +1,23 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
  * 跑批创建参数。
  */
 public class EvalRunCreateParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private Integer datasetVersionNo;
     private String baselineRunId;
     private Boolean allowReuse = Boolean.TRUE;
     private String scopeType;
     private String stageCode;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public Integer getDatasetVersionNo() {

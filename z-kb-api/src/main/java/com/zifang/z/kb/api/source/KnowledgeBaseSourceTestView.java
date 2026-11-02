@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 /**
  * 接入源连通性探测结果：只回答能不能连通，不落库、不产生任务。

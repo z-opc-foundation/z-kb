@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
+import com.zifang.z.kb.api.resource.KbCaller;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ import java.util.List;
 public interface MaterialRepoBrowseService {
 
     /** 项目概览：仓库坐标、分支与提交、文件统计与根目录子项。 */
-    RepoOverview overview(String materialId, ***REMOVED***Caller caller);
+    RepoOverview overview(String materialId, KbCaller caller);
 
     /** 列出目录下的直接子项，目录在前；path 为空表示根目录。 */
-    List<RepoEntry> listEntries(String materialId, String path, ***REMOVED***Caller caller);
+    List<RepoEntry> listEntries(String materialId, String path, KbCaller caller);
 
     /** 读取单个文件正文；二进制文件只标记，超长文本截断后返回。 */
-    RepoFile readFile(String materialId, String path, ***REMOVED***Caller caller);
+    RepoFile readFile(String materialId, String path, KbCaller caller);
 }

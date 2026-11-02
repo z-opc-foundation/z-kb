@@ -5,8 +5,8 @@ import type { EvalOverview, EvalRunDetail } from '@/services/evaluation';
 import OverviewView from './overview-view';
 
 const OVERVIEW: EvalOverview = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   dataset: {
     versionNo: 'v3',
     status: 'PUBLISHED',
@@ -40,7 +40,7 @@ const OVERVIEW: EvalOverview = {
 const RUN_DETAIL: EvalRunDetail = {
   run: {
     runId: 'run-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'COMPLETED',
     resultUsable: true,
     datasetVersionNo: 'v3',
@@ -167,7 +167,7 @@ describe('OverviewView', () => {
   it('QA 版本缺失时提示需先发布', () => {
     renderView({
       overview: {
-        ***REMOVED***Id: '***REMOVED***-1',
+        kbId: 'kb-1',
         dataset: { status: 'DRAFT', caseCount: null },
         notConnected: null,
         evidence: null,

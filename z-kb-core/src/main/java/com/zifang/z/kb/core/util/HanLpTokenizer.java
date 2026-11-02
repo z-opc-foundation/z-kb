@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.util;
+package com.zifang.z.kb.core.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

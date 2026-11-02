@@ -19,7 +19,7 @@ function renderTab() {
   return render(
     <MemoryRouter initialEntries={['/']}>
       <Routes>
-        <Route path="/" element={<MaterialWikiTab ***REMOVED***Id="***REMOVED***-1" materialId="mat-1" />} />
+        <Route path="/" element={<MaterialWikiTab kbId="kb-1" materialId="mat-1" />} />
         <Route path="*" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>,
@@ -29,7 +29,7 @@ function renderTab() {
 const PAGES: WikiPageRecord[] = [
   {
     wikiId: 'wiki-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-1',
     title: '排班管理制度',
     pointCount: 4,
@@ -39,7 +39,7 @@ const PAGES: WikiPageRecord[] = [
   },
   {
     wikiId: 'wiki-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-1',
     title: '交接班规范',
     pointCount: 2,
@@ -70,7 +70,7 @@ describe('资料 Wiki 页签', () => {
 
     fireEvent.click(screen.getByText('排班管理制度'));
     expect(screen.getByTestId('location').textContent).toBe(
-      '/knowledge-bases/***REMOVED***-1/workspace?view=wiki&wikiId=wiki-1',
+      '/knowledge-bases/kb-1/workspace?view=wiki&wikiId=wiki-1',
     );
   });
 

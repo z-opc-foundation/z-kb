@@ -1,20 +1,20 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 知识库更新请求。
  */
 public class KnowledgeBaseUpdateRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String description;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

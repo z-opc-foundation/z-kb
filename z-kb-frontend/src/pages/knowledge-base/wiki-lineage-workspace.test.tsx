@@ -11,7 +11,7 @@ import WikiLineageWorkspace from './wiki-lineage-workspace';
 import { getWikiLineage, listWikiPages } from '@/services/wiki';
 import {
   getConcept,
-  listConceptsBy***REMOVED***,
+  listConceptsByKb,
   type ConceptRecord,
 } from '@/services/concept';
 
@@ -21,7 +21,7 @@ vi.mock('@/services/wiki', () => ({
 }));
 
 vi.mock('@/services/concept', () => ({
-  listConceptsBy***REMOVED***: vi.fn(),
+  listConceptsByKb: vi.fn(),
   getConcept: vi.fn(),
 }));
 
@@ -80,7 +80,7 @@ describe('Wiki 图谱工作区', () => {
   beforeEach(() => {
     vi.mocked(listWikiPages).mockResolvedValue([]);
     vi.mocked(getWikiLineage).mockResolvedValue(lineage);
-    vi.mocked(listConceptsBy***REMOVED***).mockResolvedValue([concept]);
+    vi.mocked(listConceptsByKb).mockResolvedValue([concept]);
     vi.mocked(getConcept).mockResolvedValue({
       concept,
       mentions: [
@@ -104,7 +104,7 @@ describe('Wiki 图谱工作区', () => {
   });
 
   it('在节点树中展示概念，并可从概念节点打开详情', async () => {
-    const { container } = render(<WikiLineageWorkspace ***REMOVED***Id="***REMOVED***-1" />);
+    const { container } = render(<WikiLineageWorkspace kbId="kb-1" />);
 
     const tree = await waitFor(() => {
       const el = container.querySelector('.tree') as HTMLElement | null;
@@ -134,7 +134,7 @@ describe('Wiki 图谱工作区', () => {
   });
 
   it('右上角固定元类型图例可整类显隐并切换箭头', async () => {
-    const { container } = render(<WikiLineageWorkspace ***REMOVED***Id="***REMOVED***-1" />);
+    const { container } = render(<WikiLineageWorkspace kbId="kb-1" />);
 
     const panel = await waitFor(() => {
       const el = container.querySelector('.wb-network-panel');
@@ -169,7 +169,7 @@ describe('Wiki 图谱工作区', () => {
 
   it('conceptId 深链直接选中对应的概念节点', async () => {
     render(
-      <WikiLineageWorkspace ***REMOVED***Id="***REMOVED***-1" focusConceptId={concept.conceptId} />,
+      <WikiLineageWorkspace kbId="kb-1" focusConceptId={concept.conceptId} />,
     );
 
     expect(await screen.findByText('门诊排班的规则集合。')).toBeTruthy();

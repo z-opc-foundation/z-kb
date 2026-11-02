@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /**
  * 语雀 OpenAPI 调用失败。kind 用于区分「可重试」与「确定性错误」：

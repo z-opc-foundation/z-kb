@@ -26,7 +26,7 @@ import {
   AiStatusTag,
   AI_CODE_HINT,
   AI_STATUS_OPTIONS,
-  ***REMOVED***Select,
+  KbSelect,
   MultiPick,
   aiCodeError,
   fmtAiTime,
@@ -44,8 +44,8 @@ function AgentFormModal({
   agent,
   skills,
   tools,
-  ***REMOVED***s,
-  ***REMOVED***Loading,
+  kbs,
+  kbLoading,
   remote,
   onClose,
   onSaved,
@@ -54,8 +54,8 @@ function AgentFormModal({
   agent?: AiAgentRecord;
   skills: AiSkillRecord[];
   tools: AiToolRecord[];
-  ***REMOVED***s: KnowledgeBaseRecord[];
-  ***REMOVED***Loading: boolean;
+  kbs: KnowledgeBaseRecord[];
+  kbLoading: boolean;
   /** 定义面在 galaxy 远端：知识库/技能/工具绑定不随本页保存。 */
   remote: boolean;
   onClose: () => void;
@@ -65,7 +65,7 @@ function AgentFormModal({
   const [name, setName] = useState(agent?.name || '');
   const [description, setDescription] = useState(agent?.description || '');
   const [systemPrompt, setSystemPrompt] = useState(agent?.systemPrompt || '');
-  const [***REMOVED***Id, set***REMOVED***Id] = useState(agent?.***REMOVED***Id || '');
+  const [kbId, setKbId] = useState(agent?.kbId || '');
   const [skillCodes, setSkillCodes] = useState<string[]>(
     agent?.skillCodes || [],
   );
@@ -92,7 +92,7 @@ function AgentFormModal({
       name: nextName,
       description: description.trim() || undefined,
       systemPrompt: systemPrompt.trim() || undefined,
-      ***REMOVED***Id: remote ? undefined : ***REMOVED***Id || undefined,
+      kbId: remote ? undefined : kbId || undefined,
       skillCodes: remote ? [] : skillCodes,
       toolCodes: remote ? [] : toolCodes,
     };
@@ -122,7 +122,7 @@ function AgentFormModal({
               className="input"
               value={code}
               disabled={mode === 'edit'}
-              placeholder="如 ***REMOVED***_qa_assistant"
+              placeholder="如 kb_qa_assistant"
               onChange={(event) => setCode(event.target.value)}
             />
             <span className="help">
@@ -173,11 +173,11 @@ function AgentFormModal({
             <>
               <div className="field">
                 <label>绑定知识库</label>
-                <***REMOVED***Select
-                  value={***REMOVED***Id}
-                  onChange={set***REMOVED***Id}
-                  options={***REMOVED***s}
-                  loading={***REMOVED***Loading}
+                <KbSelect
+                  value={kbId}
+                  onChange={setKbId}
+                  options={kbs}
+                  loading={kbLoading}
                 />
                 <span className="help">
                   试运行时仍可临时覆盖；knowledge_search 必须要有库
@@ -255,7 +255,7 @@ export default function AiAgentsPage() {
     agent?: AiAgentRecord;
   } | null>(null);
   const [runAgent, setRunAgent] = useState<AiAgentRecord | null>(null);
-  const { ***REMOVED***s, loading: ***REMOVED***Loading } = useKnowledgeBaseOptions();
+  const { kbs, loading: kbLoading } = useKnowledgeBaseOptions();
   const runtime = useAiRuntimeStatus();
 
   useEffect(() => {
@@ -293,11 +293,11 @@ export default function AiAgentsPage() {
     tools.forEach((tool) => map.set(tool.code, tool.name));
     return map;
   }, [tools]);
-  const ***REMOVED***Names = useMemo(() => {
+  const kbNames = useMemo(() => {
     const map = new Map<string, string>();
-    ***REMOVED***s.forEach((***REMOVED***) => map.set(***REMOVED***.***REMOVED***Id, ***REMOVED***.name));
+    kbs.forEach((kb) => map.set(kb.kbId, kb.name));
     return map;
-  }, [***REMOVED***s]);
+  }, [kbs]);
 
   const counts = useMemo(() => {
     return {
@@ -542,9 +542,9 @@ export default function AiAgentsPage() {
                         </div>
                       </td>
                       <td>
-                        {agent.***REMOVED***Id ? (
-                          <span title={agent.***REMOVED***Id}>
-                            {***REMOVED***Names.get(agent.***REMOVED***Id) || agent.***REMOVED***Id}
+                        {agent.kbId ? (
+                          <span title={agent.kbId}>
+                            {kbNames.get(agent.kbId) || agent.kbId}
                           </span>
                         ) : (
                           <span className="note">试运行选择</span>
@@ -667,8 +667,8 @@ export default function AiAgentsPage() {
           agent={form.agent}
           skills={skills}
           tools={tools}
-          ***REMOVED***s={***REMOVED***s}
-          ***REMOVED***Loading={***REMOVED***Loading}
+          kbs={kbs}
+          kbLoading={kbLoading}
           remote={isGalaxyRuntime(runtime)}
           onClose={() => setForm(null)}
           onSaved={onSaved}

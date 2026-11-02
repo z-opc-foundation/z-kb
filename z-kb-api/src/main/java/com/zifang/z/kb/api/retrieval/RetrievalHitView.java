@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.retrieval;
+package com.zifang.z.kb.api.retrieval;
 
 import java.time.Instant;
 import java.util.ArrayList;

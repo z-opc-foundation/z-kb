@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.ingest.source;
+package com.zifang.z.kb.ingest.source;
 
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.util.HttpHelper;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.util.HttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

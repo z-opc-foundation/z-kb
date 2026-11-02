@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
-import com.zifang.z.***REMOVED***.core.source.git.GitFileNode;
+import com.zifang.z.kb.core.source.git.GitFileNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;

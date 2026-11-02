@@ -27,7 +27,7 @@ const toastMock = vi.mocked(toast);
 const RUN_DETAIL: EvalRunDetail = {
   run: {
     runId: 'run-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'COMPLETED',
     resultUsable: true,
     finishedAt: '2026-10-20T10:00:00',
@@ -36,8 +36,8 @@ const RUN_DETAIL: EvalRunDetail = {
 };
 
 const OVERVIEW: EvalOverview = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   lastRun: { runId: 'run-1', status: 'COMPLETED', resultUsable: true },
   badcaseCounts: { open: 2, fixed: 3, regressed: 1 },
 };
@@ -101,7 +101,7 @@ function renderView(
   overrides: Partial<ComponentProps<typeof CasesView>> = {},
 ) {
   const props = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     runDetail: RUN_DETAIL,
     overview: OVERVIEW,
     statusFilter: '',
@@ -142,7 +142,7 @@ describe('CasesView', () => {
     expect(screen.getByText('RETRIEVAL')).toBeInTheDocument();
     expect(screen.getAllByText('run-1').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('待修复').length).toBeGreaterThanOrEqual(1);
-    expect(listMock).toHaveBeenCalledWith('***REMOVED***-1', undefined);
+    expect(listMock).toHaveBeenCalledWith('kb-1', undefined);
   });
 
   it('状态筛选、行点击与明细按钮触发回调', async () => {
@@ -162,7 +162,7 @@ describe('CasesView', () => {
   it('传入状态筛选时按状态查询', async () => {
     renderView({ statusFilter: 'OPEN' });
     await screen.findByText('发热患者如何分级？');
-    expect(listMock).toHaveBeenCalledWith('***REMOVED***-1', 'OPEN');
+    expect(listMock).toHaveBeenCalledWith('kb-1', 'OPEN');
     expect(screen.getByText('待修复 · 1 / 1')).toBeInTheDocument();
   });
 
@@ -170,7 +170,7 @@ describe('CasesView', () => {
     listMock.mockResolvedValue({ records: [], total: 0 });
     const { props } = renderView({
       runDetail: null,
-      overview: { ***REMOVED***Id: '***REMOVED***-1', lastRun: null },
+      overview: { kbId: 'kb-1', lastRun: null },
     });
     expect(await screen.findByText('尚无坏例记录')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /发起跑批/ }));
@@ -268,7 +268,7 @@ describe('CasesView', () => {
     renderView({
       caseId: 'case-1',
       runDetail: null,
-      overview: { ***REMOVED***Id: '***REMOVED***-1', lastRun: null },
+      overview: { kbId: 'kb-1', lastRun: null },
     });
     const dialog = await screen.findByRole('dialog');
     const view = within(dialog);

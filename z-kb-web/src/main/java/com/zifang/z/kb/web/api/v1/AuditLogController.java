@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.audit.AuditLogService;
-import com.zifang.z.***REMOVED***.api.audit.AuditLogView;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.AuditLogPageRequest;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.audit.AuditLogService;
+import com.zifang.z.kb.api.audit.AuditLogView;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.api.v1.dto.AuditLogPageRequest;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,30 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "审计日志")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/auditLog")
+@RequestMapping("/api/kb/v1/auditLog")
 public class AuditLogController {
 
     private final AuditLogService auditLogService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
-    public AuditLogController(AuditLogService auditLogService, ***REMOVED***CallerResolver callerResolver) {
+    public AuditLogController(AuditLogService auditLogService, KbCallerResolver callerResolver) {
         this.auditLogService = auditLogService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "审计日志分页列表", description = "按关键词、操作人、结果与时间范围查询当前租户的审计日志")
     @PostMapping("/page")
-    public ***REMOVED***Result<PageResult<AuditLogView>> page(
+    public KbResult<PageResult<AuditLogView>> page(
             @RequestBody(required = false) AuditLogPageRequest body,
             HttpServletRequest request) {
         AuditLogPageRequest query = body == null ? new AuditLogPageRequest() : body;
-        return ***REMOVED***Result.ok(auditLogService.page(query.toQuery(),
+        return KbResult.ok(auditLogService.page(query.toQuery(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "审计日志详情", description = "按主键查询单条审计日志，含出入参报文")
     @GetMapping("/get")
-    public ***REMOVED***Result<AuditLogView> get(@RequestParam String id, HttpServletRequest request) {
-        return ***REMOVED***Result.ok(auditLogService.get(id, callerResolver.resolve(request)));
+    public KbResult<AuditLogView> get(@RequestParam String id, HttpServletRequest request) {
+        return KbResult.ok(auditLogService.get(id, callerResolver.resolve(request)));
     }
 }

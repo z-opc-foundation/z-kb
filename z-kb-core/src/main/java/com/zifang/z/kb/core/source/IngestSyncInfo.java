@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
 import java.util.ArrayList;
 import java.util.List;

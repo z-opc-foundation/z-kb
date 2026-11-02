@@ -5,13 +5,13 @@ import {
   KnowledgeBaseRecord,
   KnowledgeBaseType,
 } from '@/services/knowledgeBase';
-import { get***REMOVED***Overview, ***REMOVED***Overview } from '@/services/overview';
-import { emit***REMOVED***Changed } from '@/utils/***REMOVED***-events';
+import { getKbOverview, KbOverview } from '@/services/overview';
+import { emitKbChanged } from '@/utils/kb-events';
 import { getTenantInfo } from '@/utils/tenant';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import ***REMOVED***FormModal from './***REMOVED***-form-modal';
+import KbFormModal from './kb-form-modal';
 import MaterialWorkspace from './material-workspace';
 import MixEntryWorkspace from './mix-entry-workspace';
 import { resolveMaterialDetailTab } from './material-detail-tabs';
@@ -22,8 +22,8 @@ import WikiWorkspace from './wiki-workspace';
 import { AgentAskButton } from '@/pages/ai/agent-ask';
 import { KnowledgeAssistant } from './components/knowledge-assistant';
 
-const FAV_STORAGE_KEY = '***REMOVED***.favorite-***REMOVED***s';
-const ASSISTANT_STORAGE_KEY = '***REMOVED***.workspace-assistant';
+const FAV_STORAGE_KEY = 'kb.favorite-kbs';
+const ASSISTANT_STORAGE_KEY = 'kb.workspace-assistant';
 
 const TYPE_META: Record<KnowledgeBaseType, { label: string; icon: string }> = {
   FILE: { label: '文件库', icon: 'file-text' },
@@ -100,9 +100,9 @@ function readFavorites(): string[] {
 }
 
 export default function KnowledgeBaseDetailPage() {
-  const params = useParams<{ ***REMOVED***Id?: string; tab?: string }>();
+  const params = useParams<{ kbId?: string; tab?: string }>();
   const navigate = useNavigate();
-  const ***REMOVED***Id = params.***REMOVED***Id || '';
+  const kbId = params.kbId || '';
   // 可观测已并入任务管理子页签，旧深链按任务管理打开可观测子页签；tasks 是任务管理的历史路径
   const obsDeepLink = params.tab === 'observability';
   const tabAlias = params.tab === 'tasks' ? 'governance' : params.tab;
@@ -115,9 +115,9 @@ export default function KnowledgeBaseDetailPage() {
   // 权限管理页已并入设置页，旧深链转到设置页的权限分区
   useEffect(() => {
     if (params.tab === 'members') {
-      navigate(`/knowledge-bases/${***REMOVED***Id}/settings?section=access`, { replace: true });
+      navigate(`/knowledge-bases/${kbId}/settings?section=access`, { replace: true });
     }
-  }, [***REMOVED***Id, navigate, params.tab]);
+  }, [kbId, navigate, params.tab]);
   const [searchParams, setSearchParams] = useSearchParams();
   const rawView = searchParams.get('view');
   const workspaceView: 'materials' | 'wiki' | 'lineage' | 'retrieval' =
@@ -147,12 +147,12 @@ export default function KnowledgeBaseDetailPage() {
   const materialTab =
     workspaceView === 'materials' ? searchParams.get('materialTab') : null;
 
-  const [***REMOVED***, set***REMOVED***] = useState<KnowledgeBaseRecord | null>(null);
+  const [kb, setKb] = useState<KnowledgeBaseRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(readFavorites);
-  const [stats, setStats] = useState<***REMOVED***Overview | null>(null);
+  const [stats, setStats] = useState<KbOverview | null>(null);
   const [focusMaterialId, setFocusMaterialId] = useState('');
   const [focusBatchId, setFocusBatchId] = useState('');
   const [uploadSignal, setUploadSignal] = useState(0);
@@ -182,37 +182,37 @@ export default function KnowledgeBaseDetailPage() {
   }, [focusMaterialId, searchParams, workspaceView]);
 
   const load = useCallback(async () => {
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       setLoading(false);
       setNotFound(true);
       return;
     }
     setLoading(true);
-    const result = await getKnowledgeBase(***REMOVED***Id);
+    const result = await getKnowledgeBase(kbId);
     setLoading(false);
     if (!result) {
       setNotFound(true);
-      set***REMOVED***(null);
+      setKb(null);
       return;
     }
     setNotFound(false);
-    set***REMOVED***(result);
-    emit***REMOVED***Changed();
-  }, [***REMOVED***Id]);
+    setKb(result);
+    emitKbChanged();
+  }, [kbId]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const loadStats = useCallback(async () => {
-    if (!***REMOVED***) {
+    if (!kb) {
       return;
     }
-    const result = await get***REMOVED***Overview(***REMOVED***.***REMOVED***Id);
+    const result = await getKbOverview(kb.kbId);
     if (result) {
       setStats(result);
     }
-  }, [***REMOVED***]);
+  }, [kb]);
 
   useEffect(() => {
     void loadStats();
@@ -226,24 +226,24 @@ export default function KnowledgeBaseDetailPage() {
     }
   }, [favorites]);
 
-  const favorited = useMemo(() => favorites.includes(***REMOVED***Id), [favorites, ***REMOVED***Id]);
+  const favorited = useMemo(() => favorites.includes(kbId), [favorites, kbId]);
 
   const toggleFavorite = () => {
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       return;
     }
     setFavorites((prev) =>
-      prev.includes(***REMOVED***Id)
-        ? prev.filter((item) => item !== ***REMOVED***Id)
-        : [...prev, ***REMOVED***Id],
+      prev.includes(kbId)
+        ? prev.filter((item) => item !== kbId)
+        : [...prev, kbId],
     );
   };
 
   const switchTab = (nextTab: string) => {
-    if (!***REMOVED***) {
+    if (!kb) {
       return;
     }
-    const base = `/knowledge-bases/${encodeURIComponent(***REMOVED***.***REMOVED***Id)}`;
+    const base = `/knowledge-bases/${encodeURIComponent(kb.kbId)}`;
     navigate(nextTab === 'overview' ? base : `${base}/${nextTab}`);
   };
 
@@ -274,7 +274,7 @@ export default function KnowledgeBaseDetailPage() {
     if (tab !== 'workspace') {
       // 视口由路由 tab 决定，非工作台页签只改查询参数不会切页，需显式跳到工作台。
       navigate(
-        `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?materialId=${encodeURIComponent(materialId)}`,
+        `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?materialId=${encodeURIComponent(materialId)}`,
       );
       return;
     }
@@ -341,7 +341,7 @@ export default function KnowledgeBaseDetailPage() {
     );
   }
 
-  if (notFound || !***REMOVED***) {
+  if (notFound || !kb) {
     return (
       <div className="view">
         <section className="panel">
@@ -351,7 +351,7 @@ export default function KnowledgeBaseDetailPage() {
             </div>
             <b>找不到这个知识库</b>
             <p>
-              深链中的 ***REMOVED***Id 不在当前租户的可见范围里，可能已被删除或无权访问。
+              深链中的 kbId 不在当前租户的可见范围里，可能已被删除或无权访问。
             </p>
             <button
               className="btn"
@@ -366,33 +366,33 @@ export default function KnowledgeBaseDetailPage() {
     );
   }
 
-  const meta = statusMeta(***REMOVED***.status);
-  const type = typeMeta(***REMOVED***.type);
-  const canWrite = ***REMOVED***.actions
-    ? ***REMOVED***.actions.includes('material.write')
-    : !!***REMOVED***.canManageDoc || !!***REMOVED***.canManage;
-  const canCompile = ***REMOVED***.actions ? ***REMOVED***.actions.includes('compilation.run') : !!***REMOVED***.canManage;
+  const meta = statusMeta(kb.status);
+  const type = typeMeta(kb.type);
+  const canWrite = kb.actions
+    ? kb.actions.includes('material.write')
+    : !!kb.canManageDoc || !!kb.canManage;
+  const canCompile = kb.actions ? kb.actions.includes('compilation.run') : !!kb.canManage;
 
   const hero = (
-    <section className="***REMOVED***-hero">
-      <div className="***REMOVED***-hero-main">
-        <div className="***REMOVED***-icon">
+    <section className="kb-hero">
+      <div className="kb-hero-main">
+        <div className="kb-icon">
           <Icon name={type.icon} size={25} />
         </div>
-        <div className="***REMOVED***-hero-copy">
+        <div className="kb-hero-copy">
           <h1>
-            {***REMOVED***.name} <span className={`tag ${meta.tag}`}>{meta.label}</span>
+            {kb.name} <span className={`tag ${meta.tag}`}>{meta.label}</span>
           </h1>
           <div className="meta">
             <span className="tag gray">{type.label}</span>
-            <span className="tag blue mono">{***REMOVED***.tenantCode}</span>
-            <span className={`tag ${***REMOVED***.canManage ? 'violet' : 'gray'}`}>
-              {***REMOVED***.canManage ? '可管理' : '只读'}
+            <span className="tag blue mono">{kb.tenantCode}</span>
+            <span className={`tag ${kb.canManage ? 'violet' : 'gray'}`}>
+              {kb.canManage ? '可管理' : '只读'}
             </span>
           </div>
-          <p className="desc">{***REMOVED***.description || '这个知识库还没有描述。'}</p>
+          <p className="desc">{kb.description || '这个知识库还没有描述。'}</p>
         </div>
-        <div className="***REMOVED***-hero-actions">
+        <div className="kb-hero-actions">
           <button
             className={`btn${favorited ? ' fav-on' : ''}`}
             type="button"
@@ -401,7 +401,7 @@ export default function KnowledgeBaseDetailPage() {
             <Icon name="star" size={14} />
             {favorited ? '已收藏' : '收藏'}
           </button>
-          {***REMOVED***.canManage ? (
+          {kb.canManage ? (
             <button
               className="btn"
               type="button"
@@ -416,64 +416,64 @@ export default function KnowledgeBaseDetailPage() {
             type="button"
             onClick={() =>
               navigate(
-                `/knowledge-bases/${encodeURIComponent(***REMOVED***.***REMOVED***Id)}/evaluation`,
+                `/knowledge-bases/${encodeURIComponent(kb.kbId)}/evaluation`,
               )
             }
           >
             <Icon name="shield-check" size={14} />
             知识评测
           </button>
-          <AgentAskButton ***REMOVED***Id={***REMOVED***.***REMOVED***Id} label="问 AI" />
+          <AgentAskButton kbId={kb.kbId} label="问 AI" />
           {backToList}
         </div>
       </div>
-      <div className="***REMOVED***-facts">
-        <div className="***REMOVED***-fact">
+      <div className="kb-facts">
+        <div className="kb-fact">
           <Icon name="hash" size={13} />
-          编码 <b className="mono">{***REMOVED***.code}</b>
+          编码 <b className="mono">{kb.code}</b>
         </div>
         <span className="sep"></span>
-        <div className="***REMOVED***-fact">
+        <div className="kb-fact">
           <Icon name="file-text" size={13} />
           资料 <b>{stats ? stats.fileCount : '—'}</b>
         </div>
         <span className="sep"></span>
-        <div className="***REMOVED***-fact">
+        <div className="kb-fact">
           <Icon name="layers" size={13} />
-          租户 <b>{getTenantInfo(***REMOVED***.tenantCode).name}</b>
+          租户 <b>{getTenantInfo(kb.tenantCode).name}</b>
           <span
             className="mono-sm"
             style={{ color: 'var(--muted-2)', marginLeft: 4 }}
           >
-            {***REMOVED***.tenantCode}
+            {kb.tenantCode}
           </span>
         </div>
         <span className="sep"></span>
-        <div className="***REMOVED***-fact">
+        <div className="kb-fact">
           <Icon name="user" size={13} />
-          创建人 <b>actorId {***REMOVED***.ownerId}</b>
+          创建人 <b>actorId {kb.ownerId}</b>
         </div>
         <span className="sep"></span>
-        <div className="***REMOVED***-fact">
+        <div className="kb-fact">
           <Icon name="calendar" size={13} />
-          创建于 <b>{fmtDate(***REMOVED***.createTime)}</b>
+          创建于 <b>{fmtDate(kb.createTime)}</b>
         </div>
         <span className="sep"></span>
-        <div className="***REMOVED***-fact">
+        <div className="kb-fact">
           <Icon name="clock" size={13} />
-          更新于 <b>{fmtTime(***REMOVED***.updateTime)}</b>
+          更新于 <b>{fmtTime(kb.updateTime)}</b>
         </div>
       </div>
     </section>
   );
 
   const tabs = (
-    <nav className="***REMOVED***-tabs">
+    <nav className="kb-tabs">
       {Object.entries(TAB_META).map(([key, item]) => (
         <button
           key={key}
           type="button"
-          className={`***REMOVED***-tab ${tab === key ? 'active' : ''}`}
+          className={`kb-tab ${tab === key ? 'active' : ''}`}
           style={{
             border: 0,
             background: 'transparent',
@@ -547,28 +547,28 @@ export default function KnowledgeBaseDetailPage() {
           </div>
           <div className="panel-body">
             <dl className="kv">
-              <dt>***REMOVED***Id</dt>
-              <dd className="mono">{***REMOVED***.***REMOVED***Id}</dd>
+              <dt>kbId</dt>
+              <dd className="mono">{kb.kbId}</dd>
               <dt>编码</dt>
-              <dd className="mono">{***REMOVED***.code}</dd>
+              <dd className="mono">{kb.code}</dd>
               <dt>类型</dt>
               <dd>{type.label}</dd>
               <dt>租户</dt>
-              <dd className="mono">{***REMOVED***.tenantCode}</dd>
+              <dd className="mono">{kb.tenantCode}</dd>
               <dt>创建人</dt>
-              <dd>actorId {***REMOVED***.ownerId}</dd>
+              <dd>actorId {kb.ownerId}</dd>
               <dt>创建时间</dt>
-              <dd>{fmtTime(***REMOVED***.createTime)}</dd>
+              <dd>{fmtTime(kb.createTime)}</dd>
               <dt>更新时间</dt>
-              <dd>{fmtTime(***REMOVED***.updateTime)}</dd>
-              {***REMOVED***.archivedAt ? (
+              <dd>{fmtTime(kb.updateTime)}</dd>
+              {kb.archivedAt ? (
                 <>
                   <dt>归档时间</dt>
-                  <dd>{fmtTime(***REMOVED***.archivedAt)}</dd>
+                  <dd>{fmtTime(kb.archivedAt)}</dd>
                 </>
               ) : null}
               <dt>图谱空间</dt>
-              <dd className="mono">{***REMOVED***.primaryGraphSpaceKey || '—'}</dd>
+              <dd className="mono">{kb.primaryGraphSpaceKey || '—'}</dd>
             </dl>
           </div>
         </section>
@@ -635,11 +635,11 @@ export default function KnowledgeBaseDetailPage() {
   let content = overview;
   const fillWorkspace =
     (tab === 'workspace' &&
-      !(workspaceView === 'materials' && ***REMOVED***.type === 'MIX')) ||
+      !(workspaceView === 'materials' && kb.type === 'MIX')) ||
     tab === 'governance' ||
     tab === 'logs';
   if (tab === 'workspace') {
-    const isMix = ***REMOVED***.type === 'MIX';
+    const isMix = kb.type === 'MIX';
     const showAssistant =
       !isMix && workspaceView !== 'retrieval' && assistantOpen;
     const workspaceTabs: {
@@ -664,7 +664,7 @@ export default function KnowledgeBaseDetailPage() {
       { key: 'retrieval', label: '知识检索', icon: 'search' },
     ];
     content = (
-      <div className="***REMOVED***-workspace">
+      <div className="kb-workspace">
         <div className="ws-head-row">
           <div className="subtabs">
             {workspaceTabs.map((item) => (
@@ -706,31 +706,31 @@ export default function KnowledgeBaseDetailPage() {
           ) : null}
         </div>
         <div
-          className={`***REMOVED***-workspace-body${showAssistant ? '' : ' single'}${
+          className={`kb-workspace-body${showAssistant ? '' : ' single'}${
             fillWorkspace ? ' fill' : ''
           }`}
         >
-        <div className="***REMOVED***-workspace-main">
+        <div className="kb-workspace-main">
         {workspaceView === 'retrieval' ? (
-          <RetrievalWorkspace ***REMOVED***Id={***REMOVED***.***REMOVED***Id} />
+          <RetrievalWorkspace kbId={kb.kbId} />
         ) : workspaceView === 'wiki' ? (
           <WikiWorkspace
-            ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
+            kbId={kb.kbId}
             canManage={canWrite}
             initialWikiId={wikiFocusId}
             onChanged={() => void loadStats()}
           />
         ) : workspaceView === 'lineage' ? (
           <WikiLineageWorkspace
-            ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
+            kbId={kb.kbId}
             initialWikiId={lineageWikiId}
             focusConceptId={conceptFocusId}
             onOpenMaterial={openMaterial}
             onCountChange={setLineageNodeCount}
           />
-        ) : ***REMOVED***.type === 'MIX' && !focusMaterialId ? (
+        ) : kb.type === 'MIX' && !focusMaterialId ? (
           <MixEntryWorkspace
-            ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
+            kbId={kb.kbId}
             canWrite={canWrite}
             canCompile={canCompile}
             initialMaterialId={focusMaterialId || undefined}
@@ -738,13 +738,13 @@ export default function KnowledgeBaseDetailPage() {
           />
         ) : (
           <MaterialWorkspace
-            ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
-            canManage={!!***REMOVED***.canManage}
+            kbId={kb.kbId}
+            canManage={!!kb.canManage}
             canWrite={canWrite}
             canCompile={canCompile}
             materialType={materialType}
             initialMaterialId={focusMaterialId || undefined}
-            onDetailClosed={***REMOVED***.type === 'MIX' ? closeMaterialDetail : undefined}
+            onDetailClosed={kb.type === 'MIX' ? closeMaterialDetail : undefined}
             initialDetailTab={
               materialTab ? resolveMaterialDetailTab(materialTab) : undefined
             }
@@ -759,8 +759,8 @@ export default function KnowledgeBaseDetailPage() {
         </div>
         {showAssistant ? (
           <KnowledgeAssistant
-            ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
-            ***REMOVED***Name={***REMOVED***.name}
+            kbId={kb.kbId}
+            kbName={kb.name}
             stats={stats}
             canWrite={canWrite}
             pageContext={{ view: workspaceView }}
@@ -778,8 +778,8 @@ export default function KnowledgeBaseDetailPage() {
   } else if (tab === 'governance') {
     content = (
       <TaskManager
-        ***REMOVED***Id={***REMOVED***.***REMOVED***Id}
-        canManage={!!***REMOVED***.canManage}
+        kbId={kb.kbId}
+        canManage={!!kb.canManage}
         canCompile={canCompile}
         focusBatchId={focusBatchId || undefined}
         onFocusHandled={() => setFocusBatchId('')}
@@ -787,17 +787,17 @@ export default function KnowledgeBaseDetailPage() {
       />
     );
   } else if (tab === 'logs') {
-    content = <AuditLogPanel type="***REMOVED***" bizRef={***REMOVED***.***REMOVED***Id} />;
+    content = <AuditLogPanel type="KB" bizRef={kb.kbId} />;
   }
 
   return (
-    <div className={`view ***REMOVED***-detail-view${fillWorkspace ? ' fill-viewport' : ''}`}>
+    <div className={`view kb-detail-view${fillWorkspace ? ' fill-viewport' : ''}`}>
       {tabs}
       <div className="mt-16">{content}</div>
       {editOpen ? (
-        <***REMOVED***FormModal
+        <KbFormModal
           mode="edit"
-          ***REMOVED***={***REMOVED***}
+          kb={kb}
           onClose={() => setEditOpen(false)}
           onSaved={() => {
             setEditOpen(false);

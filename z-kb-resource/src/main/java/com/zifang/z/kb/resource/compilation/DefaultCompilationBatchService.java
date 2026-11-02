@@ -1,29 +1,29 @@
-package com.zifang.z.***REMOVED***.resource.compilation;
+package com.zifang.z.kb.resource.compilation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.compilation.BatchScopeType;
-import com.zifang.z.***REMOVED***.api.compilation.BatchStatus;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchCreateParam;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchMemberView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchPageView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchService;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationScopeParam;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.compilation.JobRunStatus;
-import com.zifang.z.***REMOVED***.api.material.MaterialQuery;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialView;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***PrincipalDirectory;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberCandidate;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationStageEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.api.compilation.BatchScopeType;
+import com.zifang.z.kb.api.compilation.BatchStatus;
+import com.zifang.z.kb.api.compilation.CompilationBatchCreateParam;
+import com.zifang.z.kb.api.compilation.CompilationBatchMemberView;
+import com.zifang.z.kb.api.compilation.CompilationBatchPageView;
+import com.zifang.z.kb.api.compilation.CompilationBatchService;
+import com.zifang.z.kb.api.compilation.CompilationBatchView;
+import com.zifang.z.kb.api.compilation.CompilationScopeParam;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.compilation.JobRunStatus;
+import com.zifang.z.kb.api.material.MaterialQuery;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialView;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KbPrincipalDirectory;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberCandidate;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.entity.CompilationStageEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -33,22 +33,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.DEFAULT_BATCH_LIST;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.MAX_BATCH_LIST;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.MAX_BATCH_MEMBERS;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.batchNotFound;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.batchRunning;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.limit;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.paramInvalid;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.trimToNull;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.truncate;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.DEFAULT_BATCH_LIST;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.MAX_BATCH_LIST;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.MAX_BATCH_MEMBERS;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.batchNotFound;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.batchRunning;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.hasText;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.limit;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.paramInvalid;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.trimToNull;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.truncate;
 
 /**
  * 编译组别编排默认实现：一个组别就是一次多文件编译作业，成员是各文件的一组阶段。
  *
  * <p>组别不单独落表，进度与状态直接读作业与阶段行；提交人姓名经
- * {@link ***REMOVED***PrincipalDirectory} 解析，目录不可用时留空。</p>
+ * {@link KbPrincipalDirectory} 解析，目录不可用时留空。</p>
  */
 public class DefaultCompilationBatchService implements CompilationBatchService {
 
@@ -57,7 +57,7 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
     private final CompilationService compilationService;
     private final MaterialService materialService;
     private final KnowledgeBaseResourceService resourceService;
-    private final ***REMOVED***PrincipalDirectory principalDirectory;
+    private final KbPrincipalDirectory principalDirectory;
 
     public DefaultCompilationBatchService(
             CompilationJobMapper jobMapper,
@@ -65,7 +65,7 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
             CompilationService compilationService,
             MaterialService materialService,
             KnowledgeBaseResourceService resourceService,
-            ***REMOVED***PrincipalDirectory principalDirectory) {
+            KbPrincipalDirectory principalDirectory) {
         this.jobMapper = jobMapper;
         this.stageMapper = stageMapper;
         this.compilationService = compilationService;
@@ -76,12 +76,12 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationBatchView create(CompilationBatchCreateParam param, ***REMOVED***Caller caller) {
-        if (param == null || !hasText(param.get***REMOVED***Id())) {
+    public CompilationBatchView create(CompilationBatchCreateParam param, KbCaller caller) {
+        if (param == null || !hasText(param.getKbId())) {
             throw paramInvalid();
         }
-        String ***REMOVED***Id = param.get***REMOVED***Id().trim();
-        resourceService.requireActionable(***REMOVED***Id, KnowledgeBaseAction.COMPILATION_RUN, caller);
+        String kbId = param.getKbId().trim();
+        resourceService.requireActionable(kbId, KnowledgeBaseAction.COMPILATION_RUN, caller);
         String scopeType = CompilationSupport.scopeTypeOf(param.getScopeType());
         String scopeId = trimToNull(param.getScopeId());
         Set<String> materialIds = new LinkedHashSet<>();
@@ -95,7 +95,7 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
         if (materialIds.isEmpty() && scopeId != null
                 && (BatchScopeType.CATEGORY.name().equals(scopeType)
                 || BatchScopeType.FOLDER.name().equals(scopeType))) {
-            for (MaterialView material : listScopeMaterials(***REMOVED***Id, scopeId, caller)) {
+            for (MaterialView material : listScopeMaterials(kbId, scopeId, caller)) {
                 if (hasText(material.getMaterialId())) {
                     materialIds.add(material.getMaterialId());
                 }
@@ -104,11 +104,11 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
         if (materialIds.isEmpty() || materialIds.size() > MAX_BATCH_MEMBERS) {
             throw paramInvalid();
         }
-        if (countRunning(caller.getTenantCode(), ***REMOVED***Id) > 0) {
+        if (countRunning(caller.getTenantCode(), kbId) > 0) {
             throw batchRunning();
         }
         CompilationScopeParam scopeParam = new CompilationScopeParam();
-        scopeParam.set***REMOVED***Id(***REMOVED***Id);
+        scopeParam.setKbId(kbId);
         scopeParam.setName(trimToNull(param.getName()));
         scopeParam.setScopeType(scopeType);
         scopeParam.setScopeId(scopeId);
@@ -120,9 +120,9 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationBatchView cancel(String batchId, ***REMOVED***Caller caller) {
+    public CompilationBatchView cancel(String batchId, KbCaller caller) {
         CompilationJobEntity job = requireBatch(caller.getTenantCode(), batchId);
-        resourceService.requireActionable(job.get***REMOVED***Id(), KnowledgeBaseAction.COMPILATION_RUN,
+        resourceService.requireActionable(job.getKbId(), KnowledgeBaseAction.COMPILATION_RUN,
                 caller);
         if (!JobRunStatus.isTerminal(job.getRunStatus())) {
             compilationService.cancel(job.getJobId(), caller);
@@ -132,22 +132,22 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
     }
 
     @Override
-    public CompilationBatchView query(String batchId, ***REMOVED***Caller caller) {
+    public CompilationBatchView query(String batchId, KbCaller caller) {
         CompilationJobEntity job = requireBatch(caller.getTenantCode(), batchId);
-        resourceService.requireReadable(job.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(job.getKbId(), caller);
         return toBatchView(job, true);
     }
 
     @Override
-    public List<CompilationBatchView> listBy***REMOVED***(String ***REMOVED***Id, int limit, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
+    public List<CompilationBatchView> listByKb(String kbId, int limit, KbCaller caller) {
+        if (!hasText(kbId)) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id.trim(), caller);
+        resourceService.requireReadable(kbId.trim(), caller);
         int size = limit(limit, DEFAULT_BATCH_LIST, MAX_BATCH_LIST);
         List<CompilationBatchView> result = new ArrayList<>();
         QueryWrapper<CompilationJobEntity> query = batchConditions(caller.getTenantCode(),
-                ***REMOVED***Id.trim()).orderByDesc("create_time").orderByDesc("id")
+                kbId.trim()).orderByDesc("create_time").orderByDesc("id")
                 .last("LIMIT " + size);
         for (CompilationJobEntity job : jobMapper.selectList(query)) {
             result.add(toBatchView(job, false));
@@ -156,17 +156,17 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
     }
 
     @Override
-    public CompilationBatchPageView pageBy***REMOVED***(String ***REMOVED***Id, int pageNo, int pageSize,
-                                             ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
+    public CompilationBatchPageView pageByKb(String kbId, int pageNo, int pageSize,
+                                             KbCaller caller) {
+        if (!hasText(kbId)) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id.trim(), caller);
+        resourceService.requireReadable(kbId.trim(), caller);
         int current = pageNo <= 0 ? 1 : pageNo;
         int size = limit(pageSize, DEFAULT_BATCH_LIST, MAX_BATCH_LIST);
-        Long total = jobMapper.selectCount(batchConditions(caller.getTenantCode(), ***REMOVED***Id.trim()));
+        Long total = jobMapper.selectCount(batchConditions(caller.getTenantCode(), kbId.trim()));
         QueryWrapper<CompilationJobEntity> pageQuery = batchConditions(caller.getTenantCode(),
-                ***REMOVED***Id.trim()).orderByDesc("create_time").orderByDesc("id")
+                kbId.trim()).orderByDesc("create_time").orderByDesc("id")
                 .last("LIMIT " + size + " OFFSET " + ((long) (current - 1) * size));
         CompilationBatchPageView view = new CompilationBatchPageView();
         view.setPageNo(current);
@@ -181,26 +181,26 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
     }
 
     @Override
-    public boolean hasRunning(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
+    public boolean hasRunning(String kbId, KbCaller caller) {
+        if (!hasText(kbId)) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id.trim(), caller);
-        return countRunning(caller.getTenantCode(), ***REMOVED***Id.trim()) > 0;
+        resourceService.requireReadable(kbId.trim(), caller);
+        return countRunning(caller.getTenantCode(), kbId.trim()) > 0;
     }
 
     /** 组别查询条件：同一租户与知识库，排除单文件作业。 */
-    private QueryWrapper<CompilationJobEntity> batchConditions(String tenant, String ***REMOVED***Id) {
+    private QueryWrapper<CompilationJobEntity> batchConditions(String tenant, String kbId) {
         QueryWrapper<CompilationJobEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", tenant).eq("***REMOVED***_id", ***REMOVED***Id).eq("is_deleted", 0)
+        query.eq("tenant_code", tenant).eq("kb_id", kbId).eq("is_deleted", 0)
                 .ne("scope_type", BatchScopeType.SINGLE.name());
         return query;
     }
 
     /** 统计知识库内排队与运行中的组别数量。 */
-    private long countRunning(String tenant, String ***REMOVED***Id) {
+    private long countRunning(String tenant, String kbId) {
         QueryWrapper<CompilationJobEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", tenant).eq("***REMOVED***_id", ***REMOVED***Id).eq("is_deleted", 0)
+        query.eq("tenant_code", tenant).eq("kb_id", kbId).eq("is_deleted", 0)
                 .ne("scope_type", BatchScopeType.SINGLE.name())
                 .in("run_status", JobRunStatus.QUEUED.name(), JobRunStatus.RUNNING.name());
         Long count = jobMapper.selectCount(query);
@@ -208,12 +208,12 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
     }
 
     /** 按分类或文件夹列出范围内物料，超过成员上限时直接拒绝。 */
-    private List<MaterialView> listScopeMaterials(String ***REMOVED***Id, String categoryId, ***REMOVED***Caller caller) {
+    private List<MaterialView> listScopeMaterials(String kbId, String categoryId, KbCaller caller) {
         MaterialQuery query = new MaterialQuery();
         query.setCategoryId(categoryId);
         query.setCurrent(1);
         query.setSize(MAX_BATCH_MEMBERS);
-        PageResult<MaterialView> first = materialService.page(***REMOVED***Id, query, caller);
+        PageResult<MaterialView> first = materialService.page(kbId, query, caller);
         if (first.getTotal() > MAX_BATCH_MEMBERS) {
             throw paramInvalid();
         }
@@ -221,7 +221,7 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
         long pages = first.getSize() <= 0 ? 1 : (first.getTotal() + first.getSize() - 1) / first.getSize();
         for (long page = 2; page <= pages; page++) {
             query.setCurrent(page);
-            records.addAll(materialService.page(***REMOVED***Id, query, caller).getRecords());
+            records.addAll(materialService.page(kbId, query, caller).getRecords());
         }
         return records;
     }
@@ -247,7 +247,7 @@ public class DefaultCompilationBatchService implements CompilationBatchService {
                 job.getTenantCode(), job.getJobId(), roundOf(job));
         CompilationBatchView view = new CompilationBatchView();
         view.setBatchId(job.getJobId());
-        view.set***REMOVED***Id(job.get***REMOVED***Id());
+        view.setKbId(job.getKbId());
         view.setName(job.getName());
         view.setTaskType(job.getTaskType());
         view.setScopeType(job.getScopeType());

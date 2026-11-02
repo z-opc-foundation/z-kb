@@ -21,8 +21,8 @@ import {
 } from './shared';
 
 interface QaDatasetDrawerProps {
-  ***REMOVED***Id: string;
-  ***REMOVED***Name: string;
+  kbId: string;
+  kbName: string;
   onClose: () => void;
   onChanged: () => void;
 }
@@ -82,8 +82,8 @@ function emptyDraftCase(index: number): DraftCaseForm {
 }
 
 export default function QaDatasetDrawer({
-  ***REMOVED***Id,
-  ***REMOVED***Name,
+  kbId,
+  kbName,
   onClose,
   onChanged,
 }: QaDatasetDrawerProps) {
@@ -102,7 +102,7 @@ export default function QaDatasetDrawer({
   const load = useCallback(async () => {
     setLoading(true);
     setFailed(false);
-    const result = await queryEvalDataset(***REMOVED***Id);
+    const result = await queryEvalDataset(kbId);
     setLoading(false);
     if (result === undefined) {
       setFailed(true);
@@ -110,7 +110,7 @@ export default function QaDatasetDrawer({
       return;
     }
     setData(Array.isArray(result) ? { dataset: null, cases: result } : result);
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void load();
@@ -121,7 +121,7 @@ export default function QaDatasetDrawer({
   const status = datasetStatusMeta(dataset?.status);
 
   const startEdit = () => {
-    setName(`${***REMOVED***Name || '知识库'} QA 集合`);
+    setName(`${kbName || '知识库'} QA 集合`);
     setDescription('');
     setCases(datasetCases.map(toDraftCase));
     setFormError('');
@@ -193,8 +193,8 @@ export default function QaDatasetDrawer({
     }));
     setSaving(true);
     const result = await saveEvalDatasetDraft({
-      ***REMOVED***Id,
-      name: name.trim() || `${***REMOVED***Name || '知识库'} QA 集合`,
+      kbId,
+      name: name.trim() || `${kbName || '知识库'} QA 集合`,
       description: description.trim(),
       cases: payloadCases,
     });
@@ -215,7 +215,7 @@ export default function QaDatasetDrawer({
     }
     setPublishing(true);
     const result = await publishEvalDataset({
-      ***REMOVED***Id,
+      kbId,
       expectedVersionNo: dataset.versionNo,
     });
     setPublishing(false);
@@ -357,7 +357,7 @@ export default function QaDatasetDrawer({
           <input
             className="input"
             value={name}
-            placeholder={`${***REMOVED***Name || '知识库'} QA 集合`}
+            placeholder={`${kbName || '知识库'} QA 集合`}
             onChange={(event) => setName(event.target.value)}
           />
         </div>
@@ -510,7 +510,7 @@ export default function QaDatasetDrawer({
         title="QA 集合"
         sub={
           <>
-            <span className="mono">{***REMOVED***Id}</span>
+            <span className="mono">{kbId}</span>
             {dataset?.versionNo ? <Tag tone="gray" className="sm">{dataset.versionNo}</Tag> : null}
             <StatusTag meta={status} />
             <span>{mode === 'edit' ? '草稿编辑' : '当前版本'}</span>
@@ -623,7 +623,7 @@ export default function QaDatasetDrawer({
               </div>
               <dl className="kv mt-16">
                 <dt>知识库</dt>
-                <dd>{***REMOVED***Name || ***REMOVED***Id}</dd>
+                <dd>{kbName || kbId}</dd>
                 <dt>版本</dt>
                 <dd className="mono">{dataset.versionNo}</dd>
                 <dt>题数</dt>

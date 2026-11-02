@@ -1,7 +1,7 @@
 import Icon from '@/components/icon';
 import {
   pageEvaluationKnowledgeBases,
-  type Eval***REMOVED***ListRecord,
+  type EvalKbListRecord,
 } from '@/services/evaluation';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ const PAGE_SIZE = 10;
 
 export default function EvaluationListPage() {
   const navigate = useNavigate();
-  const [records, setRecords] = useState<Eval***REMOVED***ListRecord[]>([]);
+  const [records, setRecords] = useState<EvalKbListRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -73,8 +73,8 @@ export default function EvaluationListPage() {
     setPage(1);
   };
 
-  const openWor***REMOVED***ench = (record: Eval***REMOVED***ListRecord) => {
-    navigate(`/knowledge-bases/${encodeURIComponent(record.***REMOVED***Id)}/evaluation`);
+  const openWorkbench = (record: EvalKbListRecord) => {
+    navigate(`/knowledge-bases/${encodeURIComponent(record.kbId)}/evaluation`);
   };
 
   let body: ReactNode;
@@ -164,14 +164,14 @@ export default function EvaluationListPage() {
                 const notConnected = normalizeNotConnected(record.notConnected);
                 return (
                   <tr
-                    key={record.***REMOVED***Id}
+                    key={record.kbId}
                     className="c-pointer"
-                    onClick={() => openWor***REMOVED***ench(record)}
+                    onClick={() => openWorkbench(record)}
                   >
                     <td>
-                      <b>{record.***REMOVED***Name || record.***REMOVED***Id}</b>
+                      <b>{record.kbName || record.kbId}</b>
                       <small className="mono-sm" style={{ display: 'block' }}>
-                        {record.***REMOVED***Id}
+                        {record.kbId}
                       </small>
                     </td>
                     <td>
@@ -246,7 +246,7 @@ export default function EvaluationListPage() {
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
-                          openWor***REMOVED***ench(record);
+                          openWorkbench(record);
                         }}
                       >
                         进入评测
@@ -278,7 +278,7 @@ export default function EvaluationListPage() {
               <input
                 className="input"
                 value={keyword}
-                placeholder="搜索知识库名称或 ***REMOVED***Id"
+                placeholder="搜索知识库名称或 kbId"
                 onChange={(event) => setKeyword(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {

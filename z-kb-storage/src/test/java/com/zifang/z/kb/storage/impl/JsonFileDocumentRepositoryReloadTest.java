@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.storage.impl;
+package com.zifang.z.kb.storage.impl;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.DocumentStatus;
-import com.zifang.z.***REMOVED***.api.Workspace;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.DocumentStatus;
+import com.zifang.z.kb.api.Workspace;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -26,7 +26,7 @@ class JsonFileDocumentRepositoryReloadTest {
 
     @Test
     void 重启后枚举时间戳与嵌套Map都完整回来() throws Exception {
-        Path store = Files.createTempDirectory("***REMOVED***-reload").resolve("***REMOVED***.json");
+        Path store = Files.createTempDirectory("kb-reload").resolve("kb.json");
 
         JsonFileDocumentRepository first = new JsonFileDocumentRepository(store.toString());
         Workspace ws = first.getWorkspaceByName("default");

@@ -44,7 +44,7 @@ function hitTitles(result: unknown): string[] {
 const NO_CONTENT_TIMEOUT_MS = 90000;
 
 export function useKnowledgeAssistantChat(
-  ***REMOVED***Id: string,
+  kbId: string,
   pageContext?: Record<string, string>,
 ) {
   const [turns, setTurns] = useState<AssistantTurn[]>([]);
@@ -147,7 +147,7 @@ export function useKnowledgeAssistantChat(
         {
           agentCode: AI_QA_AGENT_CODE,
           conversationId: conversationRef.current || undefined,
-          ***REMOVED***Id,
+          kbId,
           userInput: trimmed,
           context: pageContextRef.current,
         },
@@ -196,7 +196,7 @@ export function useKnowledgeAssistantChat(
         );
       });
     },
-    [***REMOVED***Id],
+    [kbId],
   );
 
   /** 本地汇总类回答（资料缺口）不走模型，直接落一条助手消息。 */

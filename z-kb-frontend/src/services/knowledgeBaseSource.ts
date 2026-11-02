@@ -75,7 +75,7 @@ export interface KnowledgeBaseSourceDocList {
   message?: string;
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBaseSource';
+const BASE = '/kb/v1/knowledgeBaseSource';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -88,65 +88,65 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
   }
 }
 
-export function listKnowledgeBaseSources(***REMOVED***Id: string) {
+export function listKnowledgeBaseSources(kbId: string) {
   return call(() =>
     request<KnowledgeBaseSourceRecord[]>(`${BASE}/list`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function saveKnowledgeBaseSources(***REMOVED***Id: string, sources: KnowledgeBaseSourcePayload[]) {
+export function saveKnowledgeBaseSources(kbId: string, sources: KnowledgeBaseSourcePayload[]) {
   return call(() =>
     request<KnowledgeBaseSourceRecord[]>(`${BASE}/save`, {
       method: 'post',
-      data: { ***REMOVED***Id, sources },
+      data: { kbId, sources },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function testKnowledgeBaseSource(***REMOVED***Id: string, source: KnowledgeBaseSourcePayload) {
+export function testKnowledgeBaseSource(kbId: string, source: KnowledgeBaseSourcePayload) {
   return call(() =>
     request<KnowledgeBaseSourceTestResult>(`${BASE}/test`, {
       method: 'post',
-      data: { ***REMOVED***Id, source },
+      data: { kbId, source },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function syncKnowledgeBaseSource(***REMOVED***Id: string, sourceId: string) {
+export function syncKnowledgeBaseSource(kbId: string, sourceId: string) {
   return call(() =>
     request<KnowledgeBaseSourceSyncResult>(`${BASE}/sync`, {
       method: 'post',
-      data: { ***REMOVED***Id, sourceId },
+      data: { kbId, sourceId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function loadYuqueCatalog(***REMOVED***Id: string, source: KnowledgeBaseSourcePayload) {
+export function loadYuqueCatalog(kbId: string, source: KnowledgeBaseSourcePayload) {
   return call(() =>
     request<KnowledgeBaseSourceCatalog>(`${BASE}/yuque/catalog`, {
       method: 'post',
-      data: { ***REMOVED***Id, source },
+      data: { kbId, source },
       headers: tenantHeaders(),
     }),
   );
 }
 
 export function loadYuqueCatalogDocs(
-  ***REMOVED***Id: string,
+  kbId: string,
   source: KnowledgeBaseSourcePayload,
   book: string,
 ) {
   return call(() =>
     request<KnowledgeBaseSourceDocList>(`${BASE}/yuque/catalogDocs`, {
       method: 'post',
-      data: { ***REMOVED***Id, source, book },
+      data: { kbId, source, book },
       headers: tenantHeaders(),
     }),
   );

@@ -2,11 +2,11 @@ import {useEffect, useState} from 'react'
 import {Card, Input, Button, Select, InputNumber, List, Tag, Alert, Space} from 'antd'
 import {SearchOutlined} from '@ant-design/icons'
 import {EmptyState, ErrorState, LoadingState} from '@yuku123/z-frontend-common/ui'
-import {***REMOVED***Api} from '../services/api'
+import {kbApi} from '../services/api'
 
 const {TextArea} = Input
 
-// SearchMode 枚举，逐一对应 z-***REMOVED***-api/src/.../SearchMode.java
+// SearchMode 枚举，逐一对应 z-kb-api/src/.../SearchMode.java
 const MODES = [
     {value: 'FUSION', label: 'FUSION（向量+关键词+图谱，RRF）'},
     {value: 'HYBRID', label: 'HYBRID（向量+关键词）'},
@@ -32,7 +32,7 @@ export default function SearchPage() {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        ***REMOVED***Api.listWorkspaces().then(data => {
+        kbApi.listWorkspaces().then(data => {
             const list = Array.isArray(data) ? data : []
             setWorkspaces(list.map(w => ({label: w.name, value: w.name})))
             if (list.length > 0) setWorkspace(list[0].name)
@@ -46,7 +46,7 @@ export default function SearchPage() {
         setError(null)
         try {
             // 请求体走全局 SNAKE_CASE：实测 top_k 生效、topK 被忽略（用 topK 时恒为服务端默认 10）
-            const data = await ***REMOVED***Api.search({query: q, workspace, mode, top_k: topK})
+            const data = await kbApi.search({query: q, workspace, mode, top_k: topK})
             setResult(data && typeof data === 'object' ? data : null)
         } catch (e) {
             setError(e.message)
@@ -68,7 +68,7 @@ export default function SearchPage() {
      */
     const retry = () => {
         setError(null)
-        ***REMOVED***Api.listWorkspaces()
+        kbApi.listWorkspaces()
             .then(data => {
                 const list = Array.isArray(data) ? data : []
                 setWorkspaces(list.map(w => ({label: w.name, value: w.name})))
@@ -127,10 +127,10 @@ export default function SearchPage() {
                             message="向量召回恒为 0：不是没有向量，而是 L3 读写两侧集合名不一致"
                             description={
                                 <span>
-                                    collection <code>***REMOVED***_default_chunks_chunks</code> 实测已存 11624 条 512 维向量，
-                                    但读侧 <code>HybridSearcher.java:42</code> 用 <code>"***REMOVED***_chunks"</code>、
+                                    collection <code>kb_default_chunks_chunks</code> 实测已存 11624 条 512 维向量，
+                                    但读侧 <code>HybridSearcher.java:42</code> 用 <code>"kb_chunks"</code>、
                                     写侧 <code>DefaultKnowledgeBaseService.java:48</code> 用 <code>"chunks"</code>，
-                                    拼出的物理名 <code>***REMOVED***_default_chunks_***REMOVED***_chunks</code> 不存在 ⇒
+                                    拼出的物理名 <code>kb_default_chunks_kb_chunks</code> 不存在 ⇒
                                     <code>hasCollection()</code> 恒 false，向量分支静默返回空。
                                     当前有效召回只有关键词与图谱两路。
                                 </span>

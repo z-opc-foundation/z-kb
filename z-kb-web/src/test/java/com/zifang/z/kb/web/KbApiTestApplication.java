@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -8,5 +8,5 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
  */
 @SpringBootConfiguration
 @EnableAutoConfiguration
-public class ***REMOVED***ApiTestApplication {
+public class KbApiTestApplication {
 }

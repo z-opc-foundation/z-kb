@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.ingest.util;
+package com.zifang.z.kb.ingest.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

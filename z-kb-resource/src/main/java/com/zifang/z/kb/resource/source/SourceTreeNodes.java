@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryNode;
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.core.source.YuqueSelection;
+import com.zifang.z.kb.api.material.MaterialCategoryNode;
+import com.zifang.z.kb.api.material.MaterialCategoryService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.core.source.YuqueSelection;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class SourceTreeNodes {
     }
 
     /** 确保接入源节点存在，返回节点分类标识。 */
-    public String ensureSourceNode(String ***REMOVED***Id, KnowledgeBaseSourceAccess source, ***REMOVED***Caller caller) {
+    public String ensureSourceNode(String kbId, KnowledgeBaseSourceAccess source, KbCaller caller) {
         Map<String, Object> ext = new LinkedHashMap<>();
         ext.put("sourceId", source.getSourceId());
         ext.put("provider", source.getProvider());
@@ -30,15 +30,15 @@ public class SourceTreeNodes {
         if (namespace != null) {
             ext.put("namespace", namespace);
         }
-        MaterialCategoryNode info = categoryService.ensureBoundNode(***REMOVED***Id, null,
+        MaterialCategoryNode info = categoryService.ensureBoundNode(kbId, null,
                 MaterialCategoryService.NODE_SOURCE, source.getName(),
                 "SOURCE:" + source.getSourceId(), ext, caller);
         return info.getCategoryId();
     }
 
     /** 确保来源下的知识库节点存在，返回节点分类标识。 */
-    public String ensureBookNode(String ***REMOVED***Id, String sourceCategoryId,
-            KnowledgeBaseSourceAccess source, YuqueSelection.Book book, ***REMOVED***Caller caller) {
+    public String ensureBookNode(String kbId, String sourceCategoryId,
+            KnowledgeBaseSourceAccess source, YuqueSelection.Book book, KbCaller caller) {
         String bookScope = book.getBook().trim();
         Map<String, Object> ext = new LinkedHashMap<>();
         ext.put("sourceId", source.getSourceId());
@@ -46,23 +46,23 @@ public class SourceTreeNodes {
         ext.put("namespace", bookScope);
         ext.put("book", bookScope.contains("/")
                 ? bookScope.substring(bookScope.lastIndexOf('/') + 1) : bookScope);
-        MaterialCategoryNode info = categoryService.ensureBoundNode(***REMOVED***Id, sourceCategoryId,
+        MaterialCategoryNode info = categoryService.ensureBoundNode(kbId, sourceCategoryId,
                 MaterialCategoryService.NODE_SOURCE_BOOK, YuqueSelection.bookName(book),
                 "SOURCE_BOOK:" + source.getSourceId() + ":" + bookScope, ext, caller);
         return info.getCategoryId();
     }
 
     /** 确保来源下的代码项目节点存在：一个仓库一个节点，返回节点分类标识。 */
-    public String ensureRepoNode(String ***REMOVED***Id, String sourceCategoryId,
+    public String ensureRepoNode(String kbId, String sourceCategoryId,
             KnowledgeBaseSourceAccess source, String name, String repoScope, String branch,
-            ***REMOVED***Caller caller) {
+            KbCaller caller) {
         Map<String, Object> ext = new LinkedHashMap<>();
         ext.put("sourceId", source.getSourceId());
         ext.put("provider", source.getProvider());
         ext.put("namespace", repoScope);
         ext.put("repo", repoScope);
         ext.put("branch", branch);
-        MaterialCategoryNode info = categoryService.ensureBoundNode(***REMOVED***Id, sourceCategoryId,
+        MaterialCategoryNode info = categoryService.ensureBoundNode(kbId, sourceCategoryId,
                 MaterialCategoryService.NODE_SOURCE_REPO, name,
                 "SOURCE_REPO:" + source.getSourceId() + ":" + repoScope, ext, caller);
         return info.getCategoryId();
@@ -74,14 +74,14 @@ public class SourceTreeNodes {
      * <p>目录路径同时写进 ext 与 bindKey：路径变了就是另一个目录，绑定标识跟着变，
      * 旧目录下的物料不会被误认成新目录的。
      */
-    public String ensureLocalDirNode(String ***REMOVED***Id, String sourceCategoryId,
-            KnowledgeBaseSourceAccess source, String dirPath, ***REMOVED***Caller caller) {
+    public String ensureLocalDirNode(String kbId, String sourceCategoryId,
+            KnowledgeBaseSourceAccess source, String dirPath, KbCaller caller) {
         Map<String, Object> ext = new LinkedHashMap<>();
         ext.put("sourceId", source.getSourceId());
         ext.put("provider", source.getProvider());
         ext.put("namespace", dirPath);
         ext.put("dir", dirPath);
-        MaterialCategoryNode info = categoryService.ensureBoundNode(***REMOVED***Id, sourceCategoryId,
+        MaterialCategoryNode info = categoryService.ensureBoundNode(kbId, sourceCategoryId,
                 MaterialCategoryService.NODE_SOURCE_LOCAL_DIR, dirPath,
                 "SOURCE_LOCAL_DIR:" + source.getSourceId() + ":" + dirPath, ext, caller);
         return info.getCategoryId();

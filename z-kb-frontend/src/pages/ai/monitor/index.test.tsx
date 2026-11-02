@@ -49,7 +49,7 @@ function makeEvent(
     agentName: '知识库问答助手',
     status,
     durationMs: 320,
-    args: { ***REMOVED***Id: '***REMOVED***_1', query: '排班制度' },
+    args: { kbId: 'kb_1', query: '排班制度' },
     resultSummary: '命中 2 条',
     ...overrides,
   };
@@ -61,10 +61,10 @@ const events: CallEvent[] = [
     durationMs: 2500,
     resultSummary: '未返回业务结果',
     errorLabel: '无权限访问知识库',
-    errorMessage: '检索失败：当前租户无权访问知识库 ***REMOVED***_1',
+    errorMessage: '检索失败：当前租户无权访问知识库 kb_1',
   }),
   makeEvent('req_3', 'timeout', {
-    toolCode: '***REMOVED***_knowledge_search',
+    toolCode: 'kb_knowledge_search',
     toolName: '知识库检索（远端）',
     durationMs: 9000,
     resultSummary: '未返回业务结果',
@@ -104,7 +104,7 @@ const snapshot: MonitorSnapshot = {
       p95Ms: 2500,
     },
     {
-      toolCode: '***REMOVED***_knowledge_search',
+      toolCode: 'kb_knowledge_search',
       toolName: '知识库检索（远端）',
       calls: 1,
       successRate: 0,
@@ -229,23 +229,23 @@ describe('CallMonitorPage', () => {
       container.querySelectorAll<HTMLElement>('.ai-monitor-ranking tbody tr'),
     );
     const remoteRow = rankingRows.find((row) =>
-      row.textContent?.includes('***REMOVED***_knowledge_search'),
+      row.textContent?.includes('kb_knowledge_search'),
     ) as HTMLElement;
     fireEvent.click(remoteRow);
 
     expect(
-      screen.getByText('工具：***REMOVED***_knowledge_search'),
+      screen.getByText('工具：kb_knowledge_search'),
     ).toBeInTheDocument();
     expect(screen.getByText('req_3')).toBeInTheDocument();
     expect(screen.queryByText('req_1')).not.toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: /工具：***REMOVED***_knowledge_search/,
+        name: /工具：kb_knowledge_search/,
       }),
     );
     expect(screen.getByText('req_1')).toBeInTheDocument();
-    expect(screen.queryByText(/工具：***REMOVED***_knowledge_search_old/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/工具：kb_knowledge_search_old/)).not.toBeInTheDocument();
   });
 
   it('打开调用详情抽屉并关闭', () => {

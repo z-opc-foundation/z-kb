@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import java.util.Collections;
 
@@ -8,7 +8,7 @@ import java.util.Collections;
  * <p>前端判定：{@code success === true} 或 {@code code} 为 0/200 即成功，且对象里必须存在
  * {@code data} 键（失败时放空 Map，避免全局 NON_NULL 配置抹掉该键）。</p>
  */
-public final class ***REMOVED***Result<T> {
+public final class KbResult<T> {
 
     public static final int SUCCESS_CODE = 0;
     public static final String OK_MESSAGE = "ok";
@@ -18,23 +18,23 @@ public final class ***REMOVED***Result<T> {
     private String message;
     private T data;
 
-    public ***REMOVED***Result() {
+    public KbResult() {
     }
 
-    private ***REMOVED***Result(boolean success, int code, String message, T data) {
+    private KbResult(boolean success, int code, String message, T data) {
         this.success = success;
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public static <T> ***REMOVED***Result<T> ok(T data) {
-        return new ***REMOVED***Result<>(true, SUCCESS_CODE, OK_MESSAGE, data);
+    public static <T> KbResult<T> ok(T data) {
+        return new KbResult<>(true, SUCCESS_CODE, OK_MESSAGE, data);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> ***REMOVED***Result<T> fail(int code, String message) {
-        return new ***REMOVED***Result<>(false, code, message, (T) Collections.emptyMap());
+    public static <T> KbResult<T> fail(int code, String message) {
+        return new KbResult<>(false, code, message, (T) Collections.emptyMap());
     }
 
     public boolean isSuccess() {

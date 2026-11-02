@@ -80,8 +80,8 @@ const DRAFT = version(3, 'DRAFT', {
 });
 
 const CONFIG: KnowledgeBaseConfigRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   type: 'FILE',
   embeddingModel: 'bge-m3',
   canManage: true,
@@ -115,13 +115,13 @@ const CONFIG: KnowledgeBaseConfigRecord = {
   },
 };
 
-function renderVersions(route = '/knowledge-bases/***REMOVED***-1/versions') {
+function renderVersions(route = '/knowledge-bases/kb-1/versions') {
   return renderAt(
     <Routes>
-      <Route path="/knowledge-bases/:***REMOVED***Id/versions" element={<VersionManagementPage />} />
-      <Route path="/knowledge-bases/:***REMOVED***Id" element={<div>知识库详情页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id/settings" element={<div>设置页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id/governance" element={<div>任务管理页</div>} />
+      <Route path="/knowledge-bases/:kbId/versions" element={<VersionManagementPage />} />
+      <Route path="/knowledge-bases/:kbId" element={<div>知识库详情页</div>} />
+      <Route path="/knowledge-bases/:kbId/settings" element={<div>设置页</div>} />
+      <Route path="/knowledge-bases/:kbId/governance" element={<div>任务管理页</div>} />
     </Routes>,
     { route },
   );
@@ -147,7 +147,7 @@ describe('配置版本管理页', () => {
     expect(screen.getByText('正在加载版本管理…')).toBeTruthy();
     expect(await screen.findByText(/版本管理/)).toBeTruthy();
 
-    expect(getKnowledgeBaseConfig).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getKnowledgeBaseConfig).toHaveBeenCalledWith('kb-1');
     expect(screen.getByText(/护理知识库/)).toBeTruthy();
     expect(screen.getByText('v2')).toBeTruthy();
     expect(screen.getByText(/草稿 · v3/)).toBeTruthy();
@@ -174,7 +174,7 @@ describe('配置版本管理页', () => {
     await waitFor(() =>
       expect(saveConfigDraft).toHaveBeenCalledWith(
         expect.objectContaining({
-          ***REMOVED***Id: '***REMOVED***-1',
+          kbId: 'kb-1',
           presetVersion: 'default',
           parserPolicy: '{"ocr":"auto"}',
           remark: '切换 OCR 模式',
@@ -189,7 +189,7 @@ describe('配置版本管理页', () => {
     await screen.findByText(/护理知识库/);
 
     fireEvent.click(screen.getByRole('button', { name: /校验草稿/ }));
-    await waitFor(() => expect(validateConfigDraft).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(validateConfigDraft).toHaveBeenCalledWith('kb-1'));
     expect(await screen.findByText('校验通过')).toBeTruthy();
   });
 
@@ -203,12 +203,12 @@ describe('配置版本管理页', () => {
 
     const confirm = screen.getByRole('button', { name: '确认发布' });
     expect(confirm).toBeDisabled();
-    fireEvent.click(screen.getByRole('chec***REMOVED***ox'));
+    fireEvent.click(screen.getByRole('checkbox'));
     expect(screen.getByRole('button', { name: '确认发布' })).not.toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: '确认发布' }));
 
     await waitFor(() =>
-      expect(publishConfig).toHaveBeenCalledWith('***REMOVED***-1', '开启 OCR'),
+      expect(publishConfig).toHaveBeenCalledWith('kb-1', '开启 OCR'),
     );
     await waitFor(() => expect(getKnowledgeBaseConfig).toHaveBeenCalledTimes(2));
   });
@@ -221,10 +221,10 @@ describe('配置版本管理页', () => {
     await screen.findByRole('dialog');
     const confirm = screen.getByRole('button', { name: '确认提交' });
     expect(confirm).toBeDisabled();
-    fireEvent.click(screen.getByRole('chec***REMOVED***ox'));
+    fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: '确认提交' }));
 
-    await waitFor(() => expect(submitFullRebuild).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(submitFullRebuild).toHaveBeenCalledWith('kb-1'));
     expect(await screen.findByText('已提交全量重建')).toBeTruthy();
     expect(screen.getByText('batch-1234567890')).toBeTruthy();
 
@@ -240,12 +240,12 @@ describe('配置版本管理页', () => {
     await screen.findByRole('dialog');
     fireEvent.click(screen.getByRole('button', { name: '确认丢弃' }));
 
-    await waitFor(() => expect(discardConfigDraft).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(discardConfigDraft).toHaveBeenCalledWith('kb-1'));
   });
 
   it('配置不可用时展示无法打开提示', async () => {
     vi.mocked(getKnowledgeBaseConfig).mockResolvedValue(undefined);
-    renderVersions('/knowledge-bases/***REMOVED***-missing/versions');
+    renderVersions('/knowledge-bases/kb-missing/versions');
     expect(await screen.findByText('无法打开版本管理')).toBeTruthy();
   });
 });

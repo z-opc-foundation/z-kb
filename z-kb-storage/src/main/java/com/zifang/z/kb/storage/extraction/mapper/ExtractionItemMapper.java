@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.storage.extraction.mapper;
+package com.zifang.z.kb.storage.extraction.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ExtractionItemEntity;
+import com.zifang.z.kb.storage.extraction.entity.ExtractionItemEntity;
 
 public interface ExtractionItemMapper extends BaseMapper<ExtractionItemEntity> {
 }

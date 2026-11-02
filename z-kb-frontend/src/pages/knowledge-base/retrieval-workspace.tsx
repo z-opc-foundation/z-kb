@@ -32,7 +32,7 @@ function highlightTerms(text: string, terms: string[]): ReactNode {
   );
 }
 
-export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***Id: string }) {
+export default function RetrievalWorkspace({ kbId }: { kbId: string }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('query') || '';
@@ -66,7 +66,7 @@ export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***I
       }
       setLoading(true);
       const data = await retrieveKnowledge({
-        ***REMOVED***Id,
+        kbId,
         query: trimmed,
         topK: size,
         minScore: floor,
@@ -88,7 +88,7 @@ export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***I
       });
       setSearched(true);
     },
-    [***REMOVED***Id],
+    [kbId],
   );
 
   const submit = (event: FormEvent) => {
@@ -116,13 +116,13 @@ export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***I
       return;
     }
     navigate(
-      `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=wiki&wikiId=${encodeURIComponent(hit.wikiId)}`,
+      `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=wiki&wikiId=${encodeURIComponent(hit.wikiId)}`,
     );
   };
 
   const openMaterial = (hit: RetrievalHitRecord) => {
     navigate(
-      `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=materials&materialId=${encodeURIComponent(hit.materialId)}&materialTab=draft`,
+      `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=materials&materialId=${encodeURIComponent(hit.materialId)}&materialTab=draft`,
     );
   };
 
@@ -225,7 +225,7 @@ export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***I
           <div className="actions" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <span className="hint">{hint}</span>
             <AgentAskButton
-              ***REMOVED***Id={***REMOVED***Id}
+              kbId={kbId}
               className="btn sm"
               label={searched ? '用 AI 总结' : '问 AI'}
               question={
@@ -414,7 +414,7 @@ export default function RetrievalWorkspace({ ***REMOVED***Id }: { ***REMOVED***I
                       type="button"
                       onClick={() =>
                         navigate(
-                          `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=lineage&wikiId=${encodeURIComponent(lineageHit.wikiId || '')}`,
+                          `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=lineage&wikiId=${encodeURIComponent(lineageHit.wikiId || '')}`,
                         )
                       }
                     >

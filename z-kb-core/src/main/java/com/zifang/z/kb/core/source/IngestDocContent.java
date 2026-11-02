@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
 /**
  * 一篇来源文档的正文与版本标记。version 是来源侧的内容更新时间，

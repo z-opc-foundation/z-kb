@@ -17,8 +17,8 @@ const records: AuditLogRecord[] = [
   {
     id: '1',
     tenantCode: 'tenant-a',
-    type: '***REMOVED***',
-    bizRef: '***REMOVED***-1',
+    type: 'KB',
+    bizRef: 'kb-1',
     actorId: 9,
     action: 'MATERIAL_UPLOAD',
     actionDesc: '上传资料',
@@ -58,12 +58,12 @@ describe('操作日志列表', () => {
     vi.clearAllMocks();
   });
 
-  it('知识库页签固定 type=***REMOVED*** 与 bizRef，不展示归属列', async () => {
-    render(<AuditLogPanel type="***REMOVED***" bizRef="***REMOVED***-1" />);
+  it('知识库页签固定 type=KB 与 bizRef，不展示归属列', async () => {
+    render(<AuditLogPanel type="KB" bizRef="kb-1" />);
 
     await waitFor(() => expect(screen.getByText('上传资料')).toBeTruthy());
     expect(pageAuditLogs).toHaveBeenCalledWith(
-      expect.objectContaining({ type: '***REMOVED***', bizRef: '***REMOVED***-1' }),
+      expect.objectContaining({ type: 'KB', bizRef: 'kb-1' }),
     );
     expect(screen.queryByText('归属')).toBeNull();
   });
@@ -77,7 +77,7 @@ describe('操作日志列表', () => {
     );
     expect(screen.getByText('知识库')).toBeTruthy();
     expect(screen.getByText('系统')).toBeTruthy();
-    expect(screen.getByText('***REMOVED***-1')).toBeTruthy();
+    expect(screen.getByText('kb-1')).toBeTruthy();
   });
 
   it('切到统计页签按当前范围汇总，切回明细恢复列表', async () => {

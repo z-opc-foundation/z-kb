@@ -7,7 +7,7 @@ import MaterialListPanel from './material-list-panel';
 const RECORDS: MaterialRecord[] = [
   {
     materialId: 'mat-123456789',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '排班管理制度',
     sourceType: 'UPLOAD',
@@ -28,7 +28,7 @@ const RECORDS: MaterialRecord[] = [
   },
   {
     materialId: 'mat-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '交接班规范',
     sourceType: 'UPLOAD',
@@ -89,8 +89,8 @@ describe('资料列表面板', () => {
     expect(screen.getByText('mat-1234')).toBeTruthy();
     expect(screen.getByText('交接班规范')).toBeTruthy();
     expect(screen.getAllByText('文档')).toHaveLength(2);
-    expect(screen.getByText('2.0 ***REMOVED***')).toBeTruthy();
-    expect(screen.getByText('1.0 ***REMOVED***')).toBeTruthy();
+    expect(screen.getByText('2.0 KB')).toBeTruthy();
+    expect(screen.getByText('1.0 KB')).toBeTruthy();
     expect(screen.getByText('生效')).toBeTruthy();
     expect(screen.getByText('已登记')).toBeTruthy();
     expect(screen.getByText('已解析')).toBeTruthy();

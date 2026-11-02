@@ -12,7 +12,7 @@ const baseEvent: CallEvent = {
   agentName: '知识库问答助手',
   status: 'success',
   durationMs: 320,
-  args: { ***REMOVED***Id: '***REMOVED***_1', query: '排班制度' },
+  args: { kbId: 'kb_1', query: '排班制度' },
   resultSummary: '命中 2 条',
 };
 
@@ -28,7 +28,7 @@ describe('CallDetailDrawer', () => {
     expect(screen.getByText('知识库问答助手')).toBeInTheDocument();
     expect(screen.getByText('320 ms')).toBeInTheDocument();
     expect(screen.getByText(/10-28 10:20:30/)).toBeInTheDocument();
-    expect(screen.getByText(/***REMOVED***Id/)).toBeInTheDocument();
+    expect(screen.getByText(/kbId/)).toBeInTheDocument();
     expect(screen.getByText(/排班制度/)).toBeInTheDocument();
     expect(screen.getByText('命中 2 条')).toBeInTheDocument();
     // 成功调用没有错误提示
@@ -43,7 +43,7 @@ describe('CallDetailDrawer', () => {
           ...baseEvent,
           status: 'failed',
           errorLabel: '无权限访问知识库',
-          errorMessage: '检索失败：当前租户无权访问知识库 ***REMOVED***_1',
+          errorMessage: '检索失败：当前租户无权访问知识库 kb_1',
         }}
         onClose={vi.fn()}
       />,
@@ -51,7 +51,7 @@ describe('CallDetailDrawer', () => {
     expect(screen.getByText('失败')).toBeInTheDocument();
     expect(screen.getByText('调用失败')).toBeInTheDocument();
     expect(
-      screen.getByText('检索失败：当前租户无权访问知识库 ***REMOVED***_1'),
+      screen.getByText('检索失败：当前租户无权访问知识库 kb_1'),
     ).toBeInTheDocument();
 
     rerender(

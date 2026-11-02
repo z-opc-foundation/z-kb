@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.modeling.extractor;
+package com.zifang.z.kb.modeling.extractor;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.modeling.model.ProductModel;
 
 import java.util.*;
 import java.util.regex.Matcher;

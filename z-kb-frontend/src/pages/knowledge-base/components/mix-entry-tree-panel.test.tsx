@@ -22,7 +22,7 @@ function material(
 ): MaterialRecord {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title,
     sourceType: 'UPLOAD',

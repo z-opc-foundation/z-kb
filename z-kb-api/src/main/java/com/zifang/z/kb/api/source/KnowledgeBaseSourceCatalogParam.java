@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 /**
  * 加载可选的团队空间与知识库；scope.namespace 有值时同时返回该团队的知识库。
  */
 public class KnowledgeBaseSourceCatalogParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private KnowledgeBaseSourceParam source;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public KnowledgeBaseSourceParam getSource() {

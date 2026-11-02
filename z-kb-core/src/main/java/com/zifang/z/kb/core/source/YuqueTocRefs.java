@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueTocNode;
+import com.zifang.z.kb.core.source.yuque.YuqueTocNode;
 
 import java.util.ArrayList;
 import java.util.Collections;

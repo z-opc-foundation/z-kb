@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemParam;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPanelView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskNature;
-import com.zifang.z.***REMOVED***.storage.taskconfig.entity.TaskConfigEntity;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemView;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPanelView;
+import com.zifang.z.kb.api.taskconfig.TaskNature;
+import com.zifang.z.kb.storage.taskconfig.entity.TaskConfigEntity;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -86,14 +86,14 @@ final class TaskConfigSupport {
                 int serial = Integer.parseInt(value.substring(NEXT_VERSION_PREFIX.length()));
                 return NEXT_VERSION_PREFIX + (serial + 1);
             } catch (NumberFormatException e) {
-                throw new ***REMOVED***Exception("TASK_CONFIG_VERSION_INVALID", "任务配置版本不合法");
+                throw new KBException("TASK_CONFIG_VERSION_INVALID", "任务配置版本不合法");
             }
         }
         return INITIAL_VERSION;
     }
 
     /** 按任务性质生成一条默认配置行。 */
-    static TaskConfigEntity defaultRow(String tenantCode, String ***REMOVED***Id, TaskNature nature,
+    static TaskConfigEntity defaultRow(String tenantCode, String kbId, TaskNature nature,
                                        Instant now, String actorId) {
         TaskConfigItemView item = new TaskConfigItemView();
         item.setTaskNature(nature.name());
@@ -101,7 +101,7 @@ final class TaskConfigSupport {
         item.setTaskGroup(nature.getGroup());
         switch (nature) {
             case COMPILE:
-                fill(item, "LOCAL_PIPELINE", "***REMOVED***-compiler", "—", "—", "解析稿复用、标题切块",
+                fill(item, "LOCAL_PIPELINE", "kb-compiler", "—", "—", "解析稿复用、标题切块",
                         "chunker", "text-simple@1.0", "retrieval_chunk", 300, 1,
                         "索引后执行本地规则萃取（摘要/问句/术语/FAQ），产物不入账本。");
                 break;
@@ -118,11 +118,11 @@ final class TaskConfigSupport {
                         "同步本地确定性跑批，固定数据集与索引代际。");
                 break;
         }
-        return buildRow(tenantCode, ***REMOVED***Id, INITIAL_VERSION, item, now, actorId);
+        return buildRow(tenantCode, kbId, INITIAL_VERSION, item, now, actorId);
     }
 
     /** 按发布项生成一行。 */
-    static TaskConfigEntity buildRow(String tenantCode, String ***REMOVED***Id, String version,
+    static TaskConfigEntity buildRow(String tenantCode, String kbId, String version,
                                      TaskConfigItemParam param, Instant now, String actorId) {
         TaskNature nature = TaskNature.of(param.getTaskNature());
         TaskConfigItemView item = new TaskConfigItemView();
@@ -140,7 +140,7 @@ final class TaskConfigSupport {
         item.setTimeoutSeconds(param.getTimeoutSeconds());
         item.setRetryLimit(param.getRetryLimit());
         item.setBoundaryNote(trim(param.getBoundaryNote()));
-        return buildRow(tenantCode, ***REMOVED***Id, version, item, now, actorId);
+        return buildRow(tenantCode, kbId, version, item, now, actorId);
     }
 
     /** 组装面板：版本与发布时间取首行，条目按任务性质顺序排列。 */
@@ -164,13 +164,13 @@ final class TaskConfigSupport {
         return panel;
     }
 
-    private static TaskConfigEntity buildRow(String tenantCode, String ***REMOVED***Id, String version,
+    private static TaskConfigEntity buildRow(String tenantCode, String kbId, String version,
                                              TaskConfigItemView item, Instant now,
                                              String actorId) {
         TaskConfigEntity row = new TaskConfigEntity();
         row.setId(UUID.randomUUID().toString());
         row.setTenantCode(tenantCode);
-        row.set***REMOVED***Id(***REMOVED***Id == null ? "" : ***REMOVED***Id);
+        row.setKbId(kbId == null ? "" : kbId);
         row.setTaskType(item.getTaskGroup());
         row.setTaskCode(item.getTaskNature());
         row.setTaskName(item.getTaskLabel());
@@ -302,11 +302,11 @@ final class TaskConfigSupport {
         return value != null && !value.trim().isEmpty();
     }
 
-    static ***REMOVED***Exception paramInvalid() {
-        return new ***REMOVED***Exception("TASK_CONFIG_PARAM_INVALID", "任务配置参数不合法");
+    static KBException paramInvalid() {
+        return new KBException("TASK_CONFIG_PARAM_INVALID", "任务配置参数不合法");
     }
 
-    static ***REMOVED***Exception natureMissing() {
-        return new ***REMOVED***Exception("TASK_CONFIG_NATURE_MISSING", "任务配置必须覆盖全部三类任务性质");
+    static KBException natureMissing() {
+        return new KBException("TASK_CONFIG_NATURE_MISSING", "任务配置必须覆盖全部三类任务性质");
     }
 }

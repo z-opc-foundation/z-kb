@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.git;
+package com.zifang.z.kb.core.source.git;
 
 /** Git 托管平台 REST 调用失败。kind 用于区分「可重试」与「确定性错误」。 */
 public class GitApiException extends RuntimeException {

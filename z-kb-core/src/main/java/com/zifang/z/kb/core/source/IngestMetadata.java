@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
 import com.zifang.util.json.JsonUtil;
 

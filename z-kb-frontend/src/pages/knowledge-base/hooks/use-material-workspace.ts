@@ -22,7 +22,7 @@ import { useMaterialTree } from './use-material-tree';
 import { useMaterialDetail } from './use-material-detail';
 
 export function useMaterialWorkspace({
-  ***REMOVED***Id,
+  kbId,
   canManage,
   canWrite = canManage,
   canCompile = canManage,
@@ -51,7 +51,7 @@ export function useMaterialWorkspace({
   const [nodeBatchBusy, setNodeBatchBusy] = useState(false);
 
   const list = useMaterialList({
-    ***REMOVED***Id,
+    kbId,
     materialType,
     categoryId,
     onCategoryChange: setCategoryId,
@@ -60,7 +60,7 @@ export function useMaterialWorkspace({
   // 树与详情都会改动列表/树数据，用 ref 打破三个 hook 之间的构造顺序依赖。
   const refreshRef = useRef<() => void>(() => {});
   const tree = useMaterialTree({
-    ***REMOVED***Id,
+    kbId,
     canWrite,
     categoryId,
     setBusy,
@@ -73,14 +73,14 @@ export function useMaterialWorkspace({
     onMaterialsChanged: () => refreshRef.current(),
   });
   const detail = useMaterialDetail({
-    ***REMOVED***Id,
+    kbId,
     initialMaterialId,
     initialDetailTab,
     onDetailClosed,
     onMaterialsChanged: () => refreshRef.current(),
   });
   const recycle = useMaterialRecycle({
-    ***REMOVED***Id,
+    kbId,
     canWrite,
     materialType,
     onChanged: () => refreshRef.current(),
@@ -109,7 +109,7 @@ export function useMaterialWorkspace({
   /** 资料树上的接入源节点直接发起同步；语雀走勾选范围抽屉，Git 一次同步整个仓库。 */
   const syncSource = async (sourceId: string) => {
     setBusy(true);
-    const result = await syncKnowledgeBaseSource(***REMOVED***Id, sourceId);
+    const result = await syncKnowledgeBaseSource(kbId, sourceId);
     setBusy(false);
     if (!result) {
       return;
@@ -135,7 +135,7 @@ export function useMaterialWorkspace({
       return;
     }
     setUploading(true);
-    const result = await uploadMaterials(***REMOVED***Id, categoryId || undefined, uploadFiles);
+    const result = await uploadMaterials(kbId, categoryId || undefined, uploadFiles);
     setUploading(false);
     if (!result) {
       return;
@@ -161,7 +161,7 @@ export function useMaterialWorkspace({
       return;
     }
     setBusy(true);
-    const result = await updateMaterialCategory(***REMOVED***Id, list.selected, targetId);
+    const result = await updateMaterialCategory(kbId, list.selected, targetId);
     setBusy(false);
     if (!result) {
       return;
@@ -181,7 +181,7 @@ export function useMaterialWorkspace({
 
   const removeSelected = async () => {
     setBusy(true);
-    const result = await removeMaterials(***REMOVED***Id, list.selected);
+    const result = await removeMaterials(kbId, list.selected);
     setBusy(false);
     setConfirmRemove(false);
     if (!result) {
@@ -204,7 +204,7 @@ export function useMaterialWorkspace({
     }
     setBatchBusy(true);
     const result = await createCompilationBatch({
-      ***REMOVED***Id,
+      kbId,
       name: batchName.trim() || undefined,
       scopeType: 'WORKSPACE',
       materialIds: list.selected,
@@ -235,7 +235,7 @@ export function useMaterialWorkspace({
     }
     setNodeBatchBusy(true);
     const result = await createCompilationBatch({
-      ***REMOVED***Id,
+      kbId,
       name: nodeBatchName.trim() || undefined,
       scopeType: 'CATEGORY',
       scopeId: nodeBatch.categoryId,
@@ -257,7 +257,7 @@ export function useMaterialWorkspace({
   const currentCategory = categoryId ? findCategory(tree.tree, categoryId) : undefined;
 
   return {
-    ***REMOVED***Id,
+    kbId,
     canWrite,
     canCompile,
     onOpenConcept,

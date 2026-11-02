@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.storage.material.mapper;
+package com.zifang.z.kb.storage.material.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialEntity;
+import com.zifang.z.kb.storage.material.entity.MaterialEntity;
 
 public interface MaterialMapper extends BaseMapper<MaterialEntity> {
 }

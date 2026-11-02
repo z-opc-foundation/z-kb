@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.graph.impl;
+package com.zifang.z.kb.graph.impl;
 
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.EntityType;
-import com.zifang.z.***REMOVED***.api.GraphQueryResult;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.api.Relation;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.EntityType;
+import com.zifang.z.kb.api.GraphQueryResult;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.Relation;
 import org.slf4j.Logger;
 import com.zifang.util.json.JsonUtil;
 import org.slf4j.LoggerFactory;
@@ -19,25 +19,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * z-***REMOVED*** 图谱 JSON 文件持久化 — 重启不丢实体/关系。
+ * z-kb 图谱 JSON 文件持久化 — 重启不丢实体/关系。
  *
  * <p>每个 workspace 一份 JSON：
  * <ul>
  *   <li>{@code workspaceId} → {@link GraphData}（entities + relations + id 映射）</li>
- *   <li>默认目录：{@code ~/.***REMOVED***/graph/}（与 {@code ***REMOVED***.graph.path} 共享 home）</li>
+ *   <li>默认目录：{@code ~/.kb/graph/}（与 {@code kb.graph.path} 共享 home）</li>
  * </ul>
  *
  * <p>特点：
  * <ul>
  *   <li>扁平 JSON，可人工 cat 查看</li>
  *   <li>异步落盘，WAL  写锁防并发写</li>
- *   <li>支持通过 {@code ***REMOVED***.graph.path} 自定义目录</li>
+ *   <li>支持通过 {@code kb.graph.path} 自定义目录</li>
  * </ul>
  */
 public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
 
     private static final Logger log = LoggerFactory.getLogger(JsonFileKnowledgeGraphStore.class);
-    private static final String DEFAULT_DIR = System.getProperty("user.home") + "/.***REMOVED***/graph";
+    private static final String DEFAULT_DIR = System.getProperty("user.home") + "/.kb/graph";
 
     private final Path baseDir;
     private final ReentrantLock writeLock = new ReentrantLock();
@@ -69,7 +69,7 @@ public class JsonFileKnowledgeGraphStore implements KnowledgeGraphStore {
         }
         // 单线程池，定期扫描 dirty workspace 并落盘
         this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "***REMOVED***-graph-persist");
+            Thread t = new Thread(r, "kb-graph-persist");
             t.setDaemon(true);
             return t;
         });

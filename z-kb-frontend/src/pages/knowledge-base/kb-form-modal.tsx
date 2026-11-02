@@ -10,7 +10,7 @@ import { getActorId, getTenantInfo } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 import { queryCurrentUser } from '@/services/sso';
 import { useEffect, useState } from 'react';
-import { TYPE_META } from './***REMOVED***-meta';
+import { TYPE_META } from './kb-meta';
 
 /** 编码只做稳定标识，默认给三个自动生成的候选，创建后不可改 */
 function buildCodeOptions(): string[] {
@@ -18,30 +18,30 @@ function buildCodeOptions(): string[] {
   const pad = (value: number) => String(value).padStart(2, '0');
   const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
   const suffix = () => Math.random().toString(36).slice(2, 6).replace(/[^a-z0-9]/g, 'x');
-  return [`***REMOVED***_${stamp}_${suffix()}`, `***REMOVED***_${stamp}_${suffix()}`, `***REMOVED***_${stamp}_${suffix()}`];
+  return [`kb_${stamp}_${suffix()}`, `kb_${stamp}_${suffix()}`, `kb_${stamp}_${suffix()}`];
 }
 
-interface ***REMOVED***FormModalProps {
+interface KbFormModalProps {
   mode: 'create' | 'edit';
-  ***REMOVED***?: KnowledgeBaseRecord;
+  kb?: KnowledgeBaseRecord;
   onClose: () => void;
   onSaved: () => void;
 }
 
-function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***REMOVED***FormModalProps) {
+function KbFormModal({ mode, kb, onClose, onSaved }: KbFormModalProps) {
   const tenant = getTenantInfo();
-  const [name, setName] = useState(***REMOVED*** ? ***REMOVED***.name : '');
+  const [name, setName] = useState(kb ? kb.name : '');
   const [codeOptions] = useState<string[]>(() =>
     mode === 'create' ? buildCodeOptions() : [],
   );
-  const [code, setCode] = useState(***REMOVED*** ? ***REMOVED***.code : codeOptions[0] || '');
+  const [code, setCode] = useState(kb ? kb.code : codeOptions[0] || '');
   const [ownerName, setOwnerName] = useState('');
-  const [type, setType] = useState<KnowledgeBaseType>(***REMOVED*** ? ***REMOVED***.type : 'FILE');
+  const [type, setType] = useState<KnowledgeBaseType>(kb ? kb.type : 'FILE');
   const [embeddingModel, setEmbeddingModel] = useState(
-    ***REMOVED*** ? ***REMOVED***.embeddingModel || '' : '',
+    kb ? kb.embeddingModel || '' : '',
   );
   const [description, setDescription] = useState(
-    ***REMOVED*** ? ***REMOVED***.description || '' : '',
+    kb ? kb.description || '' : '',
   );
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +88,7 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
             embeddingModel: embeddingModel.trim() || undefined,
           })
         : await updateKnowledgeBase({
-            ***REMOVED***Id: ***REMOVED***!.***REMOVED***Id,
+            kbId: kb!.kbId,
             name: trimmedName,
             description: description.trim(),
           });
@@ -108,7 +108,7 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
     <AppModal
       icon={mode === 'create' ? 'plus' : 'edit'}
       title={
-        mode === 'create' ? '新建知识库' : `编辑知识库 · ${***REMOVED***?.name || ''}`
+        mode === 'create' ? '新建知识库' : `编辑知识库 · ${kb?.name || ''}`
       }
       width={720}
       onClose={onClose}
@@ -159,10 +159,10 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
                   ))}
                 </select>
               ) : (
-                <div className="readonly-value">{***REMOVED***?.code}</div>
+                <div className="readonly-value">{kb?.code}</div>
               )}
               <span className="help">
-                自动生成，创建后不可修改；MD 导入使用 ***REMOVED***Code。
+                自动生成，创建后不可修改；MD 导入使用 kbCode。
               </span>
             </div>
             <div className="field">
@@ -187,7 +187,7 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
                 </select>
               ) : (
                 <div className="readonly-value">
-                  {TYPE_META[***REMOVED***?.type || 'FILE'].label}
+                  {TYPE_META[kb?.type || 'FILE'].label}
                 </div>
               )}
               <span className="help">
@@ -205,7 +205,7 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
                 />
               ) : (
                 <div className="readonly-value">
-                  {***REMOVED***?.embeddingModel || '—'}
+                  {kb?.embeddingModel || '—'}
                 </div>
               )}
               <span className="help">
@@ -228,7 +228,7 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
               <div className="readonly-value">
                 {mode === 'create'
                   ? ownerName || `本地账号 actorId ${getActorId()}`
-                  : `actorId ${***REMOVED***?.ownerId}`}
+                  : `actorId ${kb?.ownerId}`}
               </div>
               <span className="help">
                 {mode === 'create'
@@ -260,4 +260,4 @@ function ***REMOVED***FormModal({ mode, ***REMOVED***, onClose, onSaved }: ***RE
   );
 }
 
-export default ***REMOVED***FormModal;
+export default KbFormModal;

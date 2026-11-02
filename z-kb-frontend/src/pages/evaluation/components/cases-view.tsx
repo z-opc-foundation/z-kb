@@ -29,7 +29,7 @@ import {
 } from './shared';
 
 interface CasesViewProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   runDetail?: EvalRunDetail | null;
   overview?: EvalOverview | null;
   statusFilter: string;
@@ -49,7 +49,7 @@ const STATUS_OPTIONS = [
 ];
 
 export default function CasesView({
-  ***REMOVED***Id,
+  kbId,
   runDetail,
   overview,
   statusFilter,
@@ -70,7 +70,7 @@ export default function CasesView({
     let alive = true;
     setLoading(true);
     setFailed(false);
-    listEvalBadcases(***REMOVED***Id, statusFilter || undefined).then((result) => {
+    listEvalBadcases(kbId, statusFilter || undefined).then((result) => {
       if (!alive) {
         return;
       }
@@ -88,7 +88,7 @@ export default function CasesView({
     return () => {
       alive = false;
     };
-  }, [***REMOVED***Id, statusFilter]);
+  }, [kbId, statusFilter]);
 
   useEffect(() => load(), [load, tick]);
 
@@ -278,7 +278,7 @@ export default function CasesView({
 
       {caseId ? (
         <CaseDetailDrawer
-          ***REMOVED***Id={***REMOVED***Id}
+          kbId={kbId}
           caseId={caseId}
           badcase={selectedBadcase}
           runId={effectiveRunId}
@@ -294,14 +294,14 @@ export default function CasesView({
 }
 
 function CaseDetailDrawer({
-  ***REMOVED***Id,
+  kbId,
   caseId,
   badcase,
   runId,
   onClose,
   onUpdated,
 }: {
-  ***REMOVED***Id: string;
+  kbId: string;
   caseId: string;
   badcase?: EvalBadcaseRecord;
   runId: string;
@@ -361,13 +361,13 @@ function CaseDetailDrawer({
   const openRetrieval = () => {
     const query = question ? `&query=${encodeURIComponent(question)}` : '';
     navigate(
-      `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=retrieval${query}`,
+      `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=retrieval${query}`,
     );
   };
 
   const openMaterial = (materialId: string) => {
     navigate(
-      `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=materials&materialId=${encodeURIComponent(
+      `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=materials&materialId=${encodeURIComponent(
         materialId,
       )}&materialTab=draft`,
     );

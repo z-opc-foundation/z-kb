@@ -21,9 +21,9 @@ const readFile = vi.mocked(readRepoFile);
 
 const MATERIAL: MaterialRecord = {
   materialId: 'mat-repo',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialType: 'CODE',
-  title: 'z-opc/z-***REMOVED***',
+  title: 'z-opc/z-kb',
   sourceType: 'CODE_GIT',
   materialStatus: 'ACTIVE',
   fingerprint: 'fp-1',
@@ -35,10 +35,10 @@ const MATERIAL: MaterialRecord = {
 
 const OVERVIEW: RepoOverview = {
   materialId: 'mat-repo',
-  title: 'z-opc/z-***REMOVED***',
+  title: 'z-opc/z-kb',
   provider: 'GIT',
-  repo: 'z-opc/z-***REMOVED***',
-  repoUrl: 'https://git.example.com/z-opc/z-***REMOVED***',
+  repo: 'z-opc/z-kb',
+  repoUrl: 'https://git.example.com/z-opc/z-kb',
   branch: 'main',
   commit: 'abcdef1234567890',
   fileCount: 12,
@@ -76,7 +76,7 @@ describe('MaterialRepoBrowser', () => {
 
     render(<MaterialRepoBrowser material={MATERIAL} />);
 
-    expect(await screen.findByText('z-opc/z-***REMOVED***')).toBeTruthy();
+    expect(await screen.findByText('z-opc/z-kb')).toBeTruthy();
     expect(screen.getByText(/分支 main/)).toBeTruthy();
     expect(screen.getByText('README.md')).toBeTruthy();
 

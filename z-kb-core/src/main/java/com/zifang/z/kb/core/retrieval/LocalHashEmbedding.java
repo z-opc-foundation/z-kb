@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.retrieval;
+package com.zifang.z.kb.core.retrieval;
 
 import java.util.ArrayList;
 import java.util.HashMap;

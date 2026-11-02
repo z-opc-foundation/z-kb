@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
  * 四层指标。层与层不做加权总分。

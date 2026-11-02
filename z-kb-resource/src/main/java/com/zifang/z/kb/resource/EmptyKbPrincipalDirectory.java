@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***PrincipalDirectory;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberCandidate;
+import com.zifang.z.kb.api.resource.KbPrincipalDirectory;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberCandidate;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 默认主体目录：不接入身份系统时返回空结果，成员功能降级但不报错。
  */
-public class Empty***REMOVED***PrincipalDirectory implements ***REMOVED***PrincipalDirectory {
+public class EmptyKbPrincipalDirectory implements KbPrincipalDirectory {
 
     @Override
     public boolean isAvailable() {

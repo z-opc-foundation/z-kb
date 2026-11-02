@@ -60,7 +60,7 @@ export default function AuditDetailDrawer({
   const failed = data.success === 0;
   const requestJson = prettyJson(data.requestParams);
   const responseJson = prettyJson(data.responseResult);
-  const ***REMOVED***Log = data.type === '***REMOVED***';
+  const kbLog = data.type === 'KB';
 
   return (
     <div className="overlay drawer-overlay" onMouseDown={onClose}>
@@ -123,8 +123,8 @@ export default function AuditDetailDrawer({
             </div>
             <div>
               <small>归属</small>
-              <b>{***REMOVED***Log ? '知识库级' : '系统级'}</b>
-              <span className="mono">{***REMOVED***Log ? data.bizRef || '未记录知识库' : '不归属业务对象'}</span>
+              <b>{kbLog ? '知识库级' : '系统级'}</b>
+              <span className="mono">{kbLog ? data.bizRef || '未记录知识库' : '不归属业务对象'}</span>
             </div>
             <div>
               <small>被代理方法</small>

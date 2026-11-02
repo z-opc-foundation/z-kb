@@ -7,20 +7,20 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-protocol</artifactId>
+    <artifactId>z-kb-protocol</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: protocol</name>
+    <name>z-kb :: protocol</name>
     <description>
-        z-***REMOVED*** 协议层 — OpenAPI 3.0 DTO 定义、Knife4j 接口契约、跨服务消息模型。
+        z-kb 协议层 — OpenAPI 3.0 DTO 定义、Knife4j 接口契约、跨服务消息模型。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -42,9 +42,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -53,7 +53,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
 
         <dependency>
@@ -63,13 +63,13 @@
         </dependency>
 
         <!-- 响应 DTO 的序列化控制走 z-util 的注解（@JsonSerialize(nonNull=true) 等），
-             与 /api/***REMOVED***/ingest/* 由 controller 显式 toJson 的那条路径对齐 -->
+             与 /api/kb/ingest/* 由 controller 显式 toJson 的那条路径对齐 -->
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-util-parser-json</artifactId>
         </dependency>
 
-        <!-- 契约注解。provided：编译期要，运行时由 z-***REMOVED***-web 的 springdoc/swagger-core 提供，
+        <!-- 契约注解。provided：编译期要，运行时由 z-kb-web 的 springdoc/swagger-core 提供，
              不传递给下游，避免给消费者白带一个注解包。
              2026-10-30：坐标从 io.swagger（v1，@ApiModel/@ApiModelProperty）换到
              io.swagger.core.v3（@Schema/@Operation/@Tag），版本走根 DM 的 ${swagger-annotations.version}。 -->

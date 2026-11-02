@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 import java.util.List;
 
@@ -7,15 +7,15 @@ import java.util.List;
  */
 public class KnowledgeBaseActivityRequest {
 
-    private List<String> ***REMOVED***Ids;
+    private List<String> kbIds;
     private Integer days;
 
-    public List<String> get***REMOVED***Ids() {
-        return ***REMOVED***Ids;
+    public List<String> getKbIds() {
+        return kbIds;
     }
 
-    public void set***REMOVED***Ids(List<String> ***REMOVED***Ids) {
-        this.***REMOVED***Ids = ***REMOVED***Ids;
+    public void setKbIds(List<String> kbIds) {
+        this.kbIds = kbIds;
     }
 
     public Integer getDays() {

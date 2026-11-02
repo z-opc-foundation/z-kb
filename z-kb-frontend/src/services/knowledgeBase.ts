@@ -22,7 +22,7 @@ export interface PageResult<T> {
 }
 
 export interface KnowledgeBaseRecord {
-  ***REMOVED***Id: string;
+  kbId: string;
   tenantCode: string;
   name: string;
   code: string;
@@ -53,12 +53,12 @@ export interface KnowledgeBaseCreatePayload {
 }
 
 export interface KnowledgeBaseUpdatePayload {
-  ***REMOVED***Id: string;
+  kbId: string;
   name: string;
   description?: string;
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/kb/v1/knowledgeBase';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -92,11 +92,11 @@ export function pageKnowledgeBase(
   );
 }
 
-export function getKnowledgeBase(***REMOVED***Id: string) {
+export function getKnowledgeBase(kbId: string) {
   return call(() =>
     request<KnowledgeBaseRecord>(`${BASE}/queryDetailById`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
@@ -122,31 +122,31 @@ export function updateKnowledgeBase(data: KnowledgeBaseUpdatePayload) {
   );
 }
 
-export function archiveKnowledgeBase(***REMOVED***Id: string) {
+export function archiveKnowledgeBase(kbId: string) {
   return call(() =>
     request<boolean>(`${BASE}/archive`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function restoreKnowledgeBase(***REMOVED***Id: string) {
+export function restoreKnowledgeBase(kbId: string) {
   return call(() =>
     request<boolean>(`${BASE}/restore`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function removeKnowledgeBase(***REMOVED***Id: string) {
+export function removeKnowledgeBase(kbId: string) {
   return call(() =>
     request<boolean>(`${BASE}/remove`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );

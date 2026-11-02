@@ -129,11 +129,11 @@ export function countCategoryMaterials(
   return total;
 }
 
-export async function loadLibraryMaterials(***REMOVED***Id: string) {
+export async function loadLibraryMaterials(kbId: string) {
   const records: MaterialRecord[] = [];
   let total = 0;
   for (let current = 1; current <= TREE_MAX_PAGES; current += 1) {
-    const result = await pageMaterial({ ***REMOVED***Id, current, size: TREE_PAGE_SIZE });
+    const result = await pageMaterial({ kbId, current, size: TREE_PAGE_SIZE });
     if (!result) {
       return undefined;
     }
@@ -183,7 +183,7 @@ export function findCategory(
 }
 
 export interface MaterialWorkspaceProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   canManage: boolean;
   canWrite?: boolean;
   canCompile?: boolean;

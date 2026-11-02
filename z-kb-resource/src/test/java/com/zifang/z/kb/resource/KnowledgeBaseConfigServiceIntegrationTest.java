@@ -1,22 +1,22 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.ConfigDiff;
-import com.zifang.z.***REMOVED***.api.resource.ConfigImpact;
-import com.zifang.z.***REMOVED***.api.resource.ConfigIssue;
-import com.zifang.z.***REMOVED***.api.resource.ConfigValidation;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseConfigService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseConfigView;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberAdminService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseProfileVersion;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.resource.ProfileVersionStatus;
-import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.ConfigDiff;
+import com.zifang.z.kb.api.resource.ConfigImpact;
+import com.zifang.z.kb.api.resource.ConfigIssue;
+import com.zifang.z.kb.api.resource.ConfigValidation;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseConfigService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseConfigView;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberAdminService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseProfileVersion;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.resource.ProfileVersionStatus;
+import com.zifang.z.kb.storage.resource.entity.KnowledgeBaseProfileEntity;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,12 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 配置版本集成测试：草稿 → 校验 → 发布，钉住 diff / impact / validation 与服务端保护。
  */
-@SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-config;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbResourceTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-config;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/config-***REMOVED***.json",
+        "kb.storage.path=target/test-kb/config-kb.json",
         "spring.main.banner-mode=off"
 })
 class KnowledgeBaseConfigServiceIntegrationTest {
@@ -60,12 +60,12 @@ class KnowledgeBaseConfigServiceIntegrationTest {
     @Autowired
     private KnowledgeBaseMemberAdminService memberAdminService;
 
-    private KnowledgeBaseView create***REMOVED***(***REMOVED***Caller caller) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("配置测试库");
-        ***REMOVED***.setCode("cfg_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        return resourceService.create(***REMOVED***, caller);
+    private KnowledgeBaseView createKb(KbCaller caller) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("配置测试库");
+        kb.setCode("cfg_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        return resourceService.create(kb, caller);
     }
 
     private KnowledgeBaseProfileVersion draftWithParser(Map<String, Object> parser) {
@@ -78,10 +78,10 @@ class KnowledgeBaseConfigServiceIntegrationTest {
     @Test
     @DisplayName("新库查询：自动补建 v1 当前版本，默认预设与空接入策略，无草稿")
     void queryBootstrapsCurrentVersion() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-cfg-boot", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of("t-cfg-boot", "u-owner");
+        KnowledgeBaseView kb = createKb(caller);
 
-        KnowledgeBaseConfigView view = configService.query(***REMOVED***.get***REMOVED***Id(), caller);
+        KnowledgeBaseConfigView view = configService.query(kb.getKbId(), caller);
         assertNotNull(view.getCurrent());
         assertEquals(1, view.getCurrent().getVersionNo());
         assertEquals(ProfileVersionStatus.CURRENT, view.getCurrent().getStatus());
@@ -98,19 +98,19 @@ class KnowledgeBaseConfigServiceIntegrationTest {
     @Test
     @DisplayName("草稿：保存生成 v2 DRAFT，diff/impact 标 FULL，校验通过")
     void saveDraftBuildsDiffAndValidation() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-cfg-draft", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of("t-cfg-draft", "u-owner");
+        KnowledgeBaseView kb = createKb(caller);
 
         Map<String, Object> parser = new LinkedHashMap<>();
         parser.put("ocr", true);
         KnowledgeBaseProfileVersion saved = configService.saveDraft(
-                ***REMOVED***.get***REMOVED***Id(), draftWithParser(parser), caller);
+                kb.getKbId(), draftWithParser(parser), caller);
 
         assertEquals(2, saved.getVersionNo());
         assertEquals(ProfileVersionStatus.DRAFT, saved.getStatus());
         assertEquals(Boolean.TRUE, saved.getParserPolicy().get("ocr"));
 
-        KnowledgeBaseConfigView view = configService.query(***REMOVED***.get***REMOVED***Id(), caller);
+        KnowledgeBaseConfigView view = configService.query(kb.getKbId(), caller);
         assertNotNull(view.getDraft());
         assertEquals(1, view.getDiff().size());
         ConfigDiff diff = view.getDiff().get(0);
@@ -129,7 +129,7 @@ class KnowledgeBaseConfigServiceIntegrationTest {
                 .filter(ConfigIssue::isOk)
                 .anyMatch(item -> "policy".equals(item.getCode())));
 
-        ConfigValidation standalone = configService.validateDraft(***REMOVED***.get***REMOVED***Id(), caller);
+        ConfigValidation standalone = configService.validateDraft(kb.getKbId(), caller);
         assertTrue(standalone.isValid());
         assertEquals(1, standalone.getChangedCount());
     }
@@ -137,25 +137,25 @@ class KnowledgeBaseConfigServiceIntegrationTest {
     @Test
     @DisplayName("发布：未确认拒绝；确认后当前版本更替、旧版本 SUPERSEDED、档案主表同步")
     void publishSupersedesAndSyncsProfile() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-cfg-publish", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of("t-cfg-publish", "u-owner");
+        KnowledgeBaseView kb = createKb(caller);
 
         Map<String, Object> parser = new LinkedHashMap<>();
         parser.put("ocr", true);
-        configService.saveDraft(***REMOVED***.get***REMOVED***Id(), draftWithParser(parser), caller);
+        configService.saveDraft(kb.getKbId(), draftWithParser(parser), caller);
 
-        ***REMOVED***Exception noConfirm = assertThrows(***REMOVED***Exception.class,
-                () -> configService.publish(***REMOVED***.get***REMOVED***Id(), null, false, caller));
-        assertEquals("***REMOVED***CONFIG_CONFIRM_REQUIRED", noConfirm.getCode());
+        KBException noConfirm = assertThrows(KBException.class,
+                () -> configService.publish(kb.getKbId(), null, false, caller));
+        assertEquals("KB_CONFIG_CONFIRM_REQUIRED", noConfirm.getCode());
 
         KnowledgeBaseProfileVersion published = configService.publish(
-                ***REMOVED***.get***REMOVED***Id(), "上线新解析策略", true, caller);
+                kb.getKbId(), "上线新解析策略", true, caller);
         assertEquals(ProfileVersionStatus.CURRENT, published.getStatus());
         assertEquals(2, published.getVersionNo());
         assertEquals("u-owner", published.getPublishedBy());
         assertEquals("上线新解析策略", published.getRemark());
 
-        KnowledgeBaseConfigView view = configService.query(***REMOVED***.get***REMOVED***Id(), caller);
+        KnowledgeBaseConfigView view = configService.query(kb.getKbId(), caller);
         assertEquals(2, view.getCurrent().getVersionNo());
         assertEquals(Boolean.TRUE, view.getCurrent().getParserPolicy().get("ocr"));
         assertNull(view.getDraft());
@@ -164,7 +164,7 @@ class KnowledgeBaseConfigServiceIntegrationTest {
                 .anyMatch(version -> version.getStatus() == ProfileVersionStatus.SUPERSEDED));
 
         QueryWrapper<KnowledgeBaseProfileEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", ***REMOVED***.getTenantCode()).eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id());
+        query.eq("tenant_code", kb.getTenantCode()).eq("kb_id", kb.getKbId());
         KnowledgeBaseProfileEntity profile = profileMapper.selectOne(query);
         assertNotNull(profile);
         assertEquals(2, profile.getConfigVersion());
@@ -174,69 +174,69 @@ class KnowledgeBaseConfigServiceIntegrationTest {
     @Test
     @DisplayName("发布：没有草稿/草稿无变更时拒绝")
     void publishRequiresDraftAndChanges() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-cfg-guard", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of("t-cfg-guard", "u-owner");
+        KnowledgeBaseView kb = createKb(caller);
 
-        ***REMOVED***Exception noDraft = assertThrows(***REMOVED***Exception.class,
-                () -> configService.publish(***REMOVED***.get***REMOVED***Id(), null, true, caller));
-        assertEquals("***REMOVED***CONFIG_DRAFT_NOT_FOUND", noDraft.getCode());
+        KBException noDraft = assertThrows(KBException.class,
+                () -> configService.publish(kb.getKbId(), null, true, caller));
+        assertEquals("KB_CONFIG_DRAFT_NOT_FOUND", noDraft.getCode());
 
-        configService.saveDraft(***REMOVED***.get***REMOVED***Id(), draftWithParser(new LinkedHashMap<>()), caller);
-        ***REMOVED***Exception noChange = assertThrows(***REMOVED***Exception.class,
-                () -> configService.publish(***REMOVED***.get***REMOVED***Id(), null, true, caller));
-        assertEquals("***REMOVED***CONFIG_DRAFT_INVALID", noChange.getCode());
+        configService.saveDraft(kb.getKbId(), draftWithParser(new LinkedHashMap<>()), caller);
+        KBException noChange = assertThrows(KBException.class,
+                () -> configService.publish(kb.getKbId(), null, true, caller));
+        assertEquals("KB_CONFIG_DRAFT_INVALID", noChange.getCode());
     }
 
     @Test
     @DisplayName("草稿：丢弃后查询回到无草稿；非法预设/超大策略拒绝")
     void discardAndValidationLimits() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of("t-cfg-discard", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of("t-cfg-discard", "u-owner");
+        KnowledgeBaseView kb = createKb(caller);
 
-        configService.saveDraft(***REMOVED***.get***REMOVED***Id(), draftWithParser(new LinkedHashMap<>()), caller);
-        assertNotNull(configService.query(***REMOVED***.get***REMOVED***Id(), caller).getDraft());
+        configService.saveDraft(kb.getKbId(), draftWithParser(new LinkedHashMap<>()), caller);
+        assertNotNull(configService.query(kb.getKbId(), caller).getDraft());
 
-        assertTrue(configService.discardDraft(***REMOVED***.get***REMOVED***Id(), caller));
-        assertNull(configService.query(***REMOVED***.get***REMOVED***Id(), caller).getDraft());
+        assertTrue(configService.discardDraft(kb.getKbId(), caller));
+        assertNull(configService.query(kb.getKbId(), caller).getDraft());
 
         KnowledgeBaseProfileVersion longPreset = new KnowledgeBaseProfileVersion();
         longPreset.setPresetVersion(repeat('p', 33));
-        ***REMOVED***Exception presetTooLong = assertThrows(***REMOVED***Exception.class,
-                () -> configService.saveDraft(***REMOVED***.get***REMOVED***Id(), longPreset, caller));
-        assertEquals("***REMOVED***CONFIG_DRAFT_INVALID", presetTooLong.getCode());
+        KBException presetTooLong = assertThrows(KBException.class,
+                () -> configService.saveDraft(kb.getKbId(), longPreset, caller));
+        assertEquals("KB_CONFIG_DRAFT_INVALID", presetTooLong.getCode());
 
         Map<String, Object> huge = new LinkedHashMap<>();
         huge.put("blob", repeat('x', 2100));
-        ***REMOVED***Exception policyTooLarge = assertThrows(***REMOVED***Exception.class,
-                () -> configService.saveDraft(***REMOVED***.get***REMOVED***Id(), draftWithParser(huge), caller));
-        assertEquals("***REMOVED***CONFIG_DRAFT_INVALID", policyTooLarge.getCode());
+        KBException policyTooLarge = assertThrows(KBException.class,
+                () -> configService.saveDraft(kb.getKbId(), draftWithParser(huge), caller));
+        assertEquals("KB_CONFIG_DRAFT_INVALID", policyTooLarge.getCode());
     }
 
     @Test
     @DisplayName("权限：只读成员可查/可校验，但保存草稿与发布被动作矩阵拦住")
     void readOnlyMemberCannotManageConfig() {
-        ***REMOVED***Caller owner = ***REMOVED***Caller.of("t-cfg-acl", "u-owner");
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(owner);
-        ***REMOVED***Caller reader = ***REMOVED***Caller.of("t-cfg-acl", "u-reader");
+        KbCaller owner = KbCaller.of("t-cfg-acl", "u-owner");
+        KnowledgeBaseView kb = createKb(owner);
+        KbCaller reader = KbCaller.of("t-cfg-acl", "u-reader");
 
-        ***REMOVED***Exception invisible = assertThrows(***REMOVED***Exception.class,
-                () -> configService.query(***REMOVED***.get***REMOVED***Id(), reader));
-        assertEquals("***REMOVED***FORBIDDEN", invisible.getCode());
+        KBException invisible = assertThrows(KBException.class,
+                () -> configService.query(kb.getKbId(), reader));
+        assertEquals("KB_FORBIDDEN", invisible.getCode());
 
-        memberAdminService.grant(***REMOVED***.get***REMOVED***Id(), "u-reader", "READER", owner);
+        memberAdminService.grant(kb.getKbId(), "u-reader", "READER", owner);
 
-        assertNotNull(configService.query(***REMOVED***.get***REMOVED***Id(), reader).getCurrent());
-        assertFalse(configService.validateDraft(***REMOVED***.get***REMOVED***Id(), reader).isValid());
+        assertNotNull(configService.query(kb.getKbId(), reader).getCurrent());
+        assertFalse(configService.validateDraft(kb.getKbId(), reader).isValid());
 
         Map<String, Object> parser = new LinkedHashMap<>();
         parser.put("ocr", true);
-        ***REMOVED***Exception saveForbidden = assertThrows(***REMOVED***Exception.class,
-                () -> configService.saveDraft(***REMOVED***.get***REMOVED***Id(), draftWithParser(parser), reader));
-        assertEquals("***REMOVED***ACTION_FORBIDDEN", saveForbidden.getCode());
+        KBException saveForbidden = assertThrows(KBException.class,
+                () -> configService.saveDraft(kb.getKbId(), draftWithParser(parser), reader));
+        assertEquals("KB_ACTION_FORBIDDEN", saveForbidden.getCode());
 
-        ***REMOVED***Exception publishForbidden = assertThrows(***REMOVED***Exception.class,
-                () -> configService.publish(***REMOVED***.get***REMOVED***Id(), null, true, reader));
-        assertEquals("***REMOVED***ACTION_FORBIDDEN", publishForbidden.getCode());
+        KBException publishForbidden = assertThrows(KBException.class,
+                () -> configService.publish(kb.getKbId(), null, true, reader));
+        assertEquals("KB_ACTION_FORBIDDEN", publishForbidden.getCode());
     }
 
     private static String repeat(char ch, int count) {

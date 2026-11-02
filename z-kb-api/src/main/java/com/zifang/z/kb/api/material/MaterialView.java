@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 import java.time.Instant;
 
@@ -8,7 +8,7 @@ import java.time.Instant;
 public class MaterialView {
 
     private String materialId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialType;
     private String entryType;
     private String title;
@@ -37,12 +37,12 @@ public class MaterialView {
         this.materialId = materialId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialType() {

@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialQuery;
+import com.zifang.z.kb.api.material.MaterialQuery;
 
 /**
  * 物料分页请求（回收站复用同一形状）。
  */
 public class MaterialPageRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String keyword;
     private String categoryId;
     private String materialType;
@@ -26,12 +26,12 @@ public class MaterialPageRequest {
         return query;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getKeyword() {

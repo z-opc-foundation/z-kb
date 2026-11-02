@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.material.entity;
+package com.zifang.z.kb.storage.material.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 物料解析稿（***REMOVED***_material_parsed_draft）。解析稿不可变，重新解析追加新稿。
+ * 物料解析稿（kb_material_parsed_draft）。解析稿不可变，重新解析追加新稿。
  */
-@TableName("***REMOVED***_material_parsed_draft")
+@TableName("kb_material_parsed_draft")
 public class ParsedDraftEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String draftId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String parserName;
@@ -55,12 +55,12 @@ public class ParsedDraftEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

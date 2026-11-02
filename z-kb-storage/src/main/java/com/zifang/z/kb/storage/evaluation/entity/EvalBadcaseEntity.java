@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,15 +7,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 评测坏例台账（***REMOVED***_eval_badcase）：按（库, 题目, 阶段）唯一。
+ * 评测坏例台账（kb_eval_badcase）：按（库, 题目, 阶段）唯一。
  */
-@TableName("***REMOVED***_eval_badcase")
+@TableName("kb_eval_badcase")
 public class EvalBadcaseEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String caseId;
     private String stageCode;
     private String category;
@@ -49,12 +49,12 @@ public class EvalBadcaseEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getCaseId() {

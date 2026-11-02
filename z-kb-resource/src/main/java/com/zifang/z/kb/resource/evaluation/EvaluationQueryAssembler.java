@@ -1,37 +1,37 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.evaluation.BaselineMetricsInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalCaseResultInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalCaseResultPageInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalCaseResultPageParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricLayer;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalRunQueryInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalRunStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalScopeType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalSnapshotStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationMetricCode;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationMetricInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStageInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.api.evaluation.RunBriefInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.RunDetailInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.RunSummaryInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.TrustEvidenceInfo;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseResultEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalResultEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalRunEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalCaseMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalCaseResultMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalResultMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalRunMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.***REMOVED***SnapshotMapper;
+import com.zifang.z.kb.api.evaluation.BaselineMetricsInfo;
+import com.zifang.z.kb.api.evaluation.EvalCaseResultInfo;
+import com.zifang.z.kb.api.evaluation.EvalCaseResultPageInfo;
+import com.zifang.z.kb.api.evaluation.EvalCaseResultPageParam;
+import com.zifang.z.kb.api.evaluation.EvalMetricLayer;
+import com.zifang.z.kb.api.evaluation.EvalMetricStatus;
+import com.zifang.z.kb.api.evaluation.EvalRunQueryInfo;
+import com.zifang.z.kb.api.evaluation.EvalRunStatus;
+import com.zifang.z.kb.api.evaluation.EvalScopeType;
+import com.zifang.z.kb.api.evaluation.EvalSnapshotStatus;
+import com.zifang.z.kb.api.evaluation.EvaluationMetricCode;
+import com.zifang.z.kb.api.evaluation.EvaluationMetricInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.api.evaluation.EvaluationStageInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.api.evaluation.RunBriefInfo;
+import com.zifang.z.kb.api.evaluation.RunDetailInfo;
+import com.zifang.z.kb.api.evaluation.RunSummaryInfo;
+import com.zifang.z.kb.api.evaluation.TrustEvidenceInfo;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseResultEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalResultEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalRunEntity;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseResultMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalResultMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalRunMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.KbSnapshotMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,17 +43,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_PAGE_SIZE;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.NOTE_LOCAL;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.error;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.failingStages;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseJson;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseStageTrace;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.requireText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.round;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.runnableStages;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_PAGE_SIZE;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.NOTE_LOCAL;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.error;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.failingStages;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseJson;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseStageTrace;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.requireText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.round;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.runnableStages;
 
 /**
  * 评测查询装配：运行详情、逐题分页、可信证据、阶段视图与基线差值。
@@ -70,7 +70,7 @@ final class EvaluationQueryAssembler {
 
     private final EvalCaseMapper caseMapper;
 
-    private final ***REMOVED***SnapshotMapper snapshotMapper;
+    private final KbSnapshotMapper snapshotMapper;
 
     private final EvaluationBadcaseManager badcaseManager;
 
@@ -79,7 +79,7 @@ final class EvaluationQueryAssembler {
             EvalResultMapper resultMapper,
             EvalCaseResultMapper caseResultMapper,
             EvalCaseMapper caseMapper,
-            ***REMOVED***SnapshotMapper snapshotMapper,
+            KbSnapshotMapper snapshotMapper,
             EvaluationBadcaseManager badcaseManager) {
         this.resourceService = resourceService;
         this.runMapper = runMapper;
@@ -103,10 +103,10 @@ final class EvaluationQueryAssembler {
     }
 
     /** 查询运行详情，返回运行信息、四层指标、阶段状态、坏例统计与基线差值。 */
-    EvalRunQueryInfo queryRun(String runId, ***REMOVED***Caller caller) {
+    EvalRunQueryInfo queryRun(String runId, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
         EvalRunEntity run = requireRun(tenantCode, runId);
-        resourceService.requireReadable(run.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(run.getKbId(), caller);
         List<EvalResultEntity> rows = resultsOfRun(tenantCode, run.getRunId());
         List<EvalCaseResultEntity> caseResults = caseResultsOfRun(tenantCode, run.getRunId());
         EvalRunQueryInfo info = new EvalRunQueryInfo();
@@ -114,9 +114,9 @@ final class EvaluationQueryAssembler {
         List<EvaluationMetricInfo> metrics = toMetricInfos(rows);
         info.setMetrics(metrics);
         info.setStages(buildStages(run, rows, caseResults));
-        info.setBadcaseCounts(badcaseManager.countBadcasesInternal(tenantCode, run.get***REMOVED***Id()));
+        info.setBadcaseCounts(badcaseManager.countBadcasesInternal(tenantCode, run.getKbId()));
         info.setEvidence(buildTrustEvidence(run, rows));
-        EvalRunEntity baseline = loadBaseline(tenantCode, run.get***REMOVED***Id(), run.getBaselineRunId());
+        EvalRunEntity baseline = loadBaseline(tenantCode, run.getKbId(), run.getBaselineRunId());
         boolean comparable = isComparable(run, baseline);
         info.setComparable(comparable);
         if (baseline != null) {
@@ -134,13 +134,13 @@ final class EvaluationQueryAssembler {
     }
 
     /** 分页查询运行下的逐题结果，可只保留失败题或按指定失败阶段过滤。 */
-    EvalCaseResultPageInfo pageCaseResults(EvalCaseResultPageParam param, ***REMOVED***Caller caller) {
+    EvalCaseResultPageInfo pageCaseResults(EvalCaseResultPageParam param, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
         if (param == null || !hasText(param.getRunId())) {
             throw error(EvaluationStatusCode.EVAL_PARAM_INVALID);
         }
         EvalRunEntity run = requireRun(tenantCode, param.getRunId());
-        resourceService.requireReadable(run.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(run.getKbId(), caller);
         String stageFilter = null;
         if (hasText(param.getStageCode())) {
             EvaluationStage stage = EvaluationStage.of(param.getStageCode());
@@ -197,10 +197,10 @@ final class EvaluationQueryAssembler {
     }
 
     /** 查询运行的版本、覆盖、评分、逐题与复现五类可信证据。 */
-    List<TrustEvidenceInfo> queryTrustEvidence(String runId, ***REMOVED***Caller caller) {
+    List<TrustEvidenceInfo> queryTrustEvidence(String runId, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
         EvalRunEntity run = requireRun(tenantCode, runId);
-        resourceService.requireReadable(run.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(run.getKbId(), caller);
         return buildTrustEvidence(run, resultsOfRun(tenantCode, run.getRunId()));
     }
 
@@ -313,12 +313,12 @@ final class EvaluationQueryAssembler {
     }
 
     /** 加载同知识库下的基线运行，入参为空或跨知识库时返回 null。 */
-    EvalRunEntity loadBaseline(String tenantCode, String ***REMOVED***Id, String baselineRunId) {
+    EvalRunEntity loadBaseline(String tenantCode, String kbId, String baselineRunId) {
         if (!hasText(baselineRunId)) {
             return null;
         }
         EvalRunEntity baseline = selectRunByRunId(tenantCode, baselineRunId.trim());
-        return baseline == null || !***REMOVED***Id.equals(baseline.get***REMOVED***Id()) ? null : baseline;
+        return baseline == null || !kbId.equals(baseline.getKbId()) ? null : baseline;
     }
 
     /** 生成版本、覆盖、评分、逐题与复现五类可信证据，说明运行结果的可采信程度。 */
@@ -348,8 +348,8 @@ final class EvaluationQueryAssembler {
         evidence.add(evidence("CASE_TRACE", "逐题证据",
                 caseTotal > 0 && caseResults >= caseTotal ? "READY" : "PARTIAL",
                 "逐题结果 " + caseResults + " / " + caseTotal));
-        ***REMOVED***SnapshotEntity snapshot = hasText(run.getSnapshotId())
-                ? snapshotMapper.selectOne(new QueryWrapper<***REMOVED***SnapshotEntity>()
+        KbSnapshotEntity snapshot = hasText(run.getSnapshotId())
+                ? snapshotMapper.selectOne(new QueryWrapper<KbSnapshotEntity>()
                         .eq("tenant_code", tenantCode)
                         .eq("snapshot_id", run.getSnapshotId())
                         .eq("is_deleted", 0))
@@ -417,7 +417,7 @@ final class EvaluationQueryAssembler {
     private RunDetailInfo toRunDetail(EvalRunEntity run) {
         RunDetailInfo info = new RunDetailInfo();
         info.setRunId(run.getRunId());
-        info.set***REMOVED***Id(run.get***REMOVED***Id());
+        info.setKbId(run.getKbId());
         info.setStatus(run.getStatus());
         info.setResultUsable(isUsable(run));
         info.setUnusableReason(run.getUnusableReason());

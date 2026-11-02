@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 /**
  * 主体目录 SPI：知识库成员展示与候选搜索依赖的身份资料来源。
@@ -6,7 +6,7 @@ package com.zifang.z.***REMOVED***.api.resource;
  * <p>生产环境由 z-ctc 适配实现；未提供实现时 {@link #isAvailable()} 返回 false，
  * 成员功能仍可用（只是不展示姓名/工号/部门，也不提供候选搜索）。</p>
  */
-public interface ***REMOVED***PrincipalDirectory {
+public interface KbPrincipalDirectory {
 
     /** 目录是否可用；false 时服务不强制主体存在性校验。 */
     default boolean isAvailable() {

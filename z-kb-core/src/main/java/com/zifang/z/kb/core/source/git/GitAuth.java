@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.git;
+package com.zifang.z.kb.core.source.git;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

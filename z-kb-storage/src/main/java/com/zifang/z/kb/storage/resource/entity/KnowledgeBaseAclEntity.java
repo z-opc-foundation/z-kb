@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.resource.entity;
+package com.zifang.z.kb.storage.resource.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,14 +7,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库 ACL（***REMOVED***_knowledge_base_acl）。
+ * 知识库 ACL（kb_knowledge_base_acl）。
  */
-@TableName("***REMOVED***_knowledge_base_acl")
+@TableName("kb_knowledge_base_acl")
 public class KnowledgeBaseAclEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String tenantCode;
     private String principalId;
     private String principalType;
@@ -35,12 +35,12 @@ public class KnowledgeBaseAclEntity {
         this.id = id;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTenantCode() {

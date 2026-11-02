@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe('useAuditLog', () => {
   it('首次加载后返回记录、总数与分页', async () => {
-    const { result } = renderHook(() => useAuditLog({ type: '***REMOVED***', bizRef: '***REMOVED***-1' }));
+    const { result } = renderHook(() => useAuditLog({ type: 'KB', bizRef: 'kb-1' }));
 
     expect(result.current.loading).toBe(true);
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -34,8 +34,8 @@ describe('useAuditLog', () => {
       current: 1,
       size: 20,
       keyword: undefined,
-      type: '***REMOVED***',
-      bizRef: '***REMOVED***-1',
+      type: 'KB',
+      bizRef: 'kb-1',
       actorId: undefined,
       success: undefined,
       startTime: undefined,

@@ -1,21 +1,21 @@
-package com.zifang.z.***REMOVED***.web.controller;
+package com.zifang.z.kb.web.controller;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.api.IngestResult;
-import com.zifang.z.***REMOVED***.ingest.pipeline.DataSourceRegistry;
-import com.zifang.z.***REMOVED***.ingest.pipeline.IngestPipeline;
-import com.zifang.z.***REMOVED***.ingest.source.WebhookSource;
-import com.zifang.z.***REMOVED***.protocol.request.WebhookPayload;
-import com.zifang.z.***REMOVED***.protocol.response.DataSourceSummary;
-import com.zifang.z.***REMOVED***.protocol.response.IngestItemSummary;
-import com.zifang.z.***REMOVED***.protocol.response.IngestSummary;
-import com.zifang.z.***REMOVED***.protocol.response.ListSourcesResponse;
-import com.zifang.z.***REMOVED***.protocol.response.SourceTypeSummary;
-import com.zifang.z.***REMOVED***.protocol.response.WebhookAck;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.api.IngestResult;
+import com.zifang.z.kb.ingest.pipeline.DataSourceRegistry;
+import com.zifang.z.kb.ingest.pipeline.IngestPipeline;
+import com.zifang.z.kb.ingest.source.WebhookSource;
+import com.zifang.z.kb.protocol.request.WebhookPayload;
+import com.zifang.z.kb.protocol.response.DataSourceSummary;
+import com.zifang.z.kb.protocol.response.IngestItemSummary;
+import com.zifang.z.kb.protocol.response.IngestSummary;
+import com.zifang.z.kb.protocol.response.ListSourcesResponse;
+import com.zifang.z.kb.protocol.response.SourceTypeSummary;
+import com.zifang.z.kb.protocol.response.WebhookAck;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,11 @@ import java.util.*;
 /**
  * 数据接入控制器 — 暴露多渠道接入能力。
  *
- * <p>路径前缀：/api/***REMOVED***/ingest
+ * <p>路径前缀：/api/kb/ingest
  */
 @Tag(name = "数据接入")
 @RestController
-@RequestMapping("/api/***REMOVED***/ingest")
+@RequestMapping("/api/kb/ingest")
 public class IngestController {
 
     @Autowired
@@ -80,7 +80,7 @@ public class IngestController {
     public void submit(@RequestBody List<IngestRequest> requests,
                        HttpServletResponse resp) throws IOException {
         if (requests == null || requests.isEmpty()) {
-            throw new ***REMOVED***Exception("请求列表为空");
+            throw new KBException("请求列表为空");
         }
         writeSummary(resp, summarize(pipeline.ingestBatch(requests)));
     }
@@ -96,7 +96,7 @@ public class IngestController {
         boolean ok = webhookSource.accept(signature, secret, payload.getTitle(),
                 payload.getContent(), meta);
         if (!ok) {
-            throw new ***REMOVED***Exception("webhook 校验失败");
+            throw new KBException("webhook 校验失败");
         }
         return new WebhookAck(true, webhookSource.pending());
     }

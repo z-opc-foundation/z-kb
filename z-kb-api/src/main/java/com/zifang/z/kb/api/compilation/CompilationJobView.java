@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.compilation;
+package com.zifang.z.kb.api.compilation;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 public class CompilationJobView {
 
     private String jobId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String taskType;
     private String scopeType;
@@ -49,12 +49,12 @@ public class CompilationJobView {
         this.jobId = jobId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

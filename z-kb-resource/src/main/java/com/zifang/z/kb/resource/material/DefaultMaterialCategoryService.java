@@ -1,16 +1,16 @@
-package com.zifang.z.***REMOVED***.resource.material;
+package com.zifang.z.kb.resource.material;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryNode;
-import com.zifang.z.***REMOVED***.api.material.MaterialCategoryService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialCategoryEntity;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialEntity;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialCategoryMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.material.MaterialCategoryNode;
+import com.zifang.z.kb.api.material.MaterialCategoryService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.storage.material.entity.MaterialCategoryEntity;
+import com.zifang.z.kb.storage.material.entity.MaterialEntity;
+import com.zifang.z.kb.storage.material.mapper.MaterialCategoryMapper;
+import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
 import com.zifang.util.json.JsonUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,9 +45,9 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
     }
 
     @Override
-    public List<MaterialCategoryNode> tree(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        resourceService.requireReadable(***REMOVED***Id, caller);
-        List<MaterialCategoryEntity> all = listBy***REMOVED***(caller.getTenantCode(), ***REMOVED***Id.trim());
+    public List<MaterialCategoryNode> tree(String kbId, KbCaller caller) {
+        resourceService.requireReadable(kbId, caller);
+        List<MaterialCategoryEntity> all = listByKb(caller.getTenantCode(), kbId.trim());
         Map<String, MaterialCategoryNode> nodes = new HashMap<>();
         for (MaterialCategoryEntity item : all) {
             nodes.put(item.getCategoryId(), toNode(item));
@@ -68,25 +68,25 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MaterialCategoryNode add(String ***REMOVED***Id, String parentId, String name, ***REMOVED***Caller caller) {
+    public MaterialCategoryNode add(String kbId, String parentId, String name, KbCaller caller) {
         String tenant = caller.getTenantCode();
-        resourceService.requireActionable(***REMOVED***Id, KnowledgeBaseAction.MATERIAL_WRITE, caller);
+        resourceService.requireActionable(kbId, KnowledgeBaseAction.MATERIAL_WRITE, caller);
         String normalizedName = requireName(name);
         String normalizedParentId = hasText(parentId) ? parentId.trim() : null;
 
-        List<MaterialCategoryEntity> all = listBy***REMOVED***(tenant, ***REMOVED***Id.trim());
+        List<MaterialCategoryEntity> all = listByKb(tenant, kbId.trim());
         if (normalizedParentId != null) {
             MaterialCategoryEntity parent = findById(all, normalizedParentId);
             if (parent == null) {
-                throw new ***REMOVED***Exception("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
+                throw new KBException("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
             }
             requireFolder(parent);
             if (depthOf(all, parent) >= MAX_DEPTH) {
-                throw new ***REMOVED***Exception("CATEGORY_LEVEL_INVALID", "分类层级不能超过 " + MAX_DEPTH + " 级");
+                throw new KBException("CATEGORY_LEVEL_INVALID", "分类层级不能超过 " + MAX_DEPTH + " 级");
             }
         }
         if (countByParentAndName(all, normalizedParentId, normalizedName) > 0) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + normalizedName);
+            throw new KBException("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + normalizedName);
         }
 
         MaterialCategoryEntity entity = new MaterialCategoryEntity();
@@ -94,7 +94,7 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
         entity.setId(UUID.randomUUID().toString());
         entity.setCategoryId(UUID.randomUUID().toString());
         entity.setTenantCode(tenant);
-        entity.set***REMOVED***Id(***REMOVED***Id.trim());
+        entity.setKbId(kbId.trim());
         entity.setParentId(normalizedParentId);
         entity.setName(normalizedName);
         entity.setSortNo(nextSortNo(all, normalizedParentId));
@@ -110,18 +110,18 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean update(String categoryId, String name, ***REMOVED***Caller caller) {
+    public boolean update(String categoryId, String name, KbCaller caller) {
         String tenant = caller.getTenantCode();
         MaterialCategoryEntity entity = requireCategory(tenant, categoryId);
-        resourceService.requireActionable(entity.get***REMOVED***Id(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
+        resourceService.requireActionable(entity.getKbId(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
         requireFolder(entity);
         String normalizedName = requireName(name);
         if (normalizedName.equals(entity.getName())) {
             return true;
         }
-        List<MaterialCategoryEntity> all = listBy***REMOVED***(tenant, entity.get***REMOVED***Id());
+        List<MaterialCategoryEntity> all = listByKb(tenant, entity.getKbId());
         if (countByParentAndName(all, entity.getParentId(), normalizedName) > 0) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + normalizedName);
+            throw new KBException("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + normalizedName);
         }
         entity.setName(normalizedName);
         entity.setUpdateBy(caller.getActorId());
@@ -131,34 +131,34 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean move(String categoryId, String parentId, ***REMOVED***Caller caller) {
+    public boolean move(String categoryId, String parentId, KbCaller caller) {
         String tenant = caller.getTenantCode();
         MaterialCategoryEntity entity = requireCategory(tenant, categoryId);
-        resourceService.requireActionable(entity.get***REMOVED***Id(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
+        resourceService.requireActionable(entity.getKbId(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
         requireFolder(entity);
         String normalizedParentId = hasText(parentId) ? parentId.trim() : null;
-        List<MaterialCategoryEntity> all = listBy***REMOVED***(tenant, entity.get***REMOVED***Id());
+        List<MaterialCategoryEntity> all = listByKb(tenant, entity.getKbId());
 
         int parentDepth = 0;
         if (normalizedParentId != null) {
             MaterialCategoryEntity parent = findById(all, normalizedParentId);
             if (parent == null) {
-                throw new ***REMOVED***Exception("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
+                throw new KBException("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
             }
             requireFolder(parent);
             if (isAncestor(all, entity.getCategoryId(), normalizedParentId)) {
-                throw new ***REMOVED***Exception("CATEGORY_LEVEL_INVALID", "不能移动到自身或其子孙分类下");
+                throw new KBException("CATEGORY_LEVEL_INVALID", "不能移动到自身或其子孙分类下");
             }
             parentDepth = depthOf(all, parent);
         }
         if (parentDepth + subtreeHeight(all, entity.getCategoryId()) - 1 > MAX_DEPTH) {
-            throw new ***REMOVED***Exception("CATEGORY_LEVEL_INVALID", "移动后分类层级超过 " + MAX_DEPTH + " 级");
+            throw new KBException("CATEGORY_LEVEL_INVALID", "移动后分类层级超过 " + MAX_DEPTH + " 级");
         }
         if (sameParent(entity.getParentId(), normalizedParentId)) {
             return true;
         }
         if (countByParentAndName(all, normalizedParentId, entity.getName()) > 0) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + entity.getName());
+            throw new KBException("CATEGORY_NAME_INVALID", "同级已存在同名分类：" + entity.getName());
         }
         entity.setParentId(normalizedParentId);
         entity.setSortNo(nextSortNo(all, normalizedParentId));
@@ -169,24 +169,24 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean remove(String categoryId, ***REMOVED***Caller caller) {
+    public boolean remove(String categoryId, KbCaller caller) {
         String tenant = caller.getTenantCode();
         MaterialCategoryEntity entity = requireCategory(tenant, categoryId);
-        resourceService.requireActionable(entity.get***REMOVED***Id(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
+        resourceService.requireActionable(entity.getKbId(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
         requireFolder(entity);
         QueryWrapper<MaterialCategoryEntity> children = new QueryWrapper<>();
-        children.eq("tenant_code", tenant).eq("***REMOVED***_id", entity.get***REMOVED***Id())
+        children.eq("tenant_code", tenant).eq("kb_id", entity.getKbId())
                 .eq("parent_id", entity.getCategoryId()).eq("is_deleted", 0);
         Long childCount = categoryMapper.selectCount(children);
         if (childCount != null && childCount > 0) {
-            throw new ***REMOVED***Exception("CATEGORY_HAS_CHILDREN", "分类下存在子分类，不能删除");
+            throw new KBException("CATEGORY_HAS_CHILDREN", "分类下存在子分类，不能删除");
         }
         QueryWrapper<MaterialEntity> materials = new QueryWrapper<>();
-        materials.eq("tenant_code", tenant).eq("***REMOVED***_id", entity.get***REMOVED***Id())
+        materials.eq("tenant_code", tenant).eq("kb_id", entity.getKbId())
                 .eq("category_id", entity.getCategoryId()).eq("is_deleted", 0);
         Long materialCount = materialMapper.selectCount(materials);
         if (materialCount != null && materialCount > 0) {
-            throw new ***REMOVED***Exception("CATEGORY_HAS_MATERIALS", "分类下仍有资料，不能删除");
+            throw new KBException("CATEGORY_HAS_MATERIALS", "分类下仍有资料，不能删除");
         }
         QueryWrapper<MaterialCategoryEntity> delete = new QueryWrapper<>();
         delete.eq("tenant_code", tenant).eq("category_id", entity.getCategoryId());
@@ -195,23 +195,23 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MaterialCategoryNode ensureBoundNode(String ***REMOVED***Id, String parentId, String nodeKind,
+    public MaterialCategoryNode ensureBoundNode(String kbId, String parentId, String nodeKind,
                                                 String name, String bindKey,
-                                                Map<String, Object> ext, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id) || !hasText(nodeKind) || !hasText(bindKey)) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "来源节点缺少知识库、节点性质或绑定键");
+                                                Map<String, Object> ext, KbCaller caller) {
+        if (!hasText(kbId) || !hasText(nodeKind) || !hasText(bindKey)) {
+            throw new KBException("CATEGORY_NAME_INVALID", "来源节点缺少知识库、节点性质或绑定键");
         }
         String tenant = caller.getTenantCode();
-        resourceService.requireActionable(***REMOVED***Id.trim(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
+        resourceService.requireActionable(kbId.trim(), KnowledgeBaseAction.MATERIAL_WRITE, caller);
         String normalizedParentId = hasText(parentId) ? parentId.trim() : null;
-        List<MaterialCategoryEntity> all = listBy***REMOVED***(tenant, ***REMOVED***Id.trim());
+        List<MaterialCategoryEntity> all = listByKb(tenant, kbId.trim());
         if (normalizedParentId != null) {
             MaterialCategoryEntity parent = findById(all, normalizedParentId);
             if (parent == null) {
-                throw new ***REMOVED***Exception("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
+                throw new KBException("CATEGORY_NOT_FOUND", "分类不存在：" + normalizedParentId);
             }
             if (depthOf(all, parent) >= MAX_DEPTH) {
-                throw new ***REMOVED***Exception("CATEGORY_LEVEL_INVALID", "分类层级不能超过 " + MAX_DEPTH + " 级");
+                throw new KBException("CATEGORY_LEVEL_INVALID", "分类层级不能超过 " + MAX_DEPTH + " 级");
             }
         }
         String displayName = truncateName(name);
@@ -241,7 +241,7 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
         entity.setId(UUID.randomUUID().toString());
         entity.setCategoryId(UUID.randomUUID().toString());
         entity.setTenantCode(tenant);
-        entity.set***REMOVED***Id(***REMOVED***Id.trim());
+        entity.setKbId(kbId.trim());
         entity.setParentId(normalizedParentId);
         entity.setName(displayName);
         entity.setSortNo(nextSortNo(all, normalizedParentId));
@@ -256,22 +256,22 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
         return toNode(entity);
     }
 
-    private List<MaterialCategoryEntity> listBy***REMOVED***(String tenant, String ***REMOVED***Id) {
+    private List<MaterialCategoryEntity> listByKb(String tenant, String kbId) {
         QueryWrapper<MaterialCategoryEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", tenant).eq("***REMOVED***_id", ***REMOVED***Id).eq("is_deleted", 0)
+        query.eq("tenant_code", tenant).eq("kb_id", kbId).eq("is_deleted", 0)
                 .orderByAsc("sort_no").orderByAsc("id");
         return categoryMapper.selectList(query);
     }
 
     private MaterialCategoryEntity requireCategory(String tenant, String categoryId) {
         if (!hasText(categoryId)) {
-            throw new ***REMOVED***Exception("CATEGORY_NOT_FOUND", "分类不存在");
+            throw new KBException("CATEGORY_NOT_FOUND", "分类不存在");
         }
         QueryWrapper<MaterialCategoryEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", tenant).eq("category_id", categoryId.trim()).eq("is_deleted", 0);
         MaterialCategoryEntity entity = categoryMapper.selectOne(query);
         if (entity == null) {
-            throw new ***REMOVED***Exception("CATEGORY_NOT_FOUND", "分类不存在：" + categoryId);
+            throw new KBException("CATEGORY_NOT_FOUND", "分类不存在：" + categoryId);
         }
         return entity;
     }
@@ -296,17 +296,17 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
 
     private void requireFolder(MaterialCategoryEntity entity) {
         if (entity.getNodeKind() != null && !NODE_FOLDER.equals(entity.getNodeKind())) {
-            throw new ***REMOVED***Exception("CATEGORY_BOUND_NODE_LOCKED", "来源节点由接入源配置维护，页面不可修改");
+            throw new KBException("CATEGORY_BOUND_NODE_LOCKED", "来源节点由接入源配置维护，页面不可修改");
         }
     }
 
     private String requireName(String value) {
         if (!hasText(value)) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "分类名称不能为空");
+            throw new KBException("CATEGORY_NAME_INVALID", "分类名称不能为空");
         }
         String name = value.trim();
         if (name.length() > MAX_NAME_LENGTH) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "分类名称不超过 " + MAX_NAME_LENGTH + " 个字符");
+            throw new KBException("CATEGORY_NAME_INVALID", "分类名称不超过 " + MAX_NAME_LENGTH + " 个字符");
         }
         return name;
     }
@@ -315,7 +315,7 @@ public class DefaultMaterialCategoryService implements MaterialCategoryService {
     private String truncateName(String value) {
         String name = hasText(value) ? value.trim() : "";
         if (name.isEmpty()) {
-            throw new ***REMOVED***Exception("CATEGORY_NAME_INVALID", "分类名称不能为空");
+            throw new KBException("CATEGORY_NAME_INVALID", "分类名称不能为空");
         }
         return name.length() > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH) : name;
     }

@@ -1,14 +1,14 @@
 import Icon from '@/components/icon';
-import { getGraphBy***REMOVED***, KnowledgeGraphRecord } from '@/services/graph';
+import { getGraphByKb, KnowledgeGraphRecord } from '@/services/graph';
 import { useEffect, useMemo, useState } from 'react';
 import { EvidenceTag, nodeTypeLabel } from './graph-meta';
 
 interface Props {
-  ***REMOVED***Id: string;
+  kbId: string;
   sourceMaterialIds: string[];
 }
 
-export default function WikiGraphTab({ ***REMOVED***Id, sourceMaterialIds }: Props) {
+export default function WikiGraphTab({ kbId, sourceMaterialIds }: Props) {
   const [graph, setGraph] = useState<KnowledgeGraphRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +16,7 @@ export default function WikiGraphTab({ ***REMOVED***Id, sourceMaterialIds }: Pro
     let cancelled = false;
     setLoading(true);
     setGraph(null);
-    void getGraphBy***REMOVED***(***REMOVED***Id).then((result) => {
+    void getGraphByKb(kbId).then((result) => {
       if (cancelled) {
         return;
       }
@@ -26,7 +26,7 @@ export default function WikiGraphTab({ ***REMOVED***Id, sourceMaterialIds }: Pro
     return () => {
       cancelled = true;
     };
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const sourceKey = sourceMaterialIds.join('|');
 

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -12,11 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 本地目录扫描 —— z-***REMOVED*** 侧唯一的「本地文件夹 → 文档清单」实现。
+ * 本地目录扫描 —— z-kb 侧唯一的「本地文件夹 → 文档清单」实现。
  *
  * <p><b>为什么放在 core 而不是各层各写一份。</b>本仓有两条路径都会扫本地目录：
- * 管道层的 {@code LocalDirSource}（走 {@code /api/***REMOVED***/ingest/run}）与接入源层的
- * 本地接入源（走 {@code /api/***REMOVED***/v1/knowledgeBaseSource/sync}）。两条路径指向的常常是
+ * 管道层的 {@code LocalDirSource}（走 {@code /api/kb/ingest/run}）与接入源层的
+ * 本地接入源（走 {@code /api/kb/v1/knowledgeBaseSource/sync}）。两条路径指向的常常是
  * 同一批文件夹（桌面端 note 的工作区），各写一份就会漂移：一边排除了
  * {@code .worktrees}、另一边没排除，同一篇笔记就在两处各存一份。
  * 所以扫描口径（含排除清单）与版本计算都在这里定死，两条路径都调它。

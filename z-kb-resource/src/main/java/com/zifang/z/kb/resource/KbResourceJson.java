@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
 import com.zifang.util.json.JsonUtil;
 
@@ -8,9 +8,9 @@ import java.util.Map;
 /**
  * 配置策略 JSON 的读写辅助：库内一律存 JSON 对象文本。
  */
-final class ***REMOVED***ResourceJson {
+final class KbResourceJson {
 
-    private ***REMOVED***ResourceJson() {
+    private KbResourceJson() {
     }
 
     /** 解析为 Map；空/非法/非对象时返回空 Map。 */

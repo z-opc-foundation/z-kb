@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.extraction;
+package com.zifang.z.kb.api.extraction;
 
 /**
  * 一份物料版本的萃取产物计数（摘要/问句/术语/FAQ 与图谱节点/边）。

@@ -29,8 +29,8 @@ function Probe() {
         {permission.loading
           ? 'loading'
           : `${permission.context?.name ?? '-'}|${permission.enforced}|${permission.can(
-              '***REMOVED***.create',
-            )}|${permission.canSeeMenu('menu.***REMOVED***')}`}
+              'kb.create',
+            )}|${permission.canSeeMenu('menu.kb')}`}
       </span>
       <button type="button" onClick={permission.reload}>
         重新加载
@@ -54,7 +54,7 @@ afterEach(() => {
 describe('AuthProvider', () => {
   it('加载权限视图后暴露角色、强制期与权限判断', async () => {
     vi.mocked(fetchAuthContext).mockResolvedValue(
-      context({ permissions: ['***REMOVED***.create'], menuCodes: ['menu.***REMOVED***'] }),
+      context({ permissions: ['kb.create'], menuCodes: ['menu.kb'] }),
     );
 
     render(
@@ -122,15 +122,15 @@ describe('AuthProvider', () => {
 describe('Can 按钮权限包装', () => {
   it('有权限渲染内容，无权限渲染兜底', async () => {
     vi.mocked(fetchAuthContext).mockResolvedValue(
-      context({ permissions: ['***REMOVED***.create'] }),
+      context({ permissions: ['kb.create'] }),
     );
 
     render(
       <AuthProvider>
-        <Can code="***REMOVED***.create">
+        <Can code="kb.create">
           <button type="button">新建</button>
         </Can>
-        <Can code="***REMOVED***.delete" fallback={<span>无删除权限</span>}>
+        <Can code="kb.delete" fallback={<span>无删除权限</span>}>
           <button type="button">删除</button>
         </Can>
       </AuthProvider>,

@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.Workspace;
-import com.zifang.z.***REMOVED***.core.embedding.TfIdfEmbeddingProvider;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
-import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.Workspace;
+import com.zifang.z.kb.core.embedding.TfIdfEmbeddingProvider;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
+import com.zifang.z.kb.core.search.Bm25Searcher;
+import com.zifang.z.kb.core.search.HybridSearcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ class HybridSearcherContentTest {
         SearchResult r = f.searcher.search(query(SearchMode.FUSION));
 
         assertTrue(r.getHits().size() > 0, "无命中，测试前提不成立");
-        for (com.zifang.z.***REMOVED***.api.SearchHit hit : r.getHits()) {
+        for (com.zifang.z.kb.api.SearchHit hit : r.getHits()) {
             assertNotNull(hit.getContent(), "FUSION 命中 " + hit.getChunkId() + " 正文为 null");
             assertEquals(CHUNK_TEXT, hit.getContent());
         }
@@ -69,7 +69,7 @@ class HybridSearcherContentTest {
         q.setIncludeContent(false);
         SearchResult r = f.searcher.search(q);
 
-        for (com.zifang.z.***REMOVED***.api.SearchHit hit : r.getHits()) {
+        for (com.zifang.z.kb.api.SearchHit hit : r.getHits()) {
             assertTrue(hit.getContent() == null, "不该回填正文");
         }
     }

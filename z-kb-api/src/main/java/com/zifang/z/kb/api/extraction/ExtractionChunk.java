@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.extraction;
+package com.zifang.z.kb.api.extraction;
 
 /**
  * 萃取输入中的检索块视图，序号与 retrieval_chunk.ordinal 一致，从 1 开始。

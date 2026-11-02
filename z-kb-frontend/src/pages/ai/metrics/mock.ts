@@ -185,7 +185,7 @@ const TOOL_PROFILES: ToolProfile[] = [
   {
     key: 'remote_search',
     name: '知识库检索（远端）',
-    code: '***REMOVED***_knowledge_search',
+    code: 'kb_knowledge_search',
     weight: 0.22,
     p50: 860,
     timeoutRate: 0.021,
@@ -199,9 +199,9 @@ const TOOL_PROFILES: ToolProfile[] = [
     timeoutRate: 0,
   },
   {
-    key: '***REMOVED***_compile',
+    key: 'kb_compile',
     name: 'Wiki 编译',
-    code: '***REMOVED***_compile',
+    code: 'kb_compile',
     weight: 0.12,
     p50: 2400,
     timeoutRate: 0.016,

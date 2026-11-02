@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 保存人工编辑后的解析稿正文；versionId 为空表示当前版本。

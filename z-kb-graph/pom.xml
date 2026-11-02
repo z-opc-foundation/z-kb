@@ -7,22 +7,22 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-graph</artifactId>
+    <artifactId>z-kb-graph</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: graph</name>
+    <name>z-kb :: graph</name>
     <description>
-        z-***REMOVED*** 图谱适配 — 封装 z-graph，提供 KnowledgeGraphStore 和 GraphRAG 查询。
+        z-kb 图谱适配 — 封装 z-graph，提供 KnowledgeGraphStore 和 GraphRAG 查询。
         将 Entity/Relation 映射到 z-graph 的 Node/Edge。
         支持：实体-关系三元组存储、多跳遍历、子图查询、版本快照。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -44,9 +44,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,7 +55,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
         <!-- z-graph 1.0.7 与 fleet 面值相同 ⇒ 本仓的 z-graph.version 键与这两条 <version> 一起删，
              版本由父链（fleet）按坐标下发。 -->

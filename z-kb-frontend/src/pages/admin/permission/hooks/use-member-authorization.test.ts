@@ -14,9 +14,9 @@ const authorization: MemberAuthorization = {
   staffId: 11,
   name: '张三',
   jobNumber: 'A001',
-  roles: [{ id: 1, roleCode: '***REMOVED***_admin', roleName: '知识库管理员', enabled: true }],
-  rolePermittedCodes: ['menu.space', 'menu.***REMOVED***'],
-  directCodes: ['***REMOVED***.create'],
+  roles: [{ id: 1, roleCode: 'kb_admin', roleName: '知识库管理员', enabled: true }],
+  rolePermittedCodes: ['menu.space', 'menu.kb'],
+  directCodes: ['kb.create'],
   inheritedCodes: [{ code: 'menu.space', source: 'UNIT' }],
 };
 

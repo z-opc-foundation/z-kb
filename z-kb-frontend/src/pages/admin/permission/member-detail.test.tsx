@@ -20,14 +20,14 @@ vi.mock('@/services/identity', () => ({
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const roles: AuthRole[] = [
-  { id: 1, roleCode: '***REMOVED***_admin', roleName: '知识库管理员', enabled: true },
-  { id: 2, roleCode: '***REMOVED***_viewer', roleName: '知识库访客', enabled: true },
+  { id: 1, roleCode: 'kb_admin', roleName: '知识库管理员', enabled: true },
+  { id: 2, roleCode: 'kb_viewer', roleName: '知识库访客', enabled: true },
 ];
 
 const catalog: PermissionCatalogItem[] = [
   { code: 'menu.space', name: '知识空间', type: 'MENU', typeCode: 1, order: 40 },
   {
-    code: 'menu.***REMOVED***',
+    code: 'menu.kb',
     name: '知识库',
     type: 'MENU',
     typeCode: 1,
@@ -35,19 +35,19 @@ const catalog: PermissionCatalogItem[] = [
     order: 41,
   },
   {
-    code: '***REMOVED***.create',
+    code: 'kb.create',
     name: '新建知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 101,
   },
   {
-    code: '***REMOVED***.delete',
+    code: 'kb.delete',
     name: '删除知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 103,
   },
 ];
@@ -57,8 +57,8 @@ const authorization: MemberAuthorization = {
   name: '张三',
   jobNumber: 'A001',
   roles: [roles[0]],
-  rolePermittedCodes: ['menu.space', 'menu.***REMOVED***'],
-  directCodes: ['***REMOVED***.create'],
+  rolePermittedCodes: ['menu.space', 'menu.kb'],
+  directCodes: ['kb.create'],
   inheritedCodes: [{ code: 'menu.space', source: 'UNIT' }],
 };
 
@@ -70,12 +70,12 @@ function treeNode(label: string): HTMLElement {
   return node as HTMLElement;
 }
 
-function treeChec***REMOVED***ox(label: string): HTMLElement {
-  const chec***REMOVED***ox = treeNode(label).querySelector('.ant-tree-chec***REMOVED***ox');
-  if (!chec***REMOVED***ox) {
+function treeCheckbox(label: string): HTMLElement {
+  const checkbox = treeNode(label).querySelector('.ant-tree-checkbox');
+  if (!checkbox) {
     throw new Error(`未找到树节点复选框 ${label}`);
   }
-  return chec***REMOVED***ox as HTMLElement;
+  return checkbox as HTMLElement;
 }
 
 function renderDetail(props: Partial<Parameters<typeof MemberDetail>[0]> = {}) {
@@ -102,7 +102,7 @@ async function waitForAuthorizationApplied() {
     ),
   );
   await waitFor(() =>
-    expect(treeChec***REMOVED***ox('新建知识库')).toHaveClass('ant-tree-chec***REMOVED***ox-checked'),
+    expect(treeCheckbox('新建知识库')).toHaveClass('ant-tree-checkbox-checked'),
   );
 }
 
@@ -148,10 +148,10 @@ describe('MemberDetail', () => {
     await waitForAuthorizationApplied();
     await screen.findByText('新建知识库');
 
-    expect(treeChec***REMOVED***ox('知识空间')).toHaveClass('ant-tree-chec***REMOVED***ox-disabled');
-    expect(treeChec***REMOVED***ox('知识库')).toHaveClass('ant-tree-chec***REMOVED***ox-disabled');
-    expect(treeChec***REMOVED***ox('新建知识库')).not.toHaveClass('ant-tree-chec***REMOVED***ox-disabled');
-    expect(treeChec***REMOVED***ox('删除知识库')).not.toHaveClass('ant-tree-chec***REMOVED***ox-disabled');
+    expect(treeCheckbox('知识空间')).toHaveClass('ant-tree-checkbox-disabled');
+    expect(treeCheckbox('知识库')).toHaveClass('ant-tree-checkbox-disabled');
+    expect(treeCheckbox('新建知识库')).not.toHaveClass('ant-tree-checkbox-disabled');
+    expect(treeCheckbox('删除知识库')).not.toHaveClass('ant-tree-checkbox-disabled');
     expect(screen.getAllByText('直接').length).toBeGreaterThan(0);
     expect(screen.getAllByText('角色').length).toBeGreaterThan(0);
     expect(screen.getAllByText('组织').length).toBeGreaterThan(0);
@@ -167,7 +167,7 @@ describe('MemberDetail', () => {
     fireEvent.click(save);
 
     await waitFor(() =>
-      expect(updateMemberRoles).toHaveBeenCalledWith(11, ['***REMOVED***_admin', '***REMOVED***_viewer']),
+      expect(updateMemberRoles).toHaveBeenCalledWith(11, ['kb_admin', 'kb_viewer']),
     );
     expect(onSaved).toHaveBeenCalledTimes(1);
     expect(toast).toHaveBeenCalledWith(
@@ -205,14 +205,14 @@ describe('MemberDetail', () => {
     const { onSaved } = renderDetail();
     await waitForAuthorizationApplied();
 
-    fireEvent.click(treeChec***REMOVED***ox('删除知识库'));
+    fireEvent.click(treeCheckbox('删除知识库'));
     const save = screen.getByRole('button', { name: '保存权限' });
     await waitFor(() => expect(save).not.toBeDisabled());
     fireEvent.click(save);
 
     await waitFor(() =>
       expect(updateMemberPermissions).toHaveBeenCalledWith(11, {
-        addCodes: ['***REMOVED***.delete'],
+        addCodes: ['kb.delete'],
         removeCodes: [],
       }),
     );
@@ -224,7 +224,7 @@ describe('MemberDetail', () => {
     renderDetail();
     await waitForAuthorizationApplied();
 
-    fireEvent.click(treeChec***REMOVED***ox('新建知识库'));
+    fireEvent.click(treeCheckbox('新建知识库'));
     const save = screen.getByRole('button', { name: '保存权限' });
     await waitFor(() => expect(save).not.toBeDisabled());
     fireEvent.click(save);
@@ -232,7 +232,7 @@ describe('MemberDetail', () => {
     await waitFor(() =>
       expect(updateMemberPermissions).toHaveBeenCalledWith(11, {
         addCodes: [],
-        removeCodes: ['***REMOVED***.create'],
+        removeCodes: ['kb.create'],
       }),
     );
   });
@@ -263,7 +263,7 @@ describe('MemberDetail', () => {
       expect(toast).toHaveBeenCalledWith('角色保存失败', '角色接口异常', 'error'),
     );
 
-    fireEvent.click(treeChec***REMOVED***ox('删除知识库'));
+    fireEvent.click(treeCheckbox('删除知识库'));
     const savePermission = screen.getByRole('button', { name: '保存权限' });
     await waitFor(() => expect(savePermission).not.toBeDisabled());
     fireEvent.click(savePermission);

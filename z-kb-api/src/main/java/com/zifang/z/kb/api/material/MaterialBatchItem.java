@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 批量操作逐条结果。批量不做“假整批成功”。

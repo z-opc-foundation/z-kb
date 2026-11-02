@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class WikiAgentSaveParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String materialVersionId;
     private String indexMd;
@@ -16,12 +16,12 @@ public class WikiAgentSaveParam {
     private String generator;
     private List<Page> pages = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

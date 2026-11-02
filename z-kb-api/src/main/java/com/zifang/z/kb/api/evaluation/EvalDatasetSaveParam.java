@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class EvalDatasetSaveParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String description;
     private List<EvalCaseInputParam> cases = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

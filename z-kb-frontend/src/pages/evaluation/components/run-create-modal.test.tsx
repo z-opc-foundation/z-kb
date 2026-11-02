@@ -16,8 +16,8 @@ const createMock = vi.mocked(createEvalRun);
 const toastMock = vi.mocked(toast);
 
 const OVERVIEW: EvalOverview = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   dataset: {
     versionNo: 'v3',
     status: 'PUBLISHED',
@@ -45,7 +45,7 @@ function renderModal(
   overrides: Partial<ComponentProps<typeof RunCreateModal>> = {},
 ) {
   const props = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     overview: OVERVIEW,
     knownRuns: KNOWN_RUNS,
     defaultBaselineRunId: undefined,
@@ -86,7 +86,7 @@ describe('RunCreateModal', () => {
 
     await waitFor(() => expect(createMock).toHaveBeenCalledTimes(1));
     expect(createMock).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       datasetVersionNo: 'v3',
       baselineRunId: 'run-0',
       allowReuse: true,

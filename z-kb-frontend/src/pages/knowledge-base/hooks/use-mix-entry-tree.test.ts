@@ -17,7 +17,7 @@ import { useMixEntryTree } from './use-mix-entry-tree';
 function material(id: string, fileExt: string, materialType: MaterialRecord['materialType'] = 'DOCUMENT') {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType,
     title: `资料 ${id}`,
     sourceType: 'UPLOAD',
@@ -52,12 +52,12 @@ describe('useMixEntryTree', () => {
       current: 1,
     });
 
-    const { result } = renderHook(() => useMixEntryTree('***REMOVED***-1'));
+    const { result } = renderHook(() => useMixEntryTree('kb-1'));
     expect(result.current.loading).toBe(true);
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(getCategoryTree).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(pageMaterial).toHaveBeenCalledWith({ current: 1, size: 100, ***REMOVED***Id: '***REMOVED***-1' });
+    expect(getCategoryTree).toHaveBeenCalledWith('kb-1');
+    expect(pageMaterial).toHaveBeenCalledWith({ current: 1, size: 100, kbId: 'kb-1' });
     expect(result.current.categories).toHaveLength(1);
     expect(result.current.entries.map((entry) => entry.type)).toEqual(['document', 'table']);
     expect(result.current.total).toBe(2);
@@ -73,11 +73,11 @@ describe('useMixEntryTree', () => {
       .mockResolvedValueOnce({ records: firstPage, total: 120, size: 100, current: 1 })
       .mockResolvedValueOnce({ records: secondPage, total: 120, size: 100, current: 2 });
 
-    const { result } = renderHook(() => useMixEntryTree('***REMOVED***-1'));
+    const { result } = renderHook(() => useMixEntryTree('kb-1'));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(pageMaterial).toHaveBeenCalledTimes(2);
-    expect(pageMaterial).toHaveBeenLastCalledWith({ current: 2, size: 100, ***REMOVED***Id: '***REMOVED***-1' });
+    expect(pageMaterial).toHaveBeenLastCalledWith({ current: 2, size: 100, kbId: 'kb-1' });
     expect(result.current.entries).toHaveLength(120);
     expect(result.current.truncated).toBe(false);
   });
@@ -86,7 +86,7 @@ describe('useMixEntryTree', () => {
     vi.mocked(getCategoryTree).mockResolvedValueOnce(undefined);
     vi.mocked(pageMaterial).mockResolvedValue({ records: [], total: 0, size: 100, current: 1 });
 
-    const { result } = renderHook(() => useMixEntryTree('***REMOVED***-1'));
+    const { result } = renderHook(() => useMixEntryTree('kb-1'));
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe(true);
     expect(result.current.entries).toEqual([]);
@@ -107,7 +107,7 @@ describe('useMixEntryTree', () => {
       .mockResolvedValueOnce({ records: firstPage, total: 500, size: 100, current: 1 })
       .mockResolvedValue({ records: [], total: 500, size: 100, current: 2 });
 
-    const { result } = renderHook(() => useMixEntryTree('***REMOVED***-1'));
+    const { result } = renderHook(() => useMixEntryTree('kb-1'));
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.truncated).toBe(true);
     expect(result.current.total).toBe(500);

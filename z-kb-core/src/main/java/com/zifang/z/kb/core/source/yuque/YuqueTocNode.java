@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /** 语雀目录树节点：type 为 DOC/TITLE/LINK，parentUuid 用于回填路径。 */
 public class YuqueTocNode {

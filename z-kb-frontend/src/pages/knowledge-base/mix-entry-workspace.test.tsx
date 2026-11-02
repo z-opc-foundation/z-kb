@@ -42,7 +42,7 @@ function material(
   partial: Partial<MaterialRecord> & Pick<MaterialRecord, 'materialId' | 'title'>,
 ): MaterialRecord {
   return {
-    ***REMOVED***Id: '***REMOVED***-mix',
+    kbId: 'kb-mix',
     materialType: 'DOCUMENT',
     sourceType: 'UPLOAD',
     materialStatus: 'ACTIVE',
@@ -135,7 +135,7 @@ afterEach(() => {
 describe('混合库条目树工作区', () => {
   it('按目录展开条目，点击条目后展示原始数据概览', async () => {
     mockLibrary([docMaterial, tableMaterial]);
-    render(<MixEntryWorkspace ***REMOVED***Id="***REMOVED***-mix" canWrite />);
+    render(<MixEntryWorkspace kbId="kb-mix" canWrite />);
 
     await screen.findByText('院级制度');
     expect(screen.getByText('排班管理制度')).toBeInTheDocument();
@@ -145,14 +145,14 @@ describe('混合库条目树工作区', () => {
 
     await screen.findByText('原始数据概览');
     expect(screen.getByText('文档（document）')).toBeInTheDocument();
-    expect(screen.getByText('4.0 ***REMOVED***')).toBeInTheDocument();
+    expect(screen.getByText('4.0 KB')).toBeInTheDocument();
     expect(await screen.findByText('MinerU@2.1')).toBeInTheDocument();
     expect(getMaterial).toHaveBeenCalledWith('mat-doc');
   });
 
   it('搜索无命中时树与概览都给出筛选空态', async () => {
     mockLibrary([docMaterial, tableMaterial]);
-    render(<MixEntryWorkspace ***REMOVED***Id="***REMOVED***-mix" />);
+    render(<MixEntryWorkspace kbId="kb-mix" />);
 
     await screen.findByText('院级制度');
     const search = screen.getByPlaceholderText('搜索条目名称');
@@ -168,7 +168,7 @@ describe('混合库条目树工作区', () => {
 
   it('在选中目录下上传文件并把目录 ID 传给上传服务', async () => {
     mockLibrary([docMaterial, tableMaterial]);
-    render(<MixEntryWorkspace ***REMOVED***Id="***REMOVED***-mix" canWrite />);
+    render(<MixEntryWorkspace kbId="kb-mix" canWrite />);
 
     await screen.findByText('院级制度');
     fireEvent.click(screen.getByText('院级制度'));
@@ -184,7 +184,7 @@ describe('混合库条目树工作区', () => {
     fireEvent.click(screen.getByText('开始上传'));
 
     await waitFor(() =>
-      expect(uploadMaterials).toHaveBeenCalledWith('***REMOVED***-mix', 'dir-1', [file]),
+      expect(uploadMaterials).toHaveBeenCalledWith('kb-mix', 'dir-1', [file]),
     );
     expect(await screen.findByText('已登记')).toBeInTheDocument();
   });
@@ -192,7 +192,7 @@ describe('混合库条目树工作区', () => {
   it('空混合库不展示示例目录或条目', async () => {
     mockLibrary([]);
     vi.mocked(getCategoryTree).mockResolvedValue([]);
-    render(<MixEntryWorkspace ***REMOVED***Id="***REMOVED***-mix" canWrite />);
+    render(<MixEntryWorkspace kbId="kb-mix" canWrite />);
 
     expect(await screen.findByText('这个混合库还没有条目')).toBeInTheDocument();
     expect(screen.getByText('还没有目录或条目')).toBeInTheDocument();

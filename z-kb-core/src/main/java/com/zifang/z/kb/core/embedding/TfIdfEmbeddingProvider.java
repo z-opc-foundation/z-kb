@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.core.embedding;
+package com.zifang.z.kb.core.embedding;
 
-import com.zifang.z.***REMOVED***.api.EmbeddingProvider;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.core.util.HanLpTokenizer;
+import com.zifang.z.kb.api.EmbeddingProvider;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.core.util.HanLpTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * <p>特点：
  * <ul>
  *   <li>零外部依赖：不需要 LLM API Key</li>
- *   <li>轻量：百 ***REMOVED*** 内存即可启动</li>
+ *   <li>轻量：百 KB 内存即可启动</li>
  *   <li>可解释：每个维度对应一个 hash bucket，便于调试</li>
  * </ul>
  *

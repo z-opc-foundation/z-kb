@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.audit.AuditLogQuery;
+import com.zifang.z.kb.api.audit.AuditLogQuery;
 
 /**
  * 审计日志分页查询请求。

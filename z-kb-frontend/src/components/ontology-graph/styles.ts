@@ -2,7 +2,7 @@
  * G6 v5 图谱样式与配置模块
  *
  * 自 galaxy-meta src/pages/brain/graph/styles.ts 平移（含力导向布局与
- * G6 v5 坑位修复），默认节点配色对齐 z-***REMOVED*** 品牌蓝。
+ * G6 v5 坑位修复），默认节点配色对齐 z-kb 品牌蓝。
  */
 
 import {
@@ -24,7 +24,7 @@ export const PATH_DIM_NODE_BORDER = '#64748b';
 export const PATH_DIM_EDGE_COLOR = '#94a3b8';
 export const PATH_DIM_LABEL_COLOR = '#64748b';
 
-// ─── 节点默认配色（对齐 z-***REMOVED*** 品牌蓝 #1F8BFF） ───
+// ─── 节点默认配色（对齐 z-kb 品牌蓝 #1F8BFF） ───
 export const NODE_FILL = '#1F8BFF';
 export const NODE_STROKE = '#0F6FDB';
 export const NODE_SHADOW_COLOR = 'rgba(31, 139, 255, 0.25)';

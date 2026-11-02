@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /** 语雀文档详情：body 为 markdown 或表格类 JSON 串。 */
 public class YuqueDocDetail {

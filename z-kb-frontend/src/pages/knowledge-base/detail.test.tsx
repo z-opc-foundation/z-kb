@@ -2,7 +2,7 @@ import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Route, Routes } from 'react-router-dom';
 import type { KnowledgeBaseRecord } from '@/services/knowledgeBase';
-import type { ***REMOVED***Overview } from '@/services/overview';
+import type { KbOverview } from '@/services/overview';
 import type { MaterialRecord } from '@/services/material';
 import { renderAt } from '@/test/render';
 
@@ -13,7 +13,7 @@ vi.mock('@/services/knowledgeBase', () => ({
 }));
 
 vi.mock('@/services/overview', () => ({
-  get***REMOVED***Overview: vi.fn(),
+  getKbOverview: vi.fn(),
 }));
 
 vi.mock('@/pages/ai/agent-ask', () => ({
@@ -45,14 +45,14 @@ vi.mock('./components/knowledge-assistant', () => ({
 }));
 
 import { getKnowledgeBase, updateKnowledgeBase } from '@/services/knowledgeBase';
-import { get***REMOVED***Overview } from '@/services/overview';
+import { getKbOverview } from '@/services/overview';
 import KnowledgeBaseDetailPage from './detail';
 
-const ***REMOVED***: KnowledgeBaseRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: '***REMOVED***_demo',
+const KB: KnowledgeBaseRecord = {
+  kbId: 'kb-1',
+  tenantCode: 'kb_demo',
   name: '心内科知识库',
-  code: '***REMOVED***_cardio',
+  code: 'kb_cardio',
   type: 'FILE',
   status: 'ACTIVE',
   description: '心内科制度、指南与临床路径',
@@ -68,7 +68,7 @@ const ***REMOVED***: KnowledgeBaseRecord = {
 
 const MATERIAL: MaterialRecord = {
   materialId: 'mat-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialType: 'DOCUMENT',
   title: '急性胸痛诊疗规范',
   sourceType: 'LOCAL',
@@ -82,8 +82,8 @@ const MATERIAL: MaterialRecord = {
   registeredBy: 7,
 };
 
-const OVERVIEW: ***REMOVED***Overview = {
-  ***REMOVED***Id: '***REMOVED***-1',
+const OVERVIEW: KbOverview = {
+  kbId: 'kb-1',
   fileCount: 12,
   compiledCount: 8,
   partialCount: 2,
@@ -95,13 +95,13 @@ const OVERVIEW: ***REMOVED***Overview = {
   refreshedAt: '2026-10-01T10:00:00',
 };
 
-function renderDetail(route = '/knowledge-bases/***REMOVED***-1') {
+function renderDetail(route = '/knowledge-bases/kb-1') {
   return renderAt(
     <Routes>
       <Route path="/knowledge-bases" element={<div>知识库列表页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id/settings" element={<div>设置页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id" element={<KnowledgeBaseDetailPage />} />
-      <Route path="/knowledge-bases/:***REMOVED***Id/:tab" element={<KnowledgeBaseDetailPage />} />
+      <Route path="/knowledge-bases/:kbId/settings" element={<div>设置页</div>} />
+      <Route path="/knowledge-bases/:kbId" element={<KnowledgeBaseDetailPage />} />
+      <Route path="/knowledge-bases/:kbId/:tab" element={<KnowledgeBaseDetailPage />} />
     </Routes>,
     { route },
   );
@@ -110,8 +110,8 @@ function renderDetail(route = '/knowledge-bases/***REMOVED***-1') {
 describe('知识库详情页', () => {
   beforeEach(() => {
     localStorage.clear();
-    vi.mocked(getKnowledgeBase).mockResolvedValue(***REMOVED***);
-    vi.mocked(get***REMOVED***Overview).mockResolvedValue(OVERVIEW);
+    vi.mocked(getKnowledgeBase).mockResolvedValue(KB);
+    vi.mocked(getKbOverview).mockResolvedValue(OVERVIEW);
     vi.mocked(updateKnowledgeBase).mockResolvedValue(true);
   });
 
@@ -126,8 +126,8 @@ describe('知识库详情页', () => {
     expect(screen.getByText('正在加载知识库…')).toBeTruthy();
     expect(await screen.findByText(/心内科知识库/)).toBeTruthy();
 
-    expect(getKnowledgeBase).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(get***REMOVED***Overview).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getKnowledgeBase).toHaveBeenCalledWith('kb-1');
+    expect(getKbOverview).toHaveBeenCalledWith('kb-1');
     expect(screen.getAllByText('运行中').length).toBeGreaterThan(0);
     expect(screen.getByText('心内科制度、指南与临床路径')).toBeTruthy();
     expect(screen.getByText('gs-cardio')).toBeTruthy();
@@ -136,9 +136,9 @@ describe('知识库详情页', () => {
     expect(screen.getAllByText(/已解析/).length).toBeGreaterThan(0);
   });
 
-  it('***REMOVED***Id 查不到时展示不可用空态并可返回列表', async () => {
+  it('kbId 查不到时展示不可用空态并可返回列表', async () => {
     vi.mocked(getKnowledgeBase).mockResolvedValue(undefined);
-    renderDetail('/knowledge-bases/***REMOVED***-missing');
+    renderDetail('/knowledge-bases/kb-missing');
 
     expect(await screen.findByText('找不到这个知识库')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '回到知识库列表' }));
@@ -188,7 +188,7 @@ describe('知识库详情页', () => {
 
     await waitFor(() =>
       expect(updateKnowledgeBase).toHaveBeenCalledWith({
-        ***REMOVED***Id: '***REMOVED***-1',
+        kbId: 'kb-1',
         name: '心内科知识库（修订）',
         description: '心内科制度、指南与临床路径',
       }),
@@ -202,7 +202,7 @@ describe('知识库详情页', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^收藏$/ }));
     expect(await screen.findByRole('button', { name: /已收藏/ })).toBeTruthy();
-    expect(localStorage.getItem('***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
+    expect(localStorage.getItem('kb.favorite-kbs')).toContain('kb-1');
 
     fireEvent.click(screen.getByRole('button', { name: /已收藏/ }));
     await waitFor(() =>
@@ -211,7 +211,7 @@ describe('知识库详情页', () => {
   });
 
   it('members 旧深链重定向到设置页权限分区', async () => {
-    renderDetail('/knowledge-bases/***REMOVED***-1/members');
+    renderDetail('/knowledge-bases/kb-1/members');
     expect(await screen.findByText('设置页')).toBeTruthy();
   });
 });

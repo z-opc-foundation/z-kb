@@ -1,27 +1,27 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactStatus;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalState;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalSnapshotItemType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalSnapshotStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.core.retrieval.LocalHashEmbedding;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactVersionEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactVersionMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotItemEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.***REMOVED***SnapshotItemMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.***REMOVED***SnapshotMapper;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialEntity;
-import com.zifang.z.***REMOVED***.storage.material.entity.MaterialVersionEntity;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialMapper;
-import com.zifang.z.***REMOVED***.storage.material.mapper.MaterialVersionMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.ArtifactStatus;
+import com.zifang.z.kb.api.compilation.RetrievalState;
+import com.zifang.z.kb.api.evaluation.EvalSnapshotItemType;
+import com.zifang.z.kb.api.evaluation.EvalSnapshotStatus;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactEntity;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactVersionEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactMapper;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotEntity;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotItemEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.KbSnapshotItemMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.KbSnapshotMapper;
+import com.zifang.z.kb.storage.material.entity.MaterialEntity;
+import com.zifang.z.kb.storage.material.entity.MaterialVersionEntity;
+import com.zifang.z.kb.storage.material.mapper.MaterialMapper;
+import com.zifang.z.kb.storage.material.mapper.MaterialVersionMapper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,10 +37,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.sha256;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.text;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.toJson;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.sha256;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.text;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.toJson;
 
 /**
  * 评测快照构建：按物料与产物的当前版本生成成员条目、指纹与索引代际，可复用同指纹快照。
@@ -57,9 +57,9 @@ final class EvaluationSnapshotBuilder {
 
     private final RetrievalChunkMapper retrievalChunkMapper;
 
-    private final ***REMOVED***SnapshotMapper ***REMOVED***SnapshotMapper;
+    private final KbSnapshotMapper kbSnapshotMapper;
 
-    private final ***REMOVED***SnapshotItemMapper ***REMOVED***SnapshotItemMapper;
+    private final KbSnapshotItemMapper kbSnapshotItemMapper;
 
     private final LocalHashEmbedding embedding;
 
@@ -68,26 +68,26 @@ final class EvaluationSnapshotBuilder {
             ArtifactMapper artifactMapper,
             ArtifactVersionMapper artifactVersionMapper,
             RetrievalChunkMapper retrievalChunkMapper,
-            ***REMOVED***SnapshotMapper ***REMOVED***SnapshotMapper,
-            ***REMOVED***SnapshotItemMapper ***REMOVED***SnapshotItemMapper,
+            KbSnapshotMapper kbSnapshotMapper,
+            KbSnapshotItemMapper kbSnapshotItemMapper,
             LocalHashEmbedding embedding) {
         this.materialMapper = materialMapper;
         this.materialVersionMapper = materialVersionMapper;
         this.artifactMapper = artifactMapper;
         this.artifactVersionMapper = artifactVersionMapper;
         this.retrievalChunkMapper = retrievalChunkMapper;
-        this.***REMOVED***SnapshotMapper = ***REMOVED***SnapshotMapper;
-        this.***REMOVED***SnapshotItemMapper = ***REMOVED***SnapshotItemMapper;
+        this.kbSnapshotMapper = kbSnapshotMapper;
+        this.kbSnapshotItemMapper = kbSnapshotItemMapper;
         this.embedding = embedding;
     }
 
     /** 构建知识库快照：按物料与加工件的当前版本生成条目、指纹与索引代际，已存在则直接复用。 */
-    SnapshotBuild buildSnapshot(String tenantCode, String ***REMOVED***Id, String configVersion,
+    SnapshotBuild buildSnapshot(String tenantCode, String kbId, String configVersion,
             String ontologyVersion, String actorId) {
         List<MaterialEntity> materials = materialMapper.selectList(
                 new QueryWrapper<MaterialEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***Id)
+                        .eq("kb_id", kbId)
                         .eq("is_deleted", 0)
                         .isNotNull("current_version_id")
                         .ne("current_version_id", "")
@@ -109,7 +109,7 @@ final class EvaluationSnapshotBuilder {
         List<ArtifactEntity> artifacts = artifactMapper.selectList(
                 new QueryWrapper<ArtifactEntity>()
                         .eq("tenant_code", tenantCode)
-                        .eq("***REMOVED***_id", ***REMOVED***Id)
+                        .eq("kb_id", kbId)
                         .eq("is_deleted", 0)
                         .isNotNull("current_version_id")
                         .ne("current_version_id", "")
@@ -131,10 +131,10 @@ final class EvaluationSnapshotBuilder {
                 artifactVersionMap.put(version.getArtifactVersionId(), version);
             }
         }
-        List<***REMOVED***SnapshotItemEntity> items = new ArrayList<>();
+        List<KbSnapshotItemEntity> items = new ArrayList<>();
         for (MaterialEntity material : materials) {
             MaterialVersionEntity version = versionMap.get(material.getCurrentVersionId());
-            ***REMOVED***SnapshotItemEntity item = new ***REMOVED***SnapshotItemEntity();
+            KbSnapshotItemEntity item = new KbSnapshotItemEntity();
             item.setId(UUID.randomUUID().toString());
             item.setTenantCode(tenantCode);
             item.setItemType(EvalSnapshotItemType.MATERIAL.name());
@@ -149,7 +149,7 @@ final class EvaluationSnapshotBuilder {
         }
         for (ArtifactEntity artifact : artifacts) {
             ArtifactVersionEntity version = artifactVersionMap.get(artifact.getCurrentVersionId());
-            ***REMOVED***SnapshotItemEntity item = new ***REMOVED***SnapshotItemEntity();
+            KbSnapshotItemEntity item = new KbSnapshotItemEntity();
             item.setId(UUID.randomUUID().toString());
             item.setTenantCode(tenantCode);
             item.setItemType(EvalSnapshotItemType.ARTIFACT.name());
@@ -164,28 +164,28 @@ final class EvaluationSnapshotBuilder {
             item.setUpdateBy(actorId);
             items.add(item);
         }
-        items.sort(Comparator.comparing(***REMOVED***SnapshotItemEntity::getItemKey));
+        items.sort(Comparator.comparing(KbSnapshotItemEntity::getItemKey));
         if (items.isEmpty()) {
-            throw new ***REMOVED***Exception(EvaluationStatusCode.EVAL_SNAPSHOT_EMPTY.code(),
+            throw new KBException(EvaluationStatusCode.EVAL_SNAPSHOT_EMPTY.code(),
                     EvaluationStatusCode.EVAL_SNAPSHOT_EMPTY.message());
         }
         List<String> keys = new ArrayList<>();
-        for (***REMOVED***SnapshotItemEntity item : items) {
+        for (KbSnapshotItemEntity item : items) {
             keys.add(item.getItemKey());
         }
         List<String> fingerprintKeys = new ArrayList<>();
-        for (***REMOVED***SnapshotItemEntity item : items) {
+        for (KbSnapshotItemEntity item : items) {
             fingerprintKeys.add(item.getItemKey() + "@" + text(item.getChecksum()));
         }
         String fingerprint = sha256(String.join("|", fingerprintKeys));
         String indexGeneration = embedding.model() + "@384|" + fingerprint.substring(0, 12);
-        ***REMOVED***SnapshotEntity existing = existingSnapshot(tenantCode, ***REMOVED***Id, fingerprint,
+        KbSnapshotEntity existing = existingSnapshot(tenantCode, kbId, fingerprint,
                 indexGeneration);
         if (existing != null) {
             SnapshotBuild build = new SnapshotBuild();
             build.snapshot = existing;
-            build.items = ***REMOVED***SnapshotItemMapper.selectList(
-                    new QueryWrapper<***REMOVED***SnapshotItemEntity>()
+            build.items = kbSnapshotItemMapper.selectList(
+                    new QueryWrapper<KbSnapshotItemEntity>()
                             .eq("tenant_code", tenantCode)
                             .eq("snapshot_id", existing.getSnapshotId())
                             .eq("is_deleted", 0)
@@ -193,11 +193,11 @@ final class EvaluationSnapshotBuilder {
             return build;
         }
         Instant now = Instant.now();
-        ***REMOVED***SnapshotEntity snapshot = new ***REMOVED***SnapshotEntity();
+        KbSnapshotEntity snapshot = new KbSnapshotEntity();
         snapshot.setId(UUID.randomUUID().toString());
         snapshot.setSnapshotId(UUID.randomUUID().toString());
         snapshot.setTenantCode(tenantCode);
-        snapshot.set***REMOVED***Id(***REMOVED***Id);
+        snapshot.setKbId(kbId);
         snapshot.setConfigVersion(configVersion);
         snapshot.setOntologyVersion(ontologyVersion);
         snapshot.setIndexGeneration(indexGeneration);
@@ -219,14 +219,14 @@ final class EvaluationSnapshotBuilder {
         snapshot.setUpdateBy(actorId);
         snapshot.setCreateTime(now);
         snapshot.setUpdateTime(now);
-        ***REMOVED***SnapshotMapper.insert(snapshot);
-        for (***REMOVED***SnapshotItemEntity item : items) {
+        kbSnapshotMapper.insert(snapshot);
+        for (KbSnapshotItemEntity item : items) {
             item.setSnapshotId(snapshot.getSnapshotId());
             item.setIndexGeneration(indexGeneration);
             item.setIsDeleted(0);
             item.setCreateTime(now);
             item.setUpdateTime(now);
-            ***REMOVED***SnapshotItemMapper.insert(item);
+            kbSnapshotItemMapper.insert(item);
         }
         SnapshotBuild build = new SnapshotBuild();
         build.snapshot = snapshot;
@@ -235,11 +235,11 @@ final class EvaluationSnapshotBuilder {
     }
 
     /** 查找同知识库下指纹与索引代际一致、状态为 READY 的最新快照，用于避免重复建快照。 */
-    private ***REMOVED***SnapshotEntity existingSnapshot(String tenantCode, String ***REMOVED***Id, String fingerprint,
+    private KbSnapshotEntity existingSnapshot(String tenantCode, String kbId, String fingerprint,
             String indexGeneration) {
-        return ***REMOVED***SnapshotMapper.selectOne(new QueryWrapper<***REMOVED***SnapshotEntity>()
+        return kbSnapshotMapper.selectOne(new QueryWrapper<KbSnapshotEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("fingerprint", fingerprint)
                 .eq("index_generation", indexGeneration)
                 .eq("status", EvalSnapshotStatus.READY.name())
@@ -251,7 +251,7 @@ final class EvaluationSnapshotBuilder {
     /**
      * 分批加载快照内物料版本的分块，可限定已索引与召回段落块，按 chunkId 排序后截断到上限。
      *
-     * <p>z-***REMOVED*** 的向量在检索时惰性计算，这里不按 embedding 字段过滤；候选块由显式传入的
+     * <p>z-kb 的向量在检索时惰性计算，这里不按 embedding 字段过滤；候选块由显式传入的
      * {@code passageOnly} 与 {@code indexedOnly} 共同收敛到 INDEXED 的 PASSAGE 块。</p>
      */
     List<RetrievalChunkEntity> loadChunks(String tenantCode, Collection<String> versionIds,
@@ -308,8 +308,8 @@ final class EvaluationSnapshotBuilder {
 
     static final class SnapshotBuild {
 
-        ***REMOVED***SnapshotEntity snapshot;
+        KbSnapshotEntity snapshot;
 
-        List<***REMOVED***SnapshotItemEntity> items;
+        List<KbSnapshotItemEntity> items;
     }
 }

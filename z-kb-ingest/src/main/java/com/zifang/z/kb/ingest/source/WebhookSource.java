@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.ingest.source;
+package com.zifang.z.kb.ingest.source;
 
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
 
 import java.util.*;
 

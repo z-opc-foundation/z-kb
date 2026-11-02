@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /** 语雀知识库：namespace 形如 group/book，itemsCount 为该库文档数。 */
 public class YuqueBook {

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.taskconfig;
+package com.zifang.z.kb.api.taskconfig;
 
 /**
  * 任务性质：文档编译与 Wiki 生成属于处理链路，测评跑批属于最终 QA。

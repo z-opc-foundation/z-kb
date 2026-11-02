@@ -82,7 +82,7 @@ export default function TenantFormModal({
               className="input mono"
               value={code}
               disabled={editing}
-              placeholder="如 ***REMOVED***_demo"
+              placeholder="如 kb_demo"
               onChange={(event) => setCode(event.target.value)}
             />
             <span className="help">编码是请求头 X-Tenant-Code 的取值，创建后不可修改</span>

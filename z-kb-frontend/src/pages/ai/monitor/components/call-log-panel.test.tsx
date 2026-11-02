@@ -33,7 +33,7 @@ const events: CallEvent[] = [
   {
     id: 'req_2',
     at: Date.now(),
-    toolCode: '***REMOVED***_knowledge_search',
+    toolCode: 'kb_knowledge_search',
     toolName: '知识库检索（远端）',
     agentCode: 'agent_qa',
     agentName: '问答助手',

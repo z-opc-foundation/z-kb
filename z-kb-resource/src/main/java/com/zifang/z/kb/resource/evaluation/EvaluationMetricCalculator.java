@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricLayer;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalScopeType;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationMetricCode;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.core.retrieval.LocalHashEmbedding;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalResultEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalRunEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalResultMapper;
+import com.zifang.z.kb.api.evaluation.EvalMetricLayer;
+import com.zifang.z.kb.api.evaluation.EvalMetricStatus;
+import com.zifang.z.kb.api.evaluation.EvalScopeType;
+import com.zifang.z.kb.api.evaluation.EvaluationMetricCode;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalResultEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalRunEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalResultMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,19 +24,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_STATS_CHUNKS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.NOTE_LOCAL;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.NOTE_NOT_CONNECTED;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.NOTE_RUNTIME;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.OVERLONG_CHARS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.PARSE_SUCCESS_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.RECALL_FLOOR_TARGET;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.chunkLength;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.decimal;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.isIndexed;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.percentile;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.INDEX_COVERAGE_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_STATS_CHUNKS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.NOTE_LOCAL;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.NOTE_NOT_CONNECTED;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.NOTE_RUNTIME;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.OVERLONG_CHARS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.PARSE_SUCCESS_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.RECALL_FLOOR_TARGET;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.chunkLength;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.decimal;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.isIndexed;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.percentile;
 
 /**
  * 四层指标计算与落库：核心、前置、诊断、运行时指标的目标、状态与备注。

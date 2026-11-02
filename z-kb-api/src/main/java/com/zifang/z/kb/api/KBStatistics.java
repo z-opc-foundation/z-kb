@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 工作台综合统计。
  */
-public class ***REMOVED***Statistics {
+public class KBStatistics {
 
     private String workspace;
     private long documentCount;

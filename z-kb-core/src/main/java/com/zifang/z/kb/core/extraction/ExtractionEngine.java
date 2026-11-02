@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionChunk;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionInput;
+import com.zifang.z.kb.api.extraction.ExtractionChunk;
+import com.zifang.z.kb.api.extraction.ExtractionInput;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -291,9 +291,9 @@ public class ExtractionEngine {
         return "edge:" + shortHash(sourceNodeId + "|" + targetNodeId + "|" + edgeType);
     }
 
-    /** 返回知识库对应的图谱空间键（格式为 ***REMOVED***:{***REMOVED***Id}）。 */
-    public static String graphSpaceKey(String ***REMOVED***Id) {
-        return "***REMOVED***:" + ***REMOVED***Id;
+    /** 返回知识库对应的图谱空间键（格式为 kb:{kbId}）。 */
+    public static String graphSpaceKey(String kbId) {
+        return "kb:" + kbId;
     }
 
     /** 从标题分词与正文 2-6 字中文串中收集术语，过滤停用词、低频项与包含冗余后取前 MAX_TERMS 个。 */

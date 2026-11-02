@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.git;
+package com.zifang.z.kb.core.source.git;
 
 import com.zifang.util.http.client.HttpExecutionResult;
 import com.zifang.util.http.client.HttpExecutor;

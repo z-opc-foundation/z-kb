@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 物料登记状态。

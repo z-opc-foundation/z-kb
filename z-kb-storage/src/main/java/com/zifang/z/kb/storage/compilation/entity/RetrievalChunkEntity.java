@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.compilation.entity;
+package com.zifang.z.kb.storage.compilation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 检索块（***REMOVED***_retrieval_chunk）。块是产物，章节块承载上下文、段落块参与召回。
+ * 检索块（kb_retrieval_chunk）。块是产物，章节块承载上下文、段落块参与召回。
  */
-@TableName("***REMOVED***_retrieval_chunk")
+@TableName("kb_retrieval_chunk")
 public class RetrievalChunkEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String chunkId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String sourceType;
     private String sourceId;
     private String sourceVersionId;
@@ -64,12 +64,12 @@ public class RetrievalChunkEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getSourceType() {

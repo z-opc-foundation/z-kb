@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { buildSeries } from './***REMOVED***-activity-chart';
+import { buildSeries } from './kb-activity-chart';
 
 describe('活跃度曲线按周汇总', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.ingest.api;
+package com.zifang.z.kb.ingest.api;
 
 /**
  * 数据源类型 — 区分不同渠道。

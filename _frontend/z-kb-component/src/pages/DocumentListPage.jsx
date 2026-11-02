@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Button, Select, Space, Tag} from 'antd'
 import {ReloadOutlined} from '@ant-design/icons'
 import {ErrorState, ListTable, LoadingState} from '@yuku123/z-frontend-common/ui'
-import {***REMOVED***Api} from '../services/api'
+import {kbApi} from '../services/api'
 
 const PAGE_SIZE = 20
 
@@ -17,7 +17,7 @@ export default function DocumentListPage() {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        ***REMOVED***Api.listWorkspaces()
+        kbApi.listWorkspaces()
             .then(data => {
                 const list = Array.isArray(data) ? data : []
                 setWorkspaces(list)
@@ -33,8 +33,8 @@ export default function DocumentListPage() {
         setError(null)
         const offset = (page - 1) * PAGE_SIZE
         Promise.all([
-            ***REMOVED***Api.listDocuments(selectedWs, offset, PAGE_SIZE),
-            ***REMOVED***Api.getDocumentCount(selectedWs),
+            kbApi.listDocuments(selectedWs, offset, PAGE_SIZE),
+            kbApi.getDocumentCount(selectedWs),
         ]).then(([list, count]) => {
             if (cancelled) return
             setDocuments(Array.isArray(list) ? list : [])
@@ -94,7 +94,7 @@ export default function DocumentListPage() {
                         </Button>
                     }
                     // 【服务端分页，不套客户端分页】这页的翻页是 offset/limit + total 的服务端分页
-                    // （***REMOVED***Api.listDocuments(ws, offset, limit) + ***REMOVED***Api.getDocumentCount(ws)），
+                    // （kbApi.listDocuments(ws, offset, limit) + kbApi.getDocumentCount(ws)），
                     // 换页必须重新请求后端 ⇒ 不能用基座那套客户端分页（DEFAULT_PAGINATION），
                     // 所以把原来的 pagination 对象原样传给 ListTable。
                     // searchKeys 的过滤只作用于**当前这一页**已取回的行。

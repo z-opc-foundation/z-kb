@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AiChatStreamCallbacks } from '@/services/ai';
-import type { ***REMOVED***Overview } from '@/services/overview';
+import type { KbOverview } from '@/services/overview';
 import { KnowledgeAssistant } from './knowledge-assistant';
 
 vi.mock('@/services/ai', () => ({
@@ -16,8 +16,8 @@ vi.mock('@/services/ai', () => ({
 
 import { getAiRuntimeStatus, streamAiChat } from '@/services/ai';
 
-const stats: ***REMOVED***Overview = {
-  ***REMOVED***Id: '***REMOVED***-1',
+const stats: KbOverview = {
+  kbId: 'kb-1',
   fileCount: 4,
   compiledCount: 1,
   partialCount: 1,
@@ -28,7 +28,7 @@ const stats: ***REMOVED***Overview = {
   recentMaterials: [
     {
       materialId: 'mat-1',
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       materialType: 'DOCUMENT',
       title: '排班管理制度',
       sourceType: 'UPLOAD',
@@ -46,8 +46,8 @@ const stats: ***REMOVED***Overview = {
 };
 
 const baseProps = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '临床知识库',
+  kbId: 'kb-1',
+  kbName: '临床知识库',
   canWrite: true,
   onUpload: vi.fn(),
   onGoTasks: vi.fn(),
@@ -108,8 +108,8 @@ describe('知识助手面板', () => {
 
     expect(streamAiChat).toHaveBeenCalledWith(
       expect.objectContaining({
-        agentCode: '***REMOVED***_qa_assistant',
-        ***REMOVED***Id: '***REMOVED***-1',
+        agentCode: 'kb_qa_assistant',
+        kbId: 'kb-1',
         userInput: '排班规则有哪些限制？',
       }),
       expect.any(Object),

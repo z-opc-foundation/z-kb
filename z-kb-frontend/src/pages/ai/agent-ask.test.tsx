@@ -30,13 +30,13 @@ vi.mock('@/pages/ai/agent-run-drawer', async () => {
   const React = await import('react');
   const h = React.createElement;
   return {
-    AI_QA_AGENT_CODE: '***REMOVED***_qa_assistant',
+    AI_QA_AGENT_CODE: 'kb_qa_assistant',
     AgentRunDrawer: ({
       agent,
       skills,
       tools,
       runtime,
-      initial***REMOVED***Id,
+      initialKbId,
       initialQuestion,
       title,
       onClose,
@@ -45,7 +45,7 @@ vi.mock('@/pages/ai/agent-run-drawer', async () => {
       skills: AiSkillRecord[];
       tools: AiToolRecord[];
       runtime?: AiRuntimeStatus;
-      initial***REMOVED***Id?: string;
+      initialKbId?: string;
       initialQuestion?: string;
       title?: string;
       onClose: () => void;
@@ -62,7 +62,7 @@ vi.mock('@/pages/ai/agent-run-drawer', async () => {
           { 'data-testid': 'drawer-runtime' },
           runtime?.model ?? 'none',
         ),
-        h('span', { 'data-testid': 'drawer-***REMOVED***' }, initial***REMOVED***Id ?? ''),
+        h('span', { 'data-testid': 'drawer-kb' }, initialKbId ?? ''),
         h(
           'span',
           { 'data-testid': 'drawer-question' },
@@ -74,7 +74,7 @@ vi.mock('@/pages/ai/agent-run-drawer', async () => {
 });
 
 const agent: AiAgentRecord = {
-  code: '***REMOVED***_qa_assistant',
+  code: 'kb_qa_assistant',
   name: '知识库问答助手',
   status: 'published',
   statusLabel: '已发布',
@@ -125,7 +125,7 @@ describe('AgentAskButton', () => {
         resolveAgents = resolve;
       }),
     );
-    render(<AgentAskButton ***REMOVED***Id="***REMOVED***_1" question="怎么排班" />);
+    render(<AgentAskButton kbId="kb_1" question="怎么排班" />);
 
     const button = screen.getByRole('button', { name: /问 AI/ });
     fireEvent.click(button);
@@ -143,7 +143,7 @@ describe('AgentAskButton', () => {
     expect(withinDrawer('drawer-skills')).toHaveTextContent('1');
     expect(withinDrawer('drawer-tools')).toHaveTextContent('1');
     expect(withinDrawer('drawer-runtime')).toHaveTextContent('qwen3.6-flash');
-    expect(withinDrawer('drawer-***REMOVED***')).toHaveTextContent('***REMOVED***_1');
+    expect(withinDrawer('drawer-kb')).toHaveTextContent('kb_1');
     expect(withinDrawer('drawer-question')).toHaveTextContent('怎么排班');
     expect(drawer).toBeInTheDocument();
 
@@ -190,7 +190,7 @@ describe('AgentAskButton', () => {
     vi.mocked(listAiAgents).mockResolvedValue([
       { ...agent, code: 'agent_fb_qa_assistant', name: '远端问答助手' },
     ]);
-    render(<AgentAskButton ***REMOVED***Id="***REMOVED***_1" />);
+    render(<AgentAskButton kbId="kb_1" />);
 
     fireEvent.click(screen.getByRole('button', { name: /问 AI/ }));
 
@@ -201,7 +201,7 @@ describe('AgentAskButton', () => {
 
   it('运行时没有下发编码时仍按逻辑编码查找', async () => {
     vi.mocked(getAiRuntimeStatus).mockResolvedValue(runtime);
-    render(<AgentAskButton ***REMOVED***Id="***REMOVED***_1" />);
+    render(<AgentAskButton kbId="kb_1" />);
 
     fireEvent.click(screen.getByRole('button', { name: /问 AI/ }));
 

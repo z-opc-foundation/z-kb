@@ -1,16 +1,16 @@
-package com.zifang.z.***REMOVED***.modeling.core;
+package com.zifang.z.kb.modeling.core;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.GraphQueryResult;
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
-import com.zifang.z.***REMOVED***.api.Relation;
-import com.zifang.z.***REMOVED***.modeling.extractor.CausalChainExtractor;
-import com.zifang.z.***REMOVED***.modeling.extractor.ProductDecomposer;
-import com.zifang.z.***REMOVED***.modeling.generator.CheatSheetGenerator;
-import com.zifang.z.***REMOVED***.modeling.model.CheatSheet;
-import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.GraphQueryResult;
+import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.api.Relation;
+import com.zifang.z.kb.modeling.extractor.CausalChainExtractor;
+import com.zifang.z.kb.modeling.extractor.ProductDecomposer;
+import com.zifang.z.kb.modeling.generator.CheatSheetGenerator;
+import com.zifang.z.kb.modeling.model.CheatSheet;
+import com.zifang.z.kb.modeling.model.ProductModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,18 +30,18 @@ public class ModelingService {
 
     private static final Logger log = LoggerFactory.getLogger(ModelingService.class);
 
-    private final KnowledgeBaseService ***REMOVED***Service;
+    private final KnowledgeBaseService kbService;
     private final ProductDecomposer decomposer = new ProductDecomposer();
     private final CausalChainExtractor causalExtractor = new CausalChainExtractor();
     private final CheatSheetGenerator cheatsheetGenerator = new CheatSheetGenerator();
 
-    public ModelingService(KnowledgeBaseService ***REMOVED***Service) {
-        this.***REMOVED***Service = ***REMOVED***Service;
+    public ModelingService(KnowledgeBaseService kbService) {
+        this.kbService = kbService;
     }
 
     /** 拆解一个工作台下的全部文档为一个产品模型 */
     public ProductModel decompose(String workspace) {
-        List<Document> docs = ***REMOVED***Service.listDocuments(workspace, 0, 200);
+        List<Document> docs = kbService.listDocuments(workspace, 0, 200);
         if (docs.isEmpty()) {
             log.warn("工作台 {} 下没有文档，无法建模", workspace);
             ProductModel empty = new ProductModel();
@@ -54,7 +54,7 @@ public class ModelingService {
         List<Chunk> allChunks = new ArrayList<>();
         for (Document d : docs) {
             try {
-                List<Chunk> chunks = ***REMOVED***Service.getChunks(d.getWorkspace(), d.getId());
+                List<Chunk> chunks = kbService.getChunks(d.getWorkspace(), d.getId());
                 if (chunks != null) allChunks.addAll(chunks);
             } catch (Exception e) {
                 log.warn("读取文档 {} 的 chunk 失败: {}", d.getId(), e.getMessage());
@@ -64,7 +64,7 @@ public class ModelingService {
         // 工作台级实体 / 关系
         List<Entity> allEntities = new ArrayList<>();
         try {
-            allEntities = ***REMOVED***Service.listEntities(workspace, 1000);
+            allEntities = kbService.listEntities(workspace, 1000);
         } catch (Exception e) {
             log.warn("读取实体失败: {}", e.getMessage());
         }
@@ -75,7 +75,7 @@ public class ModelingService {
             List<String> entNames = new ArrayList<>();
             for (Entity e : allEntities) entNames.add(e.getCanonicalName());
             if (!entNames.isEmpty()) {
-                GraphQueryResult sg = ***REMOVED***Service.getSubgraph(workspace, entNames, 1);
+                GraphQueryResult sg = kbService.getSubgraph(workspace, entNames, 1);
                 if (sg != null && sg.getEdges() != null) allRelations.addAll(sg.getEdges());
             }
         } catch (Exception e) {

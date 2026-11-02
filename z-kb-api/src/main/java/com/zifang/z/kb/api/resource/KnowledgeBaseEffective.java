@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,22 +8,22 @@ import java.util.List;
  */
 public class KnowledgeBaseEffective {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String actorId;
     private String role;
     private boolean owner;
     private boolean canEnter;
-    private boolean canManage***REMOVED***;
+    private boolean canManageKb;
     private boolean canManageDoc;
     private boolean canReview;
     private List<String> actions = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getActorId() {
@@ -58,12 +58,12 @@ public class KnowledgeBaseEffective {
         this.canEnter = canEnter;
     }
 
-    public boolean isCanManage***REMOVED***() {
-        return canManage***REMOVED***;
+    public boolean isCanManageKb() {
+        return canManageKb;
     }
 
-    public void setCanManage***REMOVED***(boolean canManage***REMOVED***) {
-        this.canManage***REMOVED*** = canManage***REMOVED***;
+    public void setCanManageKb(boolean canManageKb) {
+        this.canManageKb = canManageKb;
     }
 
     public boolean isCanManageDoc() {

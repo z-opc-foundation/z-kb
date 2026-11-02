@@ -27,7 +27,7 @@ export interface TaskPageResult {
 }
 
 export interface TaskPageQuery {
-  ***REMOVED***Id: string;
+  kbId: string;
   taskType?: string;
   status?: string;
   pageNo?: number;
@@ -40,7 +40,7 @@ export interface TaskSummary {
   taskTotal: number;
 }
 
-const BASE = '/***REMOVED***/v1/taskMonitor';
+const BASE = '/kb/v1/taskMonitor';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -58,11 +58,11 @@ export async function pageTasks(params: TaskPageQuery): Promise<TaskPageResult |
 }
 
 /** 任务管理页签角标：一次拿组别、单任务与调度记录条数，避免为角标拉三份列表。 */
-export async function getTaskSummary(***REMOVED***Id: string): Promise<TaskSummary | undefined> {
+export async function getTaskSummary(kbId: string): Promise<TaskSummary | undefined> {
   try {
     return await request<TaskSummary>(`${BASE}/summary`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     });
   } catch (e) {

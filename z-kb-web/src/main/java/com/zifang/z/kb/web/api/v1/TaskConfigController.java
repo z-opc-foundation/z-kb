@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPanelView;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigService;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.TaskConfigPublishRequest;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPanelView;
+import com.zifang.z.kb.api.taskconfig.TaskConfigService;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.api.v1.dto.TaskConfigPublishRequest;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,29 +19,29 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "任务配置")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/taskConfig")
+@RequestMapping("/api/kb/v1/taskConfig")
 public class TaskConfigController {
 
     private final TaskConfigService taskConfigService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
     public TaskConfigController(TaskConfigService taskConfigService,
-                                ***REMOVED***CallerResolver callerResolver) {
+                                KbCallerResolver callerResolver) {
         this.taskConfigService = taskConfigService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "读取当前任务配置", description = "首次访问落系统预置版本 2026.10，返回全部任务性质")
     @GetMapping("/query")
-    public ***REMOVED***Result<TaskConfigPanelView> query(HttpServletRequest request) {
-        return ***REMOVED***Result.ok(taskConfigService.query(callerResolver.resolve(request)));
+    public KbResult<TaskConfigPanelView> query(HttpServletRequest request) {
+        return KbResult.ok(taskConfigService.query(callerResolver.resolve(request)));
     }
 
     @Operation(summary = "发布任务配置新版本", description = "整版发布全部任务性质，只影响之后创建的任务")
     @PostMapping("/publish")
-    public ***REMOVED***Result<TaskConfigPanelView> publish(@RequestBody TaskConfigPublishRequest body,
+    public KbResult<TaskConfigPanelView> publish(@RequestBody TaskConfigPublishRequest body,
                                                  HttpServletRequest request) {
-        return ***REMOVED***Result.ok(taskConfigService.publish(body.toParam(),
+        return KbResult.ok(taskConfigService.publish(body.toParam(),
                 callerResolver.resolve(request)));
     }
 }

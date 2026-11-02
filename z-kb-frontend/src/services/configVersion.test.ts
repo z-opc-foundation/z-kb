@@ -16,7 +16,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/kb/v1/knowledgeBase';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -25,17 +25,17 @@ beforeEach(() => {
 
 describe('知识库配置版本接口', () => {
   it('读取当前配置', async () => {
-    await getKnowledgeBaseConfig('***REMOVED***-1');
+    await getKnowledgeBaseConfig('kb-1');
     expect(request).toHaveBeenCalledWith(`${BASE}/queryConfig`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
   });
 
   it('保存草稿携带完整策略与超时', async () => {
     const payload = {
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       presetVersion: 'v1',
       parserPolicy: 'p',
       chunkingPolicy: 'c',
@@ -57,42 +57,42 @@ describe('知识库配置版本接口', () => {
   });
 
   it('丢弃草稿与校验只传知识库', async () => {
-    await discardConfigDraft('***REMOVED***-1');
+    await discardConfigDraft('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/discardConfigDraft`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1' },
+      data: { kbId: 'kb-1' },
       headers,
     });
 
-    await validateConfigDraft('***REMOVED***-1');
+    await validateConfigDraft('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/validateConfigDraft`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1' },
+      data: { kbId: 'kb-1' },
       headers,
     });
   });
 
   it('发布与全量重建带确认标记', async () => {
-    await publishConfig('***REMOVED***-1');
+    await publishConfig('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/publishConfig`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1', confirm: true, remark: undefined },
+      data: { kbId: 'kb-1', confirm: true, remark: undefined },
       headers,
       timeout: 60_000,
     });
 
-    await publishConfig('***REMOVED***-1', '发版');
+    await publishConfig('kb-1', '发版');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/publishConfig`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1', confirm: true, remark: '发版' },
+      data: { kbId: 'kb-1', confirm: true, remark: '发版' },
       headers,
       timeout: 60_000,
     });
 
-    await submitFullRebuild('***REMOVED***-1');
+    await submitFullRebuild('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/submitRebuild`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1', confirm: true },
+      data: { kbId: 'kb-1', confirm: true },
       headers,
       timeout: 180_000,
     });
@@ -100,11 +100,11 @@ describe('知识库配置版本接口', () => {
 
   it('失败时提示操作失败并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('策略非法'));
-    await expect(publishConfig('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(publishConfig('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('操作失败', '策略非法', 'error');
 
     vi.mocked(request).mockRejectedValueOnce('bad');
-    await expect(getKnowledgeBaseConfig('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(getKnowledgeBaseConfig('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenLastCalledWith('操作失败', '请求失败', 'error');
   });
 

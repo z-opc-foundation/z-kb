@@ -124,7 +124,7 @@ export default function SearchPage({ workspace }: Props) {
                   <Tag color="cyan">#{idx + 1}</Tag>
                   <Tag color="blue">score: {hit.score.toFixed(3)}</Tag>
                   <Tag>{hit.source}</Tag>
-                  {hit.contextTitle && <Tag color="gee***REMOVED***lue">{hit.contextTitle}</Tag>}
+                  {hit.contextTitle && <Tag color="geekblue">{hit.contextTitle}</Tag>}
                 </Space>
               </div>
               {hit.documentTitle && <Typography.Title level={5}>{hit.documentTitle}</Typography.Title>}

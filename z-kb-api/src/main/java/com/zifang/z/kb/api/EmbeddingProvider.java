@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import java.util.List;
  *
  * <p>内置实现：
  * <ul>
- *   <li>{@code TfIdfEmbeddingProvider}（z-***REMOVED***-core）— 离线 TF-IDF + 字符 n-gram hash，512 维</li>
- *   <li>{@code HttpEmbeddingProvider}（z-***REMOVED***-core）— 调用 OpenAI/Qwen/GLM 等远程 API</li>
+ *   <li>{@code TfIdfEmbeddingProvider}（z-kb-core）— 离线 TF-IDF + 字符 n-gram hash，512 维</li>
+ *   <li>{@code HttpEmbeddingProvider}（z-kb-core）— 调用 OpenAI/Qwen/GLM 等远程 API</li>
  * </ul>
  *
  * <h2>使用示例</h2>
@@ -32,7 +32,7 @@ public interface EmbeddingProvider {
      *
      * @param text 输入文本
      * @return 与 {@link #dimension()} 等长的浮点向量
-     * @throws ***REMOVED***Exception 当输入非法或远端调用失败
+     * @throws KBException 当输入非法或远端调用失败
      */
     float[] embed(String text);
 

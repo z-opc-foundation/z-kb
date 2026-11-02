@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.core.chunker.Chunker;
-import com.zifang.z.***REMOVED***.core.embedding.TfIdfEmbeddingProvider;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
-import com.zifang.z.***REMOVED***.core.parser.MarkdownParser;
-import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.core.chunker.Chunker;
+import com.zifang.z.kb.core.embedding.TfIdfEmbeddingProvider;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
+import com.zifang.z.kb.core.parser.MarkdownParser;
+import com.zifang.z.kb.core.search.Bm25Searcher;
+import com.zifang.z.kb.core.search.HybridSearcher;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

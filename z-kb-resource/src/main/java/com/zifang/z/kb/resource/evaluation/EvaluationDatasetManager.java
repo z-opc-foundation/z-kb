@@ -1,33 +1,33 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.evaluation.BaselineBriefInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.DatasetCaseInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.DatasetSummaryInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalCaseInputParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalDatasetPublishParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalDatasetSaveParam;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalDatasetStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalExpectedBehavior;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationDatasetInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.Evaluation***REMOVED***ItemInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.Evaluation***REMOVED***PageInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationOverviewInfo;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStatusCode;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseQuery;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalDatasetEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalResultEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalRunEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalCaseMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalDatasetMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalResultMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.mapper.EvalRunMapper;
+import com.zifang.z.kb.api.evaluation.BaselineBriefInfo;
+import com.zifang.z.kb.api.evaluation.DatasetCaseInfo;
+import com.zifang.z.kb.api.evaluation.DatasetSummaryInfo;
+import com.zifang.z.kb.api.evaluation.EvalCaseInputParam;
+import com.zifang.z.kb.api.evaluation.EvalDatasetPublishParam;
+import com.zifang.z.kb.api.evaluation.EvalDatasetSaveParam;
+import com.zifang.z.kb.api.evaluation.EvalDatasetStatus;
+import com.zifang.z.kb.api.evaluation.EvalExpectedBehavior;
+import com.zifang.z.kb.api.evaluation.EvaluationDatasetInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationKbItemInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationKbPageInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationOverviewInfo;
+import com.zifang.z.kb.api.evaluation.EvaluationStatusCode;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseQuery;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalDatasetEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalResultEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalRunEntity;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalCaseMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalDatasetMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalResultMapper;
+import com.zifang.z.kb.storage.evaluation.mapper.EvalRunMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -41,18 +41,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_CASES;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.MAX_PAGE_SIZE;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.defaultText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.error;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.joinTags;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseBehavior;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parseJson;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.requireText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.splitTags;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.toJson;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.truncate;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_CASES;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.MAX_PAGE_SIZE;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.defaultText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.error;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.joinTags;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseBehavior;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parseJson;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.requireText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.splitTags;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.toJson;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.truncate;
 
 /**
  * QA 数据集：知识库评测列表、概览、版本化草稿与发布。
@@ -98,30 +98,30 @@ final class EvaluationDatasetManager {
     }
 
     /** 分页查询知识库评测列表，附带数据集版本、最近运行的核心指标通过数及待处理坏例数。 */
-    Evaluation***REMOVED***PageInfo pageKnowledgeBase(int current, int size, String keyword, ***REMOVED***Caller caller) {
+    EvaluationKbPageInfo pageKnowledgeBase(int current, int size, String keyword, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
         KnowledgeBaseQuery query = new KnowledgeBaseQuery();
         query.setKeyword(keyword);
         query.setCurrent(Math.max(current, 1));
         query.setSize(Math.min(Math.max(size, 1), MAX_PAGE_SIZE));
         PageResult<KnowledgeBaseView> page = resourceService.page(query, caller);
-        Evaluation***REMOVED***PageInfo result = new Evaluation***REMOVED***PageInfo();
+        EvaluationKbPageInfo result = new EvaluationKbPageInfo();
         result.setTotal(page.getTotal());
-        List<Evaluation***REMOVED***ItemInfo> records = new ArrayList<>();
-        for (KnowledgeBaseView ***REMOVED*** : page.getRecords()) {
-            Evaluation***REMOVED***ItemInfo item = new Evaluation***REMOVED***ItemInfo();
-            item.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
-            item.set***REMOVED***Name(***REMOVED***.getName());
-            EvalDatasetEntity dataset = selectLatestFrozen(tenantCode, ***REMOVED***.get***REMOVED***Id());
+        List<EvaluationKbItemInfo> records = new ArrayList<>();
+        for (KnowledgeBaseView kb : page.getRecords()) {
+            EvaluationKbItemInfo item = new EvaluationKbItemInfo();
+            item.setKbId(kb.getKbId());
+            item.setKbName(kb.getName());
+            EvalDatasetEntity dataset = selectLatestFrozen(tenantCode, kb.getKbId());
             if (dataset == null) {
-                dataset = selectLatest(tenantCode, ***REMOVED***.get***REMOVED***Id());
+                dataset = selectLatest(tenantCode, kb.getKbId());
             }
             if (dataset != null) {
                 item.setDatasetVersion(dataset.getVersionNo());
                 item.setDatasetStatus(dataset.getStatus());
                 item.setCaseCount(dataset.getCaseCount());
             }
-            EvalRunEntity lastRun = selectLatestBy***REMOVED***(tenantCode, ***REMOVED***.get***REMOVED***Id());
+            EvalRunEntity lastRun = selectLatestByKb(tenantCode, kb.getKbId());
             if (lastRun != null) {
                 List<EvalResultEntity> rows = assembler.resultsOfRun(tenantCode,
                         lastRun.getRunId());
@@ -135,7 +135,7 @@ final class EvaluationDatasetManager {
                 item.setCoreTotal(6);
                 item.setNotConnected(new ArrayList<>(NOT_CONNECTED_DEFAULT));
             }
-            item.setOpenBadcaseCount(badcaseManager.countOpen(tenantCode, ***REMOVED***.get***REMOVED***Id()));
+            item.setOpenBadcaseCount(badcaseManager.countOpen(tenantCode, kb.getKbId()));
             records.add(item);
         }
         result.setRecords(records);
@@ -143,21 +143,21 @@ final class EvaluationDatasetManager {
     }
 
     /** 汇总知识库评测概览：当前数据集、最近运行摘要、基线运行、坏例统计与可信证据。 */
-    EvaluationOverviewInfo queryOverview(String ***REMOVED***Id, String baselineRunId, ***REMOVED***Caller caller) {
+    EvaluationOverviewInfo queryOverview(String kbId, String baselineRunId, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
-        String key = requireText(***REMOVED***Id, EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(key, caller);
+        String key = requireText(kbId, EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireReadable(key, caller);
         EvaluationOverviewInfo info = new EvaluationOverviewInfo();
-        info.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
-        info.set***REMOVED***Name(***REMOVED***.getName());
-        EvalDatasetEntity dataset = selectLatestFrozen(tenantCode, ***REMOVED***.get***REMOVED***Id());
+        info.setKbId(kb.getKbId());
+        info.setKbName(kb.getName());
+        EvalDatasetEntity dataset = selectLatestFrozen(tenantCode, kb.getKbId());
         if (dataset == null) {
-            dataset = selectLatest(tenantCode, ***REMOVED***.get***REMOVED***Id());
+            dataset = selectLatest(tenantCode, kb.getKbId());
         }
         if (dataset != null) {
             info.setDataset(toDatasetSummary(dataset));
         }
-        EvalRunEntity lastRun = selectLatestBy***REMOVED***(tenantCode, ***REMOVED***.get***REMOVED***Id());
+        EvalRunEntity lastRun = selectLatestByKb(tenantCode, kb.getKbId());
         List<EvalResultEntity> lastRows = new ArrayList<>();
         if (lastRun != null) {
             lastRows = assembler.resultsOfRun(tenantCode, lastRun.getRunId());
@@ -165,7 +165,7 @@ final class EvaluationDatasetManager {
         }
         String baselineId = hasText(baselineRunId) ? baselineRunId.trim()
                 : (lastRun == null ? null : lastRun.getBaselineRunId());
-        EvalRunEntity baseline = assembler.loadBaseline(tenantCode, ***REMOVED***.get***REMOVED***Id(), baselineId);
+        EvalRunEntity baseline = assembler.loadBaseline(tenantCode, kb.getKbId(), baselineId);
         if (baseline != null) {
             BaselineBriefInfo brief = new BaselineBriefInfo();
             brief.setRunId(baseline.getRunId());
@@ -173,7 +173,7 @@ final class EvaluationDatasetManager {
             info.setBaselineRun(brief);
         }
         info.setComparable(assembler.isComparable(lastRun, baseline));
-        info.setBadcaseCounts(badcaseManager.countBadcasesInternal(tenantCode, ***REMOVED***.get***REMOVED***Id()));
+        info.setBadcaseCounts(badcaseManager.countBadcasesInternal(tenantCode, kb.getKbId()));
         if (lastRun != null) {
             info.setEvidence(assembler.buildTrustEvidence(lastRun, lastRows));
             info.setNotConnected(assembler.notConnectedCodes(lastRows));
@@ -184,21 +184,21 @@ final class EvaluationDatasetManager {
     }
 
     /** 查询指定版本的数据集及用例列表，版本号为空时取最新冻结版本，无冻结版本则取最新草稿。 */
-    EvaluationDatasetInfo queryDataset(String ***REMOVED***Id, Integer versionNo, ***REMOVED***Caller caller) {
+    EvaluationDatasetInfo queryDataset(String kbId, Integer versionNo, KbCaller caller) {
         String tenantCode = caller.getTenantCode();
-        String key = requireText(***REMOVED***Id, EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(key, caller);
+        String key = requireText(kbId, EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireReadable(key, caller);
         EvaluationDatasetInfo info = new EvaluationDatasetInfo();
         EvalDatasetEntity dataset;
         if (versionNo != null) {
-            dataset = selectByVersion(tenantCode, ***REMOVED***.get***REMOVED***Id(), versionNo);
+            dataset = selectByVersion(tenantCode, kb.getKbId(), versionNo);
             if (dataset == null) {
                 throw error(EvaluationStatusCode.EVAL_DATASET_NOT_FOUND);
             }
         } else {
-            dataset = selectLatestFrozen(tenantCode, ***REMOVED***.get***REMOVED***Id());
+            dataset = selectLatestFrozen(tenantCode, kb.getKbId());
             if (dataset == null) {
-                dataset = selectLatest(tenantCode, ***REMOVED***.get***REMOVED***Id());
+                dataset = selectLatest(tenantCode, kb.getKbId());
             }
         }
         if (dataset == null) {
@@ -216,13 +216,13 @@ final class EvaluationDatasetManager {
 
     /** 保存 QA 数据集草稿：新建或覆盖当前草稿版本并重建用例，单次最多 200 条。 */
     @Transactional(rollbackFor = Exception.class)
-    DatasetSummaryInfo saveDatasetDraft(EvalDatasetSaveParam param, ***REMOVED***Caller caller) {
+    DatasetSummaryInfo saveDatasetDraft(EvalDatasetSaveParam param, KbCaller caller) {
         if (param == null) {
             throw error(EvaluationStatusCode.EVAL_PARAM_INVALID);
         }
         String tenantCode = caller.getTenantCode();
-        String key = requireText(param.get***REMOVED***Id(), EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(key,
+        String key = requireText(param.getKbId(), EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireActionable(key,
                 KnowledgeBaseAction.MATERIAL_WRITE, caller);
         List<EvalCaseInputParam> inputs = param.getCases();
         if (inputs == null || inputs.isEmpty()) {
@@ -234,11 +234,11 @@ final class EvaluationDatasetManager {
         List<Integer> caseNos = assignCaseNos(inputs);
         String actorId = caller.getActorId();
         Instant now = Instant.now();
-        EvalDatasetEntity dataset = selectDraft(tenantCode, ***REMOVED***.get***REMOVED***Id());
+        EvalDatasetEntity dataset = selectDraft(tenantCode, kb.getKbId());
         boolean created = dataset == null;
         if (created) {
             int nextVersion = 1;
-            for (EvalDatasetEntity existing : datasetsOf***REMOVED***(tenantCode, ***REMOVED***.get***REMOVED***Id())) {
+            for (EvalDatasetEntity existing : datasetsOfKb(tenantCode, kb.getKbId())) {
                 if (existing.getVersionNo() != null && existing.getVersionNo() >= nextVersion) {
                     nextVersion = existing.getVersionNo() + 1;
                 }
@@ -247,7 +247,7 @@ final class EvaluationDatasetManager {
             dataset.setId(UUID.randomUUID().toString());
             dataset.setDatasetId(UUID.randomUUID().toString());
             dataset.setTenantCode(tenantCode);
-            dataset.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+            dataset.setKbId(kb.getKbId());
             dataset.setVersionNo(nextVersion);
             dataset.setStatus(EvalDatasetStatus.DRAFT.name());
             dataset.setIsDeleted(0);
@@ -307,22 +307,22 @@ final class EvaluationDatasetManager {
 
     /** 将草稿数据集发布为冻结版本，校验版本号一致且至少存在一条有效用例。 */
     @Transactional(rollbackFor = Exception.class)
-    DatasetSummaryInfo publishDataset(EvalDatasetPublishParam param, ***REMOVED***Caller caller) {
+    DatasetSummaryInfo publishDataset(EvalDatasetPublishParam param, KbCaller caller) {
         if (param == null) {
             throw error(EvaluationStatusCode.EVAL_PARAM_INVALID);
         }
         String tenantCode = caller.getTenantCode();
-        String key = requireText(param.get***REMOVED***Id(), EvaluationStatusCode.EVAL_PARAM_INVALID);
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(key,
+        String key = requireText(param.getKbId(), EvaluationStatusCode.EVAL_PARAM_INVALID);
+        KnowledgeBaseView kb = resourceService.requireActionable(key,
                 KnowledgeBaseAction.MATERIAL_WRITE, caller);
         EvalDatasetEntity dataset;
         if (param.getExpectedVersionNo() != null) {
-            dataset = selectByVersion(tenantCode, ***REMOVED***.get***REMOVED***Id(), param.getExpectedVersionNo());
+            dataset = selectByVersion(tenantCode, kb.getKbId(), param.getExpectedVersionNo());
             if (dataset == null) {
                 throw error(EvaluationStatusCode.EVAL_DATASET_NOT_FOUND);
             }
         } else {
-            dataset = selectDraft(tenantCode, ***REMOVED***.get***REMOVED***Id());
+            dataset = selectDraft(tenantCode, kb.getKbId());
             if (dataset == null) {
                 throw error(EvaluationStatusCode.EVAL_DATASET_NOT_FOUND);
             }
@@ -360,38 +360,38 @@ final class EvaluationDatasetManager {
     }
 
     /** 按库查询数据集版本，按版本号倒序。 */
-    List<EvalDatasetEntity> datasetsOf***REMOVED***(String tenantCode, String ***REMOVED***Id) {
+    List<EvalDatasetEntity> datasetsOfKb(String tenantCode, String kbId) {
         return datasetMapper.selectList(new QueryWrapper<EvalDatasetEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .orderByDesc("version_no"));
     }
 
     /** 按版本号查询数据集。 */
-    EvalDatasetEntity selectByVersion(String tenantCode, String ***REMOVED***Id, Integer versionNo) {
+    EvalDatasetEntity selectByVersion(String tenantCode, String kbId, Integer versionNo) {
         return datasetMapper.selectOne(new QueryWrapper<EvalDatasetEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("version_no", versionNo)
                 .eq("is_deleted", 0));
     }
 
     /** 查询知识库最新数据集版本。 */
-    EvalDatasetEntity selectLatest(String tenantCode, String ***REMOVED***Id) {
+    EvalDatasetEntity selectLatest(String tenantCode, String kbId) {
         return datasetMapper.selectOne(new QueryWrapper<EvalDatasetEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .orderByDesc("version_no")
                 .last("LIMIT 1"));
     }
 
     /** 查询知识库最新冻结数据集版本。 */
-    EvalDatasetEntity selectLatestFrozen(String tenantCode, String ***REMOVED***Id) {
+    EvalDatasetEntity selectLatestFrozen(String tenantCode, String kbId) {
         return datasetMapper.selectOne(new QueryWrapper<EvalDatasetEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("status", EvalDatasetStatus.FROZEN.name())
                 .eq("is_deleted", 0)
                 .orderByDesc("version_no")
@@ -399,10 +399,10 @@ final class EvaluationDatasetManager {
     }
 
     /** 查询知识库当前草稿数据集版本。 */
-    EvalDatasetEntity selectDraft(String tenantCode, String ***REMOVED***Id) {
+    EvalDatasetEntity selectDraft(String tenantCode, String kbId) {
         return datasetMapper.selectOne(new QueryWrapper<EvalDatasetEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("status", EvalDatasetStatus.DRAFT.name())
                 .eq("is_deleted", 0)
                 .orderByDesc("version_no")
@@ -419,10 +419,10 @@ final class EvaluationDatasetManager {
     }
 
     /** 查询知识库最近一次运行。 */
-    private EvalRunEntity selectLatestBy***REMOVED***(String tenantCode, String ***REMOVED***Id) {
+    private EvalRunEntity selectLatestByKb(String tenantCode, String kbId) {
         return runMapper.selectOne(new QueryWrapper<EvalRunEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .orderByDesc("create_time")
                 .orderByDesc("id")
@@ -433,7 +433,7 @@ final class EvaluationDatasetManager {
     private DatasetSummaryInfo toDatasetSummary(EvalDatasetEntity dataset) {
         DatasetSummaryInfo info = new DatasetSummaryInfo();
         info.setDatasetId(dataset.getDatasetId());
-        info.set***REMOVED***Id(dataset.get***REMOVED***Id());
+        info.setKbId(dataset.getKbId());
         info.setName(dataset.getName());
         info.setVersionNo(dataset.getVersionNo());
         info.setStatus(dataset.getStatus());

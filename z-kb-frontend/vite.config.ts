@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     base: publicPathPrefix,
     define: {
       __BUILD_ENV__: JSON.stringify(BUILD_ENV || 'dev'),
-      __LOCAL_ACTOR_ID__: JSON.stringify(process.env.***REMOVED***ACTOR_ID || '1'),
+      __LOCAL_ACTOR_ID__: JSON.stringify(process.env.KB_ACTOR_ID || '1'),
     },
     plugins: [
       react(),
@@ -36,34 +36,34 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       allowedHosts: ['.cfuture.shop'],
       proxy: {
-        // z-***REMOVED*** 后端：/kapi/***REMOVED***/v1/* 一一映射到 z-***REMOVED*** 的 /api/***REMOVED***/v1/*；
+        // z-kb 后端：/kapi/kb/v1/* 一一映射到 z-kb 的 /api/kb/v1/*；
         // 本地没有 SSO 会话，租户 / 操作人头由代理补上（线上由网关注入）
-        '/kapi/***REMOVED***': {
-          target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
+        '/kapi/kb': {
+          target: process.env.KB_API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
-          rewrite: (p) => p.replace(/^\/kapi\/***REMOVED***/, '/api/***REMOVED***'),
+          rewrite: (p) => p.replace(/^\/kapi\/kb/, '/api/kb'),
           headers: {
-            'X-Tenant-Code': process.env.***REMOVED***TENANT_CODE || '***REMOVED***_demo',
-            'X-Actor-Id': process.env.***REMOVED***ACTOR_ID || '1',
+            'X-Tenant-Code': process.env.KB_TENANT_CODE || 'kb_demo',
+            'X-Actor-Id': process.env.KB_ACTOR_ID || '1',
           },
         },
-        // 其余前缀（apex-sso 登录态、galaxy-ai、本体代理等）在 z-***REMOVED*** 独立形态下统一指到
-        // 同一本地后端：z-***REMOVED*** 未提供的端点如实 404，页面按失败态展示，不做静默兜底
+        // 其余前缀（apex-sso 登录态、galaxy-ai、本体代理等）在 z-kb 独立形态下统一指到
+        // 同一本地后端：z-kb 未提供的端点如实 404，页面按失败态展示，不做静默兜底
         '/kapi': {
-          target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
+          target: process.env.KB_API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
-          rewrite: (p) => p.replace(/^\/kapi/, '/api/***REMOVED***'),
+          rewrite: (p) => p.replace(/^\/kapi/, '/api/kb'),
         },
         '/galaxy-meta-service': {
-          target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
+          target: process.env.KB_API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
         },
         '/galaxy-meta-admin': {
-          target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
+          target: process.env.KB_API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
         },
         '/apex-spc': {
-          target: process.env.***REMOVED***API_TARGET || 'http://127.0.0.1:8889',
+          target: process.env.KB_API_TARGET || 'http://127.0.0.1:8889',
           changeOrigin: true,
         },
       },

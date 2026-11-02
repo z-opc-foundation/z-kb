@@ -1,6 +1,6 @@
 {
   "datasetVersion": "v1",
-  "knowledgeVersion": "***REMOVED***-corpus-2026-10-18",
+  "knowledgeVersion": "kb-corpus-2026-10-18",
   "cases": [
     {
       "caseId": "mysql-001",

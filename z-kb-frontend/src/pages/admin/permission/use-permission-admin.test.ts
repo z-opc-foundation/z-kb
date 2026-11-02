@@ -19,14 +19,14 @@ vi.mock('@/services/identity', () => ({
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const roles: AuthRole[] = [
-  { id: 1, roleCode: '***REMOVED***_admin', roleName: '知识库管理员', enabled: true },
-  { id: 2, roleCode: '***REMOVED***_viewer', roleName: '知识库访客', enabled: false },
+  { id: 1, roleCode: 'kb_admin', roleName: '知识库管理员', enabled: true },
+  { id: 2, roleCode: 'kb_viewer', roleName: '知识库访客', enabled: false },
 ];
 
 const catalog: PermissionCatalogItem[] = [
   { code: 'menu.space', name: '知识空间', type: 'MENU', typeCode: 1, order: 40 },
   {
-    code: 'menu.***REMOVED***',
+    code: 'menu.kb',
     name: '知识库',
     type: 'MENU',
     typeCode: 1,
@@ -34,11 +34,11 @@ const catalog: PermissionCatalogItem[] = [
     order: 41,
   },
   {
-    code: '***REMOVED***.create',
+    code: 'kb.create',
     name: '新建知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 101,
   },
 ];

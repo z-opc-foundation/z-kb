@@ -1,17 +1,17 @@
-const ***REMOVED***BASE = '/api/***REMOVED***'
+const KB_BASE = '/api/kb'
 
 /**
- * z-***REMOVED*** 前端 API 客户端（JS 版）。
+ * z-kb 前端 API 客户端（JS 版）。
  *
  * ── 口径说明（2026-10-22 实测，TASK-20260925-025）────────────────────────────
- * 1. **路径**：全部按 z-***REMOVED***-web 7 个 controller 的真实 @RequestMapping 抄的，
+ * 1. **路径**：全部按 z-kb-web 7 个 controller 的真实 @RequestMapping 抄的，
  *    不是按注解「推」的。真实路由共 33 条，见
- *    `z-***REMOVED***/z-***REMOVED***-web/src/test/java/com/zifang/z/***REMOVED***/web/***REMOVED***WebAutoConfigurationTest`
- *    的 READING-***REMOVED***WEB 路由 输出。
+ *    `z-kb/z-kb-web/src/test/java/com/zifang/z/kb/web/KbWebAutoConfigurationTest`
+ *    的 READING-KBWEB 路由 输出。
  *    注意三个 controller **没有裸根路由**：graph / ingest / modeling 的第一条就是
  *    /{workspace}/... 或 /sources、/stats、/decompose。
  * 2. **请求体字段**：宿主（z-opc）全局 Jackson 是 `PropertyNamingStrategy.SNAKE_CASE`
- *    （z-team-core/JacksonConfig），z-***REMOVED*** 单跑则是 camelCase。
+ *    （z-team-core/JacksonConfig），z-kb 单跑则是 camelCase。
  *    Boot 默认忽略未知属性 ⇒ 请求体**两种拼写都带**（camel + snake），
  *    两种环境都收得下；实测宿主里 `top_k` 生效、`topK` 被忽略。
  * 3. **响应字段**：宿主把 long 序列化成字符串（z-boot-jackson-starter 的
@@ -19,14 +19,14 @@ const ***REMOVED***BASE = '/api/***REMOVED***'
  *    `document_count` / `chunk_count` / `created_at` / `count` 这些键在宿主里是
  *    下划线 + 字符串。本文件**不改响应形状**（页面按原始字段读，改了会连带把
  *    WorkspaceListPage / DocumentListPage 弄坏），需要数值时用 `toNumber()`。
- * 4. **不包信封**：z-***REMOVED*** 的 controller 直接返回 DTO，宿主不会给它套 Result 信封；
+ * 4. **不包信封**：z-kb 的 controller 直接返回 DTO，宿主不会给它套 Result 信封；
  *    但 z-opc 其它模块有套信封的老习惯，故这里仍保留 `data?.data ?? data` 兼容。
  */
 
 const DEFAULT_WORKSPACE = 'default'
 
 async function request(path, options = {}) {
-    const res = await fetch(`${***REMOVED***BASE}${path}`, {
+    const res = await fetch(`${KB_BASE}${path}`, {
         headers: {'Content-Type': 'application/json', ...options.headers},
         ...options,
     })
@@ -86,14 +86,14 @@ export function toNumber(value, fallback = 0) {
     return Number.isFinite(n) ? n : fallback
 }
 
-export const ***REMOVED***Api = {
-    // ── Workspaces（WorkspaceController，/api/***REMOVED***/workspaces）────────────────
+export const kbApi = {
+    // ── Workspaces（WorkspaceController，/api/kb/workspaces）────────────────
     listWorkspaces: () => request('/workspaces'),
     getWorkspace: (name) => request(`/workspaces/${encodeURIComponent(name)}`),
     createWorkspace: (body) => request('/workspaces', {method: 'POST', body: JSON.stringify(wire(body))}),
     getWorkspaceStats: (name) => request(`/workspaces/${encodeURIComponent(name)}/statistics`),
 
-    // ── Documents（DocumentController，/api/***REMOVED***/documents）──────────────────
+    // ── Documents（DocumentController，/api/kb/documents）──────────────────
     // 上游是服务端分页 (offset/limit, 默认 0/20)，总数另走 /count
     listDocuments: (workspace, offset = 0, limit = 20) =>
         request(`/documents/${encodeURIComponent(workspace)}?offset=${offset}&limit=${limit}`),
@@ -116,11 +116,11 @@ export const ***REMOVED***Api = {
             `/documents/${encodeURIComponent(workspace)}/by-tags?${qs}&offset=${offset}&limit=${limit}`)
     },
 
-    // ── Search（SearchController，/api/***REMOVED***/search）──────────────────────────
+    // ── Search（SearchController，/api/kb/search）──────────────────────────
     // body: {query, workspace, mode(FUSION|VECTOR|KEYWORD|GRAPH|HYBRID), topK, ...}
     search: (body) => request('/search', {method: 'POST', body: JSON.stringify(wire(body))}),
 
-    // ── Chat（ChatController，/api/***REMOVED***/chat）───────────────────────────────
+    // ── Chat（ChatController，/api/kb/chat）───────────────────────────────
     chat: (body) => request('/chat', {method: 'POST', body: JSON.stringify(wire(body))}),
     createSession: (body) => request('/chat/sessions', {method: 'POST', body: JSON.stringify(wire(body))}),
     getSession: (id) => request(`/chat/sessions/${encodeURIComponent(id)}`),
@@ -135,7 +135,7 @@ export const ***REMOVED***Api = {
     chatInSession: (id, body) =>
         request(`/chat/sessions/${encodeURIComponent(id)}/chat`, {method: 'POST', body: JSON.stringify(wire(body))}),
 
-    // ── Graph（GraphController，/api/***REMOVED***/graph）─────────────────────────────
+    // ── Graph（GraphController，/api/kb/graph）─────────────────────────────
     // 注意：graph 没有裸根路由，第一条就是 /{workspace}/entities
     listEntities: (workspace, limit = 100) =>
         request(`/graph/${encodeURIComponent(workspace)}/entities?limit=${limit}`),
@@ -150,7 +150,7 @@ export const ***REMOVED***Api = {
             body: JSON.stringify(entityNames),
         }),
 
-    // ── Ingest（IngestController，/api/***REMOVED***/ingest）──────────────────────────
+    // ── Ingest（IngestController，/api/kb/ingest）──────────────────────────
     listSources: () => request('/ingest/sources'),
     getIngestStats: () => request('/ingest/stats'),
     // 批量拉取可能很久：这里不设超时，交由浏览器/网关口径
@@ -170,7 +170,7 @@ export const ***REMOVED***Api = {
         }),
     flushWebhook: () => request('/ingest/webhook/flush', {method: 'POST'}),
 
-    // ── Modeling（ModelingController，/api/***REMOVED***/modeling）────────────────────
+    // ── Modeling（ModelingController，/api/kb/modeling）────────────────────
     // modeling 也没有裸根路由：/decompose 与 /cheatsheet
     decompose: (workspace = DEFAULT_WORKSPACE) =>
         request(`/modeling/decompose?workspace=${encodeURIComponent(workspace)}`),

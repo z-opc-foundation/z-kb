@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.extraction.entity;
+package com.zifang.z.kb.storage.extraction.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库级概念模型（***REMOVED***_concept）：同一库内按规范化名称归一，跨资料复用升级为 CONFIRMED。
+ * 知识库级概念模型（kb_concept）：同一库内按规范化名称归一，跨资料复用升级为 CONFIRMED。
  */
-@TableName("***REMOVED***_concept")
+@TableName("kb_concept")
 public class ConceptEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String conceptId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private String normalizedName;
     private String cognitionKey;
@@ -59,12 +59,12 @@ public class ConceptEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

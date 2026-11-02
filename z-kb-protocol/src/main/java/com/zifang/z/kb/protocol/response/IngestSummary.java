@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 一次接入批次的汇总 —— {@code /api/***REMOVED***/ingest/run}、{@code /submit}、{@code /webhook/flush} 共用。
+ * 一次接入批次的汇总 —— {@code /api/kb/ingest/run}、{@code /submit}、{@code /webhook/flush} 共用。
  *
  * <p>顶层四组计数与逐条明细同时给出：前端列表页读 {@code items}，
  * 只想要一行汇总（"这次导了几篇"）时读顶层的 success/failed/skipped 与三个 total。

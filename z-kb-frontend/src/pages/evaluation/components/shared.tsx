@@ -842,11 +842,11 @@ export function runRecordFromBrief(
     finishedAt?: string | null;
     durationMs?: number | null;
   },
-  ***REMOVED***Id?: string,
+  kbId?: string,
 ): EvalRunRecord {
   return {
     runId: brief.runId,
-    ***REMOVED***Id,
+    kbId,
     status: brief.status ?? null,
     resultUsable: brief.resultUsable ?? null,
     finishedAt: brief.finishedAt ?? null,

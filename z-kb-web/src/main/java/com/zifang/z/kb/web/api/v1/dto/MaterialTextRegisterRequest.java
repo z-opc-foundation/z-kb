@@ -1,21 +1,21 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 把一段文本（通常为 Markdown）登记为资料。
  */
 public class MaterialTextRegisterRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String title;
     private String categoryId;
     private String content;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTitle() {

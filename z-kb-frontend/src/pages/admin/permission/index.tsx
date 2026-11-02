@@ -309,7 +309,7 @@ export default function PermissionAdminPage() {
             )}
           </section>
 
-          <section className="panel perm-wor***REMOVED***ench">
+          <section className="panel perm-workbench">
             {selected ? (
               <RoleDetail
                 role={selected}

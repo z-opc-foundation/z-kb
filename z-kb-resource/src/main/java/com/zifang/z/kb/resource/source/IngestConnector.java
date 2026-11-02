@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
 
 /**
  * 一种接入源的同步执行器。统一入口只做「拉来源、登记物料」，
@@ -21,5 +21,5 @@ public interface IngestConnector {
     String inputSnapshot(KnowledgeBaseSourceAccess source);
 
     /** 执行一次整库同步，返回计数与失败明细。 */
-    IngestSyncInfo sync(String ***REMOVED***Id, KnowledgeBaseSourceAccess source, ***REMOVED***Caller caller);
+    IngestSyncInfo sync(String kbId, KnowledgeBaseSourceAccess source, KbCaller caller);
 }

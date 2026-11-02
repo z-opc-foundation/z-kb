@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 已落对象存储、尚未登记为资料的附件。

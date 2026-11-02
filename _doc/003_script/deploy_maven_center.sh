@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# deploy_maven_center.sh — z-***REMOVED*** 一键发布到 Maven Central
+# deploy_maven_center.sh — z-kb 一键发布到 Maven Central
 #
 # 子命令：
 #   publish    实际 mvn deploy -Pcentral（默认）
@@ -40,11 +40,11 @@ print_help() {
     sed -n '2,16p' "$0"
 }
 
-# ---------- 切到 z-***REMOVED*** 根目录 ----------
+# ---------- 切到 z-kb 根目录 ----------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
-[[ -f pom.xml ]] || die "请在 z-***REMOVED*** 仓库根目录运行此脚本"
+[[ -f pom.xml ]] || die "请在 z-kb 仓库根目录运行此脚本"
 
 # ---------- 加载 .env ----------
 load_env() {
@@ -137,7 +137,7 @@ cmd_publish() {
     check_deps
 
     log "═══════════════════════════════════════════════════════════════"
-    log " 即将把 z-***REMOVED*** 上传到 Maven Central"
+    log " 即将把 z-kb 上传到 Maven Central"
     log "  groupId : io.github.yuku123"
     log "  version : $(grep '<version>1.0.1</version>' pom.xml | head -1 | sed 's/.*<version>\(.*\)<\/version>.*/\1/')"
     log "  GPG KEY : ${GPG_KEY_ID:-?}"
@@ -150,20 +150,20 @@ cmd_publish() {
         -Pcentral \
         -DskipTests \
         -Dgpg.passphrase="$CENTRAL_GPG_PASSPHRASE" \
-        2>&1 | tee /tmp/z-***REMOVED***-deploy.log | tail -100
+        2>&1 | tee /tmp/z-kb-deploy.log | tail -100
 
-    if grep -q "BUILD SUCCESS" /tmp/z-***REMOVED***-deploy.log; then
+    if grep -q "BUILD SUCCESS" /tmp/z-kb-deploy.log; then
         log ""
         log "✅ BUILD SUCCESS"
-        if grep -q "Uploaded bundle successfully" /tmp/z-***REMOVED***-deploy.log; then
+        if grep -q "Uploaded bundle successfully" /tmp/z-kb-deploy.log; then
             log "✅ Bundle uploaded"
             log "Central Portal 控制台：https://central.sonatype.com/publishing/deployments"
             log "验证（30 秒后）：https://search.maven.org/search?q=g:io.github.yuku123"
         else
-            warn "BUILD SUCCESS 但 upload 未确认。请看 /tmp/z-***REMOVED***-deploy.log 最后 30 行"
+            warn "BUILD SUCCESS 但 upload 未确认。请看 /tmp/z-kb-deploy.log 最后 30 行"
         fi
     else
-        die "BUILD FAILURE，请看 /tmp/z-***REMOVED***-deploy.log"
+        die "BUILD FAILURE，请看 /tmp/z-kb-deploy.log"
     fi
 }
 
@@ -171,10 +171,10 @@ cmd_publish() {
 cmd_verify() {
     log "搜索 Maven Central：g:io.github.yuku123"
     sleep 30  # 等 Central Portal 同步
-    HTTP=$(curl -s -o /tmp/z-***REMOVED***-verify.json -w "%{http_code}" \
+    HTTP=$(curl -s -o /tmp/z-kb-verify.json -w "%{http_code}" \
         "https://search.maven.org/solrsearch/select?q=g:io.github.yuku123&rows=5&wt=json")
     if [[ "$HTTP" == "200" ]]; then
-        NUM=$(python3 -c "import json; print(json.load(open('/tmp/z-***REMOVED***-verify.json'))['response']['numFound'])" 2>/dev/null || echo "?")
+        NUM=$(python3 -c "import json; print(json.load(open('/tmp/z-kb-verify.json'))['response']['numFound'])" 2>/dev/null || echo "?")
         log "Maven Central 上 io.github.yuku123 命名空间有 $NUM 个 artifact"
         [[ "$NUM" != "?" && "$NUM" -gt 0 ]] && log "✅ 发布成功" || warn "⚠️  还没同步完，再等等"
     else

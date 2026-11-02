@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.protocol.request;
+package com.zifang.z.kb.protocol.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * 创建会话请求 —— {@code POST /api/***REMOVED***/chat/sessions}。
+ * 创建会话请求 —— {@code POST /api/kb/chat/sessions}。
  */
 @Schema(description = "创建会话请求")
 public class CreateSessionRequest {

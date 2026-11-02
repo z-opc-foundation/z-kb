@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.taskconfig.entity;
+package com.zifang.z.kb.storage.taskconfig.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 任务配置行（***REMOVED***_task_config）。***REMOVED***_id 为空串表示租户级配置，非空表示库级覆盖。
- * 同一 (tenant, ***REMOVED***_id, config_version) 下每个任务性质一行，执行参数整体落在 executor_config。
+ * 任务配置行（kb_task_config）。kb_id 为空串表示租户级配置，非空表示库级覆盖。
+ * 同一 (tenant, kb_id, config_version) 下每个任务性质一行，执行参数整体落在 executor_config。
  */
-@TableName("***REMOVED***_task_config")
+@TableName("kb_task_config")
 public class TaskConfigEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String taskType;
     private String taskCode;
     private String taskName;
@@ -46,12 +46,12 @@ public class TaskConfigEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTaskType() {

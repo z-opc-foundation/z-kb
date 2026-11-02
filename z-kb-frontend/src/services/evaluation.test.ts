@@ -20,7 +20,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/evaluation';
+const BASE = '/kb/v1/evaluation';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -49,31 +49,31 @@ describe('知识评测查询接口', () => {
   });
 
   it('概览与数据集携带可选基线、版本参数', async () => {
-    await queryEvalOverview('***REMOVED***-1');
+    await queryEvalOverview('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/queryOverview`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
-    await queryEvalOverview('***REMOVED***-1', 'run-0');
+    await queryEvalOverview('kb-1', 'run-0');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/queryOverview`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', baselineRunId: 'run-0' },
+      params: { kbId: 'kb-1', baselineRunId: 'run-0' },
       headers,
     });
 
-    await queryEvalDataset('***REMOVED***-1');
+    await queryEvalDataset('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/queryDataset`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
-    await queryEvalDataset('***REMOVED***-1', 'v2');
+    await queryEvalDataset('kb-1', 'v2');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/queryDataset`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', versionNo: 'v2' },
+      params: { kbId: 'kb-1', versionNo: 'v2' },
       headers,
     });
   });
@@ -103,17 +103,17 @@ describe('知识评测查询接口', () => {
   });
 
   it('坏例列表拼接可选状态与阶段', async () => {
-    await listEvalBadcases('***REMOVED***-1');
+    await listEvalBadcases('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/listBadcases`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
-    await listEvalBadcases('***REMOVED***-1', 'OPEN', 'RETRIEVE');
+    await listEvalBadcases('kb-1', 'OPEN', 'RETRIEVE');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/listBadcases`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', status: 'OPEN', stageCode: 'RETRIEVE' },
+      params: { kbId: 'kb-1', status: 'OPEN', stageCode: 'RETRIEVE' },
       headers,
     });
   });
@@ -130,7 +130,7 @@ describe('知识评测查询接口', () => {
 describe('知识评测写入接口', () => {
   it('保存草稿、发布数据集与创建运行', async () => {
     const draft = {
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       name: '数据集',
       cases: [{ caseNo: '1', question: 'q', expectedAnswer: 'a', expectedBehavior: 'b', expectedEvidence: [], tags: [] }],
     };
@@ -141,7 +141,7 @@ describe('知识评测写入接口', () => {
       headers,
     });
 
-    const publish = { ***REMOVED***Id: '***REMOVED***-1', expectedVersionNo: 'v1' };
+    const publish = { kbId: 'kb-1', expectedVersionNo: 'v1' };
     await publishEvalDataset(publish);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/publishDataset`, {
       method: 'post',
@@ -149,7 +149,7 @@ describe('知识评测写入接口', () => {
       headers,
     });
 
-    const run = { ***REMOVED***Id: '***REMOVED***-1', allowReuse: true as const, datasetVersionNo: 'v2' };
+    const run = { kbId: 'kb-1', allowReuse: true as const, datasetVersionNo: 'v2' };
     await createEvalRun(run);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/createRun`, {
       method: 'post',

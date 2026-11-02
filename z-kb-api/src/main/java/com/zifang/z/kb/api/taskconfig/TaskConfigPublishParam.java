@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.taskconfig;
+package com.zifang.z.kb.api.taskconfig;
 
 import java.util.ArrayList;
 import java.util.List;

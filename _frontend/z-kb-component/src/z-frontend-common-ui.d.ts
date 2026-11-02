@@ -3,7 +3,7 @@
  *
  * 【为什么手写而不是等基座出 d.ts】
  * 基座是纯 JS 包（dist 里只有 js，没有 .d.ts），exports 的 './ui' 子路径也没配 types，
- * TS 直接 import 会报 TS7016 "Could not find a declaration file"。本仓 src/***REMOVED***/pages 下
+ * TS 直接 import 会报 TS7016 "Could not find a declaration file"。本仓 src/kb/pages 下
  * 是 .tsx（TypeScript 源码），所以必须像 z-surl 仓那样手写一份最小声明。
  *
  * 【维护约定】

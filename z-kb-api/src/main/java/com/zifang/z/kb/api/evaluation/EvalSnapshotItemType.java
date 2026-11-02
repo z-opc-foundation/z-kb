@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
  * 内容快照成员类型。

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 import com.zifang.util.http.client.HttpExecutionResult;
 import com.zifang.util.http.client.HttpExecutor;

@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.resource.material;
+package com.zifang.z.kb.resource.material;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Paths;
-import com.zifang.z.***REMOVED***.api.material.***REMOVED***OriginalFileStore;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.KbPaths;
+import com.zifang.z.kb.api.material.KbOriginalFileStore;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,12 +12,12 @@ import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 /**
- * 原始文件存储的本地文件系统实现：物料版本按 ***REMOVED***/版本分目录，附件按 ***REMOVED*** + 随机目录落盘。
+ * 原始文件存储的本地文件系统实现：物料版本按 kb/版本分目录，附件按 kb + 随机目录落盘。
  *
  * <p>库内只保存地址，不保存字节。返回的地址带 {@code file:} 前缀，{@link #load(String)}
  * 同时接受带前缀与纯路径两种形态；多机部署时需宿主提供共享存储（OSS/S3）实现覆盖本默认 Bean。</p>
  */
-public class Local***REMOVED***OriginalFileStore implements ***REMOVED***OriginalFileStore {
+public class LocalKbOriginalFileStore implements KbOriginalFileStore {
 
     private static final String FILE_SCHEME = "file:";
     private static final String UNBOUND = "_unbound";
@@ -25,21 +25,21 @@ public class Local***REMOVED***OriginalFileStore implements ***REMOVED***Origina
 
     private final Path root;
 
-    public Local***REMOVED***OriginalFileStore(String rootDir) {
-        String expanded = ***REMOVED***Paths.expand(rootDir);
-        this.root = Paths.get(expanded == null ? ***REMOVED***Paths.stateDir() + "/material-original" : expanded)
+    public LocalKbOriginalFileStore(String rootDir) {
+        String expanded = KbPaths.expand(rootDir);
+        this.root = Paths.get(expanded == null ? KbPaths.stateDir() + "/material-original" : expanded)
                 .toAbsolutePath().normalize();
     }
 
     @Override
-    public String store(String ***REMOVED***Id, String versionId, String fileName, byte[] content) {
-        Path dir = root.resolve(segment(***REMOVED***Id, UNBOUND)).resolve(segment(versionId, UNBOUND));
+    public String store(String kbId, String versionId, String fileName, byte[] content) {
+        Path dir = root.resolve(segment(kbId, UNBOUND)).resolve(segment(versionId, UNBOUND));
         return write(dir, fileName, content);
     }
 
     @Override
-    public String storeAttachment(String ***REMOVED***Id, String fileName, byte[] content) {
-        Path dir = root.resolve(ATTACHMENTS).resolve(segment(***REMOVED***Id, UNBOUND))
+    public String storeAttachment(String kbId, String fileName, byte[] content) {
+        Path dir = root.resolve(ATTACHMENTS).resolve(segment(kbId, UNBOUND))
                 .resolve(UUID.randomUUID().toString());
         return write(dir, fileName, content);
     }
@@ -48,12 +48,12 @@ public class Local***REMOVED***OriginalFileStore implements ***REMOVED***Origina
     public byte[] load(String url) {
         Path file = resolve(url);
         if (!Files.isRegularFile(file)) {
-            throw new ***REMOVED***Exception("MATERIAL_NOT_FOUND", "原始文件不存在或已清理");
+            throw new KBException("MATERIAL_NOT_FOUND", "原始文件不存在或已清理");
         }
         try {
             return Files.readAllBytes(file);
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("MATERIAL_READ_FAILED", "读取原始文件失败：" + e.getMessage(), e);
+            throw new KBException("MATERIAL_READ_FAILED", "读取原始文件失败：" + e.getMessage(), e);
         }
     }
 
@@ -78,7 +78,7 @@ public class Local***REMOVED***OriginalFileStore implements ***REMOVED***Origina
                     StandardOpenOption.WRITE);
             return FILE_SCHEME + file.toString();
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("MATERIAL_STORAGE_FAILED", "写入原始文件失败：" + e.getMessage(), e);
+            throw new KBException("MATERIAL_STORAGE_FAILED", "写入原始文件失败：" + e.getMessage(), e);
         }
     }
 
@@ -90,7 +90,7 @@ public class Local***REMOVED***OriginalFileStore implements ***REMOVED***Origina
         }
         Path file = Paths.get(value).toAbsolutePath().normalize();
         if (!file.startsWith(root)) {
-            throw new ***REMOVED***Exception("MATERIAL_NOT_FOUND", "原始文件地址非法");
+            throw new KBException("MATERIAL_NOT_FOUND", "原始文件地址非法");
         }
         return file;
     }

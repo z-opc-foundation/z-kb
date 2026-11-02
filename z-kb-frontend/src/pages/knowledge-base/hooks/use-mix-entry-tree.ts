@@ -11,12 +11,12 @@ interface MaterialBatch {
   total: number;
 }
 
-async function loadAllMaterials(***REMOVED***Id: string): Promise<MaterialBatch | null> {
+async function loadAllMaterials(kbId: string): Promise<MaterialBatch | null> {
   const records: MaterialRecord[] = [];
   let total = 0;
   let current = 1;
   while (records.length < MAX_ENTRIES) {
-    const result = await pageMaterial({ current, size: PAGE_SIZE, ***REMOVED***Id });
+    const result = await pageMaterial({ current, size: PAGE_SIZE, kbId });
     if (!result) {
       return null;
     }
@@ -40,7 +40,7 @@ export interface MixEntryTreeResult {
   reload: () => Promise<void>;
 }
 
-export function useMixEntryTree(***REMOVED***Id: string): MixEntryTreeResult {
+export function useMixEntryTree(kbId: string): MixEntryTreeResult {
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const [entries, setEntries] = useState<MixEntry[]>([]);
   const [total, setTotal] = useState(0);
@@ -56,8 +56,8 @@ export function useMixEntryTree(***REMOVED***Id: string): MixEntryTreeResult {
     setError(false);
     try {
       const [tree, batch] = await Promise.all([
-        getCategoryTree(***REMOVED***Id),
-        loadAllMaterials(***REMOVED***Id),
+        getCategoryTree(kbId),
+        loadAllMaterials(kbId),
       ]);
       if (seq !== seqRef.current) {
         return;
@@ -80,7 +80,7 @@ export function useMixEntryTree(***REMOVED***Id: string): MixEntryTreeResult {
         setLoading(false);
       }
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void reload();

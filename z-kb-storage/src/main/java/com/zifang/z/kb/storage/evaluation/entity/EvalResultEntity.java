@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * 评测指标结果（***REMOVED***_eval_result）。
+ * 评测指标结果（kb_eval_result）。
  */
-@TableName("***REMOVED***_eval_result")
+@TableName("kb_eval_result")
 public class EvalResultEntity {
 
     @TableId(type = IdType.INPUT)

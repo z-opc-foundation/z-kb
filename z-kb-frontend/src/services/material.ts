@@ -5,7 +5,7 @@ import type { PageResult } from '@/services/knowledgeBase';
 
 export interface MaterialRecord {
   materialId: string;
-  ***REMOVED***Id: string;
+  kbId: string;
   materialType: 'DOCUMENT' | 'CODE' | 'DATA_TABLE';
   entryType?: string;
   title: string;
@@ -76,14 +76,14 @@ export interface MaterialBatchItem {
 export interface MaterialPageQuery {
   current?: number;
   size?: number;
-  ***REMOVED***Id: string;
+  kbId: string;
   keyword?: string;
   categoryId?: string;
   materialType?: string;
   materialStatus?: string;
 }
 
-const BASE = '/***REMOVED***/v1/material';
+const BASE = '/kb/v1/material';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -106,11 +106,11 @@ export function pageMaterial(data: MaterialPageQuery) {
   );
 }
 
-export function uploadMaterials(***REMOVED***Id: string, categoryId: string | undefined, files: File[]) {
+export function uploadMaterials(kbId: string, categoryId: string | undefined, files: File[]) {
   const form = new FormData();
   files.forEach((file) => form.append('files', file));
   const params = new URLSearchParams();
-  params.set('***REMOVED***Id', ***REMOVED***Id);
+  params.set('kbId', kbId);
   if (categoryId) {
     params.set('categoryId', categoryId);
   }
@@ -134,49 +134,49 @@ export function getMaterial(materialId: string) {
   );
 }
 
-export function listRecentMaterials(***REMOVED***Id: string, limit = 5) {
+export function listRecentMaterials(kbId: string, limit = 5) {
   return call(() =>
     request<MaterialRecord[]>(`${BASE}/listRecent`, {
       method: 'get',
-      params: { ***REMOVED***Id, limit },
+      params: { kbId, limit },
       headers: tenantHeaders(),
     }),
   );
 }
 
 export function updateMaterialCategory(
-  ***REMOVED***Id: string,
+  kbId: string,
   materialIds: string[],
   categoryId?: string,
 ) {
   return call(() =>
     request<MaterialBatchItem[]>(`${BASE}/updateCategory`, {
       method: 'post',
-      data: { ***REMOVED***Id, materialIds, categoryId },
+      data: { kbId, materialIds, categoryId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function removeMaterials(***REMOVED***Id: string, materialIds: string[]) {
+export function removeMaterials(kbId: string, materialIds: string[]) {
   return call(() =>
     request<MaterialBatchItem[]>(`${BASE}/remove`, {
       method: 'post',
-      data: { ***REMOVED***Id, materialIds },
+      data: { kbId, materialIds },
       headers: tenantHeaders(),
     }),
   );
 }
 
 export function reviseMaterial(
-  ***REMOVED***Id: string,
+  kbId: string,
   materialId: string,
   file: File,
   sourceVersion?: string,
 ) {
   const form = new FormData();
   form.append('file', file);
-  const params = new URLSearchParams({ ***REMOVED***Id, materialId });
+  const params = new URLSearchParams({ kbId, materialId });
   if (sourceVersion) {
     params.set('sourceVersion', sourceVersion);
   }
@@ -224,11 +224,11 @@ export function listDrafts(materialId: string, versionId?: string) {
   );
 }
 
-export function restoreMaterials(***REMOVED***Id: string, materialIds: string[]) {
+export function restoreMaterials(kbId: string, materialIds: string[]) {
   return call(() =>
     request<MaterialBatchItem[]>(`${BASE}/restore`, {
       method: 'post',
-      data: { ***REMOVED***Id, materialIds },
+      data: { kbId, materialIds },
       headers: tenantHeaders(),
     }),
   );
@@ -244,11 +244,11 @@ export function pageDeletedMaterials(data: MaterialPageQuery) {
   );
 }
 
-export function purgeMaterials(***REMOVED***Id: string, materialIds: string[]) {
+export function purgeMaterials(kbId: string, materialIds: string[]) {
   return call(() =>
     request<MaterialBatchItem[]>(`${BASE}/purge`, {
       method: 'post',
-      data: { ***REMOVED***Id, materialIds },
+      data: { kbId, materialIds },
       headers: tenantHeaders(),
     }),
   );

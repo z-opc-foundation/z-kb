@@ -21,7 +21,7 @@ import {
 } from './shared';
 
 interface StagesViewProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   runDetail?: EvalRunDetail | null;
   loading: boolean;
   error: boolean;

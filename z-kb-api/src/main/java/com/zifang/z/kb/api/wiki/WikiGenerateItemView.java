@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 /**
  * 单物料生成结果。

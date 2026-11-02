@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 /**
  * 评测指标编码。编码固定，前端按编码取口径与对比基线。

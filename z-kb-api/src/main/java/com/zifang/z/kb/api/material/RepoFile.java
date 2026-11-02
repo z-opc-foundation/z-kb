@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 仓库内单个文件的只读内容。二进制文件只标记不返回正文，超长文本按上限截断。

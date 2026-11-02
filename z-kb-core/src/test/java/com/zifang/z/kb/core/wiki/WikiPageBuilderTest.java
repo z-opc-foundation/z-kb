@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.core.wiki;
+package com.zifang.z.kb.core.wiki;
 
-import com.zifang.z.***REMOVED***.api.wiki.WikiPointView;
+import com.zifang.z.kb.api.wiki.WikiPointView;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

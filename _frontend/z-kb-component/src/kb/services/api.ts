@@ -1,18 +1,18 @@
 import axios from 'axios'
 import type {
   Document, ImportResult, SearchQuery, SearchResult,
-  Entity, GraphQueryResult, Workspace, ***REMOVED***Statistics,
+  Entity, GraphQueryResult, Workspace, KBStatistics,
   ChatSession, ChatResponse
 } from '../types'
 
 const api = axios.create({
-  baseURL: '/api/***REMOVED***',
+  baseURL: '/api/kb',
   timeout: 30000,
 })
 
 /** 慢请求实例（建模/大批量 ingest 用），放宽到 5 分钟 */
 const slowApi = axios.create({
-  baseURL: '/api/***REMOVED***',
+  baseURL: '/api/kb',
   timeout: 300000,
 })
 
@@ -67,8 +67,8 @@ export const WorkspaceAPI = {
   create: (name: string, description?: string): Promise<Workspace> =>
     api.post<Workspace>('/workspaces', { name, description }).then(r => r.data),
 
-  statistics: (name: string): Promise<***REMOVED***Statistics> =>
-    api.get<***REMOVED***Statistics>(`/workspaces/${name}/statistics`).then(r => r.data),
+  statistics: (name: string): Promise<KBStatistics> =>
+    api.get<KBStatistics>(`/workspaces/${name}/statistics`).then(r => r.data),
 }
 
 export const ChatAPI = {

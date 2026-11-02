@@ -4,11 +4,11 @@ import dayjs from 'dayjs';
 import { renderAt } from '@/test/render';
 import { listCompilationJobs } from '@/services/compilation';
 import { pageMaterial } from '@/services/material';
-import { get***REMOVED***Overview } from '@/services/overview';
+import { getKbOverview } from '@/services/overview';
 import { pageTasks } from '@/services/task';
 import ObservabilityTab from './observability';
 
-vi.mock('@/services/overview', () => ({ get***REMOVED***Overview: vi.fn() }));
+vi.mock('@/services/overview', () => ({ getKbOverview: vi.fn() }));
 vi.mock('@/services/material', () => ({ pageMaterial: vi.fn() }));
 vi.mock('@/services/task', () => ({ pageTasks: vi.fn() }));
 vi.mock('@/services/compilation', () => ({ listCompilationJobs: vi.fn() }));
@@ -18,7 +18,7 @@ const at = (hour: number, minute: number, second = 0) =>
   TODAY.hour(hour).minute(minute).second(second).format('YYYY-MM-DDTHH:mm:ss');
 
 const OVERVIEW = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   fileCount: 10,
   compiledCount: 6,
   partialCount: 1,
@@ -33,7 +33,7 @@ const OVERVIEW = {
 const MATERIALS = [
   {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '急性胸痛诊疗规范',
     sourceType: 'UPLOAD',
@@ -46,7 +46,7 @@ const MATERIALS = [
   },
   {
     materialId: 'mat-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '护理操作手册',
     sourceType: 'UPLOAD',
@@ -59,7 +59,7 @@ const MATERIALS = [
   },
   {
     materialId: 'mat-3',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '待解析制度',
     sourceType: 'UPLOAD',
@@ -142,7 +142,7 @@ const TASKS = [
 const JOBS = [
   {
     jobId: 'job-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-1',
     materialVersionId: 'mv-1',
     pipelineType: 'DOCUMENT',
@@ -158,7 +158,7 @@ const JOBS = [
   },
   {
     jobId: 'job-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-2',
     materialVersionId: 'mv-2',
     pipelineType: 'DOCUMENT',
@@ -174,7 +174,7 @@ const JOBS = [
   },
   {
     jobId: 'job-3',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-3333',
     materialVersionId: 'mv-3',
     pipelineType: 'DOCUMENT',
@@ -191,7 +191,7 @@ const JOBS = [
 ];
 
 function renderObs() {
-  return renderAt(<ObservabilityTab ***REMOVED***Id="***REMOVED***-1" />, { route: '/knowledge-bases/***REMOVED***-1/governance' });
+  return renderAt(<ObservabilityTab kbId="kb-1" />, { route: '/knowledge-bases/kb-1/governance' });
 }
 
 function metricText(label: string): string | null {
@@ -210,7 +210,7 @@ function barRowText(label: string): string {
 
 describe('可观测面板', () => {
   beforeEach(() => {
-    vi.mocked(get***REMOVED***Overview).mockResolvedValue(OVERVIEW);
+    vi.mocked(getKbOverview).mockResolvedValue(OVERVIEW);
     vi.mocked(pageMaterial).mockResolvedValue({
       records: MATERIALS,
       total: MATERIALS.length,
@@ -237,10 +237,10 @@ describe('可观测面板', () => {
     expect(screen.getByText('正在汇总观测数据…')).toBeTruthy();
 
     expect(await screen.findByText('近 14 天任务量')).toBeTruthy();
-    expect(get***REMOVED***Overview).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(pageMaterial).toHaveBeenCalledWith({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 200 });
-    expect(pageTasks).toHaveBeenCalledWith({ ***REMOVED***Id: '***REMOVED***-1', pageNo: 1, pageSize: 200 });
-    expect(listCompilationJobs).toHaveBeenCalledWith('***REMOVED***-1', undefined, 50);
+    expect(getKbOverview).toHaveBeenCalledWith('kb-1');
+    expect(pageMaterial).toHaveBeenCalledWith({ kbId: 'kb-1', current: 1, size: 200 });
+    expect(pageTasks).toHaveBeenCalledWith({ kbId: 'kb-1', pageNo: 1, pageSize: 200 });
+    expect(listCompilationJobs).toHaveBeenCalledWith('kb-1', undefined, 50);
 
     expect(metricText('资料')).toBe('资料10份');
     expect(metricText('已解析')).toBe('已解析2份');
@@ -303,7 +303,7 @@ describe('可观测面板', () => {
   });
 
   it('概览缺失时指标降级并提示统计不可用', async () => {
-    vi.mocked(get***REMOVED***Overview).mockResolvedValue(undefined);
+    vi.mocked(getKbOverview).mockResolvedValue(undefined);
     vi.mocked(pageMaterial).mockResolvedValue({
       records: [],
       total: 0,

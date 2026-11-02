@@ -1,12 +1,12 @@
-package com.zifang.z.***REMOVED***.storage.impl;
+package com.zifang.z.kb.storage.impl;
 
 import com.zifang.util.json.JsonUtil;
 import com.zifang.util.json.define.TypeReference;
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.DocumentStatus;
-import com.zifang.z.***REMOVED***.api.Workspace;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.DocumentStatus;
+import com.zifang.z.kb.api.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * JSON 文件持久化版 DocumentRepository — 解决内存版重启丢数据的痛点。
  *
- * <p>所有变更同步落盘到 {@code ***REMOVED***.json}，启动时自动加载。
- * <p>默认路径：{@code ~/.***REMOVED***/***REMOVED***.json}，可通过 {@code ***REMOVED***.storage.path} 配置覆盖。
+ * <p>所有变更同步落盘到 {@code kb.json}，启动时自动加载。
+ * <p>默认路径：{@code ~/.kb/kb.json}，可通过 {@code kb.storage.path} 配置覆盖。
  *
  * <p>适用场景：单实例 demo / 开发 / 嵌入式部署。
  * <p>生产多实例场景建议替换为基于 MySQL/MyBatis-Plus 的实现（见 storage 模块 entity/mapper 包）。
@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JsonFileDocumentRepository implements DocumentRepository {
 
     private static final Logger log = LoggerFactory.getLogger(JsonFileDocumentRepository.class);
-    private static final String DEFAULT_PATH = System.getProperty("user.home") + "/.***REMOVED***/***REMOVED***.json";
+    private static final String DEFAULT_PATH = System.getProperty("user.home") + "/.kb/kb.json";
 
     /** workspace → documentId → Document */
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Document>> docs =
@@ -84,7 +84,7 @@ public class JsonFileDocumentRepository implements DocumentRepository {
         }
         // 单线程池，定期扫描 dirty 标记并落盘（合并写）
         this.persistExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "***REMOVED***-doc-persist");
+            Thread t = new Thread(r, "kb-doc-persist");
             t.setDaemon(true);
             return t;
         });

@@ -15,7 +15,7 @@ export default function HomePage() {
         if (raw) { try { setUser(JSON.parse(raw)) } catch { setUser({ name: raw }) } }
     }, [])
 
-    const cards = menuItems.filter((m) => m.key !== '/z-***REMOVED***/home')
+    const cards = menuItems.filter((m) => m.key !== '/z-kb/home')
 
     return (
         <div>
@@ -25,7 +25,7 @@ export default function HomePage() {
                         欢迎{user?.name ? `，${user.name}` : ''}
                     </Title>
                     <Paragraph style={{ color: 'rgba(255,255,255,0.85)', margin: 0 }}>
-                        z-***REMOVED*** 知识库 管理台
+                        z-kb 知识库 管理台
                     </Paragraph>
                     {user?.role && (
                         <Tag style={{ marginTop: 8, background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none' }}>{user.role}</Tag>

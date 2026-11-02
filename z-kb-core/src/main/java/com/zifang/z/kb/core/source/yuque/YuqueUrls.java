@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /**
  * 语雀链接解析：{@code https://<tenant>.yuque.com/<group>/<book>/<doc>} → 团队 / 知识库 / 文档三级 slug。

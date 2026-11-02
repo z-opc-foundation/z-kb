@@ -4,7 +4,7 @@ import { AUDIT_STATS_DAYS, type AuditStats } from './use-audit-stats';
 const SUCCESS_COLOR = '#1f9d6b';
 const FAILED_COLOR = '#d94a4a';
 const SYS_COLOR = '#7c8aa0';
-const ***REMOVED***COLOR = '#7f6cf0';
+const KB_COLOR = '#7f6cf0';
 
 function duration(value: number | null): string {
   if (value == null) {
@@ -68,7 +68,7 @@ export default function AuditStatsPanel({
   const dayMax = Math.max(1, ...stats.byDay.map((day) => day.total));
   const actionMax = Math.max(1, ...stats.byAction.map((item) => item.count));
   const actorMax = Math.max(1, ...stats.byActor.map((item) => item.count));
-  const resultMax = Math.max(1, stats.success, stats.failed, stats.byType.sys, stats.byType.***REMOVED***);
+  const resultMax = Math.max(1, stats.success, stats.failed, stats.byType.sys, stats.byType.kb);
   const hasTrend = stats.byDay.some((day) => day.total > 0);
 
   const actorLabel = (key: string) => {
@@ -299,10 +299,10 @@ export default function AuditStatsPanel({
                     <span className="obs-track">
                       <span
                         className="obs-fill"
-                        style={{ width: barWidth(stats.byType.***REMOVED***, resultMax), background: ***REMOVED***COLOR }}
+                        style={{ width: barWidth(stats.byType.kb, resultMax), background: KB_COLOR }}
                       />
                     </span>
-                    <span className="obs-val tnum">{stats.byType.***REMOVED***}</span>
+                    <span className="obs-val tnum">{stats.byType.kb}</span>
                   </div>
                 </>
               ) : null}

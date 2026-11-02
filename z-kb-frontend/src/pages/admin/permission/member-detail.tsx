@@ -59,7 +59,7 @@ function toTreeData(
     }
     return {
       key: node.key,
-      disableChec***REMOVED***ox: state?.locked ?? false,
+      disableCheckbox: state?.locked ?? false,
       title: (
         <span className="perm-tree-title">
           <span>{node.label}</span>

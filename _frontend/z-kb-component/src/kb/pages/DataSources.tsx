@@ -42,7 +42,7 @@ const typeIcon: Record<string, React.ReactNode> = {
 }
 
 const typeColor: Record<string, string> = {
-  YUQUE: 'blue', NOTION: 'purple', CONFLUENCE: 'cyan', FEISHU: 'gee***REMOVED***lue',
+  YUQUE: 'blue', NOTION: 'purple', CONFLUENCE: 'cyan', FEISHU: 'geekblue',
   DINGTALK: 'orange', GIT: 'magenta', LOCAL_DIR: 'green', URL: 'gold',
   WEBHOOK: 'volcano', UPLOAD: 'lime', MARKDOWN: 'default',
 }
@@ -134,7 +134,7 @@ export default function DataSources({ workspace }: Props) {
             <div>
               <Typography.Title level={3} style={{ margin: 0 }}>📡 多渠道数据接入</Typography.Title>
               <Typography.Text type="secondary">
-                把企业知识库（语雀 / Notion / Confluence / 飞书 / 钉钉 / Git / 本地目录 / URL / Webhook）一键接入到 z-***REMOVED***
+                把企业知识库（语雀 / Notion / Confluence / 飞书 / 钉钉 / Git / 本地目录 / URL / Webhook）一键接入到 z-kb
               </Typography.Text>
             </div>
             <Space>
@@ -176,7 +176,7 @@ export default function DataSources({ workspace }: Props) {
           searchKeys={['label', 'sourceId', 'type']}
           searchPlaceholder="按渠道名 / Source ID 过滤"
           emptyTitle="暂无可接入的数据源"
-          emptyDescription="后端没有注册任何数据源渠道，请检查 z-***REMOVED*** 的 ingest 模块是否装配。"
+          emptyDescription="后端没有注册任何数据源渠道，请检查 z-kb 的 ingest 模块是否装配。"
           tableProps={{ size: 'middle' }}
         />
 
@@ -266,7 +266,7 @@ function renderHint(type?: string) {
     case 'GIT': return 'GitHub / GitLab / Gitee 的 API；私有仓库需 token'
     case 'LOCAL_DIR': return '扫描本地目录下的 .md 文件并入库（支持递归）'
     case 'URL': return '抓取指定 URL 页面，自动 HTML → Markdown'
-    case 'WEBHOOK': return '通过 POST /api/***REMOVED***/ingest/webhook 推送，会先入缓冲区再批量入库'
+    case 'WEBHOOK': return '通过 POST /api/kb/ingest/webhook 推送，会先入缓冲区再批量入库'
     default: return '配置后点击「开始接入」即可拉取'
   }
 }
@@ -331,6 +331,6 @@ function renderFields(type: string | undefined, form: any) {
         f('title', '标题（可选）', '', false),
       ]
     default:
-      return [<Alert key="noop" type="warning" showIcon message="该渠道直接由其它接口触发（如 webhook 走 /api/***REMOVED***/ingest/webhook）" />]
+      return [<Alert key="noop" type="warning" showIcon message="该渠道直接由其它接口触发（如 webhook 走 /api/kb/ingest/webhook）" />]
   }
 }

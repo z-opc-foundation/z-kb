@@ -35,7 +35,7 @@ function renderShell(path = '/index') {
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route
-            path="/knowledge-bases/:***REMOVED***Id"
+            path="/knowledge-bases/:kbId"
             element={
               <AppShell>
                 <div>测试内容</div>
@@ -105,7 +105,7 @@ describe('知识中台外壳', () => {
       enforced: true,
       roles: [],
       permissions: [],
-      menuCodes: ['menu.***REMOVED***'],
+      menuCodes: ['menu.kb'],
       menus: [],
     });
     renderShell('/index');
@@ -159,12 +159,12 @@ describe('知识中台外壳', () => {
 
   it('知识库详情面包屑展示真实库名', async () => {
     vi.mocked(getKnowledgeBase).mockResolvedValue({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       name: '测试知识库',
     } as never);
-    const { container } = renderShell('/knowledge-bases/***REMOVED***-1');
+    const { container } = renderShell('/knowledge-bases/kb-1');
 
-    await waitFor(() => expect(getKnowledgeBase).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(getKnowledgeBase).toHaveBeenCalledWith('kb-1'));
     await waitFor(() =>
       expect(container.querySelector('.crumbs .current')).toHaveTextContent('测试知识库'),
     );

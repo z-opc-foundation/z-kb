@@ -38,16 +38,16 @@ describe('路由与菜单元数据', () => {
 
   it('按登录人菜单授权过滤后可导航路由', () => {
     const visible = allRoutes
-      .filter((route) => canSeeMenu(context(['menu.***REMOVED***']), route.menuCode))
+      .filter((route) => canSeeMenu(context(['menu.kb']), route.menuCode))
       .map((route) => route.path);
 
     expect(visible).toEqual([
       '/welcome',
       '/knowledge-bases',
-      '/knowledge-bases/:***REMOVED***Id',
-      '/knowledge-bases/:***REMOVED***Id/settings',
-      '/knowledge-bases/:***REMOVED***Id/versions',
-      '/knowledge-bases/:***REMOVED***Id/:tab',
+      '/knowledge-bases/:kbId',
+      '/knowledge-bases/:kbId/settings',
+      '/knowledge-bases/:kbId/versions',
+      '/knowledge-bases/:kbId/:tab',
     ]);
   });
 
@@ -59,8 +59,8 @@ describe('路由与菜单元数据', () => {
   it('知识库详情通配路由排在最后，避免吞掉设置与版本页', () => {
     expect(allRoutes.at(-1)).toMatchObject({
       key: 'knowledge-base-detail-tab',
-      path: '/knowledge-bases/:***REMOVED***Id/:tab',
-      menuCode: 'menu.***REMOVED***',
+      path: '/knowledge-bases/:kbId/:tab',
+      menuCode: 'menu.kb',
     });
   });
 });

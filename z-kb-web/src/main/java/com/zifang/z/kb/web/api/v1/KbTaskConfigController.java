@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.taskconfig.***REMOVED***TaskConfigService;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPanelView;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.***REMOVED***TaskConfigPublishRequest;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.taskconfig.KbTaskConfigService;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPanelView;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.api.v1.dto.KbTaskConfigPublishRequest;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,30 +20,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "知识库任务配置")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/taskConfig/***REMOVED***")
-public class ***REMOVED***TaskConfigController {
+@RequestMapping("/api/kb/v1/taskConfig/kb")
+public class KbTaskConfigController {
 
-    private final ***REMOVED***TaskConfigService ***REMOVED***TaskConfigService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbTaskConfigService kbTaskConfigService;
+    private final KbCallerResolver callerResolver;
 
-    public ***REMOVED***TaskConfigController(***REMOVED***TaskConfigService ***REMOVED***TaskConfigService,
-                                  ***REMOVED***CallerResolver callerResolver) {
-        this.***REMOVED***TaskConfigService = ***REMOVED***TaskConfigService;
+    public KbTaskConfigController(KbTaskConfigService kbTaskConfigService,
+                                  KbCallerResolver callerResolver) {
+        this.kbTaskConfigService = kbTaskConfigService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "读取知识库任务配置", description = "库内未覆盖的任务性质回落租户当前版本")
     @GetMapping("/query")
-    public ***REMOVED***Result<TaskConfigPanelView> query(@RequestParam String ***REMOVED***Id,
+    public KbResult<TaskConfigPanelView> query(@RequestParam String kbId,
                                                HttpServletRequest request) {
-        return ***REMOVED***Result.ok(***REMOVED***TaskConfigService.query(***REMOVED***Id, callerResolver.resolve(request)));
+        return KbResult.ok(kbTaskConfigService.query(kbId, callerResolver.resolve(request)));
     }
 
     @Operation(summary = "发布知识库任务配置新版本", description = "整版覆盖该库的任务配置，只影响之后创建的任务")
     @PostMapping("/publish")
-    public ***REMOVED***Result<TaskConfigPanelView> publish(@RequestBody ***REMOVED***TaskConfigPublishRequest body,
+    public KbResult<TaskConfigPanelView> publish(@RequestBody KbTaskConfigPublishRequest body,
                                                  HttpServletRequest request) {
-        return ***REMOVED***Result.ok(***REMOVED***TaskConfigService.publish(body.get***REMOVED***Id(), body.toParam(),
+        return KbResult.ok(kbTaskConfigService.publish(body.getKbId(), body.toParam(),
                 callerResolver.resolve(request)));
     }
 }

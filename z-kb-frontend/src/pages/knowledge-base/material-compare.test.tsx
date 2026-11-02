@@ -67,7 +67,7 @@ function renderCompare(overrides: Partial<Parameters<typeof MaterialCompare>[0]>
     onClose,
     ...overrides,
   };
-  renderAt(<MaterialCompare {...props} />, { route: '/knowledge-bases/***REMOVED***-1' });
+  renderAt(<MaterialCompare {...props} />, { route: '/knowledge-bases/kb-1' });
   return { onClose, props };
 }
 

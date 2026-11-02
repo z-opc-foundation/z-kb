@@ -4,7 +4,7 @@ import { toast } from '@/utils/toast';
 
 export interface WikiPageRecord {
   wikiId: string;
-  ***REMOVED***Id: string;
+  kbId: string;
   materialId: string;
   materialVersionId?: string | null;
   title: string;
@@ -77,7 +77,7 @@ export interface WikiLineageRecord {
   note?: string;
 }
 
-const BASE = '/***REMOVED***/v1/wiki';
+const BASE = '/kb/v1/wiki';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -90,21 +90,21 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
   }
 }
 
-export function generateWiki(***REMOVED***Id: string, materialIds: string[]) {
+export function generateWiki(kbId: string, materialIds: string[]) {
   return call(() =>
     request<WikiGenerateResultRecord>(`${BASE}/generate`, {
       method: 'post',
-      data: { ***REMOVED***Id, materialIds },
+      data: { kbId, materialIds },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function listWikiPages(***REMOVED***Id: string, keyword?: string, limit = 50) {
+export function listWikiPages(kbId: string, keyword?: string, limit = 50) {
   return call(() =>
     request<WikiPageRecord[]>(`${BASE}/list`, {
       method: 'get',
-      params: { ***REMOVED***Id, keyword: keyword || undefined, limit },
+      params: { kbId, keyword: keyword || undefined, limit },
       headers: tenantHeaders(),
     }),
   );
@@ -130,7 +130,7 @@ export function listWikiByMaterial(materialId: string) {
   );
 }
 
-export function getWikiLineage(params: { ***REMOVED***Id?: string; wikiId?: string }) {
+export function getWikiLineage(params: { kbId?: string; wikiId?: string }) {
   return call(() =>
     request<WikiLineageRecord>(`${BASE}/lineage`, {
       method: 'get',

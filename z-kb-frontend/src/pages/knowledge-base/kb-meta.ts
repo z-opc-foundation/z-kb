@@ -8,7 +8,7 @@ export const TYPE_META: Record<KnowledgeBaseType, { label: string; icon: string 
   DATABASE: { label: '数据库', icon: 'database' },
 };
 
-export interface ***REMOVED***StatusMeta {
+export interface KbStatusMeta {
   label: string;
   kind: string;
   tag: string;
@@ -18,7 +18,7 @@ export function typeMeta(type: KnowledgeBaseType) {
   return TYPE_META[type] || TYPE_META.FILE;
 }
 
-export function statusMeta(status: string): ***REMOVED***StatusMeta {
+export function statusMeta(status: string): KbStatusMeta {
   if (status === 'ACTIVE') {
     return { label: '运行中', kind: 'success', tag: 'green' };
   }

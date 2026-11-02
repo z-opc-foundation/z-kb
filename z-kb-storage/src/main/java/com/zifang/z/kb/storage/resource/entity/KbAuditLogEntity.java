@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.resource.entity;
+package com.zifang.z.kb.storage.resource.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,15 +7,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库审计日志（***REMOVED***_audit_log）：记录成功写操作，活跃度热力图的唯一数据源。
+ * 知识库审计日志（kb_audit_log）：记录成功写操作，活跃度热力图的唯一数据源。
  */
-@TableName("***REMOVED***_audit_log")
-public class ***REMOVED***AuditLogEntity {
+@TableName("kb_audit_log")
+public class KbAuditLogEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String actorId;
     private String action;
     private String targetType;
@@ -40,12 +40,12 @@ public class ***REMOVED***AuditLogEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getActorId() {

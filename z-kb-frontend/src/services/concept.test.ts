@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { request } from '@/services/http';
 import { toast } from '@/utils/toast';
-import { getConcept, listConceptsBy***REMOVED*** } from './concept';
+import { getConcept, listConceptsByKb } from './concept';
 
 vi.mock('@/services/http', () => ({ request: vi.fn() }));
 vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
@@ -18,17 +18,17 @@ describe('概念接口', () => {
     const concepts = [{ conceptId: 'c1', name: '概念', conceptType: 'TERM', status: 'CONFIRMED', mentionCount: 1, materialCount: 1 }];
     vi.mocked(request).mockResolvedValue(concepts as never);
 
-    await expect(listConceptsBy***REMOVED***('***REMOVED***-1')).resolves.toBe(concepts);
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/concept/listBy***REMOVED***', {
+    await expect(listConceptsByKb('kb-1')).resolves.toBe(concepts);
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/concept/listByKb', {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', keyword: undefined },
+      params: { kbId: 'kb-1', keyword: undefined },
       headers,
     });
 
-    await listConceptsBy***REMOVED***('***REMOVED***-1', '术语');
-    expect(request).toHaveBeenLastCalledWith('/***REMOVED***/v1/concept/listBy***REMOVED***', {
+    await listConceptsByKb('kb-1', '术语');
+    expect(request).toHaveBeenLastCalledWith('/kb/v1/concept/listByKb', {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', keyword: '术语' },
+      params: { kbId: 'kb-1', keyword: '术语' },
       headers,
     });
   });
@@ -36,17 +36,17 @@ describe('概念接口', () => {
   it('读取概念详情', async () => {
     const detail = { concept: { conceptId: 'c1' }, mentions: [] };
     vi.mocked(request).mockResolvedValue(detail as never);
-    await expect(getConcept('***REMOVED***-1', 'c1')).resolves.toBe(detail);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/concept/queryById', {
+    await expect(getConcept('kb-1', 'c1')).resolves.toBe(detail);
+    expect(request).toHaveBeenCalledWith('/kb/v1/concept/queryById', {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', conceptId: 'c1' },
+      params: { kbId: 'kb-1', conceptId: 'c1' },
       headers,
     });
   });
 
   it('失败时提示并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('boom'));
-    await expect(getConcept('***REMOVED***-1', 'c1')).resolves.toBeUndefined();
+    await expect(getConcept('kb-1', 'c1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('请求失败', 'boom', 'error');
   });
 });

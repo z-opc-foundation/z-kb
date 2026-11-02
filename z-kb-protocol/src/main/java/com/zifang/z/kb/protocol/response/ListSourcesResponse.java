@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 数据源清单 —— {@code GET /api/***REMOVED***/ingest/sources}。
+ * 数据源清单 —— {@code GET /api/kb/ingest/sources}。
  */
 @Schema(description = "已注册数据源清单")
 public class ListSourcesResponse {

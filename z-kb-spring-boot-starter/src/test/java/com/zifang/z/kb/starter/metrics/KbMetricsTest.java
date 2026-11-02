@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.starter.metrics;
+package com.zifang.z.kb.starter.metrics;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.core.embedding.TfIdfEmbeddingProvider;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
-import com.zifang.z.***REMOVED***.core.search.Bm25Searcher;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
-import com.zifang.z.***REMOVED***.starter.service.DefaultSearchService;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.KbMetrics;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.core.embedding.TfIdfEmbeddingProvider;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
+import com.zifang.z.kb.core.search.Bm25Searcher;
+import com.zifang.z.kb.core.search.HybridSearcher;
+import com.zifang.z.kb.starter.service.DefaultSearchService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 埋点不能只是「有代码」，必须证明它真能报出信号。
  *
- * <p>最要紧的一条是 {@code z_***REMOVED***.search.hits.missing.content} —— 融合丢正文那类缺陷
+ * <p>最要紧的一条是 {@code z_kb.search.hits.missing.content} —— 融合丢正文那类缺陷
  * 在线上不会报任何错，问答「看起来正常」，只有这个计数器能发现。
  */
-class ***REMOVED***MetricsTest {
+class KbMetricsTest {
 
     private static final String WS = "metrics";
 
@@ -45,10 +45,10 @@ class ***REMOVED***MetricsTest {
         DefaultSearchService service = service(registry, false);
         service.search(query(SearchMode.VECTOR));
 
-        assertEquals(1.0, counter(registry, "z_***REMOVED***.search.hits.missing.content"),
+        assertEquals(1.0, counter(registry, "z_kb.search.hits.missing.content"),
                 "命中缺正文却没有计数 —— 这条指标形同虚设");
-        assertEquals(1.0, counter(registry, "z_***REMOVED***.search.hits"));
-        assertTrue(timerCount(registry, "z_***REMOVED***.search") > 0, "未记录检索耗时");
+        assertEquals(1.0, counter(registry, "z_kb.search.hits"));
+        assertTrue(timerCount(registry, "z_kb.search") > 0, "未记录检索耗时");
     }
 
     @Test
@@ -58,7 +58,7 @@ class ***REMOVED***MetricsTest {
         DefaultSearchService service = service(registry, true);
         service.search(query(SearchMode.KEYWORD));
 
-        assertEquals(0.0, counter(registry, "z_***REMOVED***.search.hits.missing.content"),
+        assertEquals(0.0, counter(registry, "z_kb.search.hits.missing.content"),
                 "有正文却报缺正文，指标本身有问题");
     }
 
@@ -66,11 +66,11 @@ class ***REMOVED***MetricsTest {
     @DisplayName("检索降级按路数计数")
     void degradedRoutesCounter() {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
-        ***REMOVED***Metrics metrics = new Micrometer***REMOVED***Metrics(registry);
+        KbMetrics metrics = new MicrometerKbMetrics(registry);
         metrics.recordSearch("FUSION", 12, 3, 0, 2);
         metrics.recordSearch("FUSION", 8, 1, 0, 1);
 
-        assertEquals(3.0, registry.get("z_***REMOVED***.search.degraded.routes")
+        assertEquals(3.0, registry.get("z_kb.search.degraded.routes")
                 .tag("mode", "FUSION").counter().count());
     }
 
@@ -78,14 +78,14 @@ class ***REMOVED***MetricsTest {
     @DisplayName("问答按降级档位与 token 分向累计")
     void chatMetrics() {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
-        ***REMOVED***Metrics metrics = new Micrometer***REMOVED***Metrics(registry);
+        KbMetrics metrics = new MicrometerKbMetrics(registry);
         metrics.recordChat("extractive-llm-failed", 0, 0, 30);
         metrics.recordChat("qwen2.5", 1200, 300, 900);
 
-        assertEquals(1.0, registry.get("z_***REMOVED***.chat").tag("model", "extractive-llm-failed").timer().count());
-        assertEquals(1200.0, registry.get("z_***REMOVED***.chat.tokens")
+        assertEquals(1.0, registry.get("z_kb.chat").tag("model", "extractive-llm-failed").timer().count());
+        assertEquals(1200.0, registry.get("z_kb.chat.tokens")
                 .tag("model", "qwen2.5").tag("direction", "prompt").counter().count());
-        assertEquals(300.0, registry.get("z_***REMOVED***.chat.tokens")
+        assertEquals(300.0, registry.get("z_kb.chat.tokens")
                 .tag("model", "qwen2.5").tag("direction", "completion").counter().count());
     }
 
@@ -121,7 +121,7 @@ class ***REMOVED***MetricsTest {
         // 图谱路本测试用不到（KEYWORD / VECTOR 模式），传 null 是 HybridSearcher 允许的
         HybridSearcher searcher = new HybridSearcher(vectorStore, null,
                 bm25, embedder, new EntityExtractor());
-        ***REMOVED***Metrics metrics = registry == null ? null : new Micrometer***REMOVED***Metrics(registry);
+        KbMetrics metrics = registry == null ? null : new MicrometerKbMetrics(registry);
         return new DefaultSearchService(searcher, metrics);
     }
 

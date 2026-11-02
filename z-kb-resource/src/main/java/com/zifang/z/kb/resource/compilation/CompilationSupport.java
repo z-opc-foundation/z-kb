@@ -1,14 +1,14 @@
-package com.zifang.z.***REMOVED***.resource.compilation;
+package com.zifang.z.kb.resource.compilation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.BatchScopeType;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationStage;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalChunkView;
-import com.zifang.z.***REMOVED***.api.compilation.TaskRunStatus;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationStageEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.BatchScopeType;
+import com.zifang.z.kb.api.compilation.CompilationStage;
+import com.zifang.z.kb.api.compilation.RetrievalChunkView;
+import com.zifang.z.kb.api.compilation.TaskRunStatus;
+import com.zifang.z.kb.storage.compilation.entity.CompilationStageEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -54,32 +54,32 @@ final class CompilationSupport {
     private CompilationSupport() {
     }
 
-    static ***REMOVED***Exception jobNotFound() {
-        return new ***REMOVED***Exception("COMPILATION_JOB_NOT_FOUND", "编译任务不存在");
+    static KBException jobNotFound() {
+        return new KBException("COMPILATION_JOB_NOT_FOUND", "编译任务不存在");
     }
 
-    static ***REMOVED***Exception batchNotFound() {
-        return new ***REMOVED***Exception("COMPILATION_BATCH_NOT_FOUND", "编译组别不存在");
+    static KBException batchNotFound() {
+        return new KBException("COMPILATION_BATCH_NOT_FOUND", "编译组别不存在");
     }
 
-    static ***REMOVED***Exception sourceNotReady() {
-        return new ***REMOVED***Exception("COMPILATION_SOURCE_NOT_READY", "物料尚未解析成功，不能编译");
+    static KBException sourceNotReady() {
+        return new KBException("COMPILATION_SOURCE_NOT_READY", "物料尚未解析成功，不能编译");
     }
 
-    static ***REMOVED***Exception paramInvalid() {
-        return new ***REMOVED***Exception("COMPILATION_PARAM_INVALID", "编译参数不合法");
+    static KBException paramInvalid() {
+        return new KBException("COMPILATION_PARAM_INVALID", "编译参数不合法");
     }
 
-    static ***REMOVED***Exception statusInvalid() {
-        return new ***REMOVED***Exception("COMPILATION_STATUS_INVALID", "编译任务当前状态不允许该操作");
+    static KBException statusInvalid() {
+        return new KBException("COMPILATION_STATUS_INVALID", "编译任务当前状态不允许该操作");
     }
 
-    static ***REMOVED***Exception batchRunning() {
-        return new ***REMOVED***Exception("COMPILATION_BATCH_RUNNING", "当前知识库存在运行中的编译组别");
+    static KBException batchRunning() {
+        return new KBException("COMPILATION_BATCH_RUNNING", "当前知识库存在运行中的编译组别");
     }
 
-    static ***REMOVED***Exception scopeTypeInvalid() {
-        return new ***REMOVED***Exception("COMPILATION_SCOPE_TYPE_INVALID",
+    static KBException scopeTypeInvalid() {
+        return new KBException("COMPILATION_SCOPE_TYPE_INVALID",
                 "编译范围不合法：scopeType 只支持 WORKSPACE / CATEGORY / FOLDER");
     }
 
@@ -215,21 +215,21 @@ final class CompilationSupport {
     /** 阶段状态映射为文件成员口径。 */
     static String memberStatus(List<CompilationStageEntity> rows) {
         if (rows == null || rows.isEmpty()) {
-            return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.QUEUED.name();
+            return com.zifang.z.kb.api.compilation.JobRunStatus.QUEUED.name();
         }
         if (hasStatus(rows, TaskRunStatus.RUNNING)) {
-            return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.RUNNING.name();
+            return com.zifang.z.kb.api.compilation.JobRunStatus.RUNNING.name();
         }
         if (hasStatus(rows, TaskRunStatus.FAILED)) {
-            return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.FAILED.name();
+            return com.zifang.z.kb.api.compilation.JobRunStatus.FAILED.name();
         }
         if (hasStatus(rows, TaskRunStatus.CANCELED)) {
-            return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.CANCELED.name();
+            return com.zifang.z.kb.api.compilation.JobRunStatus.CANCELED.name();
         }
         if (versionSucceeded(rows)) {
-            return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.COMPLETED.name();
+            return com.zifang.z.kb.api.compilation.JobRunStatus.COMPLETED.name();
         }
-        return com.zifang.z.***REMOVED***.api.compilation.JobRunStatus.QUEUED.name();
+        return com.zifang.z.kb.api.compilation.JobRunStatus.QUEUED.name();
     }
 
     /** 文件里程碑：全部成功为 M2，索引成功为 M1。 */

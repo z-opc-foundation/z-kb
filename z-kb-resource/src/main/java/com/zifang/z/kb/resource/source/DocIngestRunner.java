@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialBatchItem;
-import com.zifang.z.***REMOVED***.api.material.MaterialBinding;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialSyncRequest;
-import com.zifang.z.***REMOVED***.api.material.MaterialSyncResult;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.core.source.IngestDocContent;
-import com.zifang.z.***REMOVED***.core.source.IngestDocRef;
-import com.zifang.z.***REMOVED***.core.source.IngestMetadata;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
+import com.zifang.z.kb.api.material.MaterialBatchItem;
+import com.zifang.z.kb.api.material.MaterialBinding;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialSyncRequest;
+import com.zifang.z.kb.api.material.MaterialSyncResult;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.core.source.IngestDocContent;
+import com.zifang.z.kb.core.source.IngestDocRef;
+import com.zifang.z.kb.core.source.IngestMetadata;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,20 +41,20 @@ public class DocIngestRunner {
      * @param versions  文档 slug → 内容版本；取不到时传空表，退化为逐篇比对
      * @param fetcher   按节点拉正文
      */
-    public IngestSyncInfo run(String ***REMOVED***Id, String sourceId, String sourceType, String scope,
+    public IngestSyncInfo run(String kbId, String sourceId, String sourceType, String scope,
             List<IngestDocRef> refs, Map<String, String> versions, DocContentFetcher fetcher,
-            ***REMOVED***Caller caller) {
-        return run(***REMOVED***Id, sourceId, sourceType, scope, refs, versions, true, fetcher, caller);
+            KbCaller caller) {
+        return run(kbId, sourceId, sourceType, scope, refs, versions, true, fetcher, caller);
     }
 
     /**
      * @param allowRetire 是否允许把本次目录里消失的文档标记失效；某个子范围读取失败时传 false，
      *                    避免把「没读到」误判成「已删除」。
      */
-    public IngestSyncInfo run(String ***REMOVED***Id, String sourceId, String sourceType, String scope,
+    public IngestSyncInfo run(String kbId, String sourceId, String sourceType, String scope,
             List<IngestDocRef> refs, Map<String, String> versions, boolean allowRetire,
-            DocContentFetcher fetcher, ***REMOVED***Caller caller) {
-        Map<String, MaterialBinding> bound = loadBound(***REMOVED***Id, sourceId, caller);
+            DocContentFetcher fetcher, KbCaller caller) {
+        Map<String, MaterialBinding> bound = loadBound(kbId, sourceId, caller);
         Map<String, String> versionOf = versions == null
                 ? Collections.<String, String>emptyMap() : versions;
 
@@ -69,16 +69,16 @@ public class DocIngestRunner {
                 result.markUnchanged();
                 continue;
             }
-            syncOne(***REMOVED***Id, sourceId, sourceType, scope, fetcher, ref, existing, result, caller);
+            syncOne(kbId, sourceId, sourceType, scope, fetcher, ref, existing, result, caller);
         }
-        retireMissing(***REMOVED***Id, bound, alive, !refs.isEmpty() && allowRetire, result, caller);
+        retireMissing(kbId, bound, alive, !refs.isEmpty() && allowRetire, result, caller);
         return result;
     }
 
     /** 单篇同步：拉正文，按是否已有绑定选择新建或追加版本。 */
-    private void syncOne(String ***REMOVED***Id, String sourceId, String sourceType, String scope,
+    private void syncOne(String kbId, String sourceId, String sourceType, String scope,
             DocContentFetcher fetcher, IngestDocRef ref, MaterialBinding existing,
-            IngestSyncInfo result, ***REMOVED***Caller caller) {
+            IngestSyncInfo result, KbCaller caller) {
         try {
             IngestDocContent content = fetcher.fetch(ref);
             if (content == null || content.getMarkdown() == null
@@ -87,7 +87,7 @@ public class DocIngestRunner {
                 return;
             }
             MaterialSyncRequest request = new MaterialSyncRequest();
-            request.set***REMOVED***Id(***REMOVED***Id);
+            request.setKbId(kbId);
             request.setMaterialId(existing == null ? null : existing.getMaterialId());
             request.setCategoryId(ref.getCategoryId());
             request.setTitle(ref.getTitle());
@@ -116,8 +116,8 @@ public class DocIngestRunner {
     }
 
     /** 目录里已不存在的文档把物料标记删除；目录为空时不动，避免误删整库。 */
-    private void retireMissing(String ***REMOVED***Id, Map<String, MaterialBinding> bound, Set<String> alive,
-            boolean tocNotEmpty, IngestSyncInfo result, ***REMOVED***Caller caller) {
+    private void retireMissing(String kbId, Map<String, MaterialBinding> bound, Set<String> alive,
+            boolean tocNotEmpty, IngestSyncInfo result, KbCaller caller) {
         if (!tocNotEmpty || bound.isEmpty()) {
             return;
         }
@@ -126,7 +126,7 @@ public class DocIngestRunner {
                 continue;
             }
             MaterialBinding info = entry.getValue();
-            List<MaterialBatchItem> items = materialService.remove(***REMOVED***Id,
+            List<MaterialBatchItem> items = materialService.remove(kbId,
                     Collections.singletonList(info.getMaterialId()), caller);
             if (!items.isEmpty() && items.get(0).isSuccess()) {
                 result.markRetired();
@@ -143,9 +143,9 @@ public class DocIngestRunner {
     }
 
     /** 读回该接入源已登记的物料，按 metadata 里的 docSlug 建索引。 */
-    private Map<String, MaterialBinding> loadBound(String ***REMOVED***Id, String sourceId, ***REMOVED***Caller caller) {
+    private Map<String, MaterialBinding> loadBound(String kbId, String sourceId, KbCaller caller) {
         Map<String, MaterialBinding> bound = new LinkedHashMap<>();
-        for (MaterialBinding info : materialService.listBySource(***REMOVED***Id, sourceId, caller)) {
+        for (MaterialBinding info : materialService.listBySource(kbId, sourceId, caller)) {
             String slug = IngestMetadata.field(info.getMetadata(), "docSlug");
             if (slug != null && !bound.containsKey(slug)) {
                 bound.put(slug, info);

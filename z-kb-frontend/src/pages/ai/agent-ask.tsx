@@ -47,14 +47,14 @@ function resolveAgent(
  * <p>智能体、技能与工具都从 AI 注册表读取，不在页面里写死回答逻辑。
  */
 export function AgentAskButton({
-  ***REMOVED***Id,
+  kbId,
   question,
   label = '问 AI',
   agentCode = AI_QA_AGENT_CODE,
   className = 'btn',
   disabled,
 }: {
-  ***REMOVED***Id?: string;
+  kbId?: string;
   question?: string;
   label?: string;
   agentCode?: string;
@@ -123,7 +123,7 @@ export function AgentAskButton({
           skills={session.skills}
           tools={session.tools}
           runtime={session.runtime}
-          initial***REMOVED***Id={***REMOVED***Id}
+          initialKbId={kbId}
           initialQuestion={question}
           title="AI 问答"
           onClose={() => setSession(null)}

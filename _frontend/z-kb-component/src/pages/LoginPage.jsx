@@ -30,7 +30,7 @@ export default function LoginPage({mockAuth} = {}) {
                 localStorage.setItem('token', 'mock-' + MOCK_AUTH.username)
                 localStorage.setItem('userInfo', JSON.stringify(MOCK_AUTH.user))
                 message.success('登录成功（mock 模式，待 CTC/SSO 接入）')
-                window.location.href = '/z-***REMOVED***/home'
+                window.location.href = '/z-kb/home'
             } else {
                 message.error('用户名或密码错误')
             }
@@ -52,7 +52,7 @@ export default function LoginPage({mockAuth} = {}) {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         color: '#fff', fontSize: 24, fontWeight: 700,
                     }}>z</div>
-                    <div style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>z-***REMOVED*** 管理台</div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>z-kb 管理台</div>
                 </div>
                 <Form onFinish={handleSubmit} size="large">
                     <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>

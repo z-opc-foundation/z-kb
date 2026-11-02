@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
 /**
  * 评测内核的共享常量：Judge 版本、检索上限、可采信门槛与指标备注口径。

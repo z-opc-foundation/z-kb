@@ -2,7 +2,7 @@ import { request } from '@/services/http';
 import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/kb/v1/knowledgeBase';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -71,8 +71,8 @@ export interface ConfigValidationRecord {
 }
 
 export interface KnowledgeBaseConfigRecord {
-  ***REMOVED***Id: string;
-  ***REMOVED***Name: string;
+  kbId: string;
+  kbName: string;
   type: string;
   embeddingModel: string;
   canManage: boolean;
@@ -85,7 +85,7 @@ export interface KnowledgeBaseConfigRecord {
 }
 
 export interface ConfigDraftPayload {
-  ***REMOVED***Id: string;
+  kbId: string;
   presetVersion: string;
   parserPolicy: string;
   chunkingPolicy: string;
@@ -98,11 +98,11 @@ export interface ConfigDraftPayload {
   remark?: string;
 }
 
-export function getKnowledgeBaseConfig(***REMOVED***Id: string) {
+export function getKnowledgeBaseConfig(kbId: string) {
   return call(() =>
     request<KnowledgeBaseConfigRecord>(`${BASE}/queryConfig`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );
@@ -119,42 +119,42 @@ export function saveConfigDraft(payload: ConfigDraftPayload) {
   );
 }
 
-export function discardConfigDraft(***REMOVED***Id: string) {
+export function discardConfigDraft(kbId: string) {
   return call(() =>
     request<boolean>(`${BASE}/discardConfigDraft`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function validateConfigDraft(***REMOVED***Id: string) {
+export function validateConfigDraft(kbId: string) {
   return call(() =>
     request<ConfigValidationRecord>(`${BASE}/validateConfigDraft`, {
       method: 'post',
-      data: { ***REMOVED***Id },
+      data: { kbId },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function publishConfig(***REMOVED***Id: string, remark?: string) {
+export function publishConfig(kbId: string, remark?: string) {
   return call(() =>
     request<ProfileVersionRecord>(`${BASE}/publishConfig`, {
       method: 'post',
-      data: { ***REMOVED***Id, confirm: true, remark },
+      data: { kbId, confirm: true, remark },
       headers: tenantHeaders(),
       timeout: 60_000,
     }),
   );
 }
 
-export function submitFullRebuild(***REMOVED***Id: string) {
+export function submitFullRebuild(kbId: string) {
   return call(() =>
     request<string>(`${BASE}/submitRebuild`, {
       method: 'post',
-      data: { ***REMOVED***Id, confirm: true },
+      data: { kbId, confirm: true },
       headers: tenantHeaders(),
       timeout: 180_000,
     }),

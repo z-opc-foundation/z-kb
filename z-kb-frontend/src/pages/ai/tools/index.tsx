@@ -22,7 +22,7 @@ import {
   AiStatusTag,
   AI_CODE_HINT,
   AI_STATUS_OPTIONS,
-  ***REMOVED***Select,
+  KbSelect,
   asRecord,
   aiCodeError,
   fmtAiTime,
@@ -196,7 +196,7 @@ function ToolRegisterModal({
                   />
                   <label className="req">
                     <input
-                      type="chec***REMOVED***ox"
+                      type="checkbox"
                       checked={!!param.required}
                       onChange={(event) =>
                         updateParam(index, { required: event.target.checked })
@@ -317,14 +317,14 @@ function ToolInvokeDrawer({
   tool: AiToolRecord;
   onClose: () => void;
 }) {
-  const { ***REMOVED***s, loading: ***REMOVED***Loading } = useKnowledgeBaseOptions();
-  const [***REMOVED***Choice, set***REMOVED***Choice] = useState('');
+  const { kbs, loading: kbLoading } = useKnowledgeBaseOptions();
+  const [kbChoice, setKbChoice] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<AiToolInvokeResult | null>(null);
   const [formError, setFormError] = useState('');
 
-  const needs***REMOVED*** = tool.code === 'knowledge_search';
+  const needsKb = tool.code === 'knowledge_search';
   const searchPayload = result ? parseSearchContent(result.content) : null;
   useEscapeKey(onClose);
 
@@ -333,7 +333,7 @@ function ToolInvokeDrawer({
   };
 
   const invoke = async () => {
-    if (needs***REMOVED*** && !***REMOVED***Choice) {
+    if (needsKb && !kbChoice) {
       setFormError('知识库检索必须在指定库范围内执行');
       return;
     }
@@ -371,7 +371,7 @@ function ToolInvokeDrawer({
     setRunning(true);
     const response = await invokeAiTool({
       code: tool.code,
-      ***REMOVED***Id: needs***REMOVED*** ? ***REMOVED***Choice : undefined,
+      kbId: needsKb ? kbChoice : undefined,
       arguments: args,
     });
     setRunning(false);
@@ -427,16 +427,16 @@ function ToolInvokeDrawer({
             </div>
           </div>
 
-          {needs***REMOVED*** ? (
+          {needsKb ? (
             <div className="field mt-16">
               <label>
                 知识库范围<span className="req">*</span>
               </label>
-              <***REMOVED***Select
-                value={***REMOVED***Choice}
-                onChange={set***REMOVED***Choice}
-                options={***REMOVED***s}
-                loading={***REMOVED***Loading}
+              <KbSelect
+                value={kbChoice}
+                onChange={setKbChoice}
+                options={kbs}
+                loading={kbLoading}
               />
             </div>
           ) : null}

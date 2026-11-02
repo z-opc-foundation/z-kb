@@ -31,14 +31,14 @@ vi.mock('@/services/identity', () => ({
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const roles = [
-  { id: 1, roleCode: '***REMOVED***_admin', roleName: '知识库管理员', enabled: true },
-  { id: 2, roleCode: '***REMOVED***_viewer', roleName: '知识库访客', enabled: true },
+  { id: 1, roleCode: 'kb_admin', roleName: '知识库管理员', enabled: true },
+  { id: 2, roleCode: 'kb_viewer', roleName: '知识库访客', enabled: true },
 ];
 
 const catalog = [
   { code: 'menu.space', name: '知识空间', type: 'MENU' as const, typeCode: 1, order: 40 },
   {
-    code: 'menu.***REMOVED***',
+    code: 'menu.kb',
     name: '知识库',
     type: 'MENU' as const,
     typeCode: 1,
@@ -46,11 +46,11 @@ const catalog = [
     order: 41,
   },
   {
-    code: '***REMOVED***.create',
+    code: 'kb.create',
     name: '新建知识库',
     type: 'BUTTON' as const,
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 101,
   },
 ];
@@ -69,7 +69,7 @@ beforeEach(() => {
   vi.mocked(listRoles).mockResolvedValue(roles);
   vi.mocked(listPermissionCatalog).mockResolvedValue(catalog);
   vi.mocked(listMembers).mockResolvedValue([
-    { staffId: 11, name: '张三', jobNumber: 'A001', roleCodes: ['***REMOVED***_admin'] },
+    { staffId: 11, name: '张三', jobNumber: 'A001', roleCodes: ['kb_admin'] },
     { staffId: 12, name: '李四', jobNumber: 'A002', roleCodes: [] },
   ]);
   vi.mocked(getMemberAuthorization).mockResolvedValue({
@@ -77,8 +77,8 @@ beforeEach(() => {
     name: '张三',
     jobNumber: 'A001',
     roles: [roles[0]],
-    rolePermittedCodes: ['menu.space', 'menu.***REMOVED***'],
-    directCodes: ['***REMOVED***.create'],
+    rolePermittedCodes: ['menu.space', 'menu.kb'],
+    directCodes: ['kb.create'],
     inheritedCodes: [{ code: 'menu.space', source: 'UNIT' }],
   });
   vi.mocked(updateMemberRoles).mockResolvedValue(undefined);
@@ -99,7 +99,7 @@ describe('权限管理页', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /权限目录/ }));
     expect(await screen.findByRole('button', { name: /发布权限目录/ })).toBeInTheDocument();
-    expect(await screen.findByText('***REMOVED***.create')).toBeInTheDocument();
+    expect(await screen.findByText('kb.create')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /成员授权/ }));
     expect(await screen.findByText('张三')).toBeInTheDocument();
@@ -132,7 +132,7 @@ describe('权限管理页', () => {
     fireEvent.click(save);
 
     await waitFor(() =>
-      expect(updateMemberRoles).toHaveBeenCalledWith(11, ['***REMOVED***_viewer']),
+      expect(updateMemberRoles).toHaveBeenCalledWith(11, ['kb_viewer']),
     );
   });
 });

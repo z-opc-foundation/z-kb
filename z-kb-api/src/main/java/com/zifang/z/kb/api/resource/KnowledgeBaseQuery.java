@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 /**
  * 知识库分页查询条件（对齐参考实现 KnowledgeBasePageParam）。

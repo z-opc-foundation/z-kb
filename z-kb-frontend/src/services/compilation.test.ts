@@ -24,7 +24,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/compilation';
+const BASE = '/kb/v1/compilation';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -96,17 +96,17 @@ describe('知识编译接口', () => {
       headers,
     });
 
-    await listCompilationJobs('***REMOVED***-1');
-    expect(request).toHaveBeenLastCalledWith(`${BASE}/listBy***REMOVED***`, {
+    await listCompilationJobs('kb-1');
+    expect(request).toHaveBeenLastCalledWith(`${BASE}/listByKb`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', limit: 20 },
+      params: { kbId: 'kb-1', limit: 20 },
       headers,
     });
 
-    await listCompilationJobs('***REMOVED***-1', 'm1', 5);
-    expect(request).toHaveBeenLastCalledWith(`${BASE}/listBy***REMOVED***`, {
+    await listCompilationJobs('kb-1', 'm1', 5);
+    expect(request).toHaveBeenLastCalledWith(`${BASE}/listByKb`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', materialId: 'm1', limit: 5 },
+      params: { kbId: 'kb-1', materialId: 'm1', limit: 5 },
       headers,
     });
 
@@ -124,23 +124,23 @@ describe('知识编译接口', () => {
       headers,
     });
 
-    await searchCompilationChunks('***REMOVED***-1');
+    await searchCompilationChunks('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/search`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', limit: 20 },
+      params: { kbId: 'kb-1', limit: 20 },
       headers,
     });
 
-    await searchCompilationChunks('***REMOVED***-1', '关键词', 5);
+    await searchCompilationChunks('kb-1', '关键词', 5);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/search`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', keyword: '关键词', limit: 5 },
+      params: { kbId: 'kb-1', keyword: '关键词', limit: 5 },
       headers,
     });
   });
 
   it('批量任务创建、列表、分页与运行状态查询', async () => {
-    const payload = { ***REMOVED***Id: '***REMOVED***-1', materialIds: ['m1'], scopeType: 'MATERIAL' };
+    const payload = { kbId: 'kb-1', materialIds: ['m1'], scopeType: 'MATERIAL' };
     await createCompilationBatch(payload);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/createBatch`, {
       method: 'post',
@@ -149,24 +149,24 @@ describe('知识编译接口', () => {
       timeout: 15_000,
     });
 
-    await listCompilationBatches('***REMOVED***-1');
+    await listCompilationBatches('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/listBatches`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', limit: 20 },
+      params: { kbId: 'kb-1', limit: 20 },
       headers,
     });
 
-    await pageCompilationBatches('***REMOVED***-1');
+    await pageCompilationBatches('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/pageBatches`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', pageNo: 1, pageSize: 20 },
+      params: { kbId: 'kb-1', pageNo: 1, pageSize: 20 },
       headers,
     });
 
-    await pageCompilationBatches('***REMOVED***-1', 3, 10);
+    await pageCompilationBatches('kb-1', 3, 10);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/pageBatches`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1', pageNo: 3, pageSize: 10 },
+      params: { kbId: 'kb-1', pageNo: 3, pageSize: 10 },
       headers,
     });
 
@@ -177,10 +177,10 @@ describe('知识编译接口', () => {
       headers,
     });
 
-    await hasRunningCompilationBatch('***REMOVED***-1');
+    await hasRunningCompilationBatch('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/hasRunningBatch`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
   });

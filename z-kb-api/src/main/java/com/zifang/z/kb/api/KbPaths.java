@@ -1,20 +1,20 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 import java.io.File;
 import java.nio.file.Paths;
 
 /**
- * z-***REMOVED*** 状态目录的<b>路径约定</b>（1.1.0 起统一口径）。
+ * z-kb 状态目录的<b>路径约定</b>（1.1.0 起统一口径）。
  *
- * <p>1.1.0 之前 z-***REMOVED*** 的三块本地状态各写各的：
+ * <p>1.1.0 之前 z-kb 的三块本地状态各写各的：
  * <ul>
  *   <li>向量：{@code ./data/zvector}（相对当前工作目录 ⇒ 换个启动目录就是另一份数据）；</li>
- *   <li>图谱 JSON：{@code ~/.***REMOVED***/graph}；</li>
- *   <li>文档 JSON：{@code ~/.***REMOVED***/***REMOVED***.json}。</li>
+ *   <li>图谱 JSON：{@code ~/.kb/graph}；</li>
+ *   <li>文档 JSON：{@code ~/.kb/kb.json}。</li>
  * </ul>
  *
- * <p>1.1.0 起统一收敛到 {@code ~/.***REMOVED***/} 这一个状态根目录，并且<b>所有可配置路径都接受
- * {@code ~} 展开</b>：写 {@code ***REMOVED***.vector.data-dir=~/data/vector} 会被展开成
+ * <p>1.1.0 起统一收敛到 {@code ~/.kb/} 这一个状态根目录，并且<b>所有可配置路径都接受
+ * {@code ~} 展开</b>：写 {@code kb.vector.data-dir=~/data/vector} 会被展开成
  * {@code /home/<用户>/data/vector}，而不是在当前目录下造一个名字叫「~」的目录。
  *
  * <p>约定：
@@ -25,14 +25,14 @@ import java.nio.file.Paths;
  * </ul>
  *
  * <p>本类是<b>纯路径计算</b>，不碰磁盘、不读配置，因此放在 SPI 模块里给
- * z-***REMOVED***-vector / z-***REMOVED***-graph / z-***REMOVED***-storage 三个装配层共用。
+ * z-kb-vector / z-kb-graph / z-kb-storage 三个装配层共用。
  */
-public final class ***REMOVED***Paths {
+public final class KbPaths {
 
-    /** z-***REMOVED*** 状态根目录名（相对 home）。 */
-    public static final String STATE_DIR_NAME = ".***REMOVED***";
+    /** z-kb 状态根目录名（相对 home）。 */
+    public static final String STATE_DIR_NAME = ".kb";
 
-    private ***REMOVED***Paths() {
+    private KbPaths() {
     }
 
     /**
@@ -45,24 +45,24 @@ public final class ***REMOVED***Paths {
         return (h == null || h.trim().isEmpty()) ? "" : h.trim();
     }
 
-    /** z-***REMOVED*** 状态根目录绝对路径：{@code ~/.***REMOVED***}。 */
+    /** z-kb 状态根目录绝对路径：{@code ~/.kb}。 */
     public static String stateDir() {
         return home() + File.separator + STATE_DIR_NAME;
     }
 
-    /** 向量存储默认目录：{@code ~/.***REMOVED***/vector}。 */
+    /** 向量存储默认目录：{@code ~/.kb/vector}。 */
     public static String vectorDataDir() {
         return stateDir() + File.separator + "vector";
     }
 
-    /** 图谱 JSON 默认目录：{@code ~/.***REMOVED***/graph}。 */
+    /** 图谱 JSON 默认目录：{@code ~/.kb/graph}。 */
     public static String graphDir() {
         return stateDir() + File.separator + "graph";
     }
 
-    /** 文档 JSON 默认文件：{@code ~/.***REMOVED***/***REMOVED***.json}。 */
+    /** 文档 JSON 默认文件：{@code ~/.kb/kb.json}。 */
     public static String documentFile() {
-        return stateDir() + File.separator + "***REMOVED***.json";
+        return stateDir() + File.separator + "kb.json";
     }
 
     /**

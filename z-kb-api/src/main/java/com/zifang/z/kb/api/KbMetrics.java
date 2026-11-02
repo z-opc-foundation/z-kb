@@ -1,14 +1,14 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
- * z-***REMOVED*** 运行时指标出口。
+ * z-kb 运行时指标出口。
  *
  * <p>不引用 micrometer 任何类型：actuator 在 starter 里是 optional，下游没带 actuator 时
  * 直接用 micrometer 的类会整类加载失败。这里只定义契约，实现方在有 micrometer 时才装配。
  *
  * <p>无实现时业务侧传 null 即可，全部调用点是可选的。
  */
-public interface ***REMOVED***Metrics {
+public interface KbMetrics {
 
     /**
      * 一次检索的观测值。

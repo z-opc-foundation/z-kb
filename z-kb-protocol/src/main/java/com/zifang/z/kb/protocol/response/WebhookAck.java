@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * Webhook 受理回执 —— {@code POST /api/***REMOVED***/ingest/webhook}。
+ * Webhook 受理回执 —— {@code POST /api/kb/ingest/webhook}。
  *
  * <p>受理不等于入库：webhook 只进缓冲区，真正入库要等 {@code /webhook/flush}
  * 或流水线自动触发。所以 {@code pending} 是必读字段。

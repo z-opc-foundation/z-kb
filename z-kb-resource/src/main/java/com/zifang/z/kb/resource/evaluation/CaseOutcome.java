@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.resource.evaluation.EvaluationCaseScorer.ScoredChunk;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.resource.evaluation.EvaluationCaseScorer.ScoredChunk;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
 
 import java.util.List;
 import java.util.Map;

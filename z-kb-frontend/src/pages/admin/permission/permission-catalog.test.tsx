@@ -18,7 +18,7 @@ const catalog: PermissionCatalogItem[] = [
     order: 40,
   },
   {
-    code: 'menu.***REMOVED***',
+    code: 'menu.kb',
     name: '知识库',
     type: 'MENU',
     typeCode: 1,
@@ -27,19 +27,19 @@ const catalog: PermissionCatalogItem[] = [
     order: 41,
   },
   {
-    code: '***REMOVED***.create',
+    code: 'kb.create',
     name: '新建知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 101,
   },
   {
-    code: '***REMOVED***.delete',
+    code: 'kb.delete',
     name: '删除知识库',
     type: 'BUTTON',
     typeCode: 2,
-    parentCode: 'menu.***REMOVED***',
+    parentCode: 'menu.kb',
     order: 103,
   },
 ];
@@ -88,7 +88,7 @@ describe('PermissionCatalogPanel', () => {
     expect(screen.getByText('新建知识库')).toBeInTheDocument();
     expect(screen.getByText('删除知识库')).toBeInTheDocument();
     expect(screen.getAllByText('/knowledge-bases').length).toBe(2);
-    expect(screen.getAllByText('***REMOVED***.create').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('kb.create').length).toBeGreaterThan(0);
   });
 
   it('刷新与发布按钮分别触发父级回调', async () => {

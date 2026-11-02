@@ -58,9 +58,9 @@ function parseView(value: string | null): ViewKey {
     : 'result';
 }
 
-export default function EvaluationWor***REMOVED***enchPage() {
-  const params = useParams<{ ***REMOVED***Id?: string }>();
-  const ***REMOVED***Id = params.***REMOVED***Id || '';
+export default function EvaluationWorkbenchPage() {
+  const params = useParams<{ kbId?: string }>();
+  const kbId = params.kbId || '';
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -86,7 +86,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
   const [runTick, setRunTick] = useState(0);
 
   const [knownRuns, setKnownRuns] = useState<EvalRunRecord[]>(() =>
-    readKnownRuns(***REMOVED***Id),
+    readKnownRuns(kbId),
   );
   const [reused, setReused] = useState(false);
   const [qaOpen, setQaOpen] = useState(false);
@@ -120,22 +120,22 @@ export default function EvaluationWor***REMOVED***enchPage() {
 
   const rememberRun = useCallback(
     (record: EvalRunRecord) => {
-      if (!***REMOVED***Id || !record?.runId) {
+      if (!kbId || !record?.runId) {
         return;
       }
-      const merged = mergeRunRecords(readKnownRuns(***REMOVED***Id), [record]);
-      writeKnownRuns(***REMOVED***Id, merged);
+      const merged = mergeRunRecords(readKnownRuns(kbId), [record]);
+      writeKnownRuns(kbId, merged);
       setKnownRuns(merged);
     },
-    [***REMOVED***Id],
+    [kbId],
   );
 
   useEffect(() => {
-    setKnownRuns(readKnownRuns(***REMOVED***Id));
-  }, [***REMOVED***Id]);
+    setKnownRuns(readKnownRuns(kbId));
+  }, [kbId]);
 
   useEffect(() => {
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       setOverview(null);
       setOverviewLoading(false);
       setOverviewError(true);
@@ -144,7 +144,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
     let alive = true;
     setOverviewLoading(true);
     setOverviewError(false);
-    queryEvalOverview(***REMOVED***Id, baselineRunId || undefined).then((result) => {
+    queryEvalOverview(kbId, baselineRunId || undefined).then((result) => {
       if (!alive) {
         return;
       }
@@ -155,21 +155,21 @@ export default function EvaluationWor***REMOVED***enchPage() {
       }
       setOverview(result);
       if (result.lastRun?.runId) {
-        rememberRun(runRecordFromBrief(result.lastRun, ***REMOVED***Id));
+        rememberRun(runRecordFromBrief(result.lastRun, kbId));
       }
     });
     return () => {
       alive = false;
     };
-  }, [baselineRunId, ***REMOVED***Id, overviewTick, rememberRun]);
+  }, [baselineRunId, kbId, overviewTick, rememberRun]);
 
   useEffect(() => {
-    if (!***REMOVED***Id || urlRunId || !lastRunId) {
+    if (!kbId || urlRunId || !lastRunId) {
       return;
     }
     // 首次进入时把最近跑批写入 URL，刷新 / 分享后仍指向同一次结果。
     updateParams({ runId: lastRunId }, { replace: true });
-  }, [***REMOVED***Id, lastRunId, updateParams, urlRunId]);
+  }, [kbId, lastRunId, updateParams, urlRunId]);
 
   useEffect(() => {
     if (!effectiveRunId) {
@@ -244,7 +244,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
   const handleCreated = (result: EvalCreateRunResult) => {
     const record: EvalRunRecord = {
       runId: result.runId,
-      ***REMOVED***Id,
+      kbId,
       status: result.status ?? null,
       resultUsable: result.resultUsable ?? null,
       unusableReason: result.unusableReason ?? null,
@@ -267,13 +267,13 @@ export default function EvaluationWor***REMOVED***enchPage() {
     updateParams({ view: 'result', runId: result.runId }, { replace: false });
   };
 
-  if (!***REMOVED***Id) {
+  if (!kbId) {
     return (
       <div className="view">
         <section className="panel">
           <ErrorState
             title="缺少知识库标识"
-            description="深链需要 /knowledge-bases/:***REMOVED***Id/evaluation。"
+            description="深链需要 /knowledge-bases/:kbId/evaluation。"
             action={
               <button
                 className="btn"
@@ -310,7 +310,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
     currentRun?.configVersion || currentRun?.taskConfigVersion || '';
   const snapshotId = currentRun?.snapshotId || '';
   const indexGeneration = currentRun?.indexGeneration;
-  const ***REMOVED***Name = overview?.***REMOVED***Name || '知识评测';
+  const kbName = overview?.kbName || '知识评测';
   const overviewBusy = overviewLoading && !overview;
   const runBusy = !!effectiveRunId && runLoading && !runDetail;
   const resultLoading = overviewBusy || runBusy;
@@ -373,7 +373,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
       case 'stages':
         return (
           <StagesView
-            ***REMOVED***Id={***REMOVED***Id}
+            kbId={kbId}
             runDetail={runDetail}
             loading={resultLoading}
             error={resultError}
@@ -389,7 +389,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
       case 'cases':
         return (
           <CasesView
-            ***REMOVED***Id={***REMOVED***Id}
+            kbId={kbId}
             runDetail={runDetail}
             overview={overview}
             statusFilter={statusFilter}
@@ -422,14 +422,14 @@ export default function EvaluationWor***REMOVED***enchPage() {
 
   return (
     <div className="view eval-detail-page">
-      <section className="***REMOVED***-hero eval-***REMOVED***-hero">
-        <div className="***REMOVED***-hero-main">
-          <div className="***REMOVED***-icon">
+      <section className="kb-hero eval-kb-hero">
+        <div className="kb-hero-main">
+          <div className="kb-icon">
             <Icon name="shield-check" size={22} />
           </div>
-          <div className="***REMOVED***-hero-copy">
+          <div className="kb-hero-copy">
             <h1>
-              {***REMOVED***Name}
+              {kbName}
               <span className="tag gray sm">知识评测</span>
             </h1>
             <div className="meta">
@@ -438,7 +438,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
               {currentRun || lastRunBrief ? (
                 <StatusTag meta={runStatus} />
               ) : null}
-              <span className="tag gray mono">{***REMOVED***Id}</span>
+              <span className="tag gray mono">{kbId}</span>
             </div>
             <p className="desc">
               单库评测工作台：固定 QA 版本、配置与快照后按本地规则判分，结果只代表当前快照下的相对参考。
@@ -466,7 +466,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
               <Icon name="info" size={12} />
               知识评测只做相对参考，不是发布门禁
             </div>
-            <div className="***REMOVED***-hero-actions">
+            <div className="kb-hero-actions">
               <button
                 className="btn"
                 type="button"
@@ -495,7 +495,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
                 className="btn ghost"
                 type="button"
                 onClick={() =>
-                  navigate(`/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}`)
+                  navigate(`/knowledge-bases/${encodeURIComponent(kbId)}`)
                 }
               >
                 <Icon name="arrow-left" size={14} />
@@ -504,18 +504,18 @@ export default function EvaluationWor***REMOVED***enchPage() {
             </div>
           </div>
         </div>
-        <div className="***REMOVED***-facts">
-          <div className="***REMOVED***-fact">
+        <div className="kb-facts">
+          <div className="kb-fact">
             <Icon name="list" size={13} />
             QA 版本 <b className="mono">{qaVersion || '未配置'}</b>
           </div>
           <span className="sep"></span>
-          <div className="***REMOVED***-fact">
+          <div className="kb-fact">
             <Icon name="settings" size={13} />
             配置版本 <b className="mono">{configVersion || '—'}</b>
           </div>
           <span className="sep"></span>
-          <div className="***REMOVED***-fact">
+          <div className="kb-fact">
             <Icon name="layers" size={13} />
             snapshotId{' '}
             <b className="mono ellipsis" title={snapshotId || ''}>
@@ -523,26 +523,26 @@ export default function EvaluationWor***REMOVED***enchPage() {
             </b>
           </div>
           <span className="sep"></span>
-          <div className="***REMOVED***-fact">
+          <div className="kb-fact">
             <Icon name="refresh" size={13} />
             索引代际 <b className="mono">{indexGeneration ?? '—'}</b>
           </div>
           <span className="sep"></span>
-          <div className="***REMOVED***-fact">
+          <div className="kb-fact">
             <Icon name="play" size={13} />
             跑批 <b className="mono">{effectiveRunId || '未跑批'}</b>
           </div>
         </div>
       </section>
 
-      <nav className="***REMOVED***-tabs eval-***REMOVED***-tabs">
+      <nav className="kb-tabs eval-kb-tabs">
         {VIEW_KEYS.filter((key) => key !== 'overview').map((key) => {
           const meta = VIEW_META[key];
           return (
             <button
               key={key}
               type="button"
-              className={`***REMOVED***-tab ${view === key ? 'active' : ''}`}
+              className={`kb-tab ${view === key ? 'active' : ''}`}
               style={{
                 border: 0,
                 background: 'transparent',
@@ -596,8 +596,8 @@ export default function EvaluationWor***REMOVED***enchPage() {
 
       {qaOpen ? (
         <QaDatasetDrawer
-          ***REMOVED***Id={***REMOVED***Id}
-          ***REMOVED***Name={***REMOVED***Name}
+          kbId={kbId}
+          kbName={kbName}
           onClose={() => setQaOpen(false)}
           onChanged={() => {
             setOverviewTick((value) => value + 1);
@@ -608,7 +608,7 @@ export default function EvaluationWor***REMOVED***enchPage() {
 
       {createOpen ? (
         <RunCreateModal
-          ***REMOVED***Id={***REMOVED***Id}
+          kbId={kbId}
           overview={overview}
           knownRuns={knownRuns}
           defaultBaselineRunId={baselineRunId || undefined}

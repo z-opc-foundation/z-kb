@@ -3,14 +3,14 @@ import { pageMaterial, type MaterialRecord } from '@/services/material';
 import { PAGE_SIZE, type MaterialTypeKey } from '../material-workspace-model';
 
 interface UseMaterialListParams {
-  ***REMOVED***Id: string;
+  kbId: string;
   materialType: MaterialTypeKey;
   categoryId: string;
   onCategoryChange: (next: string) => void;
 }
 
 export function useMaterialList({
-  ***REMOVED***Id,
+  kbId,
   materialType,
   categoryId,
   onCategoryChange,
@@ -33,7 +33,7 @@ export function useMaterialList({
     const result = await pageMaterial({
       current: page,
       size: PAGE_SIZE,
-      ***REMOVED***Id,
+      kbId,
       keyword: queryKeyword || undefined,
       categoryId: categoryId || undefined,
       materialType,
@@ -51,7 +51,7 @@ export function useMaterialList({
     setRecords(result.records);
     setTotal(result.total);
     setSelected((prev) => prev.filter((id) => result.records.some((r) => r.materialId === id)));
-  }, [***REMOVED***Id, page, queryKeyword, categoryId, materialType, reloadTick]);
+  }, [kbId, page, queryKeyword, categoryId, materialType, reloadTick]);
 
   useEffect(() => {
     setPage(1);

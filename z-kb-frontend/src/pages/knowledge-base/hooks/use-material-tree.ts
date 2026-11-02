@@ -19,7 +19,7 @@ import {
 } from '../material-workspace-model';
 
 interface UseMaterialTreeParams {
-  ***REMOVED***Id: string;
+  kbId: string;
   canWrite: boolean;
   categoryId: string;
   setBusy: (next: boolean) => void;
@@ -28,7 +28,7 @@ interface UseMaterialTreeParams {
 }
 
 export function useMaterialTree({
-  ***REMOVED***Id,
+  kbId,
   canWrite,
   categoryId,
   setBusy,
@@ -73,19 +73,19 @@ export function useMaterialTree({
   }, [materialsByCategory, tree]);
 
   const loadTree = useCallback(async () => {
-    const result = await getCategoryTree(***REMOVED***Id);
+    const result = await getCategoryTree(kbId);
     if (result) {
       setTree(result);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const loadTreeMaterials = useCallback(async () => {
-    const result = await loadLibraryMaterials(***REMOVED***Id);
+    const result = await loadLibraryMaterials(kbId);
     if (result) {
       setTreeMaterials(result.records);
       setLibraryTotal(result.total);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void loadTree();
@@ -145,7 +145,7 @@ export function useMaterialTree({
       toast('请输入分类名称', undefined, 'warn');
       return;
     }
-    const result = await createCategory(***REMOVED***Id, name, categoryModal.parentId);
+    const result = await createCategory(kbId, name, categoryModal.parentId);
     if (!result) {
       return;
     }
@@ -214,7 +214,7 @@ export function useMaterialTree({
       return;
     }
     setBusy(true);
-    const result = await updateMaterialCategory(***REMOVED***Id, [materialId], targetId || undefined);
+    const result = await updateMaterialCategory(kbId, [materialId], targetId || undefined);
     setBusy(false);
     if (!result) {
       return;
@@ -278,7 +278,7 @@ export function useMaterialTree({
       onDrop: (event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         const categoryDragId =
-          event.dataTransfer.getData('application/x-***REMOVED***-category') || dragCategoryId;
+          event.dataTransfer.getData('application/x-kb-category') || dragCategoryId;
         const materialDragId = event.dataTransfer.getData('text/plain') || dragMaterialId;
         setDragCategoryId('');
         setDragMaterialId('');
@@ -319,7 +319,7 @@ export function useMaterialTree({
       }
       event.preventDefault();
       const categoryDragId =
-        event.dataTransfer.getData('application/x-***REMOVED***-category') || dragCategoryId;
+        event.dataTransfer.getData('application/x-kb-category') || dragCategoryId;
       const materialDragId = event.dataTransfer.getData('text/plain') || dragMaterialId;
       setDragCategoryId('');
       setDragMaterialId('');

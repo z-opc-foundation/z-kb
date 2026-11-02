@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
-import com.zifang.z.***REMOVED***.core.search.HybridSearcher;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
+import com.zifang.z.kb.core.search.HybridSearcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>两套都跑是为了看检索增益的可观测性差异：常识题上各臂都接近饱和，看不出
  * 策略差异；长尾题上才有区分度。
  */
-class ***REMOVED***AblationOnGeneratedCorpusTest {
+class KbAblationOnGeneratedCorpusTest {
 
     @Test
     @DisplayName("两套语料上的四臂消融")

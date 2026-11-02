@@ -19,7 +19,7 @@ import MaterialEvidenceCompare from './material-evidence-compare';
 const DETAIL: MaterialDetailRecord = {
   material: {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '排班管理制度',
     sourceType: 'UPLOAD',
@@ -53,7 +53,7 @@ const EXTRACTION: MaterialExtractionRecord = {
 const WIKI: WikiPageRecord[] = [
   {
     wikiId: 'w-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-1',
     title: '排班管理制度 Wiki',
     pointCount: 3,

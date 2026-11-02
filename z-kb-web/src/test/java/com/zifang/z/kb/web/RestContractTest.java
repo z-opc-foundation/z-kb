@@ -1,23 +1,23 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
-import com.zifang.z.***REMOVED***.api.ChatResponse;
-import com.zifang.z.***REMOVED***.api.ChatService;
-import com.zifang.z.***REMOVED***.api.ImportResult;
-import com.zifang.z.***REMOVED***.api.Workspace;
-import com.zifang.z.***REMOVED***.api.ChatSession;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.api.IngestResult;
-import com.zifang.z.***REMOVED***.ingest.pipeline.DataSourceRegistry;
-import com.zifang.z.***REMOVED***.ingest.pipeline.IngestPipeline;
-import com.zifang.z.***REMOVED***.ingest.source.WebhookSource;
-import com.zifang.z.***REMOVED***.web.controller.ChatController;
-import com.zifang.z.***REMOVED***.web.controller.DocumentController;
-import com.zifang.z.***REMOVED***.web.controller.IngestController;
-import com.zifang.z.***REMOVED***.web.controller.WorkspaceController;
-import com.zifang.z.***REMOVED***.web.exception.WebExceptionHandler;
+import com.zifang.z.kb.api.ChatResponse;
+import com.zifang.z.kb.api.ChatService;
+import com.zifang.z.kb.api.ImportResult;
+import com.zifang.z.kb.api.Workspace;
+import com.zifang.z.kb.api.ChatSession;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.api.IngestResult;
+import com.zifang.z.kb.ingest.pipeline.DataSourceRegistry;
+import com.zifang.z.kb.ingest.pipeline.IngestPipeline;
+import com.zifang.z.kb.ingest.source.WebhookSource;
+import com.zifang.z.kb.web.controller.ChatController;
+import com.zifang.z.kb.web.controller.DocumentController;
+import com.zifang.z.kb.web.controller.IngestController;
+import com.zifang.z.kb.web.controller.WorkspaceController;
+import com.zifang.z.kb.web.exception.WebExceptionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -90,10 +90,10 @@ class RestContractTest {
         when(svc.importMarkdown(anyString(), any(), any(), any(), any()))
                 .thenReturn(importResult("d-1", 3));
         DocumentController c = new DocumentController();
-        inject(c, "***REMOVED***Service", svc);
+        inject(c, "kbService", svc);
         MockMvc mvc = mvc(c);
 
-        mvc.perform(post("/api/***REMOVED***/documents/markdown")
+        mvc.perform(post("/api/kb/documents/markdown")
                         .contentType("application/json")
                         .content("{\"title\":\"手册\",\"content\":\"# x\",\"tags\":[\"a\",\"b\"],\"author\":\"yuku\"}"))
                 .andExpect(status().isOk())
@@ -111,9 +111,9 @@ class RestContractTest {
         when(svc.importMarkdown(anyString(), any(), any(), any(), any()))
                 .thenReturn(importResult("d-2", 1));
         DocumentController c = new DocumentController();
-        inject(c, "***REMOVED***Service", svc);
+        inject(c, "kbService", svc);
 
-        mvc(c).perform(post("/api/***REMOVED***/documents/markdown")
+        mvc(c).perform(post("/api/kb/documents/markdown")
                         .contentType("application/json")
                         .content("{\"content\":\"x\"}"))
                 .andExpect(status().isOk());
@@ -127,9 +127,9 @@ class RestContractTest {
         KnowledgeBaseService svc = mock(KnowledgeBaseService.class);
         when(svc.countDocuments("default")).thenReturn(42L);
         DocumentController c = new DocumentController();
-        inject(c, "***REMOVED***Service", svc);
+        inject(c, "kbService", svc);
 
-        byte[] body = mvc(c).perform(get("/api/***REMOVED***/documents/default/count"))
+        byte[] body = mvc(c).perform(get("/api/kb/documents/default/count"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(42))
                 .andReturn().getResponse().getContentAsByteArray();
@@ -147,9 +147,9 @@ class RestContractTest {
         when(svc.createWorkspace(anyString(), any()))
                 .thenReturn(new Workspace("product"));
         WorkspaceController c = new WorkspaceController();
-        inject(c, "***REMOVED***Service", svc);
+        inject(c, "kbService", svc);
 
-        mvc(c).perform(post("/api/***REMOVED***/workspaces")
+        mvc(c).perform(post("/api/kb/workspaces")
                         .contentType("application/json")
                         .content("{\"name\":\"product\",\"description\":\"产品线知识库\"}"))
                 .andExpect(status().isOk());
@@ -167,7 +167,7 @@ class RestContractTest {
         ChatController c = new ChatController();
         inject(c, "chatService", svc);
 
-        mvc(c).perform(post("/api/***REMOVED***/chat/sessions")
+        mvc(c).perform(post("/api/kb/chat/sessions")
                         .contentType("application/json")
                         .content("{\"userId\":\"u1\",\"title\":\"排查\"}"))
                 .andExpect(status().isOk());
@@ -184,7 +184,7 @@ class RestContractTest {
         ChatController c = new ChatController();
         inject(c, "chatService", svc);
 
-        mvc(c).perform(post("/api/***REMOVED***/chat/sessions/s-1/chat")
+        mvc(c).perform(post("/api/kb/chat/sessions/s-1/chat")
                         .contentType("application/json")
                         .content("{\"question\":\"怎么部署？\"}"))
                 .andExpect(status().isOk());
@@ -204,7 +204,7 @@ class RestContractTest {
         inject(c, "pipeline", mock(IngestPipeline.class));
         inject(c, "webhookSource", mock(WebhookSource.class));
 
-        byte[] body = mvc(c).perform(get("/api/***REMOVED***/ingest/sources"))
+        byte[] body = mvc(c).perform(get("/api/kb/ingest/sources"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsByteArray();
 
@@ -222,8 +222,8 @@ class RestContractTest {
     @DisplayName("GET /ingest/sources：数据源元素含 sourceId/type/label/enabled")
     void listSourcesItemKeys() throws Exception {
         DataSourceRegistry registry = mock(DataSourceRegistry.class);
-        com.zifang.z.***REMOVED***.ingest.api.DataSource src =
-                mock(com.zifang.z.***REMOVED***.ingest.api.DataSource.class);
+        com.zifang.z.kb.ingest.api.DataSource src =
+                mock(com.zifang.z.kb.ingest.api.DataSource.class);
         when(src.getSourceId()).thenReturn("markdown-src");
         when(src.getType()).thenReturn(DataSourceType.MARKDOWN);
         when(src.isEnabled()).thenReturn(true);
@@ -234,7 +234,7 @@ class RestContractTest {
         inject(c, "pipeline", mock(IngestPipeline.class));
         inject(c, "webhookSource", mock(WebhookSource.class));
 
-        byte[] body = mvc(c).perform(get("/api/***REMOVED***/ingest/sources"))
+        byte[] body = mvc(c).perform(get("/api/kb/ingest/sources"))
                 .andReturn().getResponse().getContentAsByteArray();
         JsonNode item = mapper.readTree(body).get("sources").get(0);
         assertEquals(4, item.size(), "数据源元素应恰为 4 键");
@@ -256,7 +256,7 @@ class RestContractTest {
         inject(c, "registry", mock(DataSourceRegistry.class));
         inject(c, "webhookSource", mock(WebhookSource.class));
 
-        byte[] body = mvc(c).perform(post("/api/***REMOVED***/ingest/run").param("sourceId", "markdown-src")
+        byte[] body = mvc(c).perform(post("/api/kb/ingest/run").param("sourceId", "markdown-src")
                         .contentType("application/json").content("{}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsByteArray();
@@ -284,7 +284,7 @@ class RestContractTest {
         inject(c, "registry", mock(DataSourceRegistry.class));
         inject(c, "webhookSource", mock(WebhookSource.class));
 
-        mvc(c).perform(post("/api/***REMOVED***/ingest/run").param("sourceId", "markdown-src"))
+        mvc(c).perform(post("/api/kb/ingest/run").param("sourceId", "markdown-src"))
                 .andExpect(status().isOk());
 
         @SuppressWarnings("unchecked")
@@ -305,7 +305,7 @@ class RestContractTest {
         inject(c, "pipeline", mock(IngestPipeline.class));
         inject(c, "registry", mock(DataSourceRegistry.class));
 
-        byte[] body = mvc(c).perform(post("/api/***REMOVED***/ingest/webhook")
+        byte[] body = mvc(c).perform(post("/api/kb/ingest/webhook")
                         .contentType("application/json")
                         .content("{\"content\":\"# hi\",\"metadata\":{\"src\":\"gitlab\"}}"))
                 .andExpect(status().isOk())
@@ -325,7 +325,7 @@ class RestContractTest {
     }
 
     @Test
-    @DisplayName("POST /ingest/webhook：校验失败抛 ***REMOVED***Exception → 400 + 错误信封三键")
+    @DisplayName("POST /ingest/webhook：校验失败抛 KBException → 400 + 错误信封三键")
     void webhookFailureReturnsErrorEnvelope() throws Exception {
         WebhookSource ws = mock(WebhookSource.class);
         when(ws.accept(any(), any(), anyString(), anyString(), any())).thenReturn(false);
@@ -334,7 +334,7 @@ class RestContractTest {
         inject(c, "pipeline", mock(IngestPipeline.class));
         inject(c, "registry", mock(DataSourceRegistry.class));
 
-        byte[] body = mvc(c).perform(post("/api/***REMOVED***/ingest/webhook")
+        byte[] body = mvc(c).perform(post("/api/kb/ingest/webhook")
                         .contentType("application/json").content("{\"content\":\"x\"}"))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsByteArray();
@@ -347,14 +347,14 @@ class RestContractTest {
     }
 
     @Test
-    @DisplayName("POST /ingest/submit：空列表抛 ***REMOVED***Exception → 400")
+    @DisplayName("POST /ingest/submit：空列表抛 KBException → 400")
     void submitEmptyListRejected() throws Exception {
         IngestController c = new IngestController();
         inject(c, "pipeline", mock(IngestPipeline.class));
         inject(c, "registry", mock(DataSourceRegistry.class));
         inject(c, "webhookSource", mock(WebhookSource.class));
 
-        mvc(c).perform(post("/api/***REMOVED***/ingest/submit")
+        mvc(c).perform(post("/api/kb/ingest/submit")
                         .contentType("application/json").content("[]"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400));
@@ -366,9 +366,9 @@ class RestContractTest {
         KnowledgeBaseService svc = mock(KnowledgeBaseService.class);
         when(svc.listWorkspaces()).thenThrow(new IllegalStateException("db down"));
         WorkspaceController c = new WorkspaceController();
-        inject(c, "***REMOVED***Service", svc);
+        inject(c, "kbService", svc);
 
-        byte[] body = mvc(c).perform(get("/api/***REMOVED***/workspaces"))
+        byte[] body = mvc(c).perform(get("/api/kb/workspaces"))
                 .andExpect(status().isInternalServerError())
                 .andReturn().getResponse().getContentAsByteArray();
 

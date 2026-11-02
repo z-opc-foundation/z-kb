@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.vector.impl;
+package com.zifang.z.kb.vector.impl;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
 import com.zifang.z.vector.api.DistanceMetric;
 import com.zifang.z.vector.api.Filter;
 import com.zifang.z.vector.api.IndexType;
@@ -20,7 +20,7 @@ import java.util.Map;
  * 基于 z-vector 的 ChunkVectorStore 实现 — 适配器模式。
  *
  * <p>每个 workspace 对应一个独立的 Collection：
- * {@code ***REMOVED***_<sanitized_workspace>_chunks}
+ * {@code kb_<sanitized_workspace>_chunks}
  */
 public class ZVectorChunkVectorStore implements ChunkVectorStore {
 
@@ -37,7 +37,7 @@ public class ZVectorChunkVectorStore implements ChunkVectorStore {
     private String collectionName(String workspace) {
         // 工作台名做安全转换（去除特殊字符）
         String safe = workspace.replaceAll("[^a-zA-Z0-9_]", "_");
-        return "***REMOVED***_" + safe + "_chunks";
+        return "kb_" + safe + "_chunks";
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ZVectorChunkVectorStore implements ChunkVectorStore {
 
     /**
      * z-vector 的 {@code SearchResult.score} 是<b>距离</b>（越小越近，COSINE 下为 {@code 1 - cos}），
-     * 而 z-***REMOVED*** 契约里 score 一律是「越大越近」——BM25 如此，RRF 与 topK 截断也依赖这个方向。
+     * 而 z-kb 契约里 score 一律是「越大越近」——BM25 如此，RRF 与 topK 截断也依赖这个方向。
      * 直接透传会让向量路排序整个反过来：最近的被排到末尾，{@code minScore} 阈值又恰好把
      * 最相关的那些滤掉，只剩正交（距离 1.0）的噪声。
      *

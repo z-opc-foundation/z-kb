@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigItemParam;
-import com.zifang.z.***REMOVED***.api.taskconfig.TaskConfigPublishParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigItemParam;
+import com.zifang.z.kb.api.taskconfig.TaskConfigPublishParam;
 
 import java.util.ArrayList;
 import java.util.List;

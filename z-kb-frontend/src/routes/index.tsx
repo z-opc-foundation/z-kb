@@ -8,7 +8,7 @@ const KnowledgeBaseDetailPage = lazy(() => import('@/pages/knowledge-base/detail
 const KnowledgeBaseSettingsPage = lazy(() => import('@/pages/knowledge-base/settings'));
 const KnowledgeBaseVersionPage = lazy(() => import('@/pages/knowledge-base/version-management'));
 const EvaluationListPage = lazy(() => import('@/pages/evaluation'));
-const EvaluationWor***REMOVED***enchPage = lazy(() => import('@/pages/evaluation/detail'));
+const EvaluationWorkbenchPage = lazy(() => import('@/pages/evaluation/detail'));
 const AiAgentsPage = lazy(() => import('@/pages/ai/agents'));
 const AiSkillsPage = lazy(() => import('@/pages/ai/skills'));
 const AiToolsPage = lazy(() => import('@/pages/ai/tools'));
@@ -55,30 +55,30 @@ export const allRoutes: AppRouteConfig[] = [
   },
   {
     key: 'knowledge-bases',
-    menuCode: 'menu.***REMOVED***',
+    menuCode: 'menu.kb',
     label: '知识管理',
     path: '/knowledge-bases',
     component: withAppShell(KnowledgeBaseListPage),
   },
   {
     key: 'knowledge-base-detail',
-    menuCode: 'menu.***REMOVED***',
+    menuCode: 'menu.kb',
     label: '知识库详情',
-    path: '/knowledge-bases/:***REMOVED***Id',
+    path: '/knowledge-bases/:kbId',
     component: withAppShell(KnowledgeBaseDetailPage),
   },
   {
     key: 'knowledge-base-settings',
-    menuCode: 'menu.***REMOVED***',
+    menuCode: 'menu.kb',
     label: '知识库设置',
-    path: '/knowledge-bases/:***REMOVED***Id/settings',
+    path: '/knowledge-bases/:kbId/settings',
     component: withAppShell(KnowledgeBaseSettingsPage),
   },
   {
     key: 'knowledge-base-versions',
-    menuCode: 'menu.***REMOVED***',
+    menuCode: 'menu.kb',
     label: '版本管理',
-    path: '/knowledge-bases/:***REMOVED***Id/versions',
+    path: '/knowledge-bases/:kbId/versions',
     component: withAppShell(KnowledgeBaseVersionPage),
   },
   {
@@ -92,8 +92,8 @@ export const allRoutes: AppRouteConfig[] = [
     key: 'knowledge-base-evaluation',
     menuCode: 'menu.evaluation',
     label: '知识评测',
-    path: '/knowledge-bases/:***REMOVED***Id/evaluation',
-    component: withAppShell(EvaluationWor***REMOVED***enchPage),
+    path: '/knowledge-bases/:kbId/evaluation',
+    component: withAppShell(EvaluationWorkbenchPage),
   },
   {
     key: 'ai-agents',
@@ -202,9 +202,9 @@ export const allRoutes: AppRouteConfig[] = [
   },
   {
     key: 'knowledge-base-detail-tab',
-    menuCode: 'menu.***REMOVED***',
+    menuCode: 'menu.kb',
     label: '知识库详情',
-    path: '/knowledge-bases/:***REMOVED***Id/:tab',
+    path: '/knowledge-bases/:kbId/:tab',
     component: withAppShell(KnowledgeBaseDetailPage),
   },
 ];

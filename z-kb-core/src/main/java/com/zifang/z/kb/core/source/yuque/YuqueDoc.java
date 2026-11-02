@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /** 语雀知识库文档列表项：contentUpdatedAt 用来判断正文是否变化。 */
 public class YuqueDoc {

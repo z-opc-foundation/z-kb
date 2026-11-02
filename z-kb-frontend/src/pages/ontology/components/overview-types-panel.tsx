@@ -325,7 +325,7 @@ function TagRow({
     >
       <button
         type="button"
-        role="chec***REMOVED***ox"
+        role="checkbox"
         aria-checked={selected}
         className={`ont-row-check${selected ? ' checked' : ''}`}
         disabled={!selected && selectedCount >= SUBGRAPH_TAG_MAX}
@@ -405,7 +405,7 @@ function EdgeRow({
     >
       <button
         type="button"
-        role="chec***REMOVED***ox"
+        role="checkbox"
         aria-checked={selected}
         className={`ont-row-check${selected ? ' checked' : ''}`}
         disabled={blocked}

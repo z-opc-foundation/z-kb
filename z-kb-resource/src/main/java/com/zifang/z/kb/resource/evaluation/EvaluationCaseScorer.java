@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.resource.evaluation;
+package com.zifang.z.kb.resource.evaluation;
 
-import com.zifang.z.***REMOVED***.api.evaluation.EvalAnswerMode;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalExpectedBehavior;
-import com.zifang.z.***REMOVED***.api.evaluation.EvalMetricStatus;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationMetricCode;
-import com.zifang.z.***REMOVED***.api.evaluation.EvaluationStage;
-import com.zifang.z.***REMOVED***.core.retrieval.LocalHashEmbedding;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.EvalCaseEntity;
+import com.zifang.z.kb.api.evaluation.EvalAnswerMode;
+import com.zifang.z.kb.api.evaluation.EvalExpectedBehavior;
+import com.zifang.z.kb.api.evaluation.EvalMetricStatus;
+import com.zifang.z.kb.api.evaluation.EvaluationMetricCode;
+import com.zifang.z.kb.api.evaluation.EvaluationStage;
+import com.zifang.z.kb.core.retrieval.LocalHashEmbedding;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.evaluation.entity.EvalCaseEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,17 +20,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.ANSWER_CHUNK_CHARS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationConstants.ANSWER_TOTAL_CHARS;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.clamp01;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.isIndexed;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.messageOf;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.parsePlain;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.round;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.runnableStages;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.text;
-import static com.zifang.z.***REMOVED***.resource.evaluation.EvaluationSupport.truncate;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.ANSWER_CHUNK_CHARS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationConstants.ANSWER_TOTAL_CHARS;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.clamp01;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.hasText;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.isIndexed;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.messageOf;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.parsePlain;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.round;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.runnableStages;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.text;
+import static com.zifang.z.kb.resource.evaluation.EvaluationSupport.truncate;
 
 /**
  * 单条用例的确定性判定：向量检索、抽取式作答、引用与 S1–S8 阶段追踪。

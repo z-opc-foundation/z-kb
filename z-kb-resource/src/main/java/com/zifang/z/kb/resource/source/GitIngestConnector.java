@@ -1,23 +1,23 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.material.MaterialBatchItem;
-import com.zifang.z.***REMOVED***.api.material.MaterialBinding;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialSyncRequest;
-import com.zifang.z.***REMOVED***.api.material.MaterialSyncResult;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.core.source.GitRepoDigest;
-import com.zifang.z.***REMOVED***.core.source.IngestMetadata;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
-import com.zifang.z.***REMOVED***.core.source.git.GitApiClient;
-import com.zifang.z.***REMOVED***.core.source.git.GitApiException;
-import com.zifang.z.***REMOVED***.core.source.git.GitAuth;
-import com.zifang.z.***REMOVED***.core.source.git.GitFileNode;
-import com.zifang.z.***REMOVED***.core.source.git.GitRepoUrl;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.material.MaterialBatchItem;
+import com.zifang.z.kb.api.material.MaterialBinding;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialSyncRequest;
+import com.zifang.z.kb.api.material.MaterialSyncResult;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.core.source.GitRepoDigest;
+import com.zifang.z.kb.core.source.IngestMetadata;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
+import com.zifang.z.kb.core.source.git.GitApiClient;
+import com.zifang.z.kb.core.source.git.GitApiException;
+import com.zifang.z.kb.core.source.git.GitAuth;
+import com.zifang.z.kb.core.source.git.GitFileNode;
+import com.zifang.z.kb.core.source.git.GitRepoUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class GitIngestConnector implements IngestConnector {
         String secret = source.resolveSecret();
         if (repo == null || secret == null || secret.trim().isEmpty()
                 || !gitApiClient.isHostAllowed(repo.getBaseUrl())) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID",
+            throw new KBException("KB_SOURCE_CONFIG_INVALID",
                     "Git 接入源需要 HTTPS 仓库地址、凭据与允许的站点");
         }
     }
@@ -90,7 +90,7 @@ public class GitIngestConnector implements IngestConnector {
     }
 
     @Override
-    public IngestSyncInfo sync(String ***REMOVED***Id, KnowledgeBaseSourceAccess source, ***REMOVED***Caller caller) {
+    public IngestSyncInfo sync(String kbId, KnowledgeBaseSourceAccess source, KbCaller caller) {
         checkScope(source);
         GitRepoUrl repo = GitRepoUrl.parse(repo(source));
         String ref = ref(source);
@@ -101,11 +101,11 @@ public class GitIngestConnector implements IngestConnector {
         String treeHash = treeHash(tree);
         String version = commit == null ? "tree:" + treeHash : commit;
 
-        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(***REMOVED***Id, source, caller);
-        String repoCategoryId = sourceTreeNodes.ensureRepoNode(***REMOVED***Id, sourceCategoryId, source,
+        String sourceCategoryId = sourceTreeNodes.ensureSourceNode(kbId, source, caller);
+        String repoCategoryId = sourceTreeNodes.ensureRepoNode(kbId, sourceCategoryId, source,
                 repo.getProjectPath(), repo.getProjectPath(), ref, caller);
 
-        List<MaterialBinding> bound = materialService.listBySource(***REMOVED***Id, source.getSourceId(),
+        List<MaterialBinding> bound = materialService.listBySource(kbId, source.getSourceId(),
                 caller);
         MaterialBinding existing = findRepoMaterial(bound);
 
@@ -113,7 +113,7 @@ public class GitIngestConnector implements IngestConnector {
         if (existing != null && version.equals(
                 IngestMetadata.field(existing.getMetadata(), "version"))) {
             result.markUnchanged();
-            retireLegacyDocs(***REMOVED***Id, bound, result, caller);
+            retireLegacyDocs(kbId, bound, result, caller);
             return result;
         }
 
@@ -125,7 +125,7 @@ public class GitIngestConnector implements IngestConnector {
                         ref, auth));
 
         MaterialSyncRequest request = new MaterialSyncRequest();
-        request.set***REMOVED***Id(***REMOVED***Id);
+        request.setKbId(kbId);
         request.setMaterialId(existing == null ? null : existing.getMaterialId());
         request.setCategoryId(repoCategoryId);
         request.setTitle(projectPath);
@@ -147,13 +147,13 @@ public class GitIngestConnector implements IngestConnector {
             result.markFailed("《" + repo.getProjectPath() + "》" + outcome.getMessage());
             return result;
         }
-        retireLegacyDocs(***REMOVED***Id, bound, result, caller);
+        retireLegacyDocs(kbId, bound, result, caller);
         return result;
     }
 
     /** 旧版 Git 同步把每个文档登记成物料，切到仓库物料后统一清退，保证一个项目一个条目。 */
-    private void retireLegacyDocs(String ***REMOVED***Id, List<MaterialBinding> bound, IngestSyncInfo result,
-            ***REMOVED***Caller caller) {
+    private void retireLegacyDocs(String kbId, List<MaterialBinding> bound, IngestSyncInfo result,
+            KbCaller caller) {
         for (MaterialBinding item : bound) {
             if (META_KIND_REPO.equals(IngestMetadata.field(item.getMetadata(), "kind"))) {
                 continue;
@@ -161,7 +161,7 @@ public class GitIngestConnector implements IngestConnector {
             if (IngestMetadata.field(item.getMetadata(), "docSlug") == null) {
                 continue;
             }
-            List<MaterialBatchItem> removed = materialService.remove(***REMOVED***Id,
+            List<MaterialBatchItem> removed = materialService.remove(kbId,
                     Collections.singletonList(item.getMaterialId()), caller);
             if (!removed.isEmpty() && removed.get(0).isSuccess()) {
                 result.markRetired();

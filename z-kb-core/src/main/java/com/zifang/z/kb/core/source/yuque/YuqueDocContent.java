@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /** 语雀文档正文读取结果；markdown 已按格式归一（表格类文档完成转换）。 */
 public class YuqueDocContent {

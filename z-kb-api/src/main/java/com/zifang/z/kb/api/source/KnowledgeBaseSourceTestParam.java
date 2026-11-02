@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 /**
  * 探测单条接入源连通性；sourceId 有值且未带凭据时读取已保存的凭据。
  */
 public class KnowledgeBaseSourceTestParam {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private KnowledgeBaseSourceParam source;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public KnowledgeBaseSourceParam getSource() {

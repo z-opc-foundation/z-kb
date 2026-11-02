@@ -19,9 +19,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import TaskConfigPanel from './task-config-panel';
 import SourceConfigPanel from './source-config-panel';
-import ***REMOVED***MemberPanel from './components/member-panel';
+import KbMemberPanel from './components/member-panel';
 import { formatDateTime } from '@/utils/format';
-import { TYPE_META } from './***REMOVED***-meta';
+import { TYPE_META } from './kb-meta';
 
 type SettingsSection = 'basic' | 'access' | 'source' | 'task' | 'danger';
 
@@ -34,12 +34,12 @@ const SECTIONS: { key: SettingsSection; label: string; icon: string; hint: strin
 ];
 
 export default function KnowledgeBaseSettingsPage() {
-  const params = useParams<{ ***REMOVED***Id?: string }>();
+  const params = useParams<{ kbId?: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const ***REMOVED***Id = params.***REMOVED***Id || '';
+  const kbId = params.kbId || '';
   const tenant = getTenantInfo();
-  const [***REMOVED***, set***REMOVED***] = useState<KnowledgeBaseRecord | null>(null);
+  const [kb, setKb] = useState<KnowledgeBaseRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [section, setSection] = useState<SettingsSection>(() => {
@@ -56,33 +56,33 @@ export default function KnowledgeBaseSettingsPage() {
   const [effective, setEffective] = useState<KnowledgeBaseEffectiveRecord | null>(null);
 
   const load = useCallback(async () => {
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       setLoading(false);
       setNotFound(true);
       return;
     }
     setLoading(true);
-    const result = await getKnowledgeBase(***REMOVED***Id);
+    const result = await getKnowledgeBase(kbId);
     setLoading(false);
     if (!result) {
       setNotFound(true);
-      set***REMOVED***(null);
+      setKb(null);
       return;
     }
     setNotFound(false);
-    set***REMOVED***(result);
+    setKb(result);
     setName(result.name);
     setDescription(result.description || '');
-    const access = await getEffectiveAccess(***REMOVED***Id);
+    const access = await getEffectiveAccess(kbId);
     setEffective(access || null);
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const saveBasic = async () => {
-    if (!***REMOVED***) {
+    if (!kb) {
       return;
     }
     const trimmedName = name.trim();
@@ -92,7 +92,7 @@ export default function KnowledgeBaseSettingsPage() {
     }
     setSaving(true);
     const result = await updateKnowledgeBase({
-      ***REMOVED***Id: ***REMOVED***.***REMOVED***Id,
+      kbId: kb.kbId,
       name: trimmedName,
       description: description.trim(),
     });
@@ -105,31 +105,31 @@ export default function KnowledgeBaseSettingsPage() {
   };
 
   const changeStatus = async (action: 'archive' | 'restore') => {
-    if (!***REMOVED***) {
+    if (!kb) {
       return;
     }
     setStatusBusy(true);
     const result =
-      action === 'archive' ? await archiveKnowledgeBase(***REMOVED***.***REMOVED***Id) : await restoreKnowledgeBase(***REMOVED***.***REMOVED***Id);
+      action === 'archive' ? await archiveKnowledgeBase(kb.kbId) : await restoreKnowledgeBase(kb.kbId);
     setStatusBusy(false);
     if (result === undefined) {
       return;
     }
-    toast(action === 'archive' ? '已归档' : '已恢复', ***REMOVED***.name, 'success');
+    toast(action === 'archive' ? '已归档' : '已恢复', kb.name, 'success');
     void load();
   };
 
   const confirmDelete = async () => {
-    if (!***REMOVED*** || deleteCode.trim() !== ***REMOVED***.code) {
+    if (!kb || deleteCode.trim() !== kb.code) {
       return;
     }
     setDeleting(true);
-    const result = await removeKnowledgeBase(***REMOVED***.***REMOVED***Id);
+    const result = await removeKnowledgeBase(kb.kbId);
     setDeleting(false);
     if (result === undefined) {
       return;
     }
-    toast('知识库已删除', ***REMOVED***.name, 'success');
+    toast('知识库已删除', kb.name, 'success');
     navigate('/knowledge-bases');
   };
 
@@ -145,7 +145,7 @@ export default function KnowledgeBaseSettingsPage() {
     );
   }
 
-  if (notFound || !***REMOVED***) {
+  if (notFound || !kb) {
     return (
       <div className="view">
         <div className="panel">
@@ -161,23 +161,23 @@ export default function KnowledgeBaseSettingsPage() {
     );
   }
 
-  const typeMeta = TYPE_META[***REMOVED***.type] || TYPE_META.FILE;
+  const typeMeta = TYPE_META[kb.type] || TYPE_META.FILE;
 
   return (
     <div className="view settings-view">
       <div className="settings-page">
         <nav className="settings-page-nav" aria-label="设置分区">
-          <div className="settings-nav-***REMOVED***">
+          <div className="settings-nav-kb">
             <button
               className="settings-nav-back"
               type="button"
-              onClick={() => navigate(`/knowledge-bases/${***REMOVED***.***REMOVED***Id}`)}
+              onClick={() => navigate(`/knowledge-bases/${kb.kbId}`)}
             >
               <Icon name="arrow-left" size={13} />
               返回知识库
             </button>
-            <b className="settings-nav-title" title={***REMOVED***.name}>
-              {***REMOVED***.name}
+            <b className="settings-nav-title" title={kb.name}>
+              {kb.name}
             </b>
           </div>
           {SECTIONS.map((item) => (
@@ -212,11 +212,11 @@ export default function KnowledgeBaseSettingsPage() {
                 <div className="panel-body">
                   <div className="form-grid">
                     <div className="field">
-                      <label htmlFor="***REMOVED***-basic-name">
+                      <label htmlFor="kb-basic-name">
                         知识库名称 <span className="req">*</span>
                       </label>
                       <input
-                        id="***REMOVED***-basic-name"
+                        id="kb-basic-name"
                         className="input"
                         value={name}
                         onChange={(event) => setName(event.target.value)}
@@ -224,7 +224,7 @@ export default function KnowledgeBaseSettingsPage() {
                     </div>
                     <div className="field">
                       <label>编码</label>
-                      <div className="readonly-value">{***REMOVED***.code}</div>
+                      <div className="readonly-value">{kb.code}</div>
                     </div>
                     <div className="field">
                       <label>类型</label>
@@ -234,12 +234,12 @@ export default function KnowledgeBaseSettingsPage() {
                     </div>
                     <div className="field">
                       <label>嵌入模型</label>
-                      <div className="readonly-value">{***REMOVED***.embeddingModel || '—'}</div>
+                      <div className="readonly-value">{kb.embeddingModel || '—'}</div>
                     </div>
                     <div className="field span-2">
-                      <label htmlFor="***REMOVED***-basic-description">描述</label>
+                      <label htmlFor="kb-basic-description">描述</label>
                       <textarea
-                        id="***REMOVED***-basic-description"
+                        id="kb-basic-description"
                         className="textarea"
                         value={description}
                         onChange={(event) => setDescription(event.target.value)}
@@ -251,7 +251,7 @@ export default function KnowledgeBaseSettingsPage() {
                     <button
                       className="btn primary"
                       type="button"
-                      disabled={saving || !***REMOVED***.canManage}
+                      disabled={saving || !kb.canManage}
                       onClick={() => void saveBasic()}
                     >
                       <Icon name="check" size={13} />
@@ -267,7 +267,7 @@ export default function KnowledgeBaseSettingsPage() {
                     <Icon name="globe" size={14} />
                     租户归属
                   </h3>
-                  <span className="tag gray mono">{***REMOVED***.tenantCode}</span>
+                  <span className="tag gray mono">{kb.tenantCode}</span>
                 </div>
                 <div className="panel-body">
                   <dl className="kv">
@@ -276,11 +276,11 @@ export default function KnowledgeBaseSettingsPage() {
                       {tenant.name} · {tenant.code}
                     </dd>
                     <dt>负责人</dt>
-                    <dd className="mono-sm">actorId {***REMOVED***.ownerId}</dd>
+                    <dd className="mono-sm">actorId {kb.ownerId}</dd>
                     <dt>创建时间</dt>
-                    <dd>{formatDateTime(***REMOVED***.createTime)}</dd>
+                    <dd>{formatDateTime(kb.createTime)}</dd>
                     <dt>最近更新</dt>
-                    <dd>{formatDateTime(***REMOVED***.updateTime)}</dd>
+                    <dd>{formatDateTime(kb.updateTime)}</dd>
                   </dl>
                   <div className="callout mt-16">
                     <Icon name="lock" size={15} />
@@ -304,12 +304,12 @@ export default function KnowledgeBaseSettingsPage() {
                   </h3>
                   <div className="actions">
                     <span className="hint">我的角色：{roleLabel(effective?.role)}</span>
-                    <span className={`tag ${***REMOVED***.canManage ? 'green' : 'gray'}`}>
-                      {***REMOVED***.canManage ? '可管理' : '只读'}
+                    <span className={`tag ${kb.canManage ? 'green' : 'gray'}`}>
+                      {kb.canManage ? '可管理' : '只读'}
                     </span>
                   </div>
                 </div>
-                <***REMOVED***MemberPanel ***REMOVED***Id={***REMOVED***.***REMOVED***Id} canManage={!!***REMOVED***.canManage} />
+                <KbMemberPanel kbId={kb.kbId} canManage={!!kb.canManage} />
               </div>
               <div className="panel mb-16">
                 <div className="panel-head">
@@ -320,7 +320,7 @@ export default function KnowledgeBaseSettingsPage() {
                   <button
                     className="btn sm"
                     type="button"
-                    onClick={() => navigate(`/knowledge-bases/${***REMOVED***.***REMOVED***Id}/versions`)}
+                    onClick={() => navigate(`/knowledge-bases/${kb.kbId}/versions`)}
                   >
                     <Icon name="arrow-right" size={12} />
                     进入版本管理
@@ -350,7 +350,7 @@ export default function KnowledgeBaseSettingsPage() {
                 <div className="panel-body">
                   <dl className="kv">
                     <dt>canManage</dt>
-                    <dd>{String(***REMOVED***.canManage)}</dd>
+                    <dd>{String(kb.canManage)}</dd>
                     <dt>当前角色</dt>
                     <dd>{roleLabel(effective?.role)}</dd>
                     <dt>创建者</dt>
@@ -358,7 +358,7 @@ export default function KnowledgeBaseSettingsPage() {
                     <dt>可见范围</dt>
                     <dd>当前租户 + owner/ACL</dd>
                     <dt>租户</dt>
-                    <dd className="mono-sm">{***REMOVED***.tenantCode}</dd>
+                    <dd className="mono-sm">{kb.tenantCode}</dd>
                   </dl>
                   <div className="mt-16">
                     <span className="note">服务端返回的有效动作</span>
@@ -384,7 +384,7 @@ export default function KnowledgeBaseSettingsPage() {
                 </h3>
               </div>
               <div className="panel-body">
-                <SourceConfigPanel ***REMOVED***Id={***REMOVED***.***REMOVED***Id} canManage={!!***REMOVED***.canManage} />
+                <SourceConfigPanel kbId={kb.kbId} canManage={!!kb.canManage} />
               </div>
             </div>
           ) : null}
@@ -399,7 +399,7 @@ export default function KnowledgeBaseSettingsPage() {
                 <span className="hint">库内未覆盖时继承租户默认 · 整版发布</span>
               </div>
               <div className="panel-body">
-                <TaskConfigPanel ***REMOVED***Id={***REMOVED***.***REMOVED***Id} canManage={!!***REMOVED***.canManage} />
+                <TaskConfigPanel kbId={kb.kbId} canManage={!!kb.canManage} />
               </div>
             </div>
           ) : null}
@@ -416,12 +416,12 @@ export default function KnowledgeBaseSettingsPage() {
               <div className="panel-body">
                 <div className="binding-row">
                   <span className="ic">
-                    <Icon name={***REMOVED***.status === 'ACTIVE' ? 'archive' : 'refresh'} size={15} />
+                    <Icon name={kb.status === 'ACTIVE' ? 'archive' : 'refresh'} size={15} />
                   </span>
                   <div className="copy">
-                    <b>{***REMOVED***.status === 'ACTIVE' ? '归档知识库' : '恢复知识库'}</b>
+                    <b>{kb.status === 'ACTIVE' ? '归档知识库' : '恢复知识库'}</b>
                     <small>
-                      {***REMOVED***.status === 'ACTIVE'
+                      {kb.status === 'ACTIVE'
                         ? '停止写入与编译，保留读取，可随时恢复'
                         : '状态回到 ACTIVE，archivedAt 清空'}
                     </small>
@@ -429,11 +429,11 @@ export default function KnowledgeBaseSettingsPage() {
                   <button
                     className="btn sm"
                     type="button"
-                    disabled={statusBusy || !***REMOVED***.canManage}
-                    onClick={() => void changeStatus(***REMOVED***.status === 'ACTIVE' ? 'archive' : 'restore')}
+                    disabled={statusBusy || !kb.canManage}
+                    onClick={() => void changeStatus(kb.status === 'ACTIVE' ? 'archive' : 'restore')}
                   >
-                    <Icon name={***REMOVED***.status === 'ACTIVE' ? 'archive' : 'refresh'} size={12} />
-                    {***REMOVED***.status === 'ACTIVE' ? '归档' : '恢复'}
+                    <Icon name={kb.status === 'ACTIVE' ? 'archive' : 'refresh'} size={12} />
+                    {kb.status === 'ACTIVE' ? '归档' : '恢复'}
                   </button>
                 </div>
                 <div className="row between mt-20">
@@ -446,7 +446,7 @@ export default function KnowledgeBaseSettingsPage() {
                   <button
                     className="btn danger"
                     type="button"
-                    disabled={!***REMOVED***.canManage || ***REMOVED***.status !== 'ARCHIVED'}
+                    disabled={!kb.canManage || kb.status !== 'ARCHIVED'}
                     onClick={() => {
                       setDeleteCode('');
                       setDeleteOpen(true);
@@ -456,7 +456,7 @@ export default function KnowledgeBaseSettingsPage() {
                     删除知识库
                   </button>
                 </div>
-                {***REMOVED***.status !== 'ARCHIVED' ? (
+                {kb.status !== 'ARCHIVED' ? (
                   <div className="callout mt-16">
                     <Icon name="info" size={15} />
                     <div className="ct">
@@ -474,7 +474,7 @@ export default function KnowledgeBaseSettingsPage() {
       {deleteOpen ? (
         <AppModal
           icon="trash"
-          title={`删除知识库 · ${***REMOVED***.name}`}
+          title={`删除知识库 · ${kb.name}`}
           sub="危险区 · 删除不可恢复"
           width={600}
           onClose={() => setDeleteOpen(false)}
@@ -486,7 +486,7 @@ export default function KnowledgeBaseSettingsPage() {
               <button
                 className="btn danger"
                 type="button"
-                disabled={deleteCode.trim() !== ***REMOVED***.code || deleting}
+                disabled={deleteCode.trim() !== kb.code || deleting}
                 onClick={() => void confirmDelete()}
               >
                 <Icon name="trash" size={12} />
@@ -504,11 +504,11 @@ export default function KnowledgeBaseSettingsPage() {
                 </div>
               </div>
               <div className="field mt-16">
-                <label>输入编码 {***REMOVED***.code} 以确认</label>
+                <label>输入编码 {kb.code} 以确认</label>
                 <input
                   className="input mono"
                   value={deleteCode}
-                  placeholder={***REMOVED***.code}
+                  placeholder={kb.code}
                   autoComplete="off"
                   onChange={(event) => setDeleteCode(event.target.value)}
                 />

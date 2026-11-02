@@ -1,12 +1,12 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.EntityType;
-import com.zifang.z.***REMOVED***.api.GraphQueryResult;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.api.Relation;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.EntityType;
+import com.zifang.z.kb.api.GraphQueryResult;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.Relation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * 评测用的内存替身 — 精确复刻 {@code JsonFileKnowledgeGraphStore.searchEntities} 的
  * {@code canonicalName.contains(keyword)} 匹配语义，以及 {@code ZVectorChunkVectorStore}
- * 的 {@code ***REMOVED***_<workspace>_<collection>} 物理命名。
+ * 的 {@code kb_<workspace>_<collection>} 物理命名。
  *
  * <p>物理命名必须照抄：写入侧与检索侧一旦用不同字面量，真实环境下表现为向量路静默恒空，
  * 而任何简化命名的替身都会把这类 bug 掩盖成「一切正常」。
@@ -40,7 +40,7 @@ class InMemoryStores {
         final List<String> probedCollections = new ArrayList<>();
 
         private String physical(String workspace, String collection) {
-            return "***REMOVED***_" + workspace + "_" + collection;
+            return "kb_" + workspace + "_" + collection;
         }
 
         @Override

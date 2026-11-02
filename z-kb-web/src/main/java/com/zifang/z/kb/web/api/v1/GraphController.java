@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.graph.GraphService;
-import com.zifang.z.***REMOVED***.api.graph.GraphView;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.graph.GraphService;
+import com.zifang.z.kb.api.graph.GraphView;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,33 +16,33 @@ import org.springframework.web.bind.annotation.RestController;
  * 本地规则图谱 REST API（路径与语义对齐参考实现）。
  */
 @Tag(name = "本地规则图谱")
-@RestController("***REMOVED***GraphV1Controller")
-@RequestMapping("/api/***REMOVED***/v1/graph")
+@RestController("kbGraphV1Controller")
+@RequestMapping("/api/kb/v1/graph")
 public class GraphController {
 
     private final GraphService graphService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
-    public GraphController(GraphService graphService, ***REMOVED***CallerResolver callerResolver) {
+    public GraphController(GraphService graphService, KbCallerResolver callerResolver) {
         this.graphService = graphService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "按知识库查询图谱",
             description = "节点按名称、边按标识稳定排序，各上限 200 条；可传 materialId 收窄证据资料")
-    @GetMapping("/queryBy***REMOVED***")
-    public ***REMOVED***Result<GraphView> queryBy***REMOVED***(@RequestParam String ***REMOVED***Id,
+    @GetMapping("/queryByKb")
+    public KbResult<GraphView> queryByKb(@RequestParam String kbId,
                                          @RequestParam(required = false) String materialId,
                                          HttpServletRequest request) {
-        return ***REMOVED***Result.ok(graphService.queryBy***REMOVED***(***REMOVED***Id, materialId,
+        return KbResult.ok(graphService.queryByKb(kbId, materialId,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "按物料查询图谱", description = "只返回以该物料为证据资料的节点与边")
     @GetMapping("/queryByMaterial")
-    public ***REMOVED***Result<GraphView> queryByMaterial(@RequestParam String materialId,
+    public KbResult<GraphView> queryByMaterial(@RequestParam String materialId,
                                                HttpServletRequest request) {
-        return ***REMOVED***Result.ok(graphService.queryByMaterial(materialId,
+        return KbResult.ok(graphService.queryByMaterial(materialId,
                 callerResolver.resolve(request)));
     }
 }

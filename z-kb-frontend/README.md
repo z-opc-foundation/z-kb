@@ -1,4 +1,4 @@
-# z-***REMOVED*** 管理前端（z-***REMOVED***-frontend）
+# z-kb 管理前端（z-kb-frontend）
 
 React 19 + TypeScript + Vite 工程，使用 Ant Design、React Router 与 Axios。当前分支 `feature/feature001` 承载迁入的知识中台页面（知识库、资料、Wiki、图谱、评估、AI 基建等）。
 
@@ -11,8 +11,8 @@ React 19 + TypeScript + Vite 工程，使用 Ant Design、React Router 与 Axios
 
 ```bash
 fnpm install
-fnpm run dev        # 联调本地后端时配合 ***REMOVED***API_TARGET，见「本地代理」
-fnpm run dev:dev    # 固定打 dev 后端，忽略 shell 里的 ***REMOVED***API_TARGET
+fnpm run dev        # 联调本地后端时配合 KB_API_TARGET，见「本地代理」
+fnpm run dev:dev    # 固定打 dev 后端，忽略 shell 里的 KB_API_TARGET
 ```
 
 开发服务监听 `5173`，访问 `http://localhost:5173/`。允许 `*.cfuture.shop` 和局域网地址访问。
@@ -21,11 +21,11 @@ fnpm run dev:dev    # 固定打 dev 后端，忽略 shell 里的 ***REMOVED***AP
 
 1. `/etc/hosts` 配置 `127.0.0.1 local.cfuture.shop`（本机已配）。
 2. `fnpm run dev:dev`，用 `http://local.cfuture.shop:5173/` 进站，不要用 `127.0.0.1`。
-3. 未登录时接口返回 `101012001`，前端自动跳 apex dev 登录页；登录后回到本地页面，接口直连 `***REMOVED***-dev.cfuture.shop`。
+3. 未登录时接口返回 `101012001`，前端自动跳 apex dev 登录页；登录后回到本地页面，接口直连 `kb-dev.cfuture.shop`。
 
 原因：apex 把登录 cookie 种在 `.cfuture.shop` 域（非 Secure），只有 `local.cfuture.shop` 这类子域能带上，vite 再原样透传给 dev 后端；`127.0.0.1` 拿不到该 cookie，会一直被判定未登录。
 
-三个脚手架工程和 z-***REMOVED***-frontend 使用相同端口，不能同时按默认配置启动。
+三个脚手架工程和 z-kb-frontend 使用相同端口，不能同时按默认配置启动。
 
 ## 目录
 
@@ -49,7 +49,7 @@ scripts/         本地启动脚本
 
 ## 请求与登录
 
-业务接口统一通过 `src/services/http.ts` 的 `request<T>(url, options)`、`downloadFile`、`buildApiUrl` 调用。Axios 的 `baseURL` 为 `/kapi`；知识中台接口统一走 `/kapi/***REMOVED***/v1/...`（对应 Matrix 应用 `z-***REMOVED***`，dev 站点 `http://***REMOVED***-dev.cfuture.shop`）。
+业务接口统一通过 `src/services/http.ts` 的 `request<T>(url, options)`、`downloadFile`、`buildApiUrl` 调用。Axios 的 `baseURL` 为 `/kapi`；知识中台接口统一走 `/kapi/kb/v1/...`（对应 Matrix 应用 `z-kb`，dev 站点 `http://kb-dev.cfuture.shop`）。
 
 响应包含 `data` 以及 `code` 或 `success` 时会自动解包。`success: true` 或 `code` 为 `0`、`200`（含字符串形式）表示成功，其他业务状态抛出 `RequestError`。非统一响应直接透传，文件下载返回 Blob。
 
@@ -61,7 +61,7 @@ scripts/         本地启动脚本
 
 | 前缀 | 目标及处理 |
 | --- | --- |
-| `/kapi/***REMOVED***` | `***REMOVED***API_TARGET` 或 `http://***REMOVED***-dev.cfuture.shop`；设置 `***REMOVED***API_TARGET` 时剥掉 `/kapi` 打本地 18080，并补 `X-Tenant-Code`/`X-Actor-Id` |
+| `/kapi/kb` | `KB_API_TARGET` 或 `http://kb-dev.cfuture.shop`；设置 `KB_API_TARGET` 时剥掉 `/kapi` 打本地 18080，并补 `X-Tenant-Code`/`X-Actor-Id` |
 | `/kapi/development-brain-portal` | `http://127.0.0.1:8080`，仅剥掉 `/kapi` |
 | `/kapi/apex-sso` | `APEX_SSO_TARGET` 或 `http://c2f.apex-dev.cfuture.shop`（本地开发用同源代理完成登录/退出） |
 | `/kapi/hbos-emr` | `https://hbos-test.cfuture.shop` |
@@ -84,6 +84,6 @@ fnpm run preview
 
 ## 部署到 dev（Matrix）
 
-- Matrix 应用：`z-***REMOVED***-frontend`（id `4019`），dev 流水线 `z-***REMOVED***-frontend_dev_defaultPipeline`，环境 `base-dev`，构建类型 `feMultiBuild`。
-- dev 站点：`http://***REMOVED***-dev.cfuture.shop/`，构建产物带版本前缀（`/<version>/assets/...`）；深链直连可能因 nginx 无 SPA 回退而 500，从 `/` 进站后客户端跳转。
+- Matrix 应用：`z-kb-frontend`（id `4019`），dev 流水线 `z-kb-frontend_dev_defaultPipeline`，环境 `base-dev`，构建类型 `feMultiBuild`。
+- dev 站点：`http://kb-dev.cfuture.shop/`，构建产物带版本前缀（`/<version>/assets/...`）；深链直连可能因 nginx 无 SPA 回退而 500，从 `/` 进站后客户端跳转。
 - 发布方式：从 Matrix 主干 `master` 切出 feature 分支，合并待发布分支后提交 dev 部署；发布记录见应用「部署信息」。

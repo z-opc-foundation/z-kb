@@ -16,7 +16,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/kb/v1/knowledgeBase';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -43,10 +43,10 @@ describe('知识库接口', () => {
   });
 
   it('详情、新建、更新、归档、恢复与删除', async () => {
-    await getKnowledgeBase('***REMOVED***-1');
+    await getKnowledgeBase('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/queryDetailById`, {
       method: 'get',
-      params: { ***REMOVED***Id: '***REMOVED***-1' },
+      params: { kbId: 'kb-1' },
       headers,
     });
 
@@ -58,7 +58,7 @@ describe('知识库接口', () => {
       headers,
     });
 
-    const update = { ***REMOVED***Id: '***REMOVED***-1', name: '新名字' };
+    const update = { kbId: 'kb-1', name: '新名字' };
     await updateKnowledgeBase(update);
     expect(request).toHaveBeenLastCalledWith(`${BASE}/update`, {
       method: 'post',
@@ -66,35 +66,35 @@ describe('知识库接口', () => {
       headers,
     });
 
-    await archiveKnowledgeBase('***REMOVED***-1');
+    await archiveKnowledgeBase('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/archive`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1' },
+      data: { kbId: 'kb-1' },
       headers,
     });
 
-    await restoreKnowledgeBase('***REMOVED***-1');
+    await restoreKnowledgeBase('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/restore`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1' },
+      data: { kbId: 'kb-1' },
       headers,
     });
 
-    await removeKnowledgeBase('***REMOVED***-1');
+    await removeKnowledgeBase('kb-1');
     expect(request).toHaveBeenLastCalledWith(`${BASE}/remove`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1' },
+      data: { kbId: 'kb-1' },
       headers,
     });
   });
 
   it('默认失败提示并返回 undefined', async () => {
     vi.mocked(request).mockRejectedValueOnce(new Error('boom'));
-    await expect(removeKnowledgeBase('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(removeKnowledgeBase('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenCalledWith('请求失败', 'boom', 'error');
 
     vi.mocked(request).mockRejectedValueOnce('bad');
-    await expect(getKnowledgeBase('***REMOVED***-1')).resolves.toBeUndefined();
+    await expect(getKnowledgeBase('kb-1')).resolves.toBeUndefined();
     expect(toast).toHaveBeenLastCalledWith('请求失败', '服务器错误', 'error');
   });
 });

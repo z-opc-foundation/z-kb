@@ -15,7 +15,7 @@ import {
 function material(overrides: Partial<MaterialRecord>): MaterialRecord {
   return {
     materialId: 'm-default',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '条目',
     sourceType: 'LOCAL',

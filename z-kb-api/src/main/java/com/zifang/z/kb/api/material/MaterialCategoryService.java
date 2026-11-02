@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
+import com.zifang.z.kb.api.resource.KbCaller;
 
 import java.util.List;
 import java.util.Map;
@@ -33,24 +33,24 @@ public interface MaterialCategoryService {
     String NODE_SOURCE_LOCAL_DIR = "SOURCE_LOCAL_DIR";
 
     /** 返回知识库的分类树（根节点列表，子节点挂在 children 上）。 */
-    List<MaterialCategoryNode> tree(String ***REMOVED***Id, ***REMOVED***Caller caller);
+    List<MaterialCategoryNode> tree(String kbId, KbCaller caller);
 
     /** 在指定父分类下新增分类，受 3 层深度与同级重名约束。 */
-    MaterialCategoryNode add(String ***REMOVED***Id, String parentId, String name, ***REMOVED***Caller caller);
+    MaterialCategoryNode add(String kbId, String parentId, String name, KbCaller caller);
 
     /** 重命名分类，同级重名时失败。 */
-    boolean update(String categoryId, String name, ***REMOVED***Caller caller);
+    boolean update(String categoryId, String name, KbCaller caller);
 
     /** 移动分类到新的父分类（parentId 为空表示移到根层级），受 3 层深度与同级重名约束。 */
-    boolean move(String categoryId, String parentId, ***REMOVED***Caller caller);
+    boolean move(String categoryId, String parentId, KbCaller caller);
 
     /** 删除分类，存在子分类或仍挂有物料时禁止删除。 */
-    boolean remove(String categoryId, ***REMOVED***Caller caller);
+    boolean remove(String categoryId, KbCaller caller);
 
     /**
      * 幂等确保一个来源节点存在：同一 parentId 下按 nodeKind + bindKey 复用，显示名随来源变化更新。
      * bindKey 写进 ext 的 key 字段，普通分类不参与匹配。
      */
-    MaterialCategoryNode ensureBoundNode(String ***REMOVED***Id, String parentId, String nodeKind, String name,
-            String bindKey, Map<String, Object> ext, ***REMOVED***Caller caller);
+    MaterialCategoryNode ensureBoundNode(String kbId, String parentId, String nodeKind, String name,
+            String bindKey, Map<String, Object> ext, KbCaller caller);
 }

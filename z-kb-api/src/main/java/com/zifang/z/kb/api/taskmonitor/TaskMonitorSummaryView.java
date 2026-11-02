@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.taskmonitor;
+package com.zifang.z.kb.api.taskmonitor;
 
 /**
  * 任务管理角标汇总：组别、单任务与调度任务三类计数。

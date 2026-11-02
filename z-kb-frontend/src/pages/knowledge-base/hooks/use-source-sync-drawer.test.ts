@@ -22,7 +22,7 @@ import {
 import { toast } from '@/utils/toast';
 import { useSourceSyncDrawer } from './use-source-sync-drawer';
 
-const ***REMOVED***ID = '***REMOVED***-1';
+const KB_ID = 'kb-1';
 const SOURCE_ID = 'src-1';
 
 const SOURCE_RECORD = {
@@ -75,15 +75,15 @@ beforeEach(() => {
 
 describe('useSourceSyncDrawer', () => {
   it('打开时按节点 sourceId 读取接入源与语雀目录，并回填已保存的勾选', async () => {
-    const { result } = renderHook(() => useSourceSyncDrawer(***REMOVED***ID));
+    const { result } = renderHook(() => useSourceSyncDrawer(KB_ID));
 
     await act(async () => {
       result.current.open(NODE);
     });
 
-    expect(listKnowledgeBaseSources).toHaveBeenCalledWith(***REMOVED***ID);
+    expect(listKnowledgeBaseSources).toHaveBeenCalledWith(KB_ID);
     expect(loadYuqueCatalog).toHaveBeenCalledWith(
-      ***REMOVED***ID,
+      KB_ID,
       expect.objectContaining({ sourceId: SOURCE_ID, provider: 'YUQUE' }),
     );
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -92,7 +92,7 @@ describe('useSourceSyncDrawer', () => {
   });
 
   it('节点没有绑定接入源时只提示，不打开抽屉', () => {
-    const { result } = renderHook(() => useSourceSyncDrawer(***REMOVED***ID));
+    const { result } = renderHook(() => useSourceSyncDrawer(KB_ID));
 
     act(() => {
       result.current.open({ categoryId: 'c', name: '普通分类', sortNo: 1 });
@@ -103,7 +103,7 @@ describe('useSourceSyncDrawer', () => {
   });
 
   it('勾选知识库后展开文章仍按整库，勾文章则改按文章白名单', async () => {
-    const { result } = renderHook(() => useSourceSyncDrawer(***REMOVED***ID));
+    const { result } = renderHook(() => useSourceSyncDrawer(KB_ID));
     await act(async () => {
       result.current.open(NODE);
     });
@@ -130,7 +130,7 @@ describe('useSourceSyncDrawer', () => {
   });
 
   it('保存勾选后先写入 scope 再触发同步，并关闭抽屉', async () => {
-    const { result } = renderHook(() => useSourceSyncDrawer(***REMOVED***ID));
+    const { result } = renderHook(() => useSourceSyncDrawer(KB_ID));
     await act(async () => {
       result.current.open(NODE);
     });
@@ -141,7 +141,7 @@ describe('useSourceSyncDrawer', () => {
       result.current.saveAndSync();
     });
 
-    expect(saveKnowledgeBaseSources).toHaveBeenCalledWith(***REMOVED***ID, [
+    expect(saveKnowledgeBaseSources).toHaveBeenCalledWith(KB_ID, [
       expect.objectContaining({
         sourceId: SOURCE_ID,
         scope: expect.objectContaining({
@@ -152,7 +152,7 @@ describe('useSourceSyncDrawer', () => {
         }),
       }),
     ]);
-    expect(syncKnowledgeBaseSource).toHaveBeenCalledWith(***REMOVED***ID, SOURCE_ID);
+    expect(syncKnowledgeBaseSource).toHaveBeenCalledWith(KB_ID, SOURCE_ID);
     await waitFor(() => expect(result.current.target).toBeNull());
     expect(toast).toHaveBeenCalledWith(
       '已按新的范围同步',
@@ -162,7 +162,7 @@ describe('useSourceSyncDrawer', () => {
   });
 
   it('一个知识库都没勾时不保存也不同步', async () => {
-    const { result } = renderHook(() => useSourceSyncDrawer(***REMOVED***ID));
+    const { result } = renderHook(() => useSourceSyncDrawer(KB_ID));
     vi.mocked(listKnowledgeBaseSources).mockResolvedValue([{ ...SOURCE_RECORD, scope: {} }]);
     await act(async () => {
       result.current.open(NODE);

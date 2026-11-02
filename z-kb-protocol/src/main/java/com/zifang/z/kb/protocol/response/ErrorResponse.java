@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

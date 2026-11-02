@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.ingest.pipeline;
+package com.zifang.z.kb.ingest.pipeline;
 
-import com.zifang.z.***REMOVED***.ingest.api.DataSource;
-import com.zifang.z.***REMOVED***.ingest.api.DataSourceType;
-import com.zifang.z.***REMOVED***.ingest.api.IngestRequest;
-import com.zifang.z.***REMOVED***.ingest.api.IngestResult;
-import com.zifang.z.***REMOVED***.ingest.source.*;
+import com.zifang.z.kb.ingest.api.DataSource;
+import com.zifang.z.kb.ingest.api.DataSourceType;
+import com.zifang.z.kb.ingest.api.IngestRequest;
+import com.zifang.z.kb.ingest.api.IngestResult;
+import com.zifang.z.kb.ingest.source.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

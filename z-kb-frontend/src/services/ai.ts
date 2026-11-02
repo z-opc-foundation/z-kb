@@ -22,7 +22,7 @@ export interface AiAgentRecord {
   publishedVersion?: number | null;
   systemPrompt?: string;
   llmCode?: string;
-  ***REMOVED***Id?: string;
+  kbId?: string;
   skillCodes: string[];
   toolCodes: string[];
   createTime?: string;
@@ -83,7 +83,7 @@ export interface AiAgentSavePayload {
   name: string;
   description?: string;
   systemPrompt?: string;
-  ***REMOVED***Id?: string;
+  kbId?: string;
   skillCodes: string[];
   toolCodes: string[];
 }
@@ -106,14 +106,14 @@ export interface AiToolRegisterPayload {
 
 export interface AiToolInvokePayload {
   code: string;
-  ***REMOVED***Id?: string;
+  kbId?: string;
   arguments: Record<string, unknown>;
 }
 
 export interface AiChatStreamPayload {
   agentCode: string;
   conversationId?: string;
-  ***REMOVED***Id?: string;
+  kbId?: string;
   userInput: string;
   /** 页面上下文（当前视图、选中资料等），后端并入提示词变量。 */
   context?: Record<string, string>;
@@ -126,7 +126,7 @@ export interface AiChatEvent {
   messageId?: string;
 }
 
-const BASE = '/***REMOVED***/v1/ai';
+const BASE = '/kb/v1/ai';
 
 const tenantHeaders = () => ({
   'X-Tenant-Code': getTenantCode(),

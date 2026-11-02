@@ -32,7 +32,7 @@ export interface RepoFile {
   content?: string | null;
 }
 
-const BASE = '/***REMOVED***/v1/material/repo';
+const BASE = '/kb/v1/material/repo';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.extraction;
+package com.zifang.z.kb.api.extraction;
 
 /**
  * 单条萃取条目视图，携带可选的关联概念。

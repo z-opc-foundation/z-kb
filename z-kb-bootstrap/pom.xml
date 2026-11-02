@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-bootstrap</artifactId>
+    <artifactId>z-kb-bootstrap</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: bootstrap</name>
+    <name>z-kb :: bootstrap</name>
     <description>
-        z-***REMOVED*** 启动器 — 独立可执行的 Spring Boot 应用，默认端口 8889。
-        集成所有 z-***REMOVED*** 子模块 + Knife4j，开箱即用。
+        z-kb 启动器 — 独立可执行的 Spring Boot 应用，默认端口 8889。
+        集成所有 z-kb 子模块 + Knife4j，开箱即用。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,9 +43,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-web</artifactId>
+            <artifactId>z-kb-web</artifactId>
         </dependency>
 
         <!-- ==================== 日志面（2026-11-01 补） ====================
@@ -159,7 +159,7 @@
         </dependency>
 
         <!-- 原显式 slf4j-api 1.7.36 直条目已删（2026-10-02）：版本字面值与根 pom DM 的
-             ${slf4j.version}=2.0.13 冲突且无 main 引用——z-***REMOVED***-web 与 spring-boot-starter 的
+             ${slf4j.version}=2.0.13 冲突且无 main 引用——z-kb-web 与 spring-boot-starter 的
              传递 slf4j-api 已经够了，直条目是噪声。 -->
     </dependencies>
 
@@ -170,7 +170,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.zifang.z.***REMOVED***.bootstrap.***REMOVED***Application</mainClass>
+                    <mainClass>com.zifang.z.kb.bootstrap.KbBootstrapApplication</mainClass>
                     <!-- 原 <excludes>slf4j-simple</excludes> 已删（2026-10-02）：上面 provided
                          声明同时没了，fat jar 没有任何东西要再显式排除；留着是误以为有 binding 要滤。 -->
                 </configuration>

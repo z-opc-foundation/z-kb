@@ -1,6 +1,6 @@
-# z-***REMOVED*** 部署清单（deploy/k8s）
+# z-kb 部署清单（deploy/k8s）
 
-本目录是 **z-***REMOVED***** 在家庭 k3s 集群（节点 `zifang001` / `zifang002`）的部署清单。
+本目录是 **z-kb** 在家庭 k3s 集群（节点 `zifang001` / `zifang002`）的部署清单。
 
 这批 Deployment 当初是手工 `kubectl apply` 上去的，仓里查不到「它是怎么部署的」——
 集群无法从代码复现，发版只能靠记忆和手记。本目录把**线上实况**（`kubectl get deploy,svc -o yaml` 的真实导出）固化回代码。
@@ -11,16 +11,16 @@
 
 | 文件 | 对象 | 线上对应 |
 |---|---|---|
-| `00-namespace.yaml` | Namespace `z-***REMOVED***` | 已存在 |
-| `01-service.yaml` | Service `z-***REMOVED***-server`（NodePort 31889 → 8889） | 已存在 |
-| `02-deployment.yaml` | Deployment `z-***REMOVED***-server`（镜像 `zopc/z-***REMOVED***:local`，replicas **0**） | 已存在 |
+| `00-namespace.yaml` | Namespace `z-kb` | 已存在 |
+| `01-service.yaml` | Service `z-kb-server`（NodePort 31889 → 8889） | 已存在 |
+| `02-deployment.yaml` | Deployment `z-kb-server`（镜像 `zopc/z-kb:local`，replicas **0**） | 已存在 |
 | `README.md` | 本文件 | — |
 
 线上实况要点（与基线导出逐条对齐）：
 
-- Deployment 名 `z-***REMOVED***-server`，容器名 `z-***REMOVED***`，容器端口 `8889`（端口名 `http`）
-- Service `z-***REMOVED***-server`，`type: NodePort`，`port 8889 → targetPort http`，`nodePort 31889`
-- 镜像 `zopc/z-***REMOVED***:local`，`imagePullPolicy: Never`
+- Deployment 名 `z-kb-server`，容器名 `z-kb`，容器端口 `8889`（端口名 `http`）
+- Service `z-kb-server`，`type: NodePort`，`port 8889 → targetPort http`，`nodePort 31889`
+- 镜像 `zopc/z-kb:local`，`imagePullPolicy: Never`
 - env：`JAVA_OPTS=-Xms256m -Xmx1024m -Dspring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER`
 - resources：requests `300m` / `1536Mi`，limits `2` CPU / `2Gi`
 - **replicas 线上是 0**（2026-10-19 23:17 手工 scale down）
@@ -30,32 +30,32 @@
 
 ### 现状（如实说明）
 
-**本仓没有 Dockerfile。** 全仓 grep 无 `Dockerfile` / `*.Dockerfile`（`z-***REMOVED***/deploy/` 目录是本任务新建的）。
-⇒ **「把源码变成 `zopc/z-***REMOVED***:local`」这一步目前不在仓内**，
+**本仓没有 Dockerfile。** 全仓 grep 无 `Dockerfile` / `*.Dockerfile`（`z-kb/deploy/` 目录是本任务新建的）。
+⇒ **「把源码变成 `zopc/z-kb:local`」这一步目前不在仓内**，
 线上那份镜像是当初在节点上手工构建后喂进 containerd 的，仓里没有留下可复现的构建定义。
 
-线上镜像口径：裸 tag `zopc/z-***REMOVED***:local`，只存在于两个节点的 containerd，不在任何 registry。
+线上镜像口径：裸 tag `zopc/z-kb:local`，只存在于两个节点的 containerd，不在任何 registry。
 
 ### 建议命令（可执行；Dockerfile 需先补进本仓）
 
 ```bash
-# 1) 打 jar —— 启动类是 z-***REMOVED***-bootstrap 里的 ***REMOVED***Application
-cd z-***REMOVED***
-mvn -pl z-***REMOVED***-bootstrap -am clean package -DskipTests
-# 产物：z-***REMOVED***-bootstrap/target/z-***REMOVED***-bootstrap-1.0.7.jar
+# 1) 打 jar —— 启动类是 z-kb-bootstrap 里的 KbBootstrapApplication
+cd z-kb
+mvn -pl z-kb-bootstrap -am clean package -DskipTests
+# 产物：z-kb-bootstrap/target/z-kb-bootstrap-1.0.7.jar
 
 # 2) 本仓当前没有 Dockerfile，建议新增 deploy/Dockerfile（Java 8 口径与本仓
 #    maven.compiler.source/target=1.8 一致；参考 z-task/Dockerfile 的写法）：
 #
 #    FROM eclipse-temurin:8-jre
 #    WORKDIR /app
-#    COPY z-***REMOVED***-bootstrap/target/z-***REMOVED***-bootstrap-1.0.7.jar app.jar
+#    COPY z-kb-bootstrap/target/z-kb-bootstrap-1.0.7.jar app.jar
 #    ENV SERVER_PORT=8889
 #    EXPOSE 8889
 #    ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # 3) 构建（tag 必须与 02-deployment.yaml 里的 image: 逐字一致）
-docker build -t zopc/z-***REMOVED***:local -f deploy/Dockerfile .
+docker build -t zopc/z-kb:local -f deploy/Dockerfile .
 ```
 
 ## 2. 怎么喂 containerd
@@ -64,7 +64,7 @@ docker build -t zopc/z-***REMOVED***:local -f deploy/Dockerfile .
 
 1. **裸 tag，禁 Nexus 前缀**——本集群 `imagePullPolicy: Never`，k3s 不会去 registry 拉，
    它按 `image:` 的字面引用去节点本地 content store 找。喂进去的 tag 带前缀
-   （如 `nexus.internal/zopc/z-***REMOVED***:local`）而清单里写的是裸 tag（或反过来）⇒ **ErrImageNeverPull**。
+   （如 `nexus.internal/zopc/z-kb:local`）而清单里写的是裸 tag（或反过来）⇒ **ErrImageNeverPull**。
 2. **必须用 `cat` 管道喂 `k3s ctr images import -`**——`ctr images import` 从 **stdin** 读，
    直接把文件路径当参数会报 `unrecognized image format`。
 3. **两个节点都要喂**——两个节点都是工作节点，Pod 可能落在任一节点；只喂一个会出现
@@ -72,26 +72,26 @@ docker build -t zopc/z-***REMOVED***:local -f deploy/Dockerfile .
 
 ```bash
 # 1) 在开发机上导出镜像（build 可在开发机做，不必上节点）
-docker save zopc/z-***REMOVED***:local > /tmp/z-***REMOVED***-local.tar
-scp /tmp/z-***REMOVED***-local.tar zifang@192.168.31.231:/tmp/     # zifang001
-scp /tmp/z-***REMOVED***-local.tar zifang@192.168.31.136:/tmp/     # zifang002
+docker save zopc/z-kb:local > /tmp/z-kb-local.tar
+scp /tmp/z-kb-local.tar zifang@192.168.31.231:/tmp/     # zifang001
+scp /tmp/z-kb-local.tar zifang@192.168.31.136:/tmp/     # zifang002
 
 # 2) 喂 zifang001（192.168.31.231）——该节点 sudo 需要口令，会交互提示
-ssh zifang@192.168.31.231 'cat /tmp/z-***REMOVED***-local.tar | sudo k3s ctr images import -'
+ssh zifang@192.168.31.231 'cat /tmp/z-kb-local.tar | sudo k3s ctr images import -'
 
 # 3) 喂 zifang002（192.168.31.136）——该节点 sudo -n 可免密
-ssh zifang@192.168.31.136 'cat /tmp/z-***REMOVED***-local.tar | sudo -n k3s ctr images import -'
+ssh zifang@192.168.31.136 'cat /tmp/z-kb-local.tar | sudo -n k3s ctr images import -'
 
 # 4) 核验（两个节点都要看到，且 tag 必须与清单一致）
-ssh zifang@192.168.31.231 'sudo k3s ctr images ls | grep z-***REMOVED***'
-ssh zifang@192.168.31.136 'sudo -n k3s ctr images ls | grep z-***REMOVED***'
+ssh zifang@192.168.31.231 'sudo k3s ctr images ls | grep z-kb'
+ssh zifang@192.168.31.136 'sudo -n k3s ctr images ls | grep z-kb'
 ```
 
 一步到位的写法（不落临时文件，效果等价）：
 
 ```bash
-docker save zopc/z-***REMOVED***:local | ssh zifang@192.168.31.231 'cat - | sudo k3s ctr images import -'
-docker save zopc/z-***REMOVED***:local | ssh zifang@192.168.31.136 'cat - | sudo -n k3s ctr images import -'
+docker save zopc/z-kb:local | ssh zifang@192.168.31.231 'cat - | sudo k3s ctr images import -'
+docker save zopc/z-kb:local | ssh zifang@192.168.31.136 'cat - | sudo -n k3s ctr images import -'
 ```
 
 ## 3. 怎么 apply
@@ -111,28 +111,28 @@ kubectl apply -f deploy/k8s/
 apply 后自检：
 
 ```bash
-kubectl -n z-***REMOVED*** get deploy,svc,pods
-kubectl -n z-***REMOVED*** describe deploy z-***REMOVED***-server | tail -30
+kubectl -n z-kb get deploy,svc,pods
+kubectl -n z-kb describe deploy z-kb-server | tail -30
 ```
 
 ## 4. 怎么回滚
 
 ```bash
 # 看历史版本
-kubectl -n z-***REMOVED*** rollout history deploy/z-***REMOVED***-server
+kubectl -n z-kb rollout history deploy/z-kb-server
 
 # 回滚到上一个版本
-kubectl -n z-***REMOVED*** rollout undo deploy/z-***REMOVED***-server
+kubectl -n z-kb rollout undo deploy/z-kb-server
 
 # 回滚到指定版本
-kubectl -n z-***REMOVED*** rollout undo deploy/z-***REMOVED***-server --to-revision=<N>
+kubectl -n z-kb rollout undo deploy/z-kb-server --to-revision=<N>
 
 # 看回滚是否完成
-kubectl -n z-***REMOVED*** rollout status deploy/z-***REMOVED***-server
+kubectl -n z-kb rollout status deploy/z-kb-server
 ```
 
 ⚠ **PVC 数据不会自动回滚**：本域没有 PVC（纯无状态 Deployment），
-但 z-***REMOVED*** 用的存储若在共享 RDS 上，回滚 Pod **不会**回滚数据库 schema / 数据。
+但 z-kb 用的存储若在共享 RDS 上，回滚 Pod **不会**回滚数据库 schema / 数据。
 镜像里带 DDL 变更时，回滚镜像后旧 schema 仍在，需要人工确认兼容性。
 
 ⚠ **回滚的前提是节点上有旧镜像**：回滚只改 Deployment 里的 `image:` 字段指向的旧 tag，

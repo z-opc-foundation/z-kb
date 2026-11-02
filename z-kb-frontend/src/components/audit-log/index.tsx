@@ -57,9 +57,9 @@ function pageItems(current: number, pages: number): (number | 'gap')[] {
 }
 
 export interface AuditLogPanelProps {
-  /** 固定日志类型：系统审计页不限，知识库操作日志传 ***REMOVED*** */
+  /** 固定日志类型：系统审计页不限，知识库操作日志传 KB */
   type?: AuditLogType;
-  /** 配合 type=***REMOVED*** 限定知识库，传 ***REMOVED***Id */
+  /** 配合 type=KB 限定知识库，传 kbId */
   bizRef?: string;
   /** 系统审计页展示「归属」列，区分系统级与知识库级日志 */
   showType?: boolean;
@@ -82,7 +82,7 @@ export default function AuditLogPanel({
   );
   const { names: actorNames } = useActorDirectory();
   const [detail, setDetail] = useState<AuditLogRecord | null>(null);
-  const ***REMOVED***Scope = type === '***REMOVED***';
+  const kbScope = type === 'KB';
 
   const stats = useAuditStats({ type, bizRef }, audit.applied, tab === 'stats');
 
@@ -101,10 +101,10 @@ export default function AuditLogPanel({
           {showType ? (
             <td>
               <div className="audit-inline">
-                <span className={`tag ${row.type === '***REMOVED***' ? 'violet' : 'gray'} sm`}>
-                  {row.type === '***REMOVED***' ? '知识库' : '系统'}
+                <span className={`tag ${row.type === 'KB' ? 'violet' : 'gray'} sm`}>
+                  {row.type === 'KB' ? '知识库' : '系统'}
                 </span>
-                {row.type === '***REMOVED***' ? (
+                {row.type === 'KB' ? (
                   <span className="mono truncate" title={row.bizRef || ''}>
                     {row.bizRef || '—'}
                   </span>
@@ -199,14 +199,14 @@ export default function AuditLogPanel({
         <b>
           {audit.filtered
             ? '没有匹配的操作记录'
-            : ***REMOVED***Scope
+            : kbScope
               ? '这个知识库还没有操作记录'
               : '当前租户还没有审计记录'}
         </b>
         <p>
           {audit.filtered
             ? '换个关键词、操作人或时间范围再试。'
-            : ***REMOVED***Scope
+            : kbScope
               ? '在这个知识库里上传资料、改配置或跑编译后，会在这里留下记录。'
               : '关键写操作执行后会自动留痕，下一次写操作后即可在这里看到。'}
         </p>

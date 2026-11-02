@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.extraction;
+package com.zifang.z.kb.core.extraction;
 
 /**
  * 未落库的图谱边草稿：MENTIONS 或 RELATED_TO。

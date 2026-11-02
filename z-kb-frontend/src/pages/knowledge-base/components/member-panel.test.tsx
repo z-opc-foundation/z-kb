@@ -27,15 +27,15 @@ import {
   searchMemberCandidates,
 } from '@/services/member';
 import { toast } from '@/utils/toast';
-import ***REMOVED***MemberPanel from './member-panel';
+import KbMemberPanel from './member-panel';
 
 const EFFECTIVE: KnowledgeBaseEffectiveRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   actorId: 1,
   role: 'READER',
   owner: false,
   canEnter: true,
-  canManage***REMOVED***: false,
+  canManageKb: false,
   canManageDoc: false,
   canReview: false,
   actions: [],
@@ -48,7 +48,7 @@ const MEMBERS: KnowledgeBaseMemberRecord[] = [
     name: '张三',
     employeeId: 'E001',
     dept: '护理部',
-    role: '***REMOVED***ADMIN',
+    role: 'KB_ADMIN',
     owner: true,
     grantedAt: '2026-10-01T10:00:00',
   },
@@ -87,19 +87,19 @@ afterEach(() => {
 
 describe('知识库成员面板', () => {
   it('无管理权限时只展示角色说明，不请求成员列表', async () => {
-    render(<***REMOVED***MemberPanel ***REMOVED***Id="***REMOVED***-1" canManage={false} />);
+    render(<KbMemberPanel kbId="kb-1" canManage={false} />);
 
     expect(await screen.findByText('当前角色无权查看成员')).toBeTruthy();
     expect(screen.getByText(/你当前的角色为 只读/)).toBeTruthy();
-    expect(getEffectiveAccess).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getEffectiveAccess).toHaveBeenCalledWith('kb-1');
     expect(listMembers).not.toHaveBeenCalled();
   });
 
   it('展示成员表格，支持关键词与角色筛选并可展开详情', async () => {
-    render(<***REMOVED***MemberPanel ***REMOVED***Id="***REMOVED***-1" canManage />);
+    render(<KbMemberPanel kbId="kb-1" canManage />);
 
     expect(await screen.findByText('张三')).toBeTruthy();
-    expect(listMembers).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(listMembers).toHaveBeenCalledWith('kb-1');
     expect(screen.getByText('2 / 2 名成员')).toBeTruthy();
     expect(screen.getByText('E001')).toBeTruthy();
     expect(screen.getByText('护理部')).toBeTruthy();
@@ -113,7 +113,7 @@ describe('知识库成员面板', () => {
     expect(screen.queryByText('张三')).toBeNull();
 
     fireEvent.change(screen.getByDisplayValue('全部角色'), {
-      target: { value: '***REMOVED***ADMIN' },
+      target: { value: 'KB_ADMIN' },
     });
     expect(await screen.findByText('没有匹配的成员')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: '清空筛选' }));
@@ -126,12 +126,12 @@ describe('知识库成员面板', () => {
   });
 
   it('添加成员：检索候选、选择角色并确认授权后刷新', async () => {
-    render(<***REMOVED***MemberPanel ***REMOVED***Id="***REMOVED***-1" canManage />);
+    render(<KbMemberPanel kbId="kb-1" canManage />);
     await screen.findByText('张三');
 
     fireEvent.click(screen.getByRole('button', { name: '添加成员' }));
     expect(await screen.findByText('王五')).toBeTruthy();
-    expect(searchMemberCandidates).toHaveBeenCalledWith('***REMOVED***-1', '');
+    expect(searchMemberCandidates).toHaveBeenCalledWith('kb-1', '');
 
     fireEvent.click(screen.getByText('王五'));
     fireEvent.change(screen.getByLabelText('新成员角色'), {
@@ -139,7 +139,7 @@ describe('知识库成员面板', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: '确认添加' }));
 
-    await waitFor(() => expect(grantMember).toHaveBeenCalledWith('***REMOVED***-1', 5, 'EDITOR'));
+    await waitFor(() => expect(grantMember).toHaveBeenCalledWith('kb-1', 5, 'EDITOR'));
     expect(toast).toHaveBeenCalledWith(
       '成员已加入',
       '王五 · 编辑',
@@ -150,7 +150,7 @@ describe('知识库成员面板', () => {
   });
 
   it('移除成员需二次确认，确认后撤销授权并刷新', async () => {
-    render(<***REMOVED***MemberPanel ***REMOVED***Id="***REMOVED***-1" canManage />);
+    render(<KbMemberPanel kbId="kb-1" canManage />);
     await screen.findByText('张三');
 
     fireEvent.click(screen.getAllByTitle('移除成员')[0]);
@@ -158,7 +158,7 @@ describe('知识库成员面板', () => {
     expect(screen.getByText(/当前角色 编辑/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '确认移除' }));
-    await waitFor(() => expect(revokeMember).toHaveBeenCalledWith('***REMOVED***-1', 2));
+    await waitFor(() => expect(revokeMember).toHaveBeenCalledWith('kb-1', 2));
     expect(toast).toHaveBeenCalledWith(
       '已移除成员',
       '李四 的授权立即失效',
@@ -168,14 +168,14 @@ describe('知识库成员面板', () => {
   });
 
   it('角色下拉变更时调用授权接口', async () => {
-    render(<***REMOVED***MemberPanel ***REMOVED***Id="***REMOVED***-1" canManage />);
+    render(<KbMemberPanel kbId="kb-1" canManage />);
     await screen.findByText('张三');
 
     fireEvent.change(screen.getByLabelText('李四 的角色'), {
       target: { value: 'REVIEWER' },
     });
     await waitFor(() =>
-      expect(grantMember).toHaveBeenCalledWith('***REMOVED***-1', 2, 'REVIEWER'),
+      expect(grantMember).toHaveBeenCalledWith('kb-1', 2, 'REVIEWER'),
     );
     await waitFor(() => expect(listMembers).toHaveBeenCalledTimes(2));
   });

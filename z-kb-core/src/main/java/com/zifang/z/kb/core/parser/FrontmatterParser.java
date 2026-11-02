@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.parser;
+package com.zifang.z.kb.core.parser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

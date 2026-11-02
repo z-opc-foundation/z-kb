@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.modeling.model;
+package com.zifang.z.kb.modeling.model;
 
 import java.time.Instant;
 import java.util.ArrayList;

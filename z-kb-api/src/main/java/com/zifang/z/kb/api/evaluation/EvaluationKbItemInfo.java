@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -7,10 +7,10 @@ import java.util.List;
 /**
  * 评测口径下的知识库列表项。
  */
-public class Evaluation***REMOVED***ItemInfo {
+public class EvaluationKbItemInfo {
 
-    private String ***REMOVED***Id;
-    private String ***REMOVED***Name;
+    private String kbId;
+    private String kbName;
     private Integer datasetVersion;
     private String datasetStatus;
     private Integer caseCount;
@@ -22,20 +22,20 @@ public class Evaluation***REMOVED***ItemInfo {
     private long openBadcaseCount;
     private List<String> notConnected = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
-    public String get***REMOVED***Name() {
-        return ***REMOVED***Name;
+    public String getKbName() {
+        return kbName;
     }
 
-    public void set***REMOVED***Name(String ***REMOVED***Name) {
-        this.***REMOVED***Name = ***REMOVED***Name;
+    public void setKbName(String kbName) {
+        this.kbName = kbName;
     }
 
     public Integer getDatasetVersion() {

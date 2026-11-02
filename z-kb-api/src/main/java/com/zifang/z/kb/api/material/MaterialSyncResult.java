@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 接入源同步在物料侧的登记结果。只描述这次登记做了什么，不代表解析/编译已完成。

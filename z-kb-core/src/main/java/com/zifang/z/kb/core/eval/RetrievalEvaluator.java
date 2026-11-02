@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

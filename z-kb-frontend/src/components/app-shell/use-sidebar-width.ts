@@ -6,7 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
-const STORAGE_KEY = '***REMOVED***.sidebarWidth';
+const STORAGE_KEY = 'kb.sidebarWidth';
 const DEFAULT_WIDTH = 252;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 400;

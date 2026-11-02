@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.api.overview;
+package com.zifang.z.kb.api.overview;
 
-import com.zifang.z.***REMOVED***.api.material.MaterialView;
+import com.zifang.z.kb.api.material.MaterialView;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class OverviewView {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private long fileCount;
     private long compiledCount;
     private long partialCount;
@@ -22,12 +22,12 @@ public class OverviewView {
     private Instant refreshedAt;
     private List<MaterialView> recentMaterials = new ArrayList<>();
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public long getFileCount() {

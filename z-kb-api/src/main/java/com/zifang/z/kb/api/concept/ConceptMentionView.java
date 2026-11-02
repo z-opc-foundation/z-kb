@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.concept;
+package com.zifang.z.kb.api.concept;
 
 /**
  * 概念提及视图：一个物料版本对一个概念的一次涌现。

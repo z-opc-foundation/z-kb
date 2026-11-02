@@ -180,7 +180,7 @@ export interface OntologyInstancePage {
 /** 本体不存在（未开通）业务错误码 */
 export const ONTOLOGY_NOT_OPEN_CODE = 51001;
 
-const BASE = '/***REMOVED***/v1/ontology';
+const BASE = '/kb/v1/ontology';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -208,7 +208,7 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
 /**
  * 本体详情：null 表示未开通（51001，正常业务态）；undefined 表示加载失败。
  *
- * z-***REMOVED*** 适配：z-***REMOVED*** 没有租户级本体与图空间绑定，图谱空间即知识库，取最近更新的
+ * z-kb 适配：z-kb 没有租户级本体与图空间绑定，图谱空间即知识库，取最近更新的
  * 一个知识库推导出详情（形状不变，页面与交互不动）；没有知识库时视同未开通。
  */
 export async function getOntologyDetail(): Promise<
@@ -217,12 +217,12 @@ export async function getOntologyDetail(): Promise<
   try {
     const page = await request<
       PageResult<{
-        ***REMOVED***Id: string;
+        kbId: string;
         code: string;
         name: string;
         description?: string;
       }>
-    >('/***REMOVED***/v1/knowledgeBase/page', {
+    >('/kb/v1/knowledgeBase/page', {
       method: 'post',
       data: { current: 1, size: 1 },
       headers: tenantHeaders(),
@@ -236,7 +236,7 @@ export async function getOntologyDetail(): Promise<
       code: first.code,
       name: first.name,
       description: first.description,
-      graphSpace: first.***REMOVED***Id,
+      graphSpace: first.kbId,
       status: 'ACTIVE',
       graphBound: true,
     };

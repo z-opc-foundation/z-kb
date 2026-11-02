@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.web.controller;
+package com.zifang.z.kb.web.controller;
 
-import com.zifang.z.***REMOVED***.api.ChatRequest;
-import com.zifang.z.***REMOVED***.api.ChatResponse;
-import com.zifang.z.***REMOVED***.api.ChatService;
-import com.zifang.z.***REMOVED***.api.ChatSession;
-import com.zifang.z.***REMOVED***.protocol.request.CreateSessionRequest;
-import com.zifang.z.***REMOVED***.protocol.request.SessionChatRequest;
+import com.zifang.z.kb.api.ChatRequest;
+import com.zifang.z.kb.api.ChatResponse;
+import com.zifang.z.kb.api.ChatService;
+import com.zifang.z.kb.api.ChatSession;
+import com.zifang.z.kb.protocol.request.CreateSessionRequest;
+import com.zifang.z.kb.protocol.request.SessionChatRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Tag(name = "RAG 问答")
 @RestController
-@RequestMapping("/api/***REMOVED***/chat")
+@RequestMapping("/api/kb/chat")
 public class ChatController {
 
     @Resource

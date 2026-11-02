@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
@@ -30,7 +30,7 @@ public class EvalDataset {
     /**
      * 从 JSON 文本解析。期望结构：
      * <pre>
-     * { "datasetVersion": "v1", "knowledgeVersion": "***REMOVED***-2026-10-18",
+     * { "datasetVersion": "v1", "knowledgeVersion": "kb-2026-10-18",
      *   "cases": [ { "caseId": "...", "question": "...",
      *                "expectedChunkIds": ["..."], "groundTruth": "...",
      *                "isUnanswerable": false, "sourceType": "...", "topic": "...",

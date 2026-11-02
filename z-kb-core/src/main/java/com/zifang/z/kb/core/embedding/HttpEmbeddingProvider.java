@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.core.embedding;
+package com.zifang.z.kb.core.embedding;
 
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.EmbeddingProvider;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
+import com.zifang.z.kb.api.EmbeddingProvider;
+import com.zifang.z.kb.api.KBException;
 import com.zifang.util.http.client.HttpExecutionResult;
 import com.zifang.util.http.client.HttpExecutor;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
             List<float[]> batch = callRemote(Collections.singletonList(text));
             return batch.get(0);
         } catch (Exception e) {
-            throw new ***REMOVED***Exception("HTTP embedding failed: " + e.getMessage(), e);
+            throw new KBException("HTTP embedding failed: " + e.getMessage(), e);
         }
     }
 
@@ -67,7 +67,7 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
         try {
             return callRemote(texts);
         } catch (Exception e) {
-            throw new ***REMOVED***Exception("HTTP embedding batch failed: " + e.getMessage(), e);
+            throw new KBException("HTTP embedding batch failed: " + e.getMessage(), e);
         }
     }
 
@@ -93,7 +93,7 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
         HttpExecutionResult resp = httpExecutor.executeByMethodUrl(
                 "POST", endpoint, headers, JsonUtil.toJson(body));
         if (resp.getStatus() / 100 != 2) {
-            throw new ***REMOVED***Exception("HTTP " + resp.getStatus() + ": "
+            throw new KBException("HTTP " + resp.getStatus() + ": "
                     + (resp.getBody() != null ? resp.getBody() : resp.getError()));
         }
 
@@ -113,7 +113,7 @@ public class HttpEmbeddingProvider implements EmbeddingProvider {
 
     private float[] parseVector(JsonCursor array) {
         if (!array.isArray()) {
-            throw new ***REMOVED***Exception("Invalid embedding response: not an array");
+            throw new KBException("Invalid embedding response: not an array");
         }
         float[] result = new float[array.size()];
         for (int i = 0; i < array.size(); i++) {

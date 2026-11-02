@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.modeling.model;
+package com.zifang.z.kb.modeling.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 产品模型 — 一份"产品小抄"，是 z-***REMOVED*** 的核心增值产物。
+ * 产品模型 — 一份"产品小抄"，是 z-kb 的核心增值产物。
  *
  * <p>把一个产品的设计文档拆成可学习的逻辑因果链条，让开发者/产品能快速理解：
  * <ul>

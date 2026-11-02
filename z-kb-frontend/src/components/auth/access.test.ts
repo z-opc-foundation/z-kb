@@ -17,24 +17,24 @@ function context(overrides: Partial<AuthContext> = {}): AuthContext {
 describe('access', () => {
   it('未取到权限视图时一律放行', () => {
     expect(isEnforced(null)).toBe(false);
-    expect(canAccess(null, '***REMOVED***.create')).toBe(true);
-    expect(canSeeMenu(null, 'menu.***REMOVED***')).toBe(true);
-    expect(canAccess(undefined, '***REMOVED***.create')).toBe(true);
+    expect(canAccess(null, 'kb.create')).toBe(true);
+    expect(canSeeMenu(null, 'menu.kb')).toBe(true);
+    expect(canAccess(undefined, 'kb.create')).toBe(true);
   });
 
   it('观察期 enforce=false 时菜单与按钮全开', () => {
     const ctx = context({ enforced: false });
     expect(isEnforced(ctx)).toBe(false);
-    expect(canAccess(ctx, '***REMOVED***.create')).toBe(true);
+    expect(canAccess(ctx, 'kb.create')).toBe(true);
     expect(canSeeMenu(ctx, 'menu.admin.permission')).toBe(true);
   });
 
   it('强制期只看已授予编码', () => {
-    const ctx = context({ permissions: ['***REMOVED***.create'], menuCodes: ['menu.***REMOVED***'] });
+    const ctx = context({ permissions: ['kb.create'], menuCodes: ['menu.kb'] });
     expect(isEnforced(ctx)).toBe(true);
-    expect(canAccess(ctx, '***REMOVED***.create')).toBe(true);
-    expect(canAccess(ctx, '***REMOVED***.delete')).toBe(false);
-    expect(canSeeMenu(ctx, 'menu.***REMOVED***')).toBe(true);
+    expect(canAccess(ctx, 'kb.create')).toBe(true);
+    expect(canAccess(ctx, 'kb.delete')).toBe(false);
+    expect(canSeeMenu(ctx, 'menu.kb')).toBe(true);
     expect(canSeeMenu(ctx, 'menu.evaluation')).toBe(false);
   });
 

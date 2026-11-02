@@ -9,14 +9,14 @@ import { toast } from '@/utils/toast';
 import { PAGE_SIZE, type MaterialTypeKey } from '../material-workspace-model';
 
 interface UseMaterialRecycleParams {
-  ***REMOVED***Id: string;
+  kbId: string;
   canWrite: boolean;
   materialType: MaterialTypeKey;
   onChanged: () => void;
 }
 
 export function useMaterialRecycle({
-  ***REMOVED***Id,
+  kbId,
   canWrite,
   materialType,
   onChanged,
@@ -38,7 +38,7 @@ export function useMaterialRecycle({
     if (!canWrite) {
       return;
     }
-    void pageDeletedMaterials({ current: 1, size: 1, ***REMOVED***Id, materialType }).then((result) => {
+    void pageDeletedMaterials({ current: 1, size: 1, kbId, materialType }).then((result) => {
       if (result) {
         setCount(result.total);
       }
@@ -50,7 +50,7 @@ export function useMaterialRecycle({
       return;
     }
     let active = true;
-    void pageDeletedMaterials({ current: 1, size: 1, ***REMOVED***Id, materialType }).then((result) => {
+    void pageDeletedMaterials({ current: 1, size: 1, kbId, materialType }).then((result) => {
       if (active && result) {
         setCount(result.total);
       }
@@ -58,7 +58,7 @@ export function useMaterialRecycle({
     return () => {
       active = false;
     };
-  }, [canWrite, ***REMOVED***Id, materialType]);
+  }, [canWrite, kbId, materialType]);
 
   useEffect(() => {
     if (!open) {
@@ -68,7 +68,7 @@ export function useMaterialRecycle({
     void pageDeletedMaterials({
       current: page,
       size: PAGE_SIZE,
-      ***REMOVED***Id,
+      kbId,
       keyword: queryKeyword || undefined,
       materialType,
     })
@@ -93,7 +93,7 @@ export function useMaterialRecycle({
           setLoading(false);
         }
       });
-  }, [open, page, queryKeyword, ***REMOVED***Id, materialType, reloadTick]);
+  }, [open, page, queryKeyword, kbId, materialType, reloadTick]);
 
   const reload = () => setReloadTick((value) => value + 1);
 
@@ -149,7 +149,7 @@ export function useMaterialRecycle({
       return;
     }
     setBusy(true);
-    const result = await restoreMaterials(***REMOVED***Id, ids);
+    const result = await restoreMaterials(kbId, ids);
     setBusy(false);
     if (!result) {
       return;
@@ -168,7 +168,7 @@ export function useMaterialRecycle({
       return;
     }
     setBusy(true);
-    const result = await purgeMaterials(***REMOVED***Id, ids);
+    const result = await purgeMaterials(kbId, ids);
     setBusy(false);
     if (!result) {
       return;

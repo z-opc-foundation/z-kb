@@ -1,16 +1,16 @@
-package com.zifang.z.***REMOVED***.core.search;
+package com.zifang.z.kb.core.search;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.ChunkVectorStore;
-import com.zifang.z.***REMOVED***.api.DocumentRepository;
-import com.zifang.z.***REMOVED***.api.EmbeddingProvider;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.KnowledgeGraphStore;
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchMode;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.core.extractor.EntityExtractor;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.ChunkVectorStore;
+import com.zifang.z.kb.api.DocumentRepository;
+import com.zifang.z.kb.api.EmbeddingProvider;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.KnowledgeGraphStore;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchMode;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.core.extractor.EntityExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

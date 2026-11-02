@@ -42,14 +42,14 @@ vi.mock('@/services/task', () => ({
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 vi.mock('./observability', () => ({
-  default: ({ ***REMOVED***Id }: { ***REMOVED***Id: string }) => (
-    <div data-testid="observability-tab">可观测视图 · {***REMOVED***Id}</div>
+  default: ({ kbId }: { kbId: string }) => (
+    <div data-testid="observability-tab">可观测视图 · {kbId}</div>
   ),
 }));
 
 const GROUP_RUNNING: CompilationBatchRecord = {
   batchId: 'batch-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   name: '护理规范批量编译',
   taskType: 'COMPILATION',
   scopeType: 'WORKSPACE',
@@ -65,7 +65,7 @@ const GROUP_RUNNING: CompilationBatchRecord = {
 
 const GROUP_DONE: CompilationBatchRecord = {
   batchId: 'batch-2',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   name: '制度文件编译',
   taskType: 'WIKI',
   scopeType: 'CATEGORY',
@@ -103,7 +103,7 @@ const GROUP_DETAIL: CompilationBatchRecord = {
 
 const JOB_RUNNING: CompilationJobRecord = {
   jobId: 'job-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialId: 'mat-1',
   materialVersionId: 'mv-1',
   pipelineType: 'DOCUMENT',
@@ -120,7 +120,7 @@ const JOB_RUNNING: CompilationJobRecord = {
 
 const JOB_DONE: CompilationJobRecord = {
   jobId: 'job-3',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialId: 'mat-2',
   materialVersionId: 'mv-2',
   pipelineType: 'DOCUMENT',
@@ -222,7 +222,7 @@ const TASK_FAILED = {
 };
 
 function renderPage() {
-  return renderAt(<TaskManager ***REMOVED***Id="***REMOVED***-1" canManage canCompile />, { route: '/knowledge-bases/***REMOVED***-1' });
+  return renderAt(<TaskManager kbId="kb-1" canManage canCompile />, { route: '/knowledge-bases/kb-1' });
 }
 
 describe('任务管理页', () => {
@@ -285,8 +285,8 @@ describe('任务管理页', () => {
     });
 
     expect(await screen.findByText('护理规范批量编译')).toBeTruthy();
-    expect(pageCompilationBatches).toHaveBeenCalledWith('***REMOVED***-1', 1, 20);
-    expect(getTaskSummary).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(pageCompilationBatches).toHaveBeenCalledWith('kb-1', 1, 20);
+    expect(getTaskSummary).toHaveBeenCalledWith('kb-1');
 
     expect(screen.getByText('工作台多选')).toBeTruthy();
     expect(screen.getByText('1/2 成功')).toBeTruthy();
@@ -310,7 +310,7 @@ describe('任务管理页', () => {
 
     expect(await screen.findByText('还没有任务组别')).toBeTruthy();
     const link = screen.getByRole('link', { name: /去知识工作台/ });
-    expect(link.getAttribute('href')).toBe('#/knowledge-bases/***REMOVED***-1/workspace');
+    expect(link.getAttribute('href')).toBe('#/knowledge-bases/kb-1/workspace');
   });
 
   it('查看组别详情并取消运行中的组别', async () => {
@@ -340,8 +340,8 @@ describe('任务管理页', () => {
     fireEvent.click(screen.getByRole('button', { name: /^单任务/ }));
 
     expect(await screen.findByText('护理操作手册')).toBeTruthy();
-    expect(listCompilationJobs).toHaveBeenCalledWith('***REMOVED***-1', undefined, 50);
-    expect(pageMaterial).toHaveBeenCalledWith({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 100 });
+    expect(listCompilationJobs).toHaveBeenCalledWith('kb-1', undefined, 50);
+    expect(pageMaterial).toHaveBeenCalledWith({ kbId: 'kb-1', current: 1, size: 100 });
     expect(screen.getByText('急性胸痛诊疗规范')).toBeTruthy();
     expect(screen.getByText('P1 解析')).toBeTruthy();
     expect(screen.getByText('3m 20s')).toBeTruthy();
@@ -414,7 +414,7 @@ describe('任务管理页', () => {
 
     expect(await screen.findByText('解析超时')).toBeTruthy();
     expect(pageTasks).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       taskType: undefined,
       status: undefined,
       pageNo: 1,
@@ -453,7 +453,7 @@ describe('任务管理页', () => {
     fireEvent.click(screen.getByRole('button', { name: /可观测/ }));
 
     expect(await screen.findByTestId('observability-tab')).toBeTruthy();
-    expect(screen.getByText('可观测视图 · ***REMOVED***-1')).toBeTruthy();
+    expect(screen.getByText('可观测视图 · kb-1')).toBeTruthy();
     expect(screen.queryByText('还没有任务组别')).toBeNull();
   });
 });

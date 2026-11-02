@@ -1,20 +1,20 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.graph.GraphEdgeView;
-import com.zifang.z.***REMOVED***.api.graph.GraphNodeView;
-import com.zifang.z.***REMOVED***.api.graph.GraphService;
-import com.zifang.z.***REMOVED***.api.graph.GraphView;
-import com.zifang.z.***REMOVED***.api.material.MaterialCompileSource;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.core.extraction.ExtractionEngine;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphEdgeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphNodeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphEdgeMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphNodeMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.graph.GraphEdgeView;
+import com.zifang.z.kb.api.graph.GraphNodeView;
+import com.zifang.z.kb.api.graph.GraphService;
+import com.zifang.z.kb.api.graph.GraphView;
+import com.zifang.z.kb.api.material.MaterialCompileSource;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.core.extraction.ExtractionEngine;
+import com.zifang.z.kb.storage.extraction.entity.GraphEdgeEntity;
+import com.zifang.z.kb.storage.extraction.entity.GraphNodeEntity;
+import com.zifang.z.kb.storage.extraction.mapper.GraphEdgeMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,24 +48,24 @@ public class DefaultGraphService implements GraphService {
     }
 
     @Override
-    public GraphView queryBy***REMOVED***(String ***REMOVED***Id, String materialId, ***REMOVED***Caller caller) {
-        if (***REMOVED***Id == null || ***REMOVED***Id.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+    public GraphView queryByKb(String kbId, String materialId, KbCaller caller) {
+        if (kbId == null || kbId.trim().isEmpty()) {
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
-        String ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id.trim(), caller).get***REMOVED***Id();
+        String kb = resourceService.requireReadable(kbId.trim(), caller).getKbId();
         String material = materialId == null || materialId.trim().isEmpty()
                 ? null : materialId.trim();
 
-        List<GraphNodeEntity> nodes = nodeMapper.selectList(nodeQuery(caller.getTenantCode(), ***REMOVED***,
+        List<GraphNodeEntity> nodes = nodeMapper.selectList(nodeQuery(caller.getTenantCode(), kb,
                 material, MAX_SCAN));
-        List<GraphEdgeEntity> edges = edgeMapper.selectList(edgeQuery(caller.getTenantCode(), ***REMOVED***,
+        List<GraphEdgeEntity> edges = edgeMapper.selectList(edgeQuery(caller.getTenantCode(), kb,
                 material, MAX_SCAN));
         List<GraphNodeEntity> uniqueNodes = dedupeNodes(nodes);
         List<GraphEdgeEntity> uniqueEdges = dedupeEdges(edges);
 
         GraphView view = new GraphView();
-        view.set***REMOVED***Id(***REMOVED***);
-        view.setGraphSpaceKey(ExtractionEngine.graphSpaceKey(***REMOVED***));
+        view.setKbId(kb);
+        view.setGraphSpaceKey(ExtractionEngine.graphSpaceKey(kb));
         view.setNodeCount(uniqueNodes.size());
         view.setEdgeCount(uniqueEdges.size());
         view.setTruncated(uniqueNodes.size() > MAX_ITEMS || uniqueEdges.size() > MAX_ITEMS
@@ -76,42 +76,42 @@ public class DefaultGraphService implements GraphService {
     }
 
     @Override
-    public GraphView queryByMaterial(String materialId, ***REMOVED***Caller caller) {
+    public GraphView queryByMaterial(String materialId, KbCaller caller) {
         if (materialId == null || materialId.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("MATERIAL_PARAM_INVALID", "物料参数不合法");
+            throw new KBException("MATERIAL_PARAM_INVALID", "物料参数不合法");
         }
         MaterialCompileSource source = materialService.loadCompileSource(materialId.trim(), null,
                 caller);
         String tenant = caller.getTenantCode();
         Long nodeCount = nodeMapper.selectCount(new QueryWrapper<GraphNodeEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", source.get***REMOVED***Id())
+                .eq("kb_id", source.getKbId())
                 .eq("material_id", source.getMaterialId())
                 .eq("is_deleted", 0));
         Long edgeCount = edgeMapper.selectCount(new QueryWrapper<GraphEdgeEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", source.get***REMOVED***Id())
+                .eq("kb_id", source.getKbId())
                 .eq("material_id", source.getMaterialId())
                 .eq("is_deleted", 0));
 
         GraphView view = new GraphView();
-        view.set***REMOVED***Id(source.get***REMOVED***Id());
-        view.setGraphSpaceKey(ExtractionEngine.graphSpaceKey(source.get***REMOVED***Id()));
+        view.setKbId(source.getKbId());
+        view.setGraphSpaceKey(ExtractionEngine.graphSpaceKey(source.getKbId()));
         view.setNodeCount(nodeCount == null ? 0L : nodeCount);
         view.setEdgeCount(edgeCount == null ? 0L : edgeCount);
         view.setTruncated(view.getNodeCount() > MAX_ITEMS || view.getEdgeCount() > MAX_ITEMS);
-        view.setNodes(toNodeViews(nodeMapper.selectList(nodeQuery(tenant, source.get***REMOVED***Id(),
+        view.setNodes(toNodeViews(nodeMapper.selectList(nodeQuery(tenant, source.getKbId(),
                 source.getMaterialId(), MAX_ITEMS))));
-        view.setEdges(toEdgeViews(edgeMapper.selectList(edgeQuery(tenant, source.get***REMOVED***Id(),
+        view.setEdges(toEdgeViews(edgeMapper.selectList(edgeQuery(tenant, source.getKbId(),
                 source.getMaterialId(), MAX_ITEMS))));
         return view;
     }
 
-    private QueryWrapper<GraphNodeEntity> nodeQuery(String tenant, String ***REMOVED***Id, String materialId,
+    private QueryWrapper<GraphNodeEntity> nodeQuery(String tenant, String kbId, String materialId,
                                                     int limit) {
         QueryWrapper<GraphNodeEntity> query = new QueryWrapper<GraphNodeEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0);
         if (materialId != null) {
             query.eq("material_id", materialId);
@@ -123,11 +123,11 @@ public class DefaultGraphService implements GraphService {
         return query;
     }
 
-    private QueryWrapper<GraphEdgeEntity> edgeQuery(String tenant, String ***REMOVED***Id, String materialId,
+    private QueryWrapper<GraphEdgeEntity> edgeQuery(String tenant, String kbId, String materialId,
                                                     int limit) {
         QueryWrapper<GraphEdgeEntity> query = new QueryWrapper<GraphEdgeEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0);
         if (materialId != null) {
             query.eq("material_id", materialId);

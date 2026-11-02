@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.api;
+package com.zifang.z.kb.api;
 
 /**
  * Token 估算器 — 抽象接口，便于切换不同的 tokenizer。
  *
- * <p>默认实现见 z-***REMOVED***-core 的 CharacterBasedTokenEstimator（中英文混合按字符估算）。
+ * <p>默认实现见 z-kb-core 的 CharacterBasedTokenEstimator（中英文混合按字符估算）。
  * 生产可切换到 OpenAI tiktoken 或其他精确 tokenizer。
  */
 public interface TokenEstimator {

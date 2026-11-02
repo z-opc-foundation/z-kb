@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 接入源同步推进到物料侧的一次登记请求。
@@ -6,7 +6,7 @@ package com.zifang.z.***REMOVED***.api.material;
  */
 public class MaterialSyncRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private String categoryId;
     private String title;
@@ -17,12 +17,12 @@ public class MaterialSyncRequest {
     private String sourceVersion;
     private String metadata;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

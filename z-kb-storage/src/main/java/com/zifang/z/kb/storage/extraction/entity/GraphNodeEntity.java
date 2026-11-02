@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.extraction.entity;
+package com.zifang.z.kb.storage.extraction.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 本地规则图谱节点（***REMOVED***_graph_node）：MATERIAL 节点每个物料一条，CONCEPT 节点回指概念模型。
+ * 本地规则图谱节点（kb_graph_node）：MATERIAL 节点每个物料一条，CONCEPT 节点回指概念模型。
  */
-@TableName("***REMOVED***_graph_node")
+@TableName("kb_graph_node")
 public class GraphNodeEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String nodeId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String graphSpaceKey;
     private String nodeType;
     private String conceptId;
@@ -54,12 +54,12 @@ public class GraphNodeEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getGraphSpaceKey() {

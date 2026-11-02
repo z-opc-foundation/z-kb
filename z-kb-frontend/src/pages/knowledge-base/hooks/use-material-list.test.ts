@@ -12,7 +12,7 @@ import { useMaterialList } from './use-material-list';
 function material(id: string, parseStatus = 'READY'): MaterialRecord {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: `资料 ${id}`,
     sourceType: 'UPLOAD',
@@ -31,7 +31,7 @@ function page(records: MaterialRecord[], total = records.length, current = 1) {
 
 function setup(overrides: Partial<Parameters<typeof useMaterialList>[0]> = {}) {
   const params = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT' as const,
     categoryId: '',
     onCategoryChange: vi.fn(),
@@ -58,7 +58,7 @@ describe('useMaterialList', () => {
     expect(pageMaterial).toHaveBeenCalledWith({
       current: 1,
       size: 10,
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       keyword: undefined,
       categoryId: undefined,
       materialType: 'DOCUMENT',
@@ -109,7 +109,7 @@ describe('useMaterialList', () => {
     expect(result.current.page).toBe(1);
 
     rerender({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       materialType: 'CODE',
       categoryId: 'cat-1',
       onCategoryChange: vi.fn(),

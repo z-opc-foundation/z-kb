@@ -1,27 +1,27 @@
-package com.zifang.z.***REMOVED***.resource.compilation;
+package com.zifang.z.kb.resource.compilation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchCreateParam;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchMemberView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchPageView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchService;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationBatchView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationJobView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalChunkView;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.resource.***REMOVED***ResourceTestApplication;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.CompilationBatchCreateParam;
+import com.zifang.z.kb.api.compilation.CompilationBatchMemberView;
+import com.zifang.z.kb.api.compilation.CompilationBatchPageView;
+import com.zifang.z.kb.api.compilation.CompilationBatchService;
+import com.zifang.z.kb.api.compilation.CompilationBatchView;
+import com.zifang.z.kb.api.compilation.CompilationJobView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.compilation.RetrievalChunkView;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.resource.KbResourceTestApplication;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +44,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 编译域集成测试：真起 Spring 容器 + H2，钉住 P0–P4 同步编排、产物版本、检索块与组别口径。
  */
-@SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-compilation;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbResourceTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-compilation;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/compilation-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/compilation-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/compilation-repo",
+        "kb.storage.path=target/test-kb/compilation-kb.json",
+        "kb.material.storage.root=target/test-kb/compilation-original",
+        "kb.material.repo.root=target/test-kb/compilation-repo",
         "spring.main.banner-mode=off"
 })
 class CompilationServiceIntegrationTest {
@@ -77,16 +77,16 @@ class CompilationServiceIntegrationTest {
     @Autowired
     private CompilationJobMapper jobMapper;
 
-    private KnowledgeBaseView create***REMOVED***(***REMOVED***Caller caller) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("编译测试库");
-        ***REMOVED***.setCode("cmp_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        return resourceService.create(***REMOVED***, caller);
+    private KnowledgeBaseView createKb(KbCaller caller) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("编译测试库");
+        kb.setCode("cmp_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        return resourceService.create(kb, caller);
     }
 
-    private String registerText(String ***REMOVED***Id, String title, String content, ***REMOVED***Caller caller) {
-        MaterialUploadItem item = materialService.registerText(***REMOVED***Id, title, null, content, caller);
+    private String registerText(String kbId, String title, String content, KbCaller caller) {
+        MaterialUploadItem item = materialService.registerText(kbId, title, null, content, caller);
         assertTrue(item.isSuccess(), item.getMessage());
         assertEquals("READY", item.getParseStatus());
         return item.getMaterialId();
@@ -95,13 +95,13 @@ class CompilationServiceIntegrationTest {
     @Test
     @DisplayName("单文件编译：P0–P4 全成功，产出已发布检索块产物，可检索并可重跑")
     void runCompilesMaterialAndKeepsArtifactVersions() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
-        String content = "# 架构说明\n\nz-***REMOVED*** 使用 InfluxDB 存储指标，Redis 作为缓存。\n\n"
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
+        String content = "# 架构说明\n\nz-kb 使用 InfluxDB 存储指标，Redis 作为缓存。\n\n"
                 + "## 细节\n\nKafka 承担消息队列，Prometheus 负责采集。\n\n"
                 + "### 检索\n\n检索块按标题切分，索引阶段写入词法索引。\n\n"
                 + "重复段落用于撑开分块：" + repeat("检索与编译链路验证。", 40);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "架构说明", content, caller);
+        String materialId = registerText(kb.getKbId(), "架构说明", content, caller);
 
         CompilationJobView job = compilationService.run(materialId, null, caller);
         assertEquals("COMPLETED", job.getRunStatus());
@@ -142,7 +142,7 @@ class CompilationServiceIntegrationTest {
             assertNotNull(chunk.getContent());
         }
 
-        List<RetrievalChunkView> hits = compilationService.search(***REMOVED***.get***REMOVED***Id(), "InfluxDB", 0, caller);
+        List<RetrievalChunkView> hits = compilationService.search(kb.getKbId(), "InfluxDB", 0, caller);
         assertFalse(hits.isEmpty());
         assertTrue(hits.get(0).getContent().contains("InfluxDB"));
 
@@ -150,7 +150,7 @@ class CompilationServiceIntegrationTest {
         assertNotNull(byMaterial);
         assertEquals(job.getJobId(), byMaterial.getJobId());
         assertEquals(1, compilationService.listScope(job.getJobId(), caller).size());
-        assertEquals(1, compilationService.listBy***REMOVED***(***REMOVED***.get***REMOVED***Id(), materialId, 0, caller).size());
+        assertEquals(1, compilationService.listByKb(kb.getKbId(), materialId, 0, caller).size());
 
         CompilationJobView reused = compilationService.run(materialId, null, caller);
         assertTrue(reused.isReused());
@@ -165,7 +165,7 @@ class CompilationServiceIntegrationTest {
         assertEquals(2, retired.getArtifact().getVersionNo());
         assertTrue(retired.getChunkCount() > 0);
         assertEquals(job.getChunkCount(), retired.getChunkCount());
-        assertFalse(compilationService.search(***REMOVED***.get***REMOVED***Id(), "InfluxDB", 0, caller).isEmpty());
+        assertFalse(compilationService.search(kb.getKbId(), "InfluxDB", 0, caller).isEmpty());
 
         CompilationJobView canceled = compilationService.cancel(job.getJobId(), caller);
         assertTrue(canceled.isReused());
@@ -175,15 +175,15 @@ class CompilationServiceIntegrationTest {
     @Test
     @DisplayName("组别编译：多文件共用作业，成员按文件投影，终态后不再占用运行锁")
     void batchCompilesMultipleMaterials() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
-        String first = registerText(***REMOVED***.get***REMOVED***Id(), "第一份",
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
+        String first = registerText(kb.getKbId(), "第一份",
                 "# 第一章\n\nMySQL 与 PostgreSQL 的对比。" + repeat("数据库选型说明。", 20), caller);
-        String second = registerText(***REMOVED***.get***REMOVED***Id(), "第二份",
+        String second = registerText(kb.getKbId(), "第二份",
                 "# 第二章\n\nKafka 与 RocketMQ 的对比。" + repeat("消息队列选型说明。", 20), caller);
 
         CompilationBatchCreateParam param = new CompilationBatchCreateParam();
-        param.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+        param.setKbId(kb.getKbId());
         param.setScopeType("WORKSPACE");
         param.setMaterialIds(new ArrayList<>(Arrays.asList(first, second)));
         CompilationBatchView batch = batchService.create(param, caller);
@@ -202,56 +202,56 @@ class CompilationServiceIntegrationTest {
             assertTrue(member.getChunkCount() > 0);
         }
         assertEquals(Arrays.asList(first, second), memberIds);
-        assertEquals(1, batchService.listBy***REMOVED***(***REMOVED***.get***REMOVED***Id(), 0, caller).size());
-        CompilationBatchPageView page = batchService.pageBy***REMOVED***(***REMOVED***.get***REMOVED***Id(), 1, 10, caller);
+        assertEquals(1, batchService.listByKb(kb.getKbId(), 0, caller).size());
+        CompilationBatchPageView page = batchService.pageByKb(kb.getKbId(), 1, 10, caller);
         assertEquals(1, page.getTotal());
         assertEquals(1, page.getRecords().size());
         assertEquals(batch.getBatchId(), page.getRecords().get(0).getBatchId());
-        assertFalse(batchService.hasRunning(***REMOVED***.get***REMOVED***Id(), caller));
+        assertFalse(batchService.hasRunning(kb.getKbId(), caller));
         assertEquals(2, batchService.query(batch.getBatchId(), caller).getMembers().size());
         assertEquals(batch.getBatchId(),
                 compilationService.queryByJobId(batch.getBatchId(), caller).getJobId());
-        assertThrows(***REMOVED***Exception.class, () -> batchService.query(batch.getBatchId() + "-x", caller));
+        assertThrows(KBException.class, () -> batchService.query(batch.getBatchId() + "-x", caller));
     }
 
     @Test
     @DisplayName("范围与状态保护：非法 scopeType、非组别标识、运行中组别互斥")
     void guardsBatchScopeAndRunningLock() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "互斥验证", "# 互斥\n\n正文。", caller);
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
+        String materialId = registerText(kb.getKbId(), "互斥验证", "# 互斥\n\n正文。", caller);
 
         CompilationBatchCreateParam invalid = new CompilationBatchCreateParam();
-        invalid.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+        invalid.setKbId(kb.getKbId());
         invalid.setScopeType("SINGLE");
         invalid.setMaterialIds(new ArrayList<>(Arrays.asList(materialId)));
-        ***REMOVED***Exception scopeError = assertThrows(***REMOVED***Exception.class,
+        KBException scopeError = assertThrows(KBException.class,
                 () -> batchService.create(invalid, caller));
         assertEquals("COMPILATION_SCOPE_TYPE_INVALID", scopeError.getCode());
 
         CompilationJobView single = compilationService.run(materialId, null, caller);
-        ***REMOVED***Exception notBatch = assertThrows(***REMOVED***Exception.class,
+        KBException notBatch = assertThrows(KBException.class,
                 () -> batchService.query(single.getJobId(), caller));
         assertEquals("COMPILATION_BATCH_NOT_FOUND", notBatch.getCode());
 
-        insertRunningBatch(caller, ***REMOVED***.get***REMOVED***Id());
+        insertRunningBatch(caller, kb.getKbId());
         CompilationBatchCreateParam blocked = new CompilationBatchCreateParam();
-        blocked.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+        blocked.setKbId(kb.getKbId());
         blocked.setScopeType("WORKSPACE");
         blocked.setMaterialIds(new ArrayList<>(Arrays.asList(materialId)));
-        ***REMOVED***Exception running = assertThrows(***REMOVED***Exception.class,
+        KBException running = assertThrows(KBException.class,
                 () -> batchService.create(blocked, caller));
         assertEquals("COMPILATION_BATCH_RUNNING", running.getCode());
     }
 
-    private void insertRunningBatch(***REMOVED***Caller caller, String ***REMOVED***Id) {
+    private void insertRunningBatch(KbCaller caller, String kbId) {
         Instant now = Instant.now();
         CompilationJobEntity job = new CompilationJobEntity();
         String id = UUID.randomUUID().toString();
         job.setId(id);
         job.setJobId(id);
         job.setTenantCode(caller.getTenantCode());
-        job.set***REMOVED***Id(***REMOVED***Id);
+        job.setKbId(kbId);
         job.setName("运行中的组别");
         job.setTaskType("COMPILATION");
         job.setScopeType("WORKSPACE");

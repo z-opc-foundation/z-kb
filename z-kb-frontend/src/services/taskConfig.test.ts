@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { request } from '@/services/http';
 import { toast } from '@/utils/toast';
 import {
-  get***REMOVED***TaskConfig,
+  getKbTaskConfig,
   getTaskConfig,
-  publish***REMOVED***TaskConfig,
+  publishKbTaskConfig,
   publishTaskConfig,
 } from './taskConfig';
 
@@ -13,7 +13,7 @@ vi.mock('@/utils/tenant', () => ({ getTenantCode: vi.fn(() => 'tenant-a') }));
 vi.mock('@/utils/toast', () => ({ toast: vi.fn() }));
 
 const headers = { 'X-Tenant-Code': 'tenant-a' };
-const BASE = '/***REMOVED***/v1/taskConfig';
+const BASE = '/kb/v1/taskConfig';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -47,12 +47,12 @@ describe('任务配置接口', () => {
     });
   });
 
-  it('读取与发布知识库级任务配置带 ***REMOVED***Id', async () => {
+  it('读取与发布知识库级任务配置带 kbId', async () => {
     const record = { version: '2026.10-r2', items: [] };
     vi.mocked(request).mockResolvedValue(record as never);
 
-    await expect(get***REMOVED***TaskConfig('***REMOVED***-1')).resolves.toBe(record);
-    expect(request).toHaveBeenLastCalledWith(`${BASE}/***REMOVED***/query?***REMOVED***Id=***REMOVED***-1`, {
+    await expect(getKbTaskConfig('kb-1')).resolves.toBe(record);
+    expect(request).toHaveBeenLastCalledWith(`${BASE}/kb/query?kbId=kb-1`, {
       method: 'get',
       headers,
     });
@@ -66,10 +66,10 @@ describe('任务配置接口', () => {
         retryLimit: 1,
       },
     ];
-    await publish***REMOVED***TaskConfig('***REMOVED***-1', items);
-    expect(request).toHaveBeenLastCalledWith(`${BASE}/***REMOVED***/publish`, {
+    await publishKbTaskConfig('kb-1', items);
+    expect(request).toHaveBeenLastCalledWith(`${BASE}/kb/publish`, {
       method: 'post',
-      data: { ***REMOVED***Id: '***REMOVED***-1', items },
+      data: { kbId: 'kb-1', items },
       headers,
     });
   });

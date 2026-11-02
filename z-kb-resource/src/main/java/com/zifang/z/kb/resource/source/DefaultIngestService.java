@@ -1,23 +1,23 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.source.IngestService;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceService;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceSyncView;
-import com.zifang.z.***REMOVED***.core.source.IngestSyncInfo;
-import com.zifang.z.***REMOVED***.resource.***REMOVED***AuditService;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.source.IngestService;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceService;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceSyncView;
+import com.zifang.z.kb.core.source.IngestSyncInfo;
+import com.zifang.z.kb.resource.KbAuditService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * 接入源同步入口：校验库权限（***REMOVED***MANAGE）与同步范围后，按供应商分派连接器。
+ * 接入源同步入口：校验库权限（KB_MANAGE）与同步范围后，按供应商分派连接器。
  *
- * <p>z-***REMOVED*** 没有独立任务内核，同步在请求内跑完并返回计数；{@code scopeId} 是本次运行的
+ * <p>z-kb 没有独立任务内核，同步在请求内跑完并返回计数；{@code scopeId} 是本次运行的
  * 标识，{@code reusing} 恒为 false（没有可复用的并发任务）。</p>
  */
 public class DefaultIngestService implements IngestService {
@@ -26,28 +26,28 @@ public class DefaultIngestService implements IngestService {
 
     private final List<IngestConnector> connectors;
 
-    private final ***REMOVED***AuditService auditService;
+    private final KbAuditService auditService;
 
     public DefaultIngestService(KnowledgeBaseSourceService sourceService,
-            List<IngestConnector> connectors, ***REMOVED***AuditService auditService) {
+            List<IngestConnector> connectors, KbAuditService auditService) {
         this.sourceService = sourceService;
         this.connectors = connectors == null ? new ArrayList<>() : connectors;
         this.auditService = auditService;
     }
 
     @Override
-    public KnowledgeBaseSourceSyncView sync(String ***REMOVED***Id, String sourceId, ***REMOVED***Caller caller) {
-        if (***REMOVED***Id == null || ***REMOVED***Id.trim().isEmpty() || sourceId == null
+    public KnowledgeBaseSourceSyncView sync(String kbId, String sourceId, KbCaller caller) {
+        if (kbId == null || kbId.trim().isEmpty() || sourceId == null
                 || sourceId.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "同步需要知识库与接入源标识");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "同步需要知识库与接入源标识");
         }
-        KnowledgeBaseSourceAccess source = sourceService.requireAccess(***REMOVED***Id, sourceId, caller);
+        KnowledgeBaseSourceAccess source = sourceService.requireAccess(kbId, sourceId, caller);
         IngestConnector connector = connectorOf(source);
         connector.checkScope(source);
 
-        String safe***REMOVED***Id = ***REMOVED***Id.trim();
-        IngestSyncInfo info = connector.sync(safe***REMOVED***Id, source, caller);
-        auditService.record(caller, safe***REMOVED***Id, "***REMOVED***.source.sync", "SOURCE", source.getSourceId(),
+        String safeKbId = kbId.trim();
+        IngestSyncInfo info = connector.sync(safeKbId, source, caller);
+        auditService.record(caller, safeKbId, "kb.source.sync", "SOURCE", source.getSourceId(),
                 info.getSummary());
         return toView(source, info);
     }
@@ -73,7 +73,7 @@ public class DefaultIngestService implements IngestService {
     /** 找到能处理该供应商的连接器；停用或未接入的供应商直接拒绝。 */
     private IngestConnector connectorOf(KnowledgeBaseSourceAccess source) {
         if (source.getEnabled() != null && !source.getEnabled()) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源已停用，不能同步");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "接入源已停用，不能同步");
         }
         KnowledgeBaseSourceProvider provider = KnowledgeBaseSourceProvider.of(
                 source.getProvider());
@@ -84,7 +84,7 @@ public class DefaultIngestService implements IngestService {
                 }
             }
         }
-        throw new ***REMOVED***Exception("***REMOVED***SOURCE_PROVIDER_UNSUPPORTED",
+        throw new KBException("KB_SOURCE_PROVIDER_UNSUPPORTED",
                 "该供应商暂不支持同步：" + source.getProvider());
     }
 }

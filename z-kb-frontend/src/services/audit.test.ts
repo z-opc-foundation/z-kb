@@ -22,15 +22,15 @@ describe('审计日志接口', () => {
       current: 2,
       size: 20,
       keyword: '上传',
-      type: '***REMOVED***' as const,
-      bizRef: '***REMOVED***-1',
+      type: 'KB' as const,
+      bizRef: 'kb-1',
       actorId: 9,
       success: 1 as const,
       startTime: 100,
       endTime: 200,
     };
     await expect(pageAuditLogs(query)).resolves.toBe(page);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/auditLog/page', {
+    expect(request).toHaveBeenCalledWith('/kb/v1/auditLog/page', {
       method: 'post',
       data: query,
       headers,
@@ -41,7 +41,7 @@ describe('审计日志接口', () => {
     const record = { id: '1', tenantCode: 'tenant-a', action: 'A', targetMethod: 'm', success: 1, createTime: '2026-01-01' };
     vi.mocked(request).mockResolvedValue(record as never);
     await expect(getAuditLog('1')).resolves.toBe(record);
-    expect(request).toHaveBeenCalledWith('/***REMOVED***/v1/auditLog/get', {
+    expect(request).toHaveBeenCalledWith('/kb/v1/auditLog/get', {
       method: 'get',
       params: { id: '1' },
       headers,

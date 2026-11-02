@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 /**
  * Wiki 编译任务句柄：沿用参考实现的字段口径。

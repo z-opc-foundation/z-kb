@@ -54,11 +54,11 @@ afterEach(() => {
 describe('概念详情弹窗', () => {
   it('加载概念后展示状态、统计、定义与来源提及', async () => {
     vi.mocked(getConcept).mockResolvedValue(DETAIL);
-    render(<ConceptDetailModal ***REMOVED***Id="***REMOVED***-1" conceptId="concept-1" onClose={vi.fn()} />);
+    render(<ConceptDetailModal kbId="kb-1" conceptId="concept-1" onClose={vi.fn()} />);
 
     expect(screen.getByText('正在加载概念…')).toBeTruthy();
     expect(await screen.findByText('概念 · 高血压')).toBeTruthy();
-    expect(getConcept).toHaveBeenCalledWith('***REMOVED***-1', 'concept-1');
+    expect(getConcept).toHaveBeenCalledWith('kb-1', 'concept-1');
 
     expect(screen.getByText('已确认')).toBeTruthy();
     expect(screen.getByText('提及 3')).toBeTruthy();
@@ -79,7 +79,7 @@ describe('概念详情弹窗', () => {
     const onOpenMaterialGraph = vi.fn();
     render(
       <ConceptDetailModal
-        ***REMOVED***Id="***REMOVED***-1"
+        kbId="kb-1"
         conceptId="concept-1"
         onClose={vi.fn()}
         onOpenMaterial={onOpenMaterial}
@@ -99,7 +99,7 @@ describe('概念详情弹窗', () => {
       concept: { ...DETAIL.concept, status: 'EMERGING', definition: null, graphNodeId: null },
       mentions: [],
     });
-    render(<ConceptDetailModal ***REMOVED***Id="***REMOVED***-1" conceptId="concept-9" onClose={vi.fn()} />);
+    render(<ConceptDetailModal kbId="kb-1" conceptId="concept-9" onClose={vi.fn()} />);
 
     expect(await screen.findByText('涌现中')).toBeTruthy();
     expect(screen.getByText('无图谱节点')).toBeTruthy();

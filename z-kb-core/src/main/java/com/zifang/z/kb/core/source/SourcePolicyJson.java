@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
+import com.zifang.z.kb.api.KBException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 接入源列表在 {@code ***REMOVED***_knowledge_base_profile.source_policy} 里的存储结构。
+ * 接入源列表在 {@code kb_knowledge_base_profile.source_policy} 里的存储结构。
  *
  * <p>用 Map 读写而不是反射绑 POJO：z-util JsonUtil 的 POJO 绑定语义与 Jackson 有差异，
  * 这里字段少、结构固定，显式取值更稳。凭据只在这份 JSON 内，读取时由服务层脱敏。</p>
@@ -153,7 +153,7 @@ public final class SourcePolicyJson {
                 throw configInvalid();
             }
             root = (Map<String, Object>) plain;
-        } catch (***REMOVED***Exception e) {
+        } catch (KBException e) {
             throw e;
         } catch (RuntimeException e) {
             throw configInvalid();
@@ -265,7 +265,7 @@ public final class SourcePolicyJson {
         return Boolean.parseBoolean(text);
     }
 
-    private static ***REMOVED***Exception configInvalid() {
-        return new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源配置格式不合法");
+    private static KBException configInvalid() {
+        return new KBException("KB_SOURCE_CONFIG_INVALID", "接入源配置格式不合法");
     }
 }

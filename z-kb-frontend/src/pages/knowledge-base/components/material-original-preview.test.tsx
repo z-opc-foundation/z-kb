@@ -12,7 +12,7 @@ const download = vi.mocked(downloadMaterial);
 function material(patch: Partial<MaterialRecord> = {}): MaterialRecord {
   return {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '排班管理制度',
     sourceType: 'UPLOAD',

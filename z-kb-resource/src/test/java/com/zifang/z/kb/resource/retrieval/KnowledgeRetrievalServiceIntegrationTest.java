@@ -1,24 +1,24 @@
-package com.zifang.z.***REMOVED***.resource.retrieval;
+package com.zifang.z.kb.resource.retrieval;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationJobView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadFile;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.retrieval.KnowledgeRetrievalService;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalHitView;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalQueryParam;
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalResultView;
-import com.zifang.z.***REMOVED***.resource.***REMOVED***ResourceTestApplication;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.CompilationJobView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadFile;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.retrieval.KnowledgeRetrievalService;
+import com.zifang.z.kb.api.retrieval.RetrievalHitView;
+import com.zifang.z.kb.api.retrieval.RetrievalQueryParam;
+import com.zifang.z.kb.api.retrieval.RetrievalResultView;
+import com.zifang.z.kb.resource.KbResourceTestApplication;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 检索域集成测试：真起 Spring 容器 + H2，钉住 dense 召回、解释字段与参数边界。
  */
-@SpringBootTest(classes = ***REMOVED***ResourceTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-retrieval;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbResourceTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-retrieval;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/retrieval-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/retrieval-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/retrieval-repo",
+        "kb.storage.path=target/test-kb/retrieval-kb.json",
+        "kb.material.storage.root=target/test-kb/retrieval-original",
+        "kb.material.repo.root=target/test-kb/retrieval-repo",
         "spring.main.banner-mode=off"
 })
 class KnowledgeRetrievalServiceIntegrationTest {
@@ -69,15 +69,15 @@ class KnowledgeRetrievalServiceIntegrationTest {
     @Test
     @DisplayName("dense 召回：命中带分数、命中词与章节上下文，缺失向量按需回填")
     void retrieveExplainsHitsAndBackfillsEmbeddings() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
         String content = "# 运维手册\n\nInfluxDB 负责存储监控指标，Prometheus 负责采集。\n\n"
                 + "## 告警\n\n告警规则由 Prometheus 评估后写入 Alertmanager。" + "指标采集说明。".repeat(120);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "运维手册", content, caller);
+        String materialId = registerText(kb.getKbId(), "运维手册", content, caller);
         CompilationJobView job = compilationService.run(materialId, null, caller);
         assertEquals("COMPLETED", job.getRunStatus());
 
-        RetrievalResultView result = retrievalService.retrieve(query(***REMOVED***.get***REMOVED***Id(), "Prometheus 告警"), caller);
+        RetrievalResultView result = retrievalService.retrieve(query(kb.getKbId(), "Prometheus 告警"), caller);
         assertEquals("dense", result.getMode());
         assertEquals("local-hash-ngram-v1", result.getEmbeddingModel());
         assertEquals(10, result.getTopK());
@@ -114,98 +114,98 @@ class KnowledgeRetrievalServiceIntegrationTest {
     @Test
     @DisplayName("参数与状态边界：topK / minScore / 查询长度 / 模式 / 租户隔离")
     void guardsParametersAndTenantBoundary() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "边界验证",
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
+        String materialId = registerText(kb.getKbId(), "边界验证",
                 "# 边界\n\nRedis 缓存与 Kafka 消息队列。" + "边界说明。".repeat(40), caller);
         compilationService.run(materialId, null, caller);
 
-        ***REMOVED***Exception blank = assertThrows(***REMOVED***Exception.class, () -> {
+        KBException blank = assertThrows(KBException.class, () -> {
             RetrievalQueryParam param = new RetrievalQueryParam();
-            param.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
+            param.setKbId(kb.getKbId());
             retrievalService.retrieve(param, caller);
         });
-        assertEquals("***REMOVED***RETRIEVAL_PARAM_INVALID", blank.getCode());
+        assertEquals("KB_RETRIEVAL_PARAM_INVALID", blank.getCode());
 
-        ***REMOVED***Exception longQuery = assertThrows(***REMOVED***Exception.class, () -> {
-            RetrievalQueryParam param = query(***REMOVED***.get***REMOVED***Id(), "长".repeat(201));
+        KBException longQuery = assertThrows(KBException.class, () -> {
+            RetrievalQueryParam param = query(kb.getKbId(), "长".repeat(201));
             retrievalService.retrieve(param, caller);
         });
-        assertEquals("***REMOVED***RETRIEVAL_PARAM_INVALID", longQuery.getCode());
+        assertEquals("KB_RETRIEVAL_PARAM_INVALID", longQuery.getCode());
 
-        ***REMOVED***Exception topK = assertThrows(***REMOVED***Exception.class, () -> {
-            RetrievalQueryParam param = query(***REMOVED***.get***REMOVED***Id(), "Redis");
+        KBException topK = assertThrows(KBException.class, () -> {
+            RetrievalQueryParam param = query(kb.getKbId(), "Redis");
             param.setTopK(51);
             retrievalService.retrieve(param, caller);
         });
-        assertEquals("***REMOVED***RETRIEVAL_PARAM_INVALID", topK.getCode());
+        assertEquals("KB_RETRIEVAL_PARAM_INVALID", topK.getCode());
 
-        ***REMOVED***Exception minScore = assertThrows(***REMOVED***Exception.class, () -> {
-            RetrievalQueryParam param = query(***REMOVED***.get***REMOVED***Id(), "Redis");
+        KBException minScore = assertThrows(KBException.class, () -> {
+            RetrievalQueryParam param = query(kb.getKbId(), "Redis");
             param.setMinScore(1.5d);
             retrievalService.retrieve(param, caller);
         });
-        assertEquals("***REMOVED***RETRIEVAL_PARAM_INVALID", minScore.getCode());
+        assertEquals("KB_RETRIEVAL_PARAM_INVALID", minScore.getCode());
 
-        ***REMOVED***Exception mode = assertThrows(***REMOVED***Exception.class, () -> {
-            RetrievalQueryParam param = query(***REMOVED***.get***REMOVED***Id(), "Redis");
+        KBException mode = assertThrows(KBException.class, () -> {
+            RetrievalQueryParam param = query(kb.getKbId(), "Redis");
             param.setMode("bm25");
             retrievalService.retrieve(param, caller);
         });
-        assertEquals("***REMOVED***RETRIEVAL_MODE_UNSUPPORTED", mode.getCode());
+        assertEquals("KB_RETRIEVAL_MODE_UNSUPPORTED", mode.getCode());
 
-        RetrievalQueryParam strict = query(***REMOVED***.get***REMOVED***Id(), "Redis");
+        RetrievalQueryParam strict = query(kb.getKbId(), "Redis");
         strict.setMinScore(1.0d);
         strict.setTopK(1);
         RetrievalResultView strictResult = retrievalService.retrieve(strict, caller);
         assertTrue(strictResult.getHits().isEmpty());
         assertEquals(0, strictResult.getReturned());
 
-        ***REMOVED***Exception foreign = assertThrows(***REMOVED***Exception.class,
-                () -> retrievalService.retrieve(query(***REMOVED***.get***REMOVED***Id(), "Redis"),
-                        ***REMOVED***Caller.of("t-other", "u-other")));
-        assertEquals("***REMOVED***NOT_FOUND", foreign.getCode());
+        KBException foreign = assertThrows(KBException.class,
+                () -> retrievalService.retrieve(query(kb.getKbId(), "Redis"),
+                        KbCaller.of("t-other", "u-other")));
+        assertEquals("KB_NOT_FOUND", foreign.getCode());
     }
 
     @Test
     @DisplayName("版本过滤：物料换版后旧版本检索块不再进入候选")
     void excludesChunksOfPreviousVersion() {
-        ***REMOVED***Caller caller = ***REMOVED***Caller.of(TENANT, ACTOR);
-        KnowledgeBaseView ***REMOVED*** = create***REMOVED***(caller);
-        String materialId = registerText(***REMOVED***.get***REMOVED***Id(), "版本过滤",
+        KbCaller caller = KbCaller.of(TENANT, ACTOR);
+        KnowledgeBaseView kb = createKb(caller);
+        String materialId = registerText(kb.getKbId(), "版本过滤",
                 "# 旧版\n\n旧版本正文提到 Solr。" + "旧版说明。".repeat(40), caller);
         compilationService.run(materialId, null, caller);
-        assertFalse(retrievalService.retrieve(query(***REMOVED***.get***REMOVED***Id(), "Solr"), caller).getHits().isEmpty());
+        assertFalse(retrievalService.retrieve(query(kb.getKbId(), "Solr"), caller).getHits().isEmpty());
 
         byte[] revised = ("# 新版\n\n新版本正文只讲 Elasticsearch。" + "新版说明。".repeat(40))
                 .getBytes(StandardCharsets.UTF_8);
-        MaterialUploadItem item = materialService.revise(***REMOVED***.get***REMOVED***Id(), materialId,
+        MaterialUploadItem item = materialService.revise(kb.getKbId(), materialId,
                 new MaterialUploadFile("new.md", revised.length, revised), null, caller);
         assertTrue(item.isSuccess(), item.getMessage());
 
-        RetrievalResultView result = retrievalService.retrieve(query(***REMOVED***.get***REMOVED***Id(), "Solr"), caller);
+        RetrievalResultView result = retrievalService.retrieve(query(kb.getKbId(), "Solr"), caller);
         assertEquals(0, result.getTotalCandidates());
         assertEquals(0, result.getReturned());
         assertTrue(result.getHits().isEmpty());
     }
 
-    private RetrievalQueryParam query(String ***REMOVED***Id, String text) {
+    private RetrievalQueryParam query(String kbId, String text) {
         RetrievalQueryParam param = new RetrievalQueryParam();
-        param.set***REMOVED***Id(***REMOVED***Id);
+        param.setKbId(kbId);
         param.setQuery(text);
         return param;
     }
 
-    private KnowledgeBaseView create***REMOVED***(***REMOVED***Caller caller) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName("检索测试库");
-        ***REMOVED***.setCode("ret_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        return resourceService.create(***REMOVED***, caller);
+    private KnowledgeBaseView createKb(KbCaller caller) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName("检索测试库");
+        kb.setCode("ret_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        return resourceService.create(kb, caller);
     }
 
-    private String registerText(String ***REMOVED***Id, String title, String content, ***REMOVED***Caller caller) {
-        MaterialUploadItem item = materialService.registerText(***REMOVED***Id, title, null, content, caller);
+    private String registerText(String kbId, String title, String content, KbCaller caller) {
+        MaterialUploadItem item = materialService.registerText(kbId, title, null, content, caller);
         assertTrue(item.isSuccess(), item.getMessage());
         return item.getMaterialId();
     }

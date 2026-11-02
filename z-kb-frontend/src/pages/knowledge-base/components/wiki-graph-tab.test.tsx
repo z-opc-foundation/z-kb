@@ -3,14 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { KnowledgeGraphRecord } from '@/services/graph';
 
 vi.mock('@/services/graph', () => ({
-  getGraphBy***REMOVED***: vi.fn(),
+  getGraphByKb: vi.fn(),
 }));
 
-import { getGraphBy***REMOVED*** } from '@/services/graph';
+import { getGraphByKb } from '@/services/graph';
 import WikiGraphTab from './wiki-graph-tab';
 
 const GRAPH: KnowledgeGraphRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   graphSpaceKey: 'space-1',
   nodeCount: 9,
   edgeCount: 2,
@@ -51,7 +51,7 @@ const GRAPH: KnowledgeGraphRecord = {
 };
 
 beforeEach(() => {
-  vi.mocked(getGraphBy***REMOVED***).mockReset();
+  vi.mocked(getGraphByKb).mockReset();
 });
 
 afterEach(() => {
@@ -60,12 +60,12 @@ afterEach(() => {
 
 describe('Wiki 同源图谱页签', () => {
   it('只展示来源资料命中的节点与同源关系', async () => {
-    vi.mocked(getGraphBy***REMOVED***).mockResolvedValue(GRAPH);
-    render(<WikiGraphTab ***REMOVED***Id="***REMOVED***-1" sourceMaterialIds={['mat-1', 'mat-2']} />);
+    vi.mocked(getGraphByKb).mockResolvedValue(GRAPH);
+    render(<WikiGraphTab kbId="kb-1" sourceMaterialIds={['mat-1', 'mat-2']} />);
 
     expect(screen.getByText('正在加载同源图谱…')).toBeTruthy();
     expect(await screen.findByText('2 个同源节点')).toBeTruthy();
-    expect(getGraphBy***REMOVED***).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getGraphByKb).toHaveBeenCalledWith('kb-1');
     expect(screen.getByText('1 条关系')).toBeTruthy();
     expect(screen.getByText('库内 9 个节点')).toBeTruthy();
     expect(screen.getByText('库内图谱已截断')).toBeTruthy();
@@ -80,16 +80,16 @@ describe('Wiki 同源图谱页签', () => {
   });
 
   it('来源资料没有命中节点时展示空态', async () => {
-    vi.mocked(getGraphBy***REMOVED***).mockResolvedValue(GRAPH);
-    render(<WikiGraphTab ***REMOVED***Id="***REMOVED***-1" sourceMaterialIds={['mat-x']} />);
+    vi.mocked(getGraphByKb).mockResolvedValue(GRAPH);
+    render(<WikiGraphTab kbId="kb-1" sourceMaterialIds={['mat-x']} />);
 
     expect(await screen.findByText('该 Wiki 来源资料暂无图谱节点')).toBeTruthy();
     expect(screen.queryByText('同源关系')).toBeNull();
   });
 
   it('有节点但无关系时提示暂无可展示关系', async () => {
-    vi.mocked(getGraphBy***REMOVED***).mockResolvedValue({ ...GRAPH, edges: [] });
-    render(<WikiGraphTab ***REMOVED***Id="***REMOVED***-1" sourceMaterialIds={['mat-1']} />);
+    vi.mocked(getGraphByKb).mockResolvedValue({ ...GRAPH, edges: [] });
+    render(<WikiGraphTab kbId="kb-1" sourceMaterialIds={['mat-1']} />);
 
     expect(await screen.findByText('1 个同源节点')).toBeTruthy();
     expect(screen.getByText('0 条关系')).toBeTruthy();

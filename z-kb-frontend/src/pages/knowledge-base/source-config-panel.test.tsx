@@ -30,7 +30,7 @@ const testMock = vi.mocked(testKnowledgeBaseSource);
 const syncMock = vi.mocked(syncKnowledgeBaseSource);
 
 function renderPanel(canManage = true) {
-  return render(<SourceConfigPanel ***REMOVED***Id="***REMOVED***-1" canManage={canManage} />);
+  return render(<SourceConfigPanel kbId="kb-1" canManage={canManage} />);
 }
 
 beforeEach(() => {
@@ -88,8 +88,8 @@ describe('SourceConfigPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: /保存变更/ }));
 
     await waitFor(() => expect(saveMock).toHaveBeenCalledTimes(1));
-    const [***REMOVED***Id, sources] = saveMock.mock.calls[0];
-    expect(***REMOVED***Id).toBe('***REMOVED***-1');
+    const [kbId, sources] = saveMock.mock.calls[0];
+    expect(kbId).toBe('kb-1');
     expect(sources).toHaveLength(2);
     expect(sources[0]).toMatchObject({ sourceId: 's-1', provider: 'YUQUE', secret: undefined });
     expect(sources[1]).toMatchObject({
@@ -132,7 +132,7 @@ describe('SourceConfigPanel', () => {
     fireEvent.click(await screen.findByRole('button', { name: /测试/ }));
 
     expect(await screen.findByText('不通')).toBeInTheDocument();
-    expect(testMock).toHaveBeenCalledWith('***REMOVED***-1', expect.objectContaining({ sourceId: 's-1' }));
+    expect(testMock).toHaveBeenCalledWith('kb-1', expect.objectContaining({ sourceId: 's-1' }));
   });
 
   it('新增语雀接入源时先加载团队与知识库再勾选', async () => {
@@ -159,7 +159,7 @@ describe('SourceConfigPanel', () => {
     await waitFor(() => expect(catalogMock).toHaveBeenCalledTimes(1));
     fireEvent.change(teamSelect, { target: { value: 'xr4hwk' } });
 
-    fireEvent.click(await screen.findByRole('chec***REMOVED***ox', { name: '同步知识库 知识中台' }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: '同步知识库 知识中台' }));
     fireEvent.click(screen.getByRole('button', { name: /加入列表/ }));
     fireEvent.click(screen.getByRole('button', { name: /保存变更/ }));
 
@@ -203,10 +203,10 @@ describe('SourceConfigPanel', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /加载团队与知识库/ }));
     await waitFor(() => expect(catalogMock).toHaveBeenCalledTimes(1));
-    fireEvent.click(await screen.findByRole('chec***REMOVED***ox', { name: '同步知识库 知识中台' }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: '同步知识库 知识中台' }));
 
     fireEvent.click(screen.getByRole('button', { name: /选文章/ }));
-    fireEvent.click(await screen.findByRole('chec***REMOVED***ox', { name: '总览' }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: '总览' }));
 
     await waitFor(() => expect(catalogDocsMock).toHaveBeenCalledTimes(1));
     expect(catalogDocsMock.mock.calls[0][2]).toBe('xr4hwk/unn4rb');

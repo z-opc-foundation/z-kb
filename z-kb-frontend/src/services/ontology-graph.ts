@@ -2,15 +2,15 @@ import { request } from './http';
 import { getTenantCode } from '@/utils/tenant';
 
 /**
- * 本体图谱查询服务（z-***REMOVED*** 适配层）。
+ * 本体图谱查询服务（z-kb 适配层）。
  *
  * 页面与类型保持 galaxy-meta OntologyBrowse 契约不变（参考实现自己的注释也预留了
- * 「仅需调整 BASE 切换到自有后端，页面与类型不变」），数据源换到 z-***REMOVED*** 图谱契约：
- * space → 知识库；objectTypes / relations → 由 graph queryBy***REMOVED*** 的节点 / 边类型现推；
- * stats → 节点 / 边按类型实时计数。z-***REMOVED*** 图谱引擎是本地规则图谱，不支持 nGQL，
+ * 「仅需调整 BASE 切换到自有后端，页面与类型不变」），数据源换到 z-kb 图谱契约：
+ * space → 知识库；objectTypes / relations → 由 graph queryByKb 的节点 / 边类型现推；
+ * stats → 节点 / 边按类型实时计数。z-kb 图谱引擎是本地规则图谱，不支持 nGQL，
  * executeNGQLQuery 显式返回失败，页面实例查询标签页如实展示原因。
  */
-const ***REMOVED***BASE = '/***REMOVED***/v1';
+const KB_BASE = '/kb/v1';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -100,34 +100,34 @@ export interface StatsJobStatus {
   jobId: string;
 }
 
-/* ---------- z-***REMOVED*** 图谱契约 ---------- */
+/* ---------- z-kb 图谱契约 ---------- */
 
-interface ***REMOVED***GraphNode {
+interface KbGraphNode {
   nodeId: string;
   nodeType: string;
   name?: string;
 }
 
-interface ***REMOVED***GraphEdge {
+interface KbGraphEdge {
   edgeId: string;
   edgeType: string;
   sourceNodeId: string;
   targetNodeId: string;
 }
 
-interface ***REMOVED***GraphView {
-  ***REMOVED***Id: string;
+interface KbGraphView {
+  kbId: string;
   nodeCount: number;
   edgeCount: number;
   truncated: boolean;
-  nodes: ***REMOVED***GraphNode[];
-  edges: ***REMOVED***GraphEdge[];
+  nodes: KbGraphNode[];
+  edges: KbGraphEdge[];
 }
 
-function loadGraph(spaceName: string): Promise<***REMOVED***GraphView> {
-  return request<***REMOVED***GraphView>(`${***REMOVED***BASE}/graph/queryBy***REMOVED***`, {
+function loadGraph(spaceName: string): Promise<KbGraphView> {
+  return request<KbGraphView>(`${KB_BASE}/graph/queryByKb`, {
     method: 'get',
-    params: { ***REMOVED***Id: spaceName },
+    params: { kbId: spaceName },
     headers: tenantHeaders(),
   });
 }
@@ -144,23 +144,23 @@ function nowStamp(): string {
 
 /* ---------- 服务函数 ---------- */
 
-/** 获取所有图数据库 Space 列表（z-***REMOVED***：知识库分页） */
+/** 获取所有图数据库 Space 列表（z-kb：知识库分页） */
 export async function querySpaces(): Promise<SpaceInfo[]> {
   const page = await request<{
-    records: Array<{ ***REMOVED***Id: string; name: string; description?: string }>;
-  }>(`${***REMOVED***BASE}/knowledgeBase/page`, {
+    records: Array<{ kbId: string; name: string; description?: string }>;
+  }>(`${KB_BASE}/knowledgeBase/page`, {
     method: 'post',
     data: { current: 1, size: 200 },
     headers: tenantHeaders(),
   });
   return (page?.records || []).map((item) => ({
-    spaceName: item.***REMOVED***Id,
+    spaceName: item.kbId,
     displayName: item.name,
     description: item.description,
   }));
 }
 
-/** 获取指定 Space 的完整元数据（z-***REMOVED***：由图谱节点 / 边类型现推） */
+/** 获取指定 Space 的完整元数据（z-kb：由图谱节点 / 边类型现推） */
 export async function getSpaceMetadata(spaceName: string): Promise<SpaceMetadata> {
   const graph = await loadGraph(spaceName);
   const nodeTypes: string[] = [];
@@ -194,7 +194,7 @@ export async function getSpaceMetadata(spaceName: string): Promise<SpaceMetadata
   };
 }
 
-/** 获取指定 Space 的 Tag-Edge 关系定义（z-***REMOVED***：按边类型取首条边的两端节点类型） */
+/** 获取指定 Space 的 Tag-Edge 关系定义（z-kb：按边类型取首条边的两端节点类型） */
 export async function queryTagRelations(spaceName: string): Promise<TagRelationInfo[]> {
   const graph = await loadGraph(spaceName);
   const typeOfNode = new Map<string, string>();
@@ -212,7 +212,7 @@ export async function queryTagRelations(spaceName: string): Promise<TagRelationI
   return relations;
 }
 
-/** 执行 nGQL 查询（z-***REMOVED*** 图谱引擎是本地规则图谱，不支持，显式失败） */
+/** 执行 nGQL 查询（z-kb 图谱引擎是本地规则图谱，不支持，显式失败） */
 export function executeNGQLQuery(
   spaceName: string,
   nGql: string,
@@ -220,7 +220,7 @@ export function executeNGQLQuery(
   return Promise.resolve({
     query: nGql,
     success: false,
-    error: 'z-***REMOVED*** 图谱引擎是本地规则图谱，不支持 nGQL 实例查询',
+    error: 'z-kb 图谱引擎是本地规则图谱，不支持 nGQL 实例查询',
     rowCount: 0,
     duration: 0,
     columns: null,
@@ -228,7 +228,7 @@ export function executeNGQLQuery(
   });
 }
 
-/** 获取实例数量与统计时间（z-***REMOVED***：节点 / 边按类型实时计数） */
+/** 获取实例数量与统计时间（z-kb：节点 / 边按类型实时计数） */
 export async function getSpaceStats(spaceName: string): Promise<SpaceStatsResult> {
   const graph = await loadGraph(spaceName);
   const tagCounts: Record<string, number> = {};
@@ -242,14 +242,14 @@ export async function getSpaceStats(spaceName: string): Promise<SpaceStatsResult
   return { tagCounts, edgeCounts, statsTime: nowStamp() };
 }
 
-/** 提交 SUBMIT JOB STATS（z-***REMOVED*** 统计为实时计算，无刷新任务） */
+/** 提交 SUBMIT JOB STATS（z-kb 统计为实时计算，无刷新任务） */
 export function refreshSpaceStats(
   spaceName: string,
 ): Promise<{ jobId: string; status: string; message?: string }> {
   return Promise.resolve({
-    jobId: `***REMOVED***-realtime-${spaceName}`,
+    jobId: `kb-realtime-${spaceName}`,
     status: 'finished',
-    message: 'z-***REMOVED*** 图谱统计为实时计算，无需刷新任务',
+    message: 'z-kb 图谱统计为实时计算，无需刷新任务',
   });
 }
 
@@ -258,6 +258,6 @@ export function getStatsJobStatus(spaceName: string): Promise<StatsJobStatus> {
   return Promise.resolve({
     status: 'finished',
     stopTime: nowStamp(),
-    jobId: `***REMOVED***-realtime-${spaceName}`,
+    jobId: `kb-realtime-${spaceName}`,
   });
 }

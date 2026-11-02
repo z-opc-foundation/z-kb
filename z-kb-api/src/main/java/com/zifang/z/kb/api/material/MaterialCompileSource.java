@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 编译输入来源。物料是唯一事实源，编译域通过本对象读取已解析正文。
@@ -6,7 +6,7 @@ package com.zifang.z.***REMOVED***.api.material;
 public class MaterialCompileSource {
 
     private String materialId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String title;
     private String versionId;
     private Integer versionNo;
@@ -25,12 +25,12 @@ public class MaterialCompileSource {
         this.materialId = materialId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTitle() {

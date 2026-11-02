@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.protocol.request;
+package com.zifang.z.kb.protocol.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Markdown 导入请求 —— {@code POST /api/***REMOVED***/documents/markdown}。
+ * Markdown 导入请求 —— {@code POST /api/kb/documents/markdown}。
  */
 @Schema(description = "Markdown 文档导入请求")
 public class ImportMarkdownRequest {

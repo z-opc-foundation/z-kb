@@ -1,14 +1,14 @@
-package com.zifang.z.***REMOVED***.resource.material;
+package com.zifang.z.kb.resource.material;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.material.MaterialRepoBrowseService;
-import com.zifang.z.***REMOVED***.api.material.MaterialRepoRef;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.RepoEntry;
-import com.zifang.z.***REMOVED***.api.material.RepoFile;
-import com.zifang.z.***REMOVED***.api.material.RepoOverview;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Paths;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.material.MaterialRepoBrowseService;
+import com.zifang.z.kb.api.material.MaterialRepoRef;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.RepoEntry;
+import com.zifang.z.kb.api.material.RepoFile;
+import com.zifang.z.kb.api.material.RepoOverview;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.KbPaths;
 import com.zifang.util.json.JsonUtil;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * 代码仓库物料只读浏览。参考实现按接入源凭据实时读 Git；本实现读宿主配置的本地检出根目录
- * （{@code ***REMOVED***.material.repo.root}），仓库坐标来自物料元数据 {@code kind=REPO, repo, branch, commit}。
+ * （{@code kb.material.repo.root}），仓库坐标来自物料元数据 {@code kind=REPO, repo, branch, commit}。
  *
  * <p>尚未配置根目录或物料不是仓库类型时抛 MATERIAL_REPO_UNSUPPORTED；路径只接受仓库内相对路径。</p>
  */
@@ -59,12 +59,12 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
 
     public DefaultMaterialRepoBrowseService(MaterialService materialService, String repoRoot) {
         this.materialService = materialService;
-        String expanded = ***REMOVED***Paths.expand(repoRoot);
+        String expanded = KbPaths.expand(repoRoot);
         this.repoRoot = expanded == null ? null : Paths.get(expanded).toAbsolutePath().normalize();
     }
 
     @Override
-    public RepoOverview overview(String materialId, ***REMOVED***Caller caller) {
+    public RepoOverview overview(String materialId, KbCaller caller) {
         RepoRef ref = resolve(materialId, caller);
         RepoOverview overview = new RepoOverview();
         overview.setMaterialId(ref.material.getMaterialId());
@@ -84,31 +84,31 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
     }
 
     @Override
-    public List<RepoEntry> listEntries(String materialId, String path, ***REMOVED***Caller caller) {
+    public List<RepoEntry> listEntries(String materialId, String path, KbCaller caller) {
         RepoRef ref = resolve(materialId, caller);
         Path dir = resolveInside(ref, path);
         if (!Files.isDirectory(dir)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_PATH_INVALID", "仓库目录不存在：" + path);
+            throw new KBException("MATERIAL_REPO_PATH_INVALID", "仓库目录不存在：" + path);
         }
         return loadEntries(dir, normalizePath(path));
     }
 
     @Override
-    public RepoFile readFile(String materialId, String path, ***REMOVED***Caller caller) {
+    public RepoFile readFile(String materialId, String path, KbCaller caller) {
         if (!hasText(path)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_PATH_INVALID", "文件路径不能为空");
+            throw new KBException("MATERIAL_REPO_PATH_INVALID", "文件路径不能为空");
         }
         RepoRef ref = resolve(materialId, caller);
         String filePath = normalizePath(path);
         Path file = resolveInside(ref, filePath);
         if (!Files.isRegularFile(file)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_PATH_INVALID", "仓库文件不存在：" + path);
+            throw new KBException("MATERIAL_REPO_PATH_INVALID", "仓库文件不存在：" + path);
         }
         byte[] bytes;
         try {
             bytes = Files.readAllBytes(file);
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_READ_FAILED", "读取仓库文件失败：" + e.getMessage(), e);
+            throw new KBException("MATERIAL_REPO_READ_FAILED", "读取仓库文件失败：" + e.getMessage(), e);
         }
         RepoFile result = new RepoFile();
         result.setPath(filePath);
@@ -128,24 +128,24 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
         return result;
     }
 
-    private RepoRef resolve(String materialId, ***REMOVED***Caller caller) {
+    private RepoRef resolve(String materialId, KbCaller caller) {
         MaterialRepoRef material = materialService.repoRef(materialId, caller);
         Map<String, Object> meta = parseMeta(material.getMetadata());
         if (!META_KIND_REPO.equals(String.valueOf(meta.get("kind")))) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_UNSUPPORTED", "该物料不是仓库类型，无法浏览文件");
+            throw new KBException("MATERIAL_REPO_UNSUPPORTED", "该物料不是仓库类型，无法浏览文件");
         }
         if (repoRoot == null) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_UNSUPPORTED",
-                    "未配置 ***REMOVED***.material.repo.root，仓库浏览不可用");
+            throw new KBException("MATERIAL_REPO_UNSUPPORTED",
+                    "未配置 kb.material.repo.root，仓库浏览不可用");
         }
         Object repoValue = meta.get("repo");
         String repo = repoValue == null ? "" : String.valueOf(repoValue).trim();
         if (!hasText(repo)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_UNSUPPORTED", "物料元数据缺少仓库坐标 repo");
+            throw new KBException("MATERIAL_REPO_UNSUPPORTED", "物料元数据缺少仓库坐标 repo");
         }
         Path dir = repoRoot.resolve(repo).normalize();
         if (!dir.startsWith(repoRoot) || !Files.isDirectory(dir)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_UNSUPPORTED", "仓库未在本地检出：" + repo);
+            throw new KBException("MATERIAL_REPO_UNSUPPORTED", "仓库未在本地检出：" + repo);
         }
         RepoRef ref = new RepoRef();
         ref.material = material;
@@ -168,7 +168,7 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
                 entries.add(entry);
             });
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_READ_FAILED", "列出仓库目录失败：" + e.getMessage(), e);
+            throw new KBException("MATERIAL_REPO_READ_FAILED", "列出仓库目录失败：" + e.getMessage(), e);
         }
         entries.sort(ENTRY_ORDER);
         return entries;
@@ -198,7 +198,7 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
         String normalized = normalizePath(path);
         Path target = normalized == null ? ref.dir : ref.dir.resolve(normalized).normalize();
         if (!target.startsWith(ref.dir)) {
-            throw new ***REMOVED***Exception("MATERIAL_REPO_PATH_INVALID", "仓库路径非法：" + path);
+            throw new KBException("MATERIAL_REPO_PATH_INVALID", "仓库路径非法：" + path);
         }
         return target;
     }
@@ -216,7 +216,7 @@ public class DefaultMaterialRepoBrowseService implements MaterialRepoBrowseServi
         }
         for (String segment : value.split("/")) {
             if (segment.isEmpty() || ".".equals(segment) || "..".equals(segment)) {
-                throw new ***REMOVED***Exception("MATERIAL_REPO_PATH_INVALID", "仓库路径非法：" + path);
+                throw new KBException("MATERIAL_REPO_PATH_INVALID", "仓库路径非法：" + path);
             }
         }
         return value;

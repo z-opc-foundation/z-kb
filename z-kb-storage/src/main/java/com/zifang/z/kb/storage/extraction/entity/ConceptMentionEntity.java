@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.extraction.entity;
+package com.zifang.z.kb.storage.extraction.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 概念提及（***REMOVED***_concept_mention）：一个物料版本对一个概念的一次涌现，桥接萃取条目。
+ * 概念提及（kb_concept_mention）：一个物料版本对一个概念的一次涌现，桥接萃取条目。
  */
-@TableName("***REMOVED***_concept_mention")
+@TableName("kb_concept_mention")
 public class ConceptMentionEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String mentionId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String conceptId;
     private String materialId;
     private String materialVersionId;
@@ -55,12 +55,12 @@ public class ConceptMentionEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getConceptId() {

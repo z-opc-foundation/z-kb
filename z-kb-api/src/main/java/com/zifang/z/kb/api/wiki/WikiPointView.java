@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 /**
  * Wiki 要点：标题 + 正文，由 Markdown 标题切分而来。

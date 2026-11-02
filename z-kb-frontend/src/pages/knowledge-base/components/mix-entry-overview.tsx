@@ -13,7 +13,7 @@ import {
 import { formatDateTime, formatFileSize } from '@/utils/format';
 
 interface MixEntryOverviewProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   entry: MixEntry | null;
   detail: MaterialDetailRecord | null;
   detailLoading: boolean;
@@ -54,7 +54,7 @@ function typeCountsOf(entries: MixEntry[]): { type: MixEntryType; count: number 
 }
 
 export default function MixEntryOverview({
-  ***REMOVED***Id,
+  kbId,
   entry,
   detail,
   detailLoading,
@@ -150,7 +150,7 @@ export default function MixEntryOverview({
               </button>
             ) : null}
             <AgentAskButton
-              ***REMOVED***Id={***REMOVED***Id}
+              kbId={kbId}
               className="btn xs"
               label="问 AI"
               question={askQuestion}

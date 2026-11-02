@@ -58,11 +58,11 @@ import {
 } from '@/services/material';
 import MaterialWorkspace from './material-workspace';
 
-const ***REMOVED***ID = '***REMOVED***-1';
+const KB_ID = 'kb-1';
 
 const MATERIAL: MaterialRecord = {
   materialId: 'mat-1',
-  ***REMOVED***Id: ***REMOVED***ID,
+  kbId: KB_ID,
   materialType: 'DOCUMENT',
   title: '护理管理制度',
   sourceType: 'LOCAL',
@@ -119,7 +119,7 @@ function page(records: MaterialRecord[]) {
 function job(overrides: Partial<CompilationJobRecord> = {}): CompilationJobRecord {
   return {
     jobId: 'job-1',
-    ***REMOVED***Id: ***REMOVED***ID,
+    kbId: KB_ID,
     materialId: 'mat-1',
     materialVersionId: 'v-1',
     pipelineType: 'DOCUMENT',
@@ -152,9 +152,9 @@ async function flushAsync() {
 
 /** 挂载工作台并等待首屏列表与分类树落定。 */
 async function renderWorkspace() {
-  const view = render(<MaterialWorkspace ***REMOVED***Id={***REMOVED***ID} canManage />);
+  const view = render(<MaterialWorkspace kbId={KB_ID} canManage />);
   await screen.findByRole('button', { name: '护理管理制度' });
-  await waitFor(() => expect(getCategoryTree).toHaveBeenCalledWith(***REMOVED***ID));
+  await waitFor(() => expect(getCategoryTree).toHaveBeenCalledWith(KB_ID));
   expect(screen.getByText('护理制度')).toBeTruthy();
   return view;
 }
@@ -197,7 +197,7 @@ describe('资料工作台页面链路', () => {
     await renderWorkspace();
 
     expect(pageMaterial).toHaveBeenCalledWith(
-      expect.objectContaining({ ***REMOVED***Id: ***REMOVED***ID, materialType: 'DOCUMENT', current: 1 }),
+      expect.objectContaining({ kbId: KB_ID, materialType: 'DOCUMENT', current: 1 }),
     );
     expect(screen.getByText(/共 1 条/)).toBeTruthy();
     expect(screen.getByText('生效')).toBeTruthy();
@@ -226,7 +226,7 @@ describe('资料工作台页面链路', () => {
       },
     ]);
 
-    render(<MaterialWorkspace ***REMOVED***Id={***REMOVED***ID} canManage />);
+    render(<MaterialWorkspace kbId={KB_ID} canManage />);
 
     expect(await screen.findByText('产品语雀')).toBeTruthy();
     expect(screen.getByText('知识中台')).toBeTruthy();
@@ -299,7 +299,7 @@ describe('资料工作台页面链路', () => {
     fireEvent.click(screen.getByRole('button', { name: '开始上传' }));
     await flushAsync();
 
-    expect(uploadMaterials).toHaveBeenCalledWith(***REMOVED***ID, undefined, [file]);
+    expect(uploadMaterials).toHaveBeenCalledWith(KB_ID, undefined, [file]);
     expect(screen.getByText('上传完成')).toBeTruthy();
     await waitFor(() => expect(vi.mocked(pageMaterial).mock.calls.length).toBeGreaterThan(2));
   });
@@ -313,7 +313,7 @@ describe('资料工作台页面链路', () => {
     fireEvent.click(screen.getByRole('button', { name: '确认删除' }));
     await flushAsync();
 
-    expect(removeMaterials).toHaveBeenCalledWith(***REMOVED***ID, ['mat-1']);
+    expect(removeMaterials).toHaveBeenCalledWith(KB_ID, ['mat-1']);
   });
 
   it('回收站弹窗：列出已删除资料，可取回或彻底删除', async () => {
@@ -330,7 +330,7 @@ describe('资料工作台页面链路', () => {
 
     expect(await screen.findByText('过期制度')).toBeTruthy();
     expect(pageDeletedMaterials).toHaveBeenCalledWith(
-      expect.objectContaining({ ***REMOVED***Id: ***REMOVED***ID, materialType: 'DOCUMENT', current: 1 }),
+      expect.objectContaining({ kbId: KB_ID, materialType: 'DOCUMENT', current: 1 }),
     );
 
     fireEvent.change(screen.getByPlaceholderText('搜索已删除资料标题'), {
@@ -346,7 +346,7 @@ describe('资料工作台页面链路', () => {
 
     fireEvent.click(screen.getByTitle('取回'));
     await flushAsync();
-    expect(restoreMaterials).toHaveBeenCalledWith(***REMOVED***ID, ['mat-1']);
+    expect(restoreMaterials).toHaveBeenCalledWith(KB_ID, ['mat-1']);
 
     await screen.findByText('过期制度');
     fireEvent.click(screen.getByTitle('彻底删除'));
@@ -354,6 +354,6 @@ describe('资料工作台页面链路', () => {
     fireEvent.click(screen.getByRole('button', { name: '确认彻底删除' }));
     await flushAsync();
 
-    expect(purgeMaterials).toHaveBeenCalledWith(***REMOVED***ID, ['mat-1']);
+    expect(purgeMaterials).toHaveBeenCalledWith(KB_ID, ['mat-1']);
   });
 });

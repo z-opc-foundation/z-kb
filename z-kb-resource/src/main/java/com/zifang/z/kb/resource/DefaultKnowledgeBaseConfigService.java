@@ -1,24 +1,24 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.ConfigDiff;
-import com.zifang.z.***REMOVED***.api.resource.ConfigImpact;
-import com.zifang.z.***REMOVED***.api.resource.ConfigIssue;
-import com.zifang.z.***REMOVED***.api.resource.ConfigValidation;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseConfigService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseConfigView;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseProfileVersion;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.resource.ProfileVersionStatus;
-import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileEntity;
-import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileVersionEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileVersionMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.ConfigDiff;
+import com.zifang.z.kb.api.resource.ConfigImpact;
+import com.zifang.z.kb.api.resource.ConfigIssue;
+import com.zifang.z.kb.api.resource.ConfigValidation;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseConfigService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseConfigView;
+import com.zifang.z.kb.api.resource.KnowledgeBaseProfileVersion;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.resource.ProfileVersionStatus;
+import com.zifang.z.kb.storage.resource.entity.KnowledgeBaseProfileEntity;
+import com.zifang.z.kb.storage.resource.entity.KnowledgeBaseProfileVersionEntity;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileMapper;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileVersionMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -50,12 +50,12 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
     private final KnowledgeBaseResourceService resourceService;
     private final KnowledgeBaseProfileMapper profileMapper;
     private final KnowledgeBaseProfileVersionMapper versionMapper;
-    private final ***REMOVED***AuditService auditService;
+    private final KbAuditService auditService;
 
     public DefaultKnowledgeBaseConfigService(KnowledgeBaseResourceService resourceService,
                                              KnowledgeBaseProfileMapper profileMapper,
                                              KnowledgeBaseProfileVersionMapper versionMapper,
-                                             ***REMOVED***AuditService auditService) {
+                                             KbAuditService auditService) {
         this.resourceService = resourceService;
         this.profileMapper = profileMapper;
         this.versionMapper = versionMapper;
@@ -63,23 +63,23 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
     }
 
     @Override
-    public KnowledgeBaseConfigView query(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id, caller);
-        ensureCurrentVersion(***REMOVED***, caller);
-        KnowledgeBaseProfileVersionEntity current = selectVersion(***REMOVED***, ProfileVersionStatus.CURRENT);
-        KnowledgeBaseProfileVersionEntity draft = selectVersion(***REMOVED***, ProfileVersionStatus.DRAFT);
+    public KnowledgeBaseConfigView query(String kbId, KbCaller caller) {
+        KnowledgeBaseView kb = resourceService.requireReadable(kbId, caller);
+        ensureCurrentVersion(kb, caller);
+        KnowledgeBaseProfileVersionEntity current = selectVersion(kb, ProfileVersionStatus.CURRENT);
+        KnowledgeBaseProfileVersionEntity draft = selectVersion(kb, ProfileVersionStatus.DRAFT);
         List<ConfigDiff> diff = draft == null ? new ArrayList<>() : buildDiff(current, draft);
 
         KnowledgeBaseConfigView view = new KnowledgeBaseConfigView();
-        view.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
-        view.set***REMOVED***Name(***REMOVED***.getName());
-        view.setType(***REMOVED***.getType());
-        view.setEmbeddingModel(***REMOVED***.getEmbeddingModel());
-        view.setCanManage(***REMOVED***.isCanManage());
+        view.setKbId(kb.getKbId());
+        view.setKbName(kb.getName());
+        view.setType(kb.getType());
+        view.setEmbeddingModel(kb.getEmbeddingModel());
+        view.setCanManage(kb.isCanManage());
         view.setCurrent(toModel(current));
         view.setDraft(draft == null ? null : toModel(draft));
         List<KnowledgeBaseProfileVersion> versions = new ArrayList<>();
-        for (KnowledgeBaseProfileVersionEntity row : listVersions(***REMOVED***)) {
+        for (KnowledgeBaseProfileVersionEntity row : listVersions(kb)) {
             if (!ProfileVersionStatus.DRAFT.name().equals(row.getStatus())) {
                 versions.add(toModel(row));
             }
@@ -93,14 +93,14 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public KnowledgeBaseProfileVersion saveDraft(String ***REMOVED***Id, KnowledgeBaseProfileVersion draft,
-                                                 ***REMOVED***Caller caller) {
+    public KnowledgeBaseProfileVersion saveDraft(String kbId, KnowledgeBaseProfileVersion draft,
+                                                 KbCaller caller) {
         if (draft == null) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_INVALID", "配置草稿不能为空");
+            throw new KBException("KB_CONFIG_DRAFT_INVALID", "配置草稿不能为空");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id,
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
-        ensureCurrentVersion(***REMOVED***, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId,
+                KnowledgeBaseAction.KB_MANAGE, caller);
+        ensureCurrentVersion(kb, caller);
 
         String preset = requirePreset(draft.getPresetVersion());
         String parser = requirePolicy(draft.getParserPolicy(), "解析策略");
@@ -114,15 +114,15 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         String source = requirePolicy(draft.getSourcePolicy(), "接入策略");
 
         Instant now = Instant.now();
-        KnowledgeBaseProfileVersionEntity entity = selectVersion(***REMOVED***, ProfileVersionStatus.DRAFT);
+        KnowledgeBaseProfileVersionEntity entity = selectVersion(kb, ProfileVersionStatus.DRAFT);
         boolean created = false;
         if (entity == null) {
             created = true;
             entity = new KnowledgeBaseProfileVersionEntity();
             entity.setId(UUID.randomUUID().toString());
-            entity.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
-            entity.setTenantCode(***REMOVED***.getTenantCode());
-            entity.setVersionNo(nextVersionNo(***REMOVED***));
+            entity.setKbId(kb.getKbId());
+            entity.setTenantCode(kb.getTenantCode());
+            entity.setVersionNo(nextVersionNo(kb));
             entity.setStatus(ProfileVersionStatus.DRAFT.name());
             entity.setCreateBy(caller.getActorId());
             entity.setCreateTime(now);
@@ -147,63 +147,63 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         } else {
             versionMapper.updateById(entity);
         }
-        auditService.record(caller, ***REMOVED***.get***REMOVED***Id(), "***REMOVED***.config.draft.save", "PROFILE_VERSION",
+        auditService.record(caller, kb.getKbId(), "kb.config.draft.save", "PROFILE_VERSION",
                 entity.getId(), "保存配置草稿 v" + entity.getVersionNo());
         return toModel(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean discardDraft(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id,
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
+    public boolean discardDraft(String kbId, KbCaller caller) {
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId,
+                KnowledgeBaseAction.KB_MANAGE, caller);
         versionMapper.delete(new QueryWrapper<KnowledgeBaseProfileVersionEntity>()
-                .eq("tenant_code", ***REMOVED***.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+                .eq("tenant_code", kb.getTenantCode())
+                .eq("kb_id", kb.getKbId())
                 .eq("status", ProfileVersionStatus.DRAFT.name()));
-        auditService.record(caller, ***REMOVED***.get***REMOVED***Id(), "***REMOVED***.config.draft.discard", "KNOWLEDGE_BASE",
-                ***REMOVED***.get***REMOVED***Id(), "丢弃配置草稿");
+        auditService.record(caller, kb.getKbId(), "kb.config.draft.discard", "KNOWLEDGE_BASE",
+                kb.getKbId(), "丢弃配置草稿");
         return true;
     }
 
     @Override
-    public ConfigValidation validateDraft(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id, caller);
-        ensureCurrentVersion(***REMOVED***, caller);
-        KnowledgeBaseProfileVersionEntity current = selectVersion(***REMOVED***, ProfileVersionStatus.CURRENT);
-        KnowledgeBaseProfileVersionEntity draft = selectVersion(***REMOVED***, ProfileVersionStatus.DRAFT);
+    public ConfigValidation validateDraft(String kbId, KbCaller caller) {
+        KnowledgeBaseView kb = resourceService.requireReadable(kbId, caller);
+        ensureCurrentVersion(kb, caller);
+        KnowledgeBaseProfileVersionEntity current = selectVersion(kb, ProfileVersionStatus.CURRENT);
+        KnowledgeBaseProfileVersionEntity draft = selectVersion(kb, ProfileVersionStatus.DRAFT);
         List<ConfigDiff> diff = draft == null ? new ArrayList<>() : buildDiff(current, draft);
         return buildValidation(draft, diff);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public KnowledgeBaseProfileVersion publish(String ***REMOVED***Id, String remark, boolean confirm,
-                                               ***REMOVED***Caller caller) {
+    public KnowledgeBaseProfileVersion publish(String kbId, String remark, boolean confirm,
+                                               KbCaller caller) {
         if (!confirm) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_CONFIRM_REQUIRED", "发布配置需要确认");
+            throw new KBException("KB_CONFIG_CONFIRM_REQUIRED", "发布配置需要确认");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id,
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
-        ensureCurrentVersion(***REMOVED***, caller);
-        KnowledgeBaseProfileVersionEntity current = selectVersion(***REMOVED***, ProfileVersionStatus.CURRENT);
-        KnowledgeBaseProfileVersionEntity draft = selectVersion(***REMOVED***, ProfileVersionStatus.DRAFT);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId,
+                KnowledgeBaseAction.KB_MANAGE, caller);
+        ensureCurrentVersion(kb, caller);
+        KnowledgeBaseProfileVersionEntity current = selectVersion(kb, ProfileVersionStatus.CURRENT);
+        KnowledgeBaseProfileVersionEntity draft = selectVersion(kb, ProfileVersionStatus.DRAFT);
         if (draft == null) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_NOT_FOUND", "没有可发布的配置草稿");
+            throw new KBException("KB_CONFIG_DRAFT_NOT_FOUND", "没有可发布的配置草稿");
         }
         ConfigValidation validation = buildValidation(draft, buildDiff(current, draft));
         if (!validation.isValid()) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_INVALID", "配置草稿校验未通过，不能发布");
+            throw new KBException("KB_CONFIG_DRAFT_INVALID", "配置草稿校验未通过，不能发布");
         }
-        KnowledgeBaseProfileEntity profile = selectProfile(***REMOVED***);
+        KnowledgeBaseProfileEntity profile = selectProfile(kb);
         if (profile == null) {
-            throw new ***REMOVED***Exception("***REMOVED***NOT_FOUND", "知识库配置档案不存在");
+            throw new KBException("KB_NOT_FOUND", "知识库配置档案不存在");
         }
 
         Instant now = Instant.now();
         UpdateWrapper<KnowledgeBaseProfileVersionEntity> supersede = new UpdateWrapper<>();
-        supersede.eq("tenant_code", ***REMOVED***.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+        supersede.eq("tenant_code", kb.getTenantCode())
+                .eq("kb_id", kb.getKbId())
                 .eq("status", ProfileVersionStatus.CURRENT.name())
                 .set("status", ProfileVersionStatus.SUPERSEDED.name())
                 .set("update_by", caller.getActorId())
@@ -235,7 +235,7 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         profile.setUpdateTime(now);
         profileMapper.updateById(profile);
 
-        auditService.record(caller, ***REMOVED***.get***REMOVED***Id(), "***REMOVED***.config.publish", "PROFILE_VERSION",
+        auditService.record(caller, kb.getKbId(), "kb.config.publish", "PROFILE_VERSION",
                 draft.getId(), "发布配置 v" + draft.getVersionNo());
         return toModel(draft);
     }
@@ -243,20 +243,20 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
     // ==================== 内部工具 ====================
 
     /** 缺失当前版本时，以配置档案主表补建初始当前版本。 */
-    private void ensureCurrentVersion(KnowledgeBaseView ***REMOVED***, ***REMOVED***Caller caller) {
-        if (selectVersion(***REMOVED***, ProfileVersionStatus.CURRENT) != null) {
+    private void ensureCurrentVersion(KnowledgeBaseView kb, KbCaller caller) {
+        if (selectVersion(kb, ProfileVersionStatus.CURRENT) != null) {
             return;
         }
-        KnowledgeBaseProfileEntity profile = selectProfile(***REMOVED***);
+        KnowledgeBaseProfileEntity profile = selectProfile(kb);
         if (profile == null) {
-            throw new ***REMOVED***Exception("***REMOVED***NOT_FOUND", "知识库配置档案不存在");
+            throw new KBException("KB_NOT_FOUND", "知识库配置档案不存在");
         }
         Instant now = Instant.now();
         Instant publishedAt = profile.getCreateTime() == null ? now : profile.getCreateTime();
         KnowledgeBaseProfileVersionEntity entity = new KnowledgeBaseProfileVersionEntity();
         entity.setId(UUID.randomUUID().toString());
-        entity.set***REMOVED***Id(***REMOVED***.get***REMOVED***Id());
-        entity.setTenantCode(***REMOVED***.getTenantCode());
+        entity.setKbId(kb.getKbId());
+        entity.setTenantCode(kb.getTenantCode());
         entity.setVersionNo(parseVersion(profile.getConfigVersion()));
         entity.setStatus(ProfileVersionStatus.CURRENT.name());
         entity.setPresetVersion(profile.getPresetVersion());
@@ -281,7 +281,7 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
             versionMapper.insert(entity);
         } catch (RuntimeException e) {
             // 并发补建撞唯一键：以先落库的那条为准
-            if (selectVersion(***REMOVED***, ProfileVersionStatus.CURRENT) == null) {
+            if (selectVersion(kb, ProfileVersionStatus.CURRENT) == null) {
                 throw e;
             }
         }
@@ -291,9 +291,9 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         return configVersion == null || configVersion < 1 ? 1 : configVersion;
     }
 
-    private int nextVersionNo(KnowledgeBaseView ***REMOVED***) {
+    private int nextVersionNo(KnowledgeBaseView kb) {
         int max = 0;
-        for (KnowledgeBaseProfileVersionEntity row : listVersions(***REMOVED***)) {
+        for (KnowledgeBaseProfileVersionEntity row : listVersions(kb)) {
             if (row.getVersionNo() != null && row.getVersionNo() > max) {
                 max = row.getVersionNo();
             }
@@ -301,25 +301,25 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         return max + 1;
     }
 
-    private KnowledgeBaseProfileEntity selectProfile(KnowledgeBaseView ***REMOVED***) {
+    private KnowledgeBaseProfileEntity selectProfile(KnowledgeBaseView kb) {
         QueryWrapper<KnowledgeBaseProfileEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", ***REMOVED***.getTenantCode()).eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id());
+        query.eq("tenant_code", kb.getTenantCode()).eq("kb_id", kb.getKbId());
         return profileMapper.selectOne(query);
     }
 
-    private KnowledgeBaseProfileVersionEntity selectVersion(KnowledgeBaseView ***REMOVED***,
+    private KnowledgeBaseProfileVersionEntity selectVersion(KnowledgeBaseView kb,
                                                             ProfileVersionStatus status) {
         QueryWrapper<KnowledgeBaseProfileVersionEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", ***REMOVED***.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+        query.eq("tenant_code", kb.getTenantCode())
+                .eq("kb_id", kb.getKbId())
                 .eq("status", status.name());
         return versionMapper.selectOne(query);
     }
 
-    private List<KnowledgeBaseProfileVersionEntity> listVersions(KnowledgeBaseView ***REMOVED***) {
+    private List<KnowledgeBaseProfileVersionEntity> listVersions(KnowledgeBaseView kb) {
         QueryWrapper<KnowledgeBaseProfileVersionEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", ***REMOVED***.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id())
+        query.eq("tenant_code", kb.getTenantCode())
+                .eq("kb_id", kb.getKbId())
                 .orderByDesc("version_no");
         return versionMapper.selectList(query);
     }
@@ -330,20 +330,20 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
         }
         KnowledgeBaseProfileVersion model = new KnowledgeBaseProfileVersion();
         model.setVersionId(row.getId());
-        model.set***REMOVED***Id(row.get***REMOVED***Id());
+        model.setKbId(row.getKbId());
         model.setTenantCode(row.getTenantCode());
         model.setVersionNo(row.getVersionNo() == null ? 0 : row.getVersionNo());
         model.setStatus(ProfileVersionStatus.valueOf(row.getStatus()));
         model.setPresetVersion(row.getPresetVersion());
-        model.setParserPolicy(***REMOVED***ResourceJson.parseObject(row.getParserPolicy()));
-        model.setChunkingPolicy(***REMOVED***ResourceJson.parseObject(row.getChunkingPolicy()));
-        model.setExtractionPolicy(***REMOVED***ResourceJson.parseObject(row.getExtractionPolicy()));
-        model.setWikiPolicy(***REMOVED***ResourceJson.parseObject(row.getWikiPolicy()));
-        model.setGraphPolicy(***REMOVED***ResourceJson.parseObject(row.getGraphPolicy()));
-        model.setReviewPolicy(***REMOVED***ResourceJson.parseObject(row.getReviewPolicy()));
-        model.setFreshnessPolicy(***REMOVED***ResourceJson.parseObject(row.getFreshnessPolicy()));
-        model.setRetrievalPolicy(***REMOVED***ResourceJson.parseObject(row.getRetrievalPolicy()));
-        model.setSourcePolicy(***REMOVED***ResourceJson.parseObject(row.getSourcePolicy()));
+        model.setParserPolicy(KbResourceJson.parseObject(row.getParserPolicy()));
+        model.setChunkingPolicy(KbResourceJson.parseObject(row.getChunkingPolicy()));
+        model.setExtractionPolicy(KbResourceJson.parseObject(row.getExtractionPolicy()));
+        model.setWikiPolicy(KbResourceJson.parseObject(row.getWikiPolicy()));
+        model.setGraphPolicy(KbResourceJson.parseObject(row.getGraphPolicy()));
+        model.setReviewPolicy(KbResourceJson.parseObject(row.getReviewPolicy()));
+        model.setFreshnessPolicy(KbResourceJson.parseObject(row.getFreshnessPolicy()));
+        model.setRetrievalPolicy(KbResourceJson.parseObject(row.getRetrievalPolicy()));
+        model.setSourcePolicy(KbResourceJson.parseObject(row.getSourcePolicy()));
         model.setRemark(row.getRemark());
         model.setPublishedBy(row.getPublishedBy());
         model.setPublishedAt(row.getPublishedAt());
@@ -424,7 +424,7 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
                 continue;
             }
             String value = valueOf(draft, field);
-            if (value.length() > MAX_POLICY_LENGTH || !***REMOVED***ResourceJson.isJsonObject(value)) {
+            if (value.length() > MAX_POLICY_LENGTH || !KbResourceJson.isJsonObject(value)) {
                 badPolicies.add(labelOf(field));
             }
         }
@@ -461,21 +461,21 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
             case "presetVersion":
                 return row.getPresetVersion() == null ? "" : row.getPresetVersion();
             case "parserPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getParserPolicy());
+                return KbResourceJson.normalize(row.getParserPolicy());
             case "chunkingPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getChunkingPolicy());
+                return KbResourceJson.normalize(row.getChunkingPolicy());
             case "extractionPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getExtractionPolicy());
+                return KbResourceJson.normalize(row.getExtractionPolicy());
             case "wikiPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getWikiPolicy());
+                return KbResourceJson.normalize(row.getWikiPolicy());
             case "graphPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getGraphPolicy());
+                return KbResourceJson.normalize(row.getGraphPolicy());
             case "reviewPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getReviewPolicy());
+                return KbResourceJson.normalize(row.getReviewPolicy());
             case "freshnessPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getFreshnessPolicy());
+                return KbResourceJson.normalize(row.getFreshnessPolicy());
             case "retrievalPolicy":
-                return ***REMOVED***ResourceJson.normalize(row.getRetrievalPolicy());
+                return KbResourceJson.normalize(row.getRetrievalPolicy());
             default:
                 return "";
         }
@@ -523,19 +523,19 @@ public class DefaultKnowledgeBaseConfigService implements KnowledgeBaseConfigSer
 
     private String requirePreset(String value) {
         if (!hasText(value)) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_INVALID", "预设版本不能为空");
+            throw new KBException("KB_CONFIG_DRAFT_INVALID", "预设版本不能为空");
         }
         String preset = value.trim();
         if (preset.length() > MAX_PRESET_LENGTH) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_INVALID", "预设版本不超过 32 个字符");
+            throw new KBException("KB_CONFIG_DRAFT_INVALID", "预设版本不超过 32 个字符");
         }
         return preset;
     }
 
     private String requirePolicy(Map<String, Object> policy, String label) {
-        String json = ***REMOVED***ResourceJson.writeObject(policy == null ? new LinkedHashMap<>() : policy);
-        if (json.length() > MAX_POLICY_LENGTH || !***REMOVED***ResourceJson.isJsonObject(json)) {
-            throw new ***REMOVED***Exception("***REMOVED***CONFIG_DRAFT_INVALID", label + "必须是合法 JSON 对象");
+        String json = KbResourceJson.writeObject(policy == null ? new LinkedHashMap<>() : policy);
+        if (json.length() > MAX_POLICY_LENGTH || !KbResourceJson.isJsonObject(json)) {
+            throw new KBException("KB_CONFIG_DRAFT_INVALID", label + "必须是合法 JSON 对象");
         }
         return json;
     }

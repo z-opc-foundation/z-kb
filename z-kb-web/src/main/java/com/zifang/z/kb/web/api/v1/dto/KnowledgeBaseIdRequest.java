@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
- * 仅携带 ***REMOVED***Id 的请求（归档/恢复/删除/校验草稿等）。
+ * 仅携带 kbId 的请求（归档/恢复/删除/校验草稿等）。
  */
 public class KnowledgeBaseIdRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 }

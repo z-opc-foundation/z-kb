@@ -229,7 +229,7 @@ export default function MaterialTreePanel({ ctrl, onSyncSource }: MaterialTreePa
           }}
           onDragStart={(event) => {
             event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData('application/x-***REMOVED***-category', node.categoryId);
+            event.dataTransfer.setData('application/x-kb-category', node.categoryId);
             setDragCategoryId(node.categoryId);
             setDragMaterialId('');
           }}

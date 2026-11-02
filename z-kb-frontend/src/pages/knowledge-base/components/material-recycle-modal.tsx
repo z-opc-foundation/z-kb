@@ -113,9 +113,9 @@ export default function MaterialRecycleModal({ recycle }: MaterialRecycleModalPr
                   <table className="list-table material-table recycle-table" style={{ width: '100%' }}>
                     <thead>
                       <tr>
-                        <th className="chec***REMOVED***ox-cell">
+                        <th className="checkbox-cell">
                           <input
-                            type="chec***REMOVED***ox"
+                            type="checkbox"
                             checked={selected.length > 0 && selected.length === records.length}
                             onChange={toggleAll}
                             aria-label="全选"
@@ -131,9 +131,9 @@ export default function MaterialRecycleModal({ recycle }: MaterialRecycleModalPr
                     <tbody>
                       {records.map((record) => (
                         <tr key={record.materialId}>
-                          <td className="chec***REMOVED***ox-cell">
+                          <td className="checkbox-cell">
                             <input
-                              type="chec***REMOVED***ox"
+                              type="checkbox"
                               checked={selectedSet.has(record.materialId)}
                               onChange={() => toggleSelected(record.materialId)}
                               aria-label={`选择 ${record.title}`}

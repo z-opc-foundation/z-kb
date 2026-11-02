@@ -135,9 +135,9 @@ export default function MaterialListPanel({ ctrl }: MaterialListPanelProps) {
             >
               <thead>
                 <tr>
-                  <th className="chec***REMOVED***ox-cell">
+                  <th className="checkbox-cell">
                     <input
-                      type="chec***REMOVED***ox"
+                      type="checkbox"
                       checked={selected.length > 0 && selected.length === records.length}
                       onChange={toggleAll}
                       aria-label="全选"
@@ -164,9 +164,9 @@ export default function MaterialListPanel({ ctrl }: MaterialListPanelProps) {
                   const fileIcon = materialFileIcon(record);
                   return (
                     <tr key={record.materialId}>
-                      <td className="chec***REMOVED***ox-cell">
+                      <td className="checkbox-cell">
                         <input
-                          type="chec***REMOVED***ox"
+                          type="checkbox"
                           checked={selectedSet.has(record.materialId)}
                           onChange={() => toggleSelected(record.materialId)}
                           aria-label={`选择 ${record.title}`}

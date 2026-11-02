@@ -1,8 +1,8 @@
 import { createPortal } from 'react-dom';
 import Icon from '@/components/icon';
 import {
-  get***REMOVED***TaskConfig,
-  publish***REMOVED***TaskConfig,
+  getKbTaskConfig,
+  publishKbTaskConfig,
   TaskConfigItemPayload,
   TaskConfigItemRecord,
   TaskConfigPanelRecord,
@@ -25,7 +25,7 @@ const GROUPS: { code: string; label: string; hint: string }[] = [
 ];
 
 interface TaskConfigPanelProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   canManage: boolean;
 }
 
@@ -60,7 +60,7 @@ function toPayload(item: TaskConfigItemRecord): TaskConfigItemPayload {
   };
 }
 
-export default function TaskConfigPanel({ ***REMOVED***Id, canManage }: TaskConfigPanelProps) {
+export default function TaskConfigPanel({ kbId, canManage }: TaskConfigPanelProps) {
   const [panel, setPanel] = useState<TaskConfigPanelRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -74,14 +74,14 @@ export default function TaskConfigPanel({ ***REMOVED***Id, canManage }: TaskConf
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
-    const result = await get***REMOVED***TaskConfig(***REMOVED***Id);
+    const result = await getKbTaskConfig(kbId);
     setLoading(false);
     if (!result) {
       setError('任务配置加载失败');
       return;
     }
     setPanel(result);
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   useEffect(() => {
     void load();
@@ -111,7 +111,7 @@ export default function TaskConfigPanel({ ***REMOVED***Id, canManage }: TaskConf
       toPayload(item.taskNature === draft.taskNature ? draft : item),
     );
     setSaving(true);
-    const result = await publish***REMOVED***TaskConfig(***REMOVED***Id, items);
+    const result = await publishKbTaskConfig(kbId, items);
     setSaving(false);
     if (!result) {
       return;

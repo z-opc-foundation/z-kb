@@ -18,7 +18,7 @@ const FOLDERS = [
 function renderModal(overrides: Partial<Parameters<typeof MixEntryUploadModal>[0]> = {}) {
   return render(
     <MixEntryUploadModal
-      ***REMOVED***Id="***REMOVED***-1"
+      kbId="kb-1"
       folders={FOLDERS}
       defaultFolderId="f1"
       onClose={vi.fn()}
@@ -56,7 +56,7 @@ describe('混合库上传弹窗', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '开始上传' }));
     await waitFor(() =>
-      expect(uploadMaterials).toHaveBeenCalledWith('***REMOVED***-1', 'f1', [file]),
+      expect(uploadMaterials).toHaveBeenCalledWith('kb-1', 'f1', [file]),
     );
     expect(await screen.findByText('已登记')).toBeTruthy();
     expect(toast).toHaveBeenCalledWith('上传完成', '成功 1 个', 'success');
@@ -82,7 +82,7 @@ describe('混合库上传弹窗', () => {
     fireEvent.click(screen.getByRole('button', { name: '开始上传' }));
 
     await waitFor(() =>
-      expect(uploadMaterials).toHaveBeenCalledWith('***REMOVED***-1', undefined, [file]),
+      expect(uploadMaterials).toHaveBeenCalledWith('kb-1', undefined, [file]),
     );
     expect(await screen.findByText('内容在本库已存在')).toBeTruthy();
     expect(toast).toHaveBeenCalledWith(

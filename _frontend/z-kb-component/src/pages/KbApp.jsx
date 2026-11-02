@@ -3,7 +3,7 @@ import WorkspaceListPage from './WorkspaceListPage'
 import DocumentListPage from './DocumentListPage'
 import SearchPage from './SearchPage'
 
-export default function ***REMOVED***App() {
+export default function KbApp() {
     return (
         <Routes>
             <Route index element={<Navigate to="workspaces" replace/>}/>

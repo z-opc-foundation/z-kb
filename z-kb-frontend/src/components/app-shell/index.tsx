@@ -1,5 +1,5 @@
 import { getKnowledgeBase, pageKnowledgeBase, type KnowledgeBaseRecord } from '@/services/knowledgeBase';
-import { ***REMOVED***CHANGED_EVENT } from '@/utils/***REMOVED***-events';
+import { KB_CHANGED_EVENT } from '@/utils/kb-events';
 import {
   DEFAULT_TENANT_CODE,
   getActorId,
@@ -17,7 +17,7 @@ import BrandMark from '@/components/brand-mark';
 import { ConfirmHost, confirmAction } from '@/components/confirm';
 import { usePermission } from '@/components/auth';
 import { logout, redirectToLogin } from '@/services/sso';
-import { typeMeta } from '@/pages/knowledge-base/***REMOVED***-meta';
+import { typeMeta } from '@/pages/knowledge-base/kb-meta';
 import { useSidebarWidth } from './use-sidebar-width';
 import '@/styles/global.css';
 
@@ -44,35 +44,35 @@ interface AppShellProps {
 const UNIMPLEMENTED_HINT = '该功能稍后开放';
 const IS_LOCAL = import.meta.env.DEV;
 
-function use***REMOVED***ChangedTick(): number {
+function useKbChangedTick(): number {
   const [tick, setTick] = useState(0);
   useEffect(() => {
     const onChange = () => setTick((value) => value + 1);
-    window.addEventListener(***REMOVED***CHANGED_EVENT, onChange);
-    return () => window.removeEventListener(***REMOVED***CHANGED_EVENT, onChange);
+    window.addEventListener(KB_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(KB_CHANGED_EVENT, onChange);
   }, []);
   return tick;
 }
 
-function useCurrent***REMOVED***Name(***REMOVED***Id: string | undefined, tick: number): string {
+function useCurrentKbName(kbId: string | undefined, tick: number): string {
   const [name, setName] = useState('');
   useEffect(() => {
     let alive = true;
     setName('');
-    if (!***REMOVED***Id) {
+    if (!kbId) {
       return () => {
         alive = false;
       };
     }
-    getKnowledgeBase(***REMOVED***Id).then((***REMOVED***) => {
-      if (alive && ***REMOVED***) {
-        setName(***REMOVED***.name);
+    getKnowledgeBase(kbId).then((kb) => {
+      if (alive && kb) {
+        setName(kb.name);
       }
     });
     return () => {
       alive = false;
     };
-  }, [***REMOVED***Id, tick]);
+  }, [kbId, tick]);
   return name;
 }
 
@@ -81,7 +81,7 @@ export default function AppShell({ children }: AppShellProps) {
   const navigate = useNavigate();
   const { canSeeMenu, context: authContext } = usePermission();
   const tenant = getTenantInfo();
-  const tick = use***REMOVED***ChangedTick();
+  const tick = useKbChangedTick();
   const path = location.pathname;
   const accountName =
     authContext?.authenticated && authContext.name
@@ -96,12 +96,12 @@ export default function AppShell({ children }: AppShellProps) {
     authContext?.authenticated && authContext.principalId
       ? String(authContext.principalId)
       : String(getActorId());
-  const { ***REMOVED***Id } = useParams<{ ***REMOVED***Id: string }>();
-  const ***REMOVED***Name = useCurrent***REMOVED***Name(***REMOVED***Id, tick);
+  const { kbId } = useParams<{ kbId: string }>();
+  const kbName = useCurrentKbName(kbId, tick);
   const isIndex = !!matchPath('/index', path);
   const isEvaluationList = !!matchPath('/evaluations', path);
-  const is***REMOVED***Evaluation = !!matchPath('/knowledge-bases/:***REMOVED***Id/evaluation', path);
-  const isEvaluation = isEvaluationList || is***REMOVED***Evaluation;
+  const isKbEvaluation = !!matchPath('/knowledge-bases/:kbId/evaluation', path);
+  const isEvaluation = isEvaluationList || isKbEvaluation;
   const aiPageLabel = path.startsWith('/ai/agents')
     ? '智能管理'
     : path.startsWith('/ai/skills')
@@ -123,7 +123,7 @@ export default function AppShell({ children }: AppShellProps) {
   const [notificationsRead, setNotificationsRead] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState('');
-  const [command***REMOVED***s, setCommand***REMOVED***s] = useState<KnowledgeBaseRecord[]>([]);
+  const [commandKbs, setCommandKbs] = useState<KnowledgeBaseRecord[]>([]);
   const [commandIndex, setCommandIndex] = useState(0);
   const [tenantOpen, setTenantOpen] = useState(false);
   const [tenantDraft, setTenantDraft] = useState(tenant.code);
@@ -143,7 +143,7 @@ export default function AppShell({ children }: AppShellProps) {
     let cancelled = false;
     void pageKnowledgeBase({ current: 1, size: 200 }).then((result) => {
       if (!cancelled && result) {
-        setCommand***REMOVED***s(result.records || []);
+        setCommandKbs(result.records || []);
       }
     });
     return () => {
@@ -253,9 +253,9 @@ export default function AppShell({ children }: AppShellProps) {
           {
             label: '知识管理',
             icon: 'database',
-            code: 'menu.***REMOVED***',
+            code: 'menu.kb',
             path: '/knowledge-bases',
-            active: path.startsWith('/knowledge-bases') && !is***REMOVED***Evaluation,
+            active: path.startsWith('/knowledge-bases') && !isKbEvaluation,
           },
           {
             label: '知识评测',
@@ -349,7 +349,7 @@ export default function AppShell({ children }: AppShellProps) {
         ],
       },
     ],
-    [path, is***REMOVED***Evaluation, isEvaluation],
+    [path, isKbEvaluation, isEvaluation],
   );
 
   // 强制期按登录人菜单授权裁剪；放行观察期（enforce=false）展示全部入口
@@ -439,23 +439,23 @@ export default function AppShell({ children }: AppShellProps) {
   }, [visibleGroups, tenant.code, go, openTenant, navigate]);
 
   const keyword = commandQuery.trim().toLowerCase();
-  const matched***REMOVED***s = keyword
-    ? command***REMOVED***s
-        .filter((***REMOVED***) => `${***REMOVED***.name} ${***REMOVED***.code}`.toLowerCase().includes(keyword))
+  const matchedKbs = keyword
+    ? commandKbs
+        .filter((kb) => `${kb.name} ${kb.code}`.toLowerCase().includes(keyword))
         .slice(0, 6)
     : [];
   const commandOptions = useMemo(() => {
-    const ***REMOVED***Options = matched***REMOVED***s.map((***REMOVED***) => {
-      const meta = typeMeta(***REMOVED***.type);
+    const kbOptions = matchedKbs.map((kb) => {
+      const meta = typeMeta(kb.type);
       return {
-        key: `***REMOVED***-${***REMOVED***.***REMOVED***Id}`,
-        label: ***REMOVED***.name,
-        hint: `${meta.label} · ${***REMOVED***.code}`,
+        key: `kb-${kb.kbId}`,
+        label: kb.name,
+        hint: `${meta.label} · ${kb.code}`,
         icon: meta.icon,
         kind: '知识库',
         run: () => {
           setCommandOpen(false);
-          navigate(`/knowledge-bases/${***REMOVED***.***REMOVED***Id}`);
+          navigate(`/knowledge-bases/${kb.kbId}`);
         },
       };
     });
@@ -471,8 +471,8 @@ export default function AppShell({ children }: AppShellProps) {
         kind: action.kind,
         run: action.run,
       }));
-    return [...***REMOVED***Options, ...actionOptions];
-  }, [commandActions, keyword, matched***REMOVED***s, navigate]);
+    return [...kbOptions, ...actionOptions];
+  }, [commandActions, keyword, matchedKbs, navigate]);
   const activeIndex = Math.min(commandIndex, Math.max(commandOptions.length - 1, 0));
 
   const crumbs = (
@@ -521,20 +521,20 @@ export default function AppShell({ children }: AppShellProps) {
       ) : path.startsWith('/knowledge-bases') ? (
         <>
           <span className="sep">/</span>
-          {***REMOVED***Id ? (
+          {kbId ? (
             <>
               <Link to="/knowledge-bases">知识管理</Link>
               <span className="sep">/</span>
-              {is***REMOVED***Evaluation ? (
+              {isKbEvaluation ? (
                 <>
-                  <Link to={`/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}`}>
-                    {***REMOVED***Name || '知识库详情'}
+                  <Link to={`/knowledge-bases/${encodeURIComponent(kbId)}`}>
+                    {kbName || '知识库详情'}
                   </Link>
                   <span className="sep">/</span>
                   <span className="current">知识评测</span>
                 </>
               ) : (
-                <span className="current">{***REMOVED***Name || '知识库详情'}</span>
+                <span className="current">{kbName || '知识库详情'}</span>
               )}
             </>
           ) : (
@@ -719,7 +719,7 @@ export default function AppShell({ children }: AppShellProps) {
             >
               <Icon name="search" />
               <span className="txt">搜索知识库、页面或操作</span>
-              <***REMOVED***d>⌘ K</***REMOVED***d>
+              <kbd>⌘ K</kbd>
             </button>
             <button
               className="tenant-chip"
@@ -817,7 +817,7 @@ export default function AppShell({ children }: AppShellProps) {
           帮助与系统导览
         </Link>
         <span className="app-footer-meta">
-          <***REMOVED***d>⌘ K</***REMOVED***d>
+          <kbd>⌘ K</kbd>
           全局搜索
         </span>
       </footer>

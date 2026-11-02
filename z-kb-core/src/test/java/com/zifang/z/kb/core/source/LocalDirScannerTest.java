@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.core.source;
+package com.zifang.z.kb.core.source;
 
-import com.zifang.z.***REMOVED***.api.source.LocalDirScanPolicy;
-import com.zifang.z.***REMOVED***.api.source.LocalDirScanner;
+import com.zifang.z.kb.api.source.LocalDirScanPolicy;
+import com.zifang.z.kb.api.source.LocalDirScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 本地目录扫描口径自守卫。
  *
- * <p>这些用例守的是「同一批文件夹，z-***REMOVED*** 与桌面端 note 必须看到同一份内容」。
+ * <p>这些用例守的是「同一批文件夹，z-kb 与桌面端 note 必须看到同一份内容」。
  * 排除清单一旦漂移，同一篇笔记就在两处各存一份 —— 这种 bug 没有编译错误、
  * 没有异常，只表现为「库里多了一份」，所以只能靠这里的用例钉住。
  */
@@ -191,7 +191,7 @@ class LocalDirScannerTest {
     // ==================== 工具 ====================
 
     private Path tempDir(String tag) throws IOException {
-        Path dir = Files.createTempDirectory("***REMOVED***-local-" + tag + "-");
+        Path dir = Files.createTempDirectory("kb-local-" + tag + "-");
         dir.toFile().deleteOnExit();
         return dir;
     }

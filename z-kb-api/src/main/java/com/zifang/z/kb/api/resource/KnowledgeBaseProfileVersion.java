@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 public class KnowledgeBaseProfileVersion {
 
     private String versionId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String tenantCode;
     private int versionNo;
     private ProfileVersionStatus status = ProfileVersionStatus.DRAFT;
@@ -37,12 +37,12 @@ public class KnowledgeBaseProfileVersion {
         this.versionId = versionId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTenantCode() {

@@ -1,36 +1,36 @@
-package com.zifang.z.***REMOVED***.resource.compilation;
+package com.zifang.z.kb.resource.compilation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactType;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactView;
-import com.zifang.z.***REMOVED***.api.compilation.BatchScopeType;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationJobView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationScopeParam;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationScopeView;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationStage;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationStageView;
-import com.zifang.z.***REMOVED***.api.compilation.JobRunStatus;
-import com.zifang.z.***REMOVED***.api.compilation.Milestone;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalChunkView;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalState;
-import com.zifang.z.***REMOVED***.api.compilation.TaskRunStatus;
-import com.zifang.z.***REMOVED***.api.material.MaterialCompileSource;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactVersionEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationStageEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactVersionMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.api.compilation.ArtifactType;
+import com.zifang.z.kb.api.compilation.ArtifactView;
+import com.zifang.z.kb.api.compilation.BatchScopeType;
+import com.zifang.z.kb.api.compilation.CompilationJobView;
+import com.zifang.z.kb.api.compilation.CompilationScopeParam;
+import com.zifang.z.kb.api.compilation.CompilationScopeView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.compilation.CompilationStage;
+import com.zifang.z.kb.api.compilation.CompilationStageView;
+import com.zifang.z.kb.api.compilation.JobRunStatus;
+import com.zifang.z.kb.api.compilation.Milestone;
+import com.zifang.z.kb.api.compilation.RetrievalChunkView;
+import com.zifang.z.kb.api.compilation.RetrievalState;
+import com.zifang.z.kb.api.compilation.TaskRunStatus;
+import com.zifang.z.kb.api.material.MaterialCompileSource;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactEntity;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactVersionEntity;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.entity.CompilationStageEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactMapper;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -42,33 +42,33 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.CONFIG_VERSION;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.DEFAULT_CHUNK_PAGE;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.DEFAULT_JOB_LIST;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.DEFAULT_SEARCH_LIMIT;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.MAX_CHUNK_PAGE;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.MAX_JOB_LIST;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.MAX_SEARCH_LIMIT;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.PIPELINE_DOCUMENT;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.STAGES;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.TASK_CODE_COMPILE_FILE;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.TASK_TYPE_COMPILATION;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.hasText;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.jobNotFound;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.limit;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.messageOf;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.paramInvalid;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.scopeTypeOf;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.stageCode;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.statusInvalid;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.trimToNull;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.truncate;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.CONFIG_VERSION;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.DEFAULT_CHUNK_PAGE;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.DEFAULT_JOB_LIST;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.DEFAULT_SEARCH_LIMIT;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.MAX_CHUNK_PAGE;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.MAX_JOB_LIST;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.MAX_SEARCH_LIMIT;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.PIPELINE_DOCUMENT;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.STAGES;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.TASK_CODE_COMPILE_FILE;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.TASK_TYPE_COMPILATION;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.hasText;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.jobNotFound;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.limit;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.messageOf;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.paramInvalid;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.scopeTypeOf;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.stageCode;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.statusInvalid;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.trimToNull;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.truncate;
 
 /**
  * 编译编排默认实现：作业冻结输入，阶段按 P0–P4 同步执行并落库。
  *
  * <p>与参考实现的口径一致：单文件触发可复用运行中/已完成的作业，批次是多文件作业，
- * 阶段按物料版本分行，索引阶段产出检索块并发布产物。差异只在调度方式：z-***REMOVED*** 没有任务
+ * 阶段按物料版本分行，索引阶段产出检索块并发布产物。差异只在调度方式：z-kb 没有任务
  * 内核，返回时即是终态，而不是「已排队」。</p>
  */
 public class DefaultCompilationService implements CompilationService {
@@ -105,20 +105,20 @@ public class DefaultCompilationService implements CompilationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationJobView run(String materialId, String versionId, ***REMOVED***Caller caller) {
+    public CompilationJobView run(String materialId, String versionId, KbCaller caller) {
         if (!hasText(materialId)) {
             throw paramInvalid();
         }
         MaterialCompileSource source = materialService.loadCompileSource(materialId.trim(),
                 trimToNull(versionId), caller);
-        resourceService.requireActionable(source.get***REMOVED***Id(), KnowledgeBaseAction.COMPILATION_RUN,
+        resourceService.requireActionable(source.getKbId(), KnowledgeBaseAction.COMPILATION_RUN,
                 caller);
         CompilationJobEntity reusable = reusableJob(caller.getTenantCode(), source);
         if (reusable != null) {
             return toView(reusable, true, true);
         }
         List<CompilationJson.ScopeEntry> entries = Collections.singletonList(entryOf(source));
-        CompilationJobEntity job = newJob(caller, source.get***REMOVED***Id(), nameOf(source.getTitle()),
+        CompilationJobEntity job = newJob(caller, source.getKbId(), nameOf(source.getTitle()),
                 TASK_TYPE_COMPILATION, BatchScopeType.SINGLE.name(), null, entries);
         jobMapper.insert(job);
         execute(job, Collections.singletonList(source), 0, caller);
@@ -127,13 +127,13 @@ public class DefaultCompilationService implements CompilationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationJobView runScope(CompilationScopeParam param, ***REMOVED***Caller caller) {
-        if (param == null || !hasText(param.get***REMOVED***Id()) || param.getMaterialIds() == null
+    public CompilationJobView runScope(CompilationScopeParam param, KbCaller caller) {
+        if (param == null || !hasText(param.getKbId()) || param.getMaterialIds() == null
                 || param.getMaterialIds().isEmpty()) {
             throw paramInvalid();
         }
-        String ***REMOVED***Id = param.get***REMOVED***Id().trim();
-        resourceService.requireActionable(***REMOVED***Id, KnowledgeBaseAction.COMPILATION_RUN, caller);
+        String kbId = param.getKbId().trim();
+        resourceService.requireActionable(kbId, KnowledgeBaseAction.COMPILATION_RUN, caller);
         List<MaterialCompileSource> sources = new ArrayList<>();
         for (int i = 0; i < param.getMaterialIds().size(); i++) {
             String materialId = param.getMaterialIds().get(i);
@@ -144,7 +144,7 @@ public class DefaultCompilationService implements CompilationService {
                     && param.getVersionIds().size() > i ? param.getVersionIds().get(i) : null;
             MaterialCompileSource source = materialService.loadCompileSource(materialId.trim(),
                     trimToNull(versionId), caller);
-            if (!***REMOVED***Id.equals(source.get***REMOVED***Id())) {
+            if (!kbId.equals(source.getKbId())) {
                 throw paramInvalid();
             }
             sources.add(source);
@@ -160,7 +160,7 @@ public class DefaultCompilationService implements CompilationService {
         for (MaterialCompileSource source : sources) {
             entries.add(entryOf(source));
         }
-        CompilationJobEntity job = newJob(caller, ***REMOVED***Id, name, taskType, scopeType,
+        CompilationJobEntity job = newJob(caller, kbId, name, taskType, scopeType,
                 trimToNull(param.getScopeId()), entries);
         jobMapper.insert(job);
         execute(job, sources, 0, caller);
@@ -169,9 +169,9 @@ public class DefaultCompilationService implements CompilationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationJobView retry(String jobId, String startStage, ***REMOVED***Caller caller) {
+    public CompilationJobView retry(String jobId, String startStage, KbCaller caller) {
         CompilationJobEntity job = requireJob(caller.getTenantCode(), jobId);
-        resourceService.requireActionable(job.get***REMOVED***Id(), KnowledgeBaseAction.COMPILATION_RUN,
+        resourceService.requireActionable(job.getKbId(), KnowledgeBaseAction.COMPILATION_RUN,
                 caller);
         if (!JobRunStatus.isTerminal(job.getRunStatus())) {
             throw statusInvalid();
@@ -193,9 +193,9 @@ public class DefaultCompilationService implements CompilationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CompilationJobView cancel(String jobId, ***REMOVED***Caller caller) {
+    public CompilationJobView cancel(String jobId, KbCaller caller) {
         CompilationJobEntity job = requireJob(caller.getTenantCode(), jobId);
-        resourceService.requireActionable(job.get***REMOVED***Id(), KnowledgeBaseAction.COMPILATION_RUN,
+        resourceService.requireActionable(job.getKbId(), KnowledgeBaseAction.COMPILATION_RUN,
                 caller);
         if (JobRunStatus.isTerminal(job.getRunStatus())) {
             return toView(job, true, true);
@@ -221,7 +221,7 @@ public class DefaultCompilationService implements CompilationService {
     }
 
     @Override
-    public CompilationJobView queryByMaterial(String materialId, String versionId, ***REMOVED***Caller caller) {
+    public CompilationJobView queryByMaterial(String materialId, String versionId, KbCaller caller) {
         if (!hasText(materialId)) {
             throw paramInvalid();
         }
@@ -239,16 +239,16 @@ public class DefaultCompilationService implements CompilationService {
     }
 
     @Override
-    public CompilationJobView queryByJobId(String jobId, ***REMOVED***Caller caller) {
+    public CompilationJobView queryByJobId(String jobId, KbCaller caller) {
         CompilationJobEntity job = requireJob(caller.getTenantCode(), jobId);
-        resourceService.requireReadable(job.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(job.getKbId(), caller);
         return toView(job, true, false);
     }
 
     @Override
-    public List<CompilationScopeView> listScope(String jobId, ***REMOVED***Caller caller) {
+    public List<CompilationScopeView> listScope(String jobId, KbCaller caller) {
         CompilationJobEntity job = requireJob(caller.getTenantCode(), jobId);
-        resourceService.requireReadable(job.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(job.getKbId(), caller);
         List<CompilationScopeView> result = new ArrayList<>();
         for (CompilationJson.ScopeEntry entry : CompilationJson.entries(job.getInputSnapshot())) {
             CompilationScopeView view = new CompilationScopeView();
@@ -261,23 +261,23 @@ public class DefaultCompilationService implements CompilationService {
     }
 
     @Override
-    public List<CompilationJobView> listBy***REMOVED***(String ***REMOVED***Id, String materialId, int limit,
-                                             ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
+    public List<CompilationJobView> listByKb(String kbId, String materialId, int limit,
+                                             KbCaller caller) {
+        if (!hasText(kbId)) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id.trim(), caller);
+        resourceService.requireReadable(kbId.trim(), caller);
         List<CompilationJobView> result = new ArrayList<>();
         if (hasText(materialId)) {
             CompilationJobView info = queryByMaterial(materialId.trim(), null, caller);
-            if (info != null && ***REMOVED***Id.trim().equals(info.get***REMOVED***Id())) {
+            if (info != null && kbId.trim().equals(info.getKbId())) {
                 result.add(info);
             }
             return result;
         }
         int size = limit(limit, DEFAULT_JOB_LIST, MAX_JOB_LIST);
         QueryWrapper<CompilationJobEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", caller.getTenantCode()).eq("***REMOVED***_id", ***REMOVED***Id.trim())
+        query.eq("tenant_code", caller.getTenantCode()).eq("kb_id", kbId.trim())
                 .eq("is_deleted", 0)
                 .orderByDesc("create_time").orderByDesc("id")
                 .last("LIMIT " + size);
@@ -292,7 +292,7 @@ public class DefaultCompilationService implements CompilationService {
 
     @Override
     public List<RetrievalChunkView> listChunks(String materialId, String versionId, int limit,
-                                               ***REMOVED***Caller caller) {
+                                               KbCaller caller) {
         if (!hasText(materialId)) {
             throw paramInvalid();
         }
@@ -302,7 +302,7 @@ public class DefaultCompilationService implements CompilationService {
         QueryWrapper<RetrievalChunkEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", caller.getTenantCode())
                 .eq("material_version_id", source.getVersionId())
-                .eq("chunk_role", com.zifang.z.***REMOVED***.api.compilation.ChunkRole.PASSAGE.name())
+                .eq("chunk_role", com.zifang.z.kb.api.compilation.ChunkRole.PASSAGE.name())
                 .eq("is_deleted", 0)
                 .orderByAsc("ordinal")
                 .last("LIMIT " + size);
@@ -314,16 +314,16 @@ public class DefaultCompilationService implements CompilationService {
     }
 
     @Override
-    public List<RetrievalChunkView> search(String ***REMOVED***Id, String keyword, int limit,
-                                           ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
+    public List<RetrievalChunkView> search(String kbId, String keyword, int limit,
+                                           KbCaller caller) {
+        if (!hasText(kbId)) {
             throw paramInvalid();
         }
-        resourceService.requireReadable(***REMOVED***Id.trim(), caller);
+        resourceService.requireReadable(kbId.trim(), caller);
         int size = limit(limit, DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT);
         QueryWrapper<RetrievalChunkEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", caller.getTenantCode()).eq("***REMOVED***_id", ***REMOVED***Id.trim())
-                .eq("chunk_role", com.zifang.z.***REMOVED***.api.compilation.ChunkRole.PASSAGE.name())
+        query.eq("tenant_code", caller.getTenantCode()).eq("kb_id", kbId.trim())
+                .eq("chunk_role", com.zifang.z.kb.api.compilation.ChunkRole.PASSAGE.name())
                 .eq("index_state", RetrievalState.INDEXED.name())
                 .eq("is_deleted", 0);
         if (hasText(keyword)) {
@@ -343,7 +343,7 @@ public class DefaultCompilationService implements CompilationService {
      * 返回时作业已是终态。
      */
     private void execute(CompilationJobEntity job, List<MaterialCompileSource> sources,
-                         int startIndex, ***REMOVED***Caller caller) {
+                         int startIndex, KbCaller caller) {
         Instant started = Instant.now();
         job.setRunStatus(JobRunStatus.RUNNING.name());
         if (job.getStartedAt() == null) {
@@ -444,7 +444,7 @@ public class DefaultCompilationService implements CompilationService {
     private CompilationStageEntity openStageRow(CompilationJobEntity job,
                                                 MaterialCompileSource source, int round,
                                                 CompilationStage stage, int seqNo,
-                                                ***REMOVED***Caller caller) {
+                                                KbCaller caller) {
         QueryWrapper<CompilationStageEntity> query = new QueryWrapper<>();
         query.eq("tenant_code", job.getTenantCode()).eq("job_id", job.getJobId())
                 .eq("material_version_id", source.getVersionId())
@@ -482,7 +482,7 @@ public class DefaultCompilationService implements CompilationService {
             return null;
         }
         CompilationJobEntity job = selectJob(tenant, latest.getJobId());
-        if (job == null || !source.get***REMOVED***Id().equals(job.get***REMOVED***Id())
+        if (job == null || !source.getKbId().equals(job.getKbId())
                 || !containsVersion(job, source.getVersionId())) {
             return null;
         }
@@ -539,7 +539,7 @@ public class DefaultCompilationService implements CompilationService {
         return fresh == null ? job : fresh;
     }
 
-    private CompilationJobEntity newJob(***REMOVED***Caller caller, String ***REMOVED***Id, String name, String taskType,
+    private CompilationJobEntity newJob(KbCaller caller, String kbId, String name, String taskType,
                                         String scopeType, String scopeId,
                                         List<CompilationJson.ScopeEntry> entries) {
         Instant now = Instant.now();
@@ -548,7 +548,7 @@ public class DefaultCompilationService implements CompilationService {
         job.setId(id);
         job.setJobId(id);
         job.setTenantCode(caller.getTenantCode());
-        job.set***REMOVED***Id(***REMOVED***Id);
+        job.setKbId(kbId);
         job.setName(truncate(name, 255));
         job.setTaskType(hasText(taskType) ? taskType : TASK_TYPE_COMPILATION);
         job.setScopeType(scopeType);
@@ -583,7 +583,7 @@ public class DefaultCompilationService implements CompilationService {
                 job.getTenantCode(), job.getJobId(), roundOf(job));
         CompilationJobView view = new CompilationJobView();
         view.setJobId(job.getJobId());
-        view.set***REMOVED***Id(job.get***REMOVED***Id());
+        view.setKbId(job.getKbId());
         view.setName(job.getName());
         view.setTaskType(job.getTaskType());
         view.setScopeType(job.getScopeType());

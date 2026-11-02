@@ -15,9 +15,9 @@ const tools: ToolMetric[] = [
     timeoutRate: 0.8,
   },
   {
-    key: '***REMOVED***_compile',
+    key: 'kb_compile',
     name: 'Wiki 编译',
-    code: '***REMOVED***_compile',
+    code: 'kb_compile',
     calls: 400,
     successRate: 96.5,
     avgMs: 2400,

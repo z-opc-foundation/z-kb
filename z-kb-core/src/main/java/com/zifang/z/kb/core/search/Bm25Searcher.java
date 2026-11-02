@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.core.search;
+package com.zifang.z.kb.core.search;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.core.util.HanLpTokenizer;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.core.util.HanLpTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

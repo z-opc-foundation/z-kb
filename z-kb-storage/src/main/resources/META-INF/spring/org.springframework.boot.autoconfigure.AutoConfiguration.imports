@@ -1,2 +1,2 @@
-com.zifang.z.***REMOVED***.storage.impl.DocumentRepositoryAutoConfiguration
-com.zifang.z.***REMOVED***.storage.resource.***REMOVED***ResourcePersistenceAutoConfiguration
+com.zifang.z.kb.storage.impl.DocumentRepositoryAutoConfiguration
+com.zifang.z.kb.storage.resource.KbResourcePersistenceAutoConfiguration

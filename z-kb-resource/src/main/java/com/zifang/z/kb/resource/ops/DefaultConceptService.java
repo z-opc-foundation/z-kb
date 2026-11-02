@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.concept.ConceptDetailView;
-import com.zifang.z.***REMOVED***.api.concept.ConceptMentionView;
-import com.zifang.z.***REMOVED***.api.concept.ConceptService;
-import com.zifang.z.***REMOVED***.api.concept.ConceptView;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ConceptEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.ConceptMentionEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.ConceptMentionMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.concept.ConceptDetailView;
+import com.zifang.z.kb.api.concept.ConceptMentionView;
+import com.zifang.z.kb.api.concept.ConceptService;
+import com.zifang.z.kb.api.concept.ConceptView;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.storage.extraction.entity.ConceptEntity;
+import com.zifang.z.kb.storage.extraction.entity.ConceptMentionEntity;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMapper;
+import com.zifang.z.kb.storage.extraction.mapper.ConceptMentionMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +40,11 @@ public class DefaultConceptService implements ConceptService {
     }
 
     @Override
-    public List<ConceptView> listBy***REMOVED***(String ***REMOVED***Id, String keyword, ***REMOVED***Caller caller) {
-        String ***REMOVED*** = require***REMOVED***(***REMOVED***Id, caller);
+    public List<ConceptView> listByKb(String kbId, String keyword, KbCaller caller) {
+        String kb = requireKb(kbId, caller);
         QueryWrapper<ConceptEntity> query = new QueryWrapper<ConceptEntity>()
                 .eq("tenant_code", caller.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***)
+                .eq("kb_id", kb)
                 .eq("is_deleted", 0);
         if (keyword != null && !keyword.trim().isEmpty()) {
             query.like("name", keyword.trim());
@@ -59,20 +59,20 @@ public class DefaultConceptService implements ConceptService {
     }
 
     @Override
-    public ConceptDetailView queryById(String ***REMOVED***Id, String conceptId, ***REMOVED***Caller caller) {
-        String ***REMOVED*** = require***REMOVED***(***REMOVED***Id, caller);
+    public ConceptDetailView queryById(String kbId, String conceptId, KbCaller caller) {
+        String kb = requireKb(kbId, caller);
         if (conceptId == null || conceptId.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
-        ConceptEntity concept = findByConceptId(caller.getTenantCode(), ***REMOVED***, conceptId.trim());
+        ConceptEntity concept = findByConceptId(caller.getTenantCode(), kb, conceptId.trim());
         if (concept == null) {
-            throw new ***REMOVED***Exception("***REMOVED***CONCEPT_NOT_FOUND", "概念不存在");
+            throw new KBException("KB_CONCEPT_NOT_FOUND", "概念不存在");
         }
         ConceptDetailView detail = new ConceptDetailView();
         detail.setConcept(toView(concept));
         QueryWrapper<ConceptMentionEntity> query = new QueryWrapper<ConceptMentionEntity>()
                 .eq("tenant_code", caller.getTenantCode())
-                .eq("***REMOVED***_id", ***REMOVED***)
+                .eq("kb_id", kb)
                 .eq("concept_id", concept.getConceptId())
                 .eq("is_deleted", 0)
                 .orderByDesc("create_time").orderByDesc("id")
@@ -83,17 +83,17 @@ public class DefaultConceptService implements ConceptService {
         return detail;
     }
 
-    private String require***REMOVED***(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        if (***REMOVED***Id == null || ***REMOVED***Id.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+    private String requireKb(String kbId, KbCaller caller) {
+        if (kbId == null || kbId.trim().isEmpty()) {
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
-        return resourceService.requireReadable(***REMOVED***Id.trim(), caller).get***REMOVED***Id();
+        return resourceService.requireReadable(kbId.trim(), caller).getKbId();
     }
 
-    private ConceptEntity findByConceptId(String tenant, String ***REMOVED***Id, String conceptId) {
+    private ConceptEntity findByConceptId(String tenant, String kbId, String conceptId) {
         QueryWrapper<ConceptEntity> query = new QueryWrapper<ConceptEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("concept_id", conceptId)
                 .eq("is_deleted", 0)
                 .last("LIMIT 1");

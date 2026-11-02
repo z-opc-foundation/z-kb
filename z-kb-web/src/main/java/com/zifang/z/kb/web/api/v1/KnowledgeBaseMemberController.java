@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseEffective;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMember;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberAdminService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseMemberCandidate;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MemberGrantRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MemberRevokeRequest;
+import com.zifang.z.kb.api.resource.KnowledgeBaseEffective;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMember;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberAdminService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseMemberCandidate;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
+import com.zifang.z.kb.web.api.v1.dto.MemberGrantRequest;
+import com.zifang.z.kb.web.api.v1.dto.MemberRevokeRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,55 +25,55 @@ import java.util.List;
  */
 @Tag(name = "知识库-成员")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/knowledgeBase/member")
+@RequestMapping("/api/kb/v1/knowledgeBase/member")
 public class KnowledgeBaseMemberController {
 
     private final KnowledgeBaseMemberAdminService memberService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
     public KnowledgeBaseMemberController(KnowledgeBaseMemberAdminService memberService,
-                                         ***REMOVED***CallerResolver callerResolver) {
+                                         KbCallerResolver callerResolver) {
         this.memberService = memberService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "成员列表")
     @GetMapping("/list")
-    public ***REMOVED***Result<List<KnowledgeBaseMember>> list(@RequestParam String ***REMOVED***Id,
+    public KbResult<List<KnowledgeBaseMember>> list(@RequestParam String kbId,
                                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(memberService.listMembers(***REMOVED***Id, callerResolver.resolve(request)));
+        return KbResult.ok(memberService.listMembers(kbId, callerResolver.resolve(request)));
     }
 
     @Operation(summary = "可授权成员候选")
     @GetMapping("/candidates")
-    public ***REMOVED***Result<List<KnowledgeBaseMemberCandidate>> candidates(
-            @RequestParam String ***REMOVED***Id,
+    public KbResult<List<KnowledgeBaseMemberCandidate>> candidates(
+            @RequestParam String kbId,
             @RequestParam(required = false) String keyword,
             HttpServletRequest request) {
-        return ***REMOVED***Result.ok(memberService.searchCandidates(***REMOVED***Id, keyword,
+        return KbResult.ok(memberService.searchCandidates(kbId, keyword,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "授予/变更成员角色")
     @PostMapping("/grant")
-    public ***REMOVED***Result<KnowledgeBaseMember> grant(@RequestBody MemberGrantRequest body,
+    public KbResult<KnowledgeBaseMember> grant(@RequestBody MemberGrantRequest body,
                                                HttpServletRequest request) {
-        return ***REMOVED***Result.ok(memberService.grant(body.get***REMOVED***Id(), body.getPrincipalId(),
+        return KbResult.ok(memberService.grant(body.getKbId(), body.getPrincipalId(),
                 body.getRole(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "移除成员")
     @PostMapping("/revoke")
-    public ***REMOVED***Result<Boolean> revoke(@RequestBody MemberRevokeRequest body,
+    public KbResult<Boolean> revoke(@RequestBody MemberRevokeRequest body,
                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(memberService.revoke(body.get***REMOVED***Id(), body.getPrincipalId(),
+        return KbResult.ok(memberService.revoke(body.getKbId(), body.getPrincipalId(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "当前调用者在该库的有效权限")
     @GetMapping("/effective")
-    public ***REMOVED***Result<KnowledgeBaseEffective> effective(@RequestParam String ***REMOVED***Id,
+    public KbResult<KnowledgeBaseEffective> effective(@RequestParam String kbId,
                                                       HttpServletRequest request) {
-        return ***REMOVED***Result.ok(memberService.effective(***REMOVED***Id, callerResolver.resolve(request)));
+        return KbResult.ok(memberService.effective(kbId, callerResolver.resolve(request)));
     }
 }

@@ -11,8 +11,8 @@ vi.mock('@/services/audit', () => ({
 const record: AuditLogRecord = {
   id: '1',
   tenantCode: 'tenant-a',
-  type: '***REMOVED***',
-  bizRef: '***REMOVED***-1',
+  type: 'KB',
+  bizRef: 'kb-1',
   actorId: 9,
   action: 'MATERIAL_UPLOAD',
   actionDesc: '上传资料',
@@ -50,20 +50,20 @@ describe('审计详情抽屉', () => {
     expect(screen.getByText('正在读取完整出入参…')).toBeInTheDocument();
     expect(screen.getByText('张三')).toBeInTheDocument();
     expect(screen.getByText('知识库级')).toBeInTheDocument();
-    expect(screen.getByText('***REMOVED***-1')).toBeInTheDocument();
+    expect(screen.getByText('kb-1')).toBeInTheDocument();
     expect(getAuditLog).toHaveBeenCalledWith('1');
 
     await act(async () => {
       resolveDetail({
         ...record,
-        requestParams: '{"***REMOVED***Id":"***REMOVED***-1","files":2}',
+        requestParams: '{"kbId":"kb-1","files":2}',
         responseResult: 'not-json',
       });
     });
 
     await waitFor(() => expect(screen.queryByText('正在读取完整出入参…')).toBeNull());
     const pres = container.querySelectorAll('pre');
-    expect(pres[0]).toHaveTextContent('"***REMOVED***Id": "***REMOVED***-1"');
+    expect(pres[0]).toHaveTextContent('"kbId": "kb-1"');
     expect(pres[1]).toHaveTextContent('not-json');
   });
 

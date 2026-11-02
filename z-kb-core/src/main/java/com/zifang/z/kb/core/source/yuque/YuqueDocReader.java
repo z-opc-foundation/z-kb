@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.yuque;
+package com.zifang.z.kb.core.source.yuque;
 
 /**
  * 语雀文档读取：链接或 namespace+slug → 拉详情 → 表格类 body 转 markdown。

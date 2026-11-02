@@ -27,9 +27,9 @@ vi.mock('@/pages/ai/agent-ask', () => ({
   ),
 }));
 vi.mock('./components/wiki-graph-tab', () => ({
-  default: ({ ***REMOVED***Id, sourceMaterialIds }: { ***REMOVED***Id: string; sourceMaterialIds: string[] }) => (
+  default: ({ kbId, sourceMaterialIds }: { kbId: string; sourceMaterialIds: string[] }) => (
     <div data-testid="wiki-graph-tab">
-      图谱 {***REMOVED***Id} · {sourceMaterialIds.length} 份来源
+      图谱 {kbId} · {sourceMaterialIds.length} 份来源
     </div>
   ),
 }));
@@ -37,7 +37,7 @@ vi.mock('./components/wiki-graph-tab', () => ({
 const PAGES = [
   {
     wikiId: 'wiki-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-1',
     title: '护理排班制度',
     summary: '排班与值班要求',
@@ -50,7 +50,7 @@ const PAGES = [
   },
   {
     wikiId: 'wiki-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-2',
     title: '交接班规范',
     summary: null,
@@ -61,7 +61,7 @@ const PAGES = [
   },
   {
     wikiId: 'wiki-3',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialId: 'mat-404',
     title: '孤儿页面',
     pointCount: 1,
@@ -73,7 +73,7 @@ const PAGES = [
 const MATERIALS = [
   {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '护理排班制度原稿',
     sourceType: 'UPLOAD',
@@ -87,7 +87,7 @@ const MATERIALS = [
   },
   {
     materialId: 'mat-2',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '交接班规范原稿',
     sourceType: 'UPLOAD',
@@ -101,7 +101,7 @@ const MATERIALS = [
   },
   {
     materialId: 'mat-3',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '制度汇编',
     sourceType: 'UPLOAD',
@@ -114,7 +114,7 @@ const MATERIALS = [
   },
   {
     materialId: 'mat-4',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '待解析制度',
     sourceType: 'UPLOAD',
@@ -158,7 +158,7 @@ const LINEAGE = {
 
 const GENERATED_PAGE = {
   wikiId: 'wiki-9',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialId: 'mat-3',
   title: '制度汇编',
   summary: '新生成的 Wiki',
@@ -170,8 +170,8 @@ const GENERATED_PAGE = {
 
 function renderWiki(canManage = true, initialWikiId?: string) {
   return renderAt(
-    <WikiWorkspace ***REMOVED***Id="***REMOVED***-1" canManage={canManage} initialWikiId={initialWikiId} onChanged={vi.fn()} />,
-    { route: '/knowledge-bases/***REMOVED***-1/workspace' },
+    <WikiWorkspace kbId="kb-1" canManage={canManage} initialWikiId={initialWikiId} onChanged={vi.fn()} />,
+    { route: '/knowledge-bases/kb-1/workspace' },
   );
 }
 
@@ -224,9 +224,9 @@ describe('Wiki 工作区', () => {
     resolvePages(PAGES);
 
     expect(await screen.findByText('排班与值班要求')).toBeTruthy();
-    expect(listWikiPages).toHaveBeenCalledWith('***REMOVED***-1', undefined, 100);
-    expect(pageMaterial).toHaveBeenCalledWith({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 100 });
-    expect(getCategoryTree).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(listWikiPages).toHaveBeenCalledWith('kb-1', undefined, 100);
+    expect(pageMaterial).toHaveBeenCalledWith({ kbId: 'kb-1', current: 1, size: 100 });
+    expect(getCategoryTree).toHaveBeenCalledWith('kb-1');
     expect(screen.getAllByText('护理排班制度').length).toBeGreaterThan(0);
     expect(screen.getAllByText('交接班规范').length).toBeGreaterThan(0);
     expect(screen.getAllByText('暂无摘要').length).toBe(2);
@@ -239,7 +239,7 @@ describe('Wiki 工作区', () => {
     fireEvent.change(search, { target: { value: ' 排班 ' } });
     fireEvent.click(within(leftPanel()).getByRole('button', { name: '搜索' }));
 
-    await waitFor(() => expect(listWikiPages).toHaveBeenLastCalledWith('***REMOVED***-1', '排班', 100));
+    await waitFor(() => expect(listWikiPages).toHaveBeenLastCalledWith('kb-1', '排班', 100));
     expect((await screen.findAllByText('没有匹配的 Wiki')).length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText('关键词：排班').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: /生成 Wiki/ })).toBeTruthy();
@@ -360,7 +360,7 @@ describe('Wiki 工作区', () => {
     fireEvent.click(screen.getByLabelText('选择 制度汇编'));
     fireEvent.click(within(dialog).getByRole('button', { name: /开始生成（1）/ }));
 
-    await waitFor(() => expect(generateWiki).toHaveBeenCalledWith('***REMOVED***-1', ['mat-3']));
+    await waitFor(() => expect(generateWiki).toHaveBeenCalledWith('kb-1', ['mat-3']));
     expect(toast).toHaveBeenCalledWith('Wiki 已生成', '1/1 篇成功', 'success');
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(listWikiPages).toHaveBeenCalledTimes(2);

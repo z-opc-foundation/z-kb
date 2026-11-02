@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.wiki;
+package com.zifang.z.kb.api.wiki;
 
 /**
  * 血缘边：关系类型为 SOURCED_FROM / MENTIONS / RELATED_TO。

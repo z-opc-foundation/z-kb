@@ -1,10 +1,10 @@
--- z-***REMOVED*** 任务配置 MySQL 元数据表（幂等）
--- 与 db/h2/taskconfig-***REMOVED***.sql 保持同构；***REMOVED***_id 空串表示租户级配置。
+-- z-kb 任务配置 MySQL 元数据表（幂等）
+-- 与 db/h2/taskconfig-kb.sql 保持同构；kb_id 空串表示租户级配置。
 
-CREATE TABLE IF NOT EXISTS ***REMOVED***_task_config (
+CREATE TABLE IF NOT EXISTS kb_task_config (
     id VARCHAR(64) NOT NULL,
     tenant_code VARCHAR(64) NOT NULL,
-    ***REMOVED***_id VARCHAR(64) NOT NULL DEFAULT '',
+    kb_id VARCHAR(64) NOT NULL DEFAULT '',
     task_type VARCHAR(32) NOT NULL,
     task_code VARCHAR(32) NOT NULL,
     task_name VARCHAR(128) NOT NULL,
@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS ***REMOVED***_task_config (
     create_time DATETIME(3) NULL,
     update_time DATETIME(3) NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_***REMOVED***_task_config (tenant_code, ***REMOVED***_id, config_version, task_code, is_deleted),
-    KEY idx_***REMOVED***_task_config_version (tenant_code, ***REMOVED***_id, published_at)
+    UNIQUE KEY uk_kb_task_config (tenant_code, kb_id, config_version, task_code, is_deleted),
+    KEY idx_kb_task_config_version (tenant_code, kb_id, published_at)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '任务配置';

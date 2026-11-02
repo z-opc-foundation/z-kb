@@ -1,13 +1,13 @@
 import type { EvalRunRecord } from '@/services/evaluation';
 import { getTenantCode } from '@/utils/tenant';
 
-function cacheKey(***REMOVED***Id: string): string {
-  return `***REMOVED***.eval-runs.${getTenantCode()}.${***REMOVED***Id}`;
+function cacheKey(kbId: string): string {
+  return `kb.eval-runs.${getTenantCode()}.${kbId}`;
 }
 
-export function readKnownRuns(***REMOVED***Id: string): EvalRunRecord[] {
+export function readKnownRuns(kbId: string): EvalRunRecord[] {
   try {
-    const raw = sessionStorage.getItem(cacheKey(***REMOVED***Id));
+    const raw = sessionStorage.getItem(cacheKey(kbId));
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? (parsed as EvalRunRecord[]) : [];
   } catch (error) {
@@ -15,9 +15,9 @@ export function readKnownRuns(***REMOVED***Id: string): EvalRunRecord[] {
   }
 }
 
-export function writeKnownRuns(***REMOVED***Id: string, runs: EvalRunRecord[]): void {
+export function writeKnownRuns(kbId: string, runs: EvalRunRecord[]): void {
   try {
-    sessionStorage.setItem(cacheKey(***REMOVED***Id), JSON.stringify(runs.slice(0, 30)));
+    sessionStorage.setItem(cacheKey(kbId), JSON.stringify(runs.slice(0, 30)));
   } catch (error) {
     // 会话缓存失败不影响真实查询结果
   }

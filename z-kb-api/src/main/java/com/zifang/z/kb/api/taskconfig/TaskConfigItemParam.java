@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.taskconfig;
+package com.zifang.z.kb.api.taskconfig;
 
 /**
  * 任务配置发布项。整版发布必须覆盖全部任务性质。

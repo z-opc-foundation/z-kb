@@ -56,7 +56,7 @@ if m:
 # ⚠ 三个坑，逐个都真实踩过：
 #   ① 不能取第一个 <version> —— 那会命中 <parent> 里的（z-graph: parent 1.0.21 /
 #      根工程 1.0.8，误取 parent ⇒ 全表 404）
-#   ② 有的仓根 pom 的 <version> 字面就是自引用 ${project.version}（z-graph / z-gw / z-***REMOVED***
+#   ② 有的仓根 pom 的 <version> 字面就是自引用 ${project.version}（z-graph / z-gw / z-kb
 #      三个都是），字面解析到此为止 ⇒ 交给 mvn help:evaluate 兜底
 #   ③ 解析结果若仍含 ${ 就不算版本，直接报，不让它去 Central 探一圈 404 回来
 root_artifact = re.search(r'</parent>.*?<artifactId>([^<]+)</artifactId>', s, re.S)

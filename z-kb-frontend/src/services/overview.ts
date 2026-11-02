@@ -3,8 +3,8 @@ import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 import type { MaterialRecord } from '@/services/material';
 
-export interface ***REMOVED***Overview {
-  ***REMOVED***Id: string;
+export interface KbOverview {
+  kbId: string;
   fileCount: number;
   compiledCount: number;
   partialCount: number;
@@ -16,7 +16,7 @@ export interface ***REMOVED***Overview {
   refreshedAt: string;
 }
 
-const BASE = '/***REMOVED***/v1/overview';
+const BASE = '/kb/v1/overview';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -26,11 +26,11 @@ function toCount(value: unknown): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export async function get***REMOVED***Overview(***REMOVED***Id: string) {
+export async function getKbOverview(kbId: string) {
   try {
-    const result = await request<***REMOVED***Overview>(`${BASE}/***REMOVED***Stats`, {
+    const result = await request<KbOverview>(`${BASE}/kbStats`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     });
     if (!result) {

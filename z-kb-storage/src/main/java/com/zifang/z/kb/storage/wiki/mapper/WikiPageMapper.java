@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.storage.wiki.mapper;
+package com.zifang.z.kb.storage.wiki.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.entity.WikiPageEntity;
+import com.zifang.z.kb.storage.wiki.entity.WikiPageEntity;
 
 public interface WikiPageMapper extends BaseMapper<WikiPageEntity> {
 }

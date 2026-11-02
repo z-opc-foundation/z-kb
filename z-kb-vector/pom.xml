@@ -7,21 +7,21 @@
 
     <parent>
         <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***</artifactId>
+            <artifactId>z-kb</artifactId>
         <version>1.1.0</version>
     </parent>
     <groupId>io.github.yuku123</groupId>
     <version>1.1.0</version>
 
-    <artifactId>z-***REMOVED***-vector</artifactId>
+    <artifactId>z-kb-vector</artifactId>
     <packaging>jar</packaging>
-    <name>z-***REMOVED*** :: vector</name>
+    <name>z-kb :: vector</name>
     <description>
-        z-***REMOVED*** 向量检索适配 — 封装 z-vector，提供 ChunkVectorStore。
+        z-kb 向量检索适配 — 封装 z-vector，提供 ChunkVectorStore。
         将 Chunk 对象（id + vector + payload + workspace）映射到 z-vector 的 VectorPoint。
     </description>
 
-    <url>https://github.com/yuku123/z-***REMOVED***</url>
+    <url>https://github.com/yuku123/z-kb</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -43,9 +43,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/yuku123/z-***REMOVED***.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-***REMOVED***.git</developerConnection>
-        <url>https://github.com/yuku123/z-***REMOVED***</url>
+        <connection>scm:git:https://github.com/yuku123/z-kb.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yuku123/z-kb.git</developerConnection>
+        <url>https://github.com/yuku123/z-kb</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.yuku123</groupId>
-            <artifactId>z-***REMOVED***-api</artifactId>
+            <artifactId>z-kb-api</artifactId>
         </dependency>
         <!-- z-vector-api / z-vector-core 不写版本：本仓原来在这里钉**字面 1.0.1**，而中央上
              io.github.yuku123:z-vector:1.0.1 那个根 pom 带着只存在于作者机器的
@@ -78,7 +78,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- 1.1.0 起 ***REMOVED***.vector.storage-type 默认 persistent ⇒ PersistentVectorStore 必须真的在
+        <!-- 1.1.0 起 kb.vector.storage-type 默认 persistent ⇒ PersistentVectorStore 必须真的在
              classpath 上，否则自动装配只能启动失败（fail-fast）。
              PersistentVectorStore 落在 z-vector-storage 这个坐标里（不在 z-vector-core 里），
              版本不写死：由父链 z-boot-fleet 的兄弟仓权威表下发（与 z-vector-api/core 同源）。 -->

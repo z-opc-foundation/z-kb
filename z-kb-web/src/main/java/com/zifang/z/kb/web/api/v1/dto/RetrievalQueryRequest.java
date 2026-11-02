@@ -1,13 +1,13 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
-import com.zifang.z.***REMOVED***.api.retrieval.RetrievalQueryParam;
+import com.zifang.z.kb.api.retrieval.RetrievalQueryParam;
 
 /**
  * 库内检索请求。mode 当前只支持 dense。
  */
 public class RetrievalQueryRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String query;
     private Integer topK;
     private Double minScore;
@@ -15,7 +15,7 @@ public class RetrievalQueryRequest {
 
     public RetrievalQueryParam toParam() {
         RetrievalQueryParam param = new RetrievalQueryParam();
-        param.set***REMOVED***Id(***REMOVED***Id);
+        param.setKbId(kbId);
         param.setQuery(query);
         param.setTopK(topK);
         param.setMinScore(minScore);
@@ -23,12 +23,12 @@ public class RetrievalQueryRequest {
         return param;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getQuery() {

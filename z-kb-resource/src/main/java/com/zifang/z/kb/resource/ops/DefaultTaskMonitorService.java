@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorPageView;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorService;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorSummaryView;
-import com.zifang.z.***REMOVED***.api.taskmonitor.TaskMonitorView;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationJobMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.CompilationStageMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.TaskMonitorRow;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorPageView;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorService;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorSummaryView;
+import com.zifang.z.kb.api.taskmonitor.TaskMonitorView;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationJobMapper;
+import com.zifang.z.kb.storage.compilation.mapper.CompilationStageMapper;
+import com.zifang.z.kb.storage.compilation.mapper.TaskMonitorRow;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,20 +45,20 @@ public class DefaultTaskMonitorService implements TaskMonitorService {
     }
 
     @Override
-    public TaskMonitorPageView page(String ***REMOVED***Id, String taskType, String status, int pageNo,
-                                    int pageSize, ***REMOVED***Caller caller) {
-        String ***REMOVED*** = require***REMOVED***(***REMOVED***Id, caller);
+    public TaskMonitorPageView page(String kbId, String taskType, String status, int pageNo,
+                                    int pageSize, KbCaller caller) {
+        String kb = requireKb(kbId, caller);
         String type = normalizeTaskType(taskType);
         String state = normalizeStatus(status);
         int no = Math.max(1, pageNo);
         int size = pageSize <= 0 ? DEFAULT_PAGE_SIZE : Math.min(pageSize, MAX_PAGE_SIZE);
 
         TaskMonitorPageView view = new TaskMonitorPageView();
-        view.setTotal(stageMapper.countBy***REMOVED***(caller.getTenantCode(), ***REMOVED***, type, state));
+        view.setTotal(stageMapper.countByKb(caller.getTenantCode(), kb, type, state));
         view.setPageNo(no);
         view.setPageSize(size);
         List<TaskMonitorView> records = new ArrayList<>();
-        for (TaskMonitorRow row : stageMapper.pageBy***REMOVED***(caller.getTenantCode(), ***REMOVED***, type, state,
+        for (TaskMonitorRow row : stageMapper.pageByKb(caller.getTenantCode(), kb, type, state,
                 size, (no - 1) * size)) {
             records.add(toView(row));
         }
@@ -67,26 +67,26 @@ public class DefaultTaskMonitorService implements TaskMonitorService {
     }
 
     @Override
-    public TaskMonitorSummaryView summary(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        String ***REMOVED*** = require***REMOVED***(***REMOVED***Id, caller);
+    public TaskMonitorSummaryView summary(String kbId, KbCaller caller) {
+        String kb = requireKb(kbId, caller);
         TaskMonitorSummaryView view = new TaskMonitorSummaryView();
-        view.setJobTotal(countJobs(caller.getTenantCode(), ***REMOVED***, false));
-        view.setGroupTotal(countJobs(caller.getTenantCode(), ***REMOVED***, true));
-        view.setTaskTotal(stageMapper.countBy***REMOVED***(caller.getTenantCode(), ***REMOVED***, null, null));
+        view.setJobTotal(countJobs(caller.getTenantCode(), kb, false));
+        view.setGroupTotal(countJobs(caller.getTenantCode(), kb, true));
+        view.setTaskTotal(stageMapper.countByKb(caller.getTenantCode(), kb, null, null));
         return view;
     }
 
-    private String require***REMOVED***(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        if (***REMOVED***Id == null || ***REMOVED***Id.trim().isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+    private String requireKb(String kbId, KbCaller caller) {
+        if (kbId == null || kbId.trim().isEmpty()) {
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
-        return resourceService.requireReadable(***REMOVED***Id.trim(), caller).get***REMOVED***Id();
+        return resourceService.requireReadable(kbId.trim(), caller).getKbId();
     }
 
-    private long countJobs(String tenantCode, String ***REMOVED***Id, boolean groupsOnly) {
+    private long countJobs(String tenantCode, String kbId, boolean groupsOnly) {
         QueryWrapper<CompilationJobEntity> wrapper = new QueryWrapper<CompilationJobEntity>()
                 .eq("tenant_code", tenantCode)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0);
         if (groupsOnly) {
             wrapper.ne("scope_type", "SINGLE");
@@ -106,7 +106,7 @@ public class DefaultTaskMonitorService implements TaskMonitorService {
         }
         String value = status.trim().toUpperCase(Locale.ROOT);
         if (!STATUSES.contains(value)) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
         return value;
     }

@@ -66,7 +66,7 @@ const TREE: CategoryNode[] = [
 function material(id: string): MaterialRecord {
   return {
     materialId: id,
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: `资料 ${id}`,
     sourceType: 'UPLOAD',
@@ -85,7 +85,7 @@ const RECORDS = [material('m1'), material('m2')];
 function batch(overrides: Partial<CompilationBatchRecord> = {}): CompilationBatchRecord {
   return {
     batchId: 'batch-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     name: '知识编译',
     taskType: 'COMPILE',
     scopeType: 'WORKSPACE',
@@ -102,7 +102,7 @@ function setup(
   overrides: Partial<Parameters<typeof useMaterialWorkspace>[0]> = {},
 ) {
   const params = {
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     canManage: true,
     ...overrides,
   };
@@ -155,15 +155,15 @@ describe('useMaterialWorkspace', () => {
     await waitFor(() => expect(result.current.treeMaterials).toHaveLength(2));
     await waitFor(() => expect(result.current.recycle.count).toBe(0));
 
-    expect(getCategoryTree).toHaveBeenCalledWith('***REMOVED***-1');
+    expect(getCategoryTree).toHaveBeenCalledWith('kb-1');
     expect(pageMaterial).toHaveBeenCalledWith(
-      expect.objectContaining({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 10 }),
+      expect.objectContaining({ kbId: 'kb-1', current: 1, size: 10 }),
     );
     expect(pageMaterial).toHaveBeenCalledWith(
-      expect.objectContaining({ ***REMOVED***Id: '***REMOVED***-1', current: 1, size: 200 }),
+      expect.objectContaining({ kbId: 'kb-1', current: 1, size: 200 }),
     );
     expect(pageDeletedMaterials).toHaveBeenCalledWith(
-      expect.objectContaining({ ***REMOVED***Id: '***REMOVED***-1', materialType: 'DOCUMENT' }),
+      expect.objectContaining({ kbId: 'kb-1', materialType: 'DOCUMENT' }),
     );
     expect(result.current.categoryId).toBe('');
     expect(result.current.currentCategory).toBeUndefined();
@@ -188,7 +188,7 @@ describe('useMaterialWorkspace', () => {
       await result.current.submitUpload();
     });
 
-    expect(uploadMaterials).toHaveBeenCalledWith('***REMOVED***-1', undefined, [file]);
+    expect(uploadMaterials).toHaveBeenCalledWith('kb-1', undefined, [file]);
     expect(result.current.uploading).toBe(false);
     expect(result.current.uploadFiles).toEqual([]);
     expect(result.current.uploadResults.map((item) => item.materialId)).toEqual(['m3']);
@@ -215,7 +215,7 @@ describe('useMaterialWorkspace', () => {
       await result.current.moveSelected('cat-2');
     });
 
-    expect(updateMaterialCategory).toHaveBeenCalledWith('***REMOVED***-1', ['m1'], 'cat-2');
+    expect(updateMaterialCategory).toHaveBeenCalledWith('kb-1', ['m1'], 'cat-2');
     expect(result.current.selected).toEqual([]);
     expect(result.current.moveOpen).toBe(false);
     expect(result.current.busy).toBe(false);
@@ -240,7 +240,7 @@ describe('useMaterialWorkspace', () => {
       await result.current.removeSelected();
     });
 
-    expect(removeMaterials).toHaveBeenCalledWith('***REMOVED***-1', ['m1', 'm2']);
+    expect(removeMaterials).toHaveBeenCalledWith('kb-1', ['m1', 'm2']);
     expect(result.current.confirmRemove).toBe(false);
     expect(result.current.selected).toEqual([]);
     expect(toast).toHaveBeenCalledWith('删除完成', '2/2 个资料已删除', 'success');
@@ -267,7 +267,7 @@ describe('useMaterialWorkspace', () => {
     });
 
     expect(createCompilationBatch).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       name: result.current.batchName,
       scopeType: 'WORKSPACE',
       materialIds: ['m1', 'm2'],
@@ -298,7 +298,7 @@ describe('useMaterialWorkspace', () => {
     });
 
     expect(createCompilationBatch).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       name: '护理制度 批量编译',
       scopeType: 'CATEGORY',
       scopeId: 'cat-1',

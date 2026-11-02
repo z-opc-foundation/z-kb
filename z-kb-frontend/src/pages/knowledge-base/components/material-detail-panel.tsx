@@ -23,7 +23,7 @@ interface MaterialDetailPanelProps {
 
 export default function MaterialDetailPanel({ ctrl }: MaterialDetailPanelProps) {
   const {
-    ***REMOVED***Id,
+    kbId,
     tree,
     canWrite,
     canCompile,
@@ -80,7 +80,7 @@ export default function MaterialDetailPanel({ ctrl }: MaterialDetailPanelProps) 
           </div>
           <div className="d-actions">
             <AgentAskButton
-              ***REMOVED***Id={***REMOVED***Id}
+              kbId={kbId}
               className="btn xs"
               label="问 AI"
               question={materialAskQuestion}
@@ -224,7 +224,7 @@ export default function MaterialDetailPanel({ ctrl }: MaterialDetailPanelProps) 
             onCompile={() => void submitCompile()}
           />
         ) : detailTab === 'wiki' ? (
-          <MaterialWikiTab ***REMOVED***Id={***REMOVED***Id} materialId={detail.material.materialId} />
+          <MaterialWikiTab kbId={kbId} materialId={detail.material.materialId} />
         ) : detailTab === 'graph' ? (
           <MaterialGraphTab materialId={detail.material.materialId} />
         ) : detailTab === 'knowledge' ? (

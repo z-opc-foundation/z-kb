@@ -1,26 +1,26 @@
-package com.zifang.z.***REMOVED***.resource.compilation;
+package com.zifang.z.kb.resource.compilation;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactStatus;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactType;
-import com.zifang.z.***REMOVED***.api.compilation.ChunkRole;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationStage;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalState;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionChunk;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionCountView;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionInput;
-import com.zifang.z.***REMOVED***.api.extraction.ExtractionService;
-import com.zifang.z.***REMOVED***.api.material.MaterialCompileSource;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.core.compilation.MarkdownChunker;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactVersionEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.CompilationJobEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.RetrievalChunkEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactVersionMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.RetrievalChunkMapper;
+import com.zifang.z.kb.api.compilation.ArtifactStatus;
+import com.zifang.z.kb.api.compilation.ArtifactType;
+import com.zifang.z.kb.api.compilation.ChunkRole;
+import com.zifang.z.kb.api.compilation.CompilationStage;
+import com.zifang.z.kb.api.compilation.RetrievalState;
+import com.zifang.z.kb.api.extraction.ExtractionChunk;
+import com.zifang.z.kb.api.extraction.ExtractionCountView;
+import com.zifang.z.kb.api.extraction.ExtractionInput;
+import com.zifang.z.kb.api.extraction.ExtractionService;
+import com.zifang.z.kb.api.material.MaterialCompileSource;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.core.compilation.MarkdownChunker;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactEntity;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactVersionEntity;
+import com.zifang.z.kb.storage.compilation.entity.CompilationJobEntity;
+import com.zifang.z.kb.storage.compilation.entity.RetrievalChunkEntity;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactMapper;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
+import com.zifang.z.kb.storage.compilation.mapper.RetrievalChunkMapper;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,15 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.COMPILER_VERSION;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.sourceNotReady;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.statusInvalid;
-import static com.zifang.z.***REMOVED***.resource.compilation.CompilationSupport.truncate;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.COMPILER_VERSION;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.sourceNotReady;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.statusInvalid;
+import static com.zifang.z.kb.resource.compilation.CompilationSupport.truncate;
 
 /**
  * 单个编译步骤的事务性执行：P0 登记、P1 解析、P2 拆块、P3 建索引、P4 萃取。
  *
- * <p>z-***REMOVED*** 没有独立任务内核，步骤在调用线程内同步执行；状态推进由
+ * <p>z-kb 没有独立任务内核，步骤在调用线程内同步执行；状态推进由
  * {@code DefaultCompilationService} 写阶段行，本类只负责副作用。</p>
  */
 public class CompilationStageRunner {
@@ -64,7 +64,7 @@ public class CompilationStageRunner {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public Outcome execute(CompilationJobEntity job, CompilationStage stage,
-                           MaterialCompileSource source, ***REMOVED***Caller caller) {
+                           MaterialCompileSource source, KbCaller caller) {
         switch (stage) {
             case REGISTER:
                 return register(source);
@@ -97,7 +97,7 @@ public class CompilationStageRunner {
     }
 
     /** 拆解步骤：按标题切块并写入未索引检索块，同时登记检索块产物与版本。 */
-    private Outcome chunk(CompilationJobEntity job, MaterialCompileSource source, ***REMOVED***Caller caller) {
+    private Outcome chunk(CompilationJobEntity job, MaterialCompileSource source, KbCaller caller) {
         if (!CompilationSupport.hasText(source.getTextContent())) {
             throw sourceNotReady();
         }
@@ -136,7 +136,7 @@ public class CompilationStageRunner {
             chunk.setId(UUID.randomUUID().toString());
             chunk.setChunkId(chunkIds.get(i));
             chunk.setTenantCode(tenant);
-            chunk.set***REMOVED***Id(job.get***REMOVED***Id());
+            chunk.setKbId(job.getKbId());
             chunk.setSourceType("MATERIAL");
             chunk.setSourceId(source.getMaterialId());
             chunk.setSourceVersionId(source.getVersionId());
@@ -168,7 +168,7 @@ public class CompilationStageRunner {
     }
 
     /** 索引步骤：把该版本的检索块统一翻转为已索引，并发布检索块产物。 */
-    private Outcome index(CompilationJobEntity job, MaterialCompileSource source, ***REMOVED***Caller caller) {
+    private Outcome index(CompilationJobEntity job, MaterialCompileSource source, KbCaller caller) {
         String tenant = job.getTenantCode();
         List<RetrievalChunkEntity> chunks = chunksOfVersion(tenant, source.getVersionId());
         if (chunks.isEmpty()) {
@@ -198,13 +198,13 @@ public class CompilationStageRunner {
     }
 
     /** 萃取步骤：基于已索引检索块做本地规则萃取，落库摘要/问句/术语/FAQ 与图谱。 */
-    private Outcome extract(CompilationJobEntity job, MaterialCompileSource source, ***REMOVED***Caller caller) {
+    private Outcome extract(CompilationJobEntity job, MaterialCompileSource source, KbCaller caller) {
         List<RetrievalChunkEntity> stored = chunksOfVersion(job.getTenantCode(), source.getVersionId());
         if (stored.isEmpty()) {
             throw statusInvalid();
         }
         ExtractionInput input = new ExtractionInput();
-        input.set***REMOVED***Id(job.get***REMOVED***Id());
+        input.setKbId(job.getKbId());
         input.setMaterialId(source.getMaterialId());
         input.setMaterialVersionId(source.getVersionId());
         input.setMaterialTitle(source.getTitle());
@@ -244,12 +244,12 @@ public class CompilationStageRunner {
     }
 
     private ArtifactEntity buildArtifact(CompilationJobEntity job, MaterialCompileSource source,
-                                         String artifactVersionId, ***REMOVED***Caller caller, Instant now) {
+                                         String artifactVersionId, KbCaller caller, Instant now) {
         ArtifactEntity artifact = new ArtifactEntity();
         artifact.setId(UUID.randomUUID().toString());
         artifact.setArtifactId(UUID.randomUUID().toString());
         artifact.setTenantCode(job.getTenantCode());
-        artifact.set***REMOVED***Id(job.get***REMOVED***Id());
+        artifact.setKbId(job.getKbId());
         artifact.setMaterialId(source.getMaterialId());
         artifact.setMaterialVersionId(source.getVersionId());
         artifact.setArtifactType(ArtifactType.RETRIEVAL_CHUNK.name());
@@ -270,7 +270,7 @@ public class CompilationStageRunner {
     private ArtifactVersionEntity buildArtifactVersion(CompilationJobEntity job, String artifactId,
                                                        String artifactVersionId,
                                                        List<MarkdownChunker.Chunk> drafts,
-                                                       ***REMOVED***Caller caller, Instant now) {
+                                                       KbCaller caller, Instant now) {
         StringBuilder joined = new StringBuilder();
         for (MarkdownChunker.Chunk draft : drafts) {
             if (draft.getRole() == ChunkRole.PASSAGE) {

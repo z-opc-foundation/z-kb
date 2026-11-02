@@ -35,7 +35,7 @@ import {
 import './mix-entry-workspace.css';
 
 interface MixEntryWorkspaceProps {
-  ***REMOVED***Id: string;
+  kbId: string;
   canWrite?: boolean;
   canCompile?: boolean;
   initialMaterialId?: string;
@@ -46,14 +46,14 @@ interface MixEntryWorkspaceProps {
 }
 
 export default function MixEntryWorkspace({
-  ***REMOVED***Id,
+  kbId,
   canWrite = false,
   canCompile = false,
   initialMaterialId,
   onOpenDetail,
 }: MixEntryWorkspaceProps) {
   const { categories, entries, total, truncated, loading, error, reload } =
-    useMixEntryTree(***REMOVED***Id);
+    useMixEntryTree(kbId);
   const [query, setQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<MixEntryType | 'all'>('all');
   const [activeFolderId, setActiveFolderId] = useState('');
@@ -217,7 +217,7 @@ export default function MixEntryWorkspace({
     }
     setFolderBusy(true);
     const result = await createCategory(
-      ***REMOVED***Id,
+      kbId,
       name,
       activeFolderId || undefined,
     );
@@ -409,7 +409,7 @@ export default function MixEntryWorkspace({
           filterActive={filterActive}
         />
         <MixEntryOverview
-          ***REMOVED***Id={***REMOVED***Id}
+          kbId={kbId}
           entry={selectedEntry}
           detail={detail}
           detailLoading={detailLoading}
@@ -441,7 +441,7 @@ export default function MixEntryWorkspace({
 
       {uploadOpen ? (
         <MixEntryUploadModal
-          ***REMOVED***Id={***REMOVED***Id}
+          kbId={kbId}
           folders={folderOptions}
           defaultFolderId={activeFolderId}
           onClose={closeUpload}

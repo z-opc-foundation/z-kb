@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.taskconfig;
+package com.zifang.z.kb.api.taskconfig;
 
 /**
  * 任务配置项（对齐参考实现 TaskConfigItemResponse）。

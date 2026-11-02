@@ -1,15 +1,15 @@
-package com.zifang.z.***REMOVED***.starter.config;
+package com.zifang.z.kb.starter.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * z-***REMOVED*** 顶层配置属性（统一前缀 ***REMOVED***.*）。
+ * z-kb 顶层配置属性（统一前缀 kb.*）。
  */
-@ConfigurationProperties(prefix = "***REMOVED***")
-public class ***REMOVED***Properties {
+@ConfigurationProperties(prefix = "kb")
+public class KBProperties {
 
-    /** 启用 z-***REMOVED*** */
+    /** 启用 z-kb */
     private boolean enabled = true;
 
     /** Embedding 配置 */
@@ -106,7 +106,7 @@ public class ***REMOVED***Properties {
         private String model;
         private String apiKey;
         /** 默认 system prompt */
-        private String systemPrompt = "你是 z-***REMOVED*** 知识库助手，基于以下参考资料回答用户问题。当参考资料不足时，明确告知用户。回答时标注引用源编号。";
+        private String systemPrompt = "你是 z-kb 知识库助手，基于以下参考资料回答用户问题。当参考资料不足时，明确告知用户。回答时标注引用源编号。";
 
         public boolean isEnabled() { return enabled; }
         public void setEnabled(boolean enabled) { this.enabled = enabled; }

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 代码仓库项目里的一个条目：目录或文件。路径是仓库内相对路径。

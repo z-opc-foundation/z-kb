@@ -53,7 +53,7 @@ afterEach(() => {
 describe('useKnowledgeAssistantChat', () => {
   it('提问携带页面上下文，token、命中与 done 汇总到助手消息', async () => {
     const { result } = renderHook(() =>
-      useKnowledgeAssistantChat('***REMOVED***-1', { view: 'workspace' }),
+      useKnowledgeAssistantChat('kb-1', { view: 'workspace' }),
     );
 
     act(() => result.current.ask('  护理制度有哪些？ '));
@@ -71,8 +71,8 @@ describe('useKnowledgeAssistantChat', () => {
     expect(result.current.streaming).toBe(true);
     expect(streams).toHaveLength(1);
     expect(streams[0].payload).toMatchObject({
-      agentCode: '***REMOVED***_qa_assistant',
-      ***REMOVED***Id: '***REMOVED***-1',
+      agentCode: 'kb_qa_assistant',
+      kbId: 'kb-1',
       userInput: '护理制度有哪些？',
       context: { view: 'workspace' },
     });
@@ -101,7 +101,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('后续提问沿用首轮返回的 conversationId', async () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('第一问'));
     emit(0, { type: 'meta', data: { conversationId: 'conv-9' } });
@@ -120,7 +120,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('流式回调报错时记录错误状态与原因', async () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('护理制度'));
     act(() => streams[0].callbacks.onError?.('网络异常'));
@@ -135,7 +135,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('停止生成时中断流并调用后端中断接口', async () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('护理制度'));
     emit(0, { type: 'meta', data: { conversationId: 'conv-stop' } });
@@ -144,7 +144,7 @@ describe('useKnowledgeAssistantChat', () => {
     expect(streams[0].handle.abort).toHaveBeenCalled();
     expect(result.current.streaming).toBe(false);
     expect(result.current.turns[1].status).toBe('stopped');
-    expect(interruptAiChat).toHaveBeenCalledWith('***REMOVED***_qa_assistant', 'conv-stop');
+    expect(interruptAiChat).toHaveBeenCalledWith('kb_qa_assistant', 'conv-stop');
 
     streams[0].resolve();
     await waitFor(() => expect(result.current.streaming).toBe(false));
@@ -152,7 +152,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('重置会中断当前流、清空消息并丢弃会话 ID', async () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('第一问'));
     emit(0, { type: 'meta', data: { conversationId: 'conv-reset' } });
@@ -173,7 +173,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('本地汇总回答直接追加完成消息，不请求模型', () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.answerLocally('资料缺口', '本地汇总：暂无资料'));
 
@@ -189,7 +189,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('空白提问被忽略，流式期间不重复发起请求', async () => {
-    const { result } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('   '));
     expect(result.current.turns).toEqual([]);
@@ -209,7 +209,7 @@ describe('useKnowledgeAssistantChat', () => {
   });
 
   it('组件卸载时中断仍在进行的流', () => {
-    const { result, unmount } = renderHook(() => useKnowledgeAssistantChat('***REMOVED***-1'));
+    const { result, unmount } = renderHook(() => useKnowledgeAssistantChat('kb-1'));
 
     act(() => result.current.ask('护理制度'));
     unmount();

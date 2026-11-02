@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.evaluation;
+package com.zifang.z.kb.api.evaluation;
 
 import java.time.Instant;
 
@@ -8,7 +8,7 @@ import java.time.Instant;
 public class DatasetSummaryInfo {
 
     private String datasetId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String name;
     private Integer versionNo;
     private String status;
@@ -24,12 +24,12 @@ public class DatasetSummaryInfo {
         this.datasetId = datasetId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getName() {

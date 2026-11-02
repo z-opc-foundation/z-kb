@@ -20,7 +20,7 @@ export interface GraphEdgeRecord {
 }
 
 export interface KnowledgeGraphRecord {
-  ***REMOVED***Id: string;
+  kbId: string;
   graphSpaceKey?: string | null;
   nodeCount: number;
   edgeCount: number;
@@ -29,7 +29,7 @@ export interface KnowledgeGraphRecord {
   edges: GraphEdgeRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/graph';
+const BASE = '/kb/v1/graph';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -52,11 +52,11 @@ export function getGraphByMaterial(materialId: string) {
   );
 }
 
-export function getGraphBy***REMOVED***(***REMOVED***Id: string) {
+export function getGraphByKb(kbId: string) {
   return call(() =>
-    request<KnowledgeGraphRecord>(`${BASE}/queryBy***REMOVED***`, {
+    request<KnowledgeGraphRecord>(`${BASE}/queryByKb`, {
       method: 'get',
-      params: { ***REMOVED***Id },
+      params: { kbId },
       headers: tenantHeaders(),
     }),
   );

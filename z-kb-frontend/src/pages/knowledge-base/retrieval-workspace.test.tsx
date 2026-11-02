@@ -56,7 +56,7 @@ const HITS = [
 ];
 
 const RESULT = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   query: '护士长职责',
   mode: 'dense',
   embeddingModel: 'bge-m3',
@@ -88,15 +88,15 @@ function Probe() {
   return (
     <div>
       <div data-testid="location-search">{location.search}</div>
-      <RetrievalWorkspace ***REMOVED***Id="***REMOVED***-1" />
+      <RetrievalWorkspace kbId="kb-1" />
     </div>
   );
 }
 
-function renderRetrieval(route = '/knowledge-bases/***REMOVED***-1/workspace') {
+function renderRetrieval(route = '/knowledge-bases/kb-1/workspace') {
   return renderAt(
     <Routes>
-      <Route path="/knowledge-bases/:***REMOVED***Id/workspace" element={<Probe />} />
+      <Route path="/knowledge-bases/:kbId/workspace" element={<Probe />} />
     </Routes>,
     { route },
   );
@@ -152,7 +152,7 @@ describe('检索工作区', () => {
 
     expect(screen.getByText('正在计算库内相似度…')).toBeTruthy();
     expect(retrieveKnowledge).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       query: '护士长职责',
       topK: 10,
       minScore: 0.1,
@@ -226,7 +226,7 @@ describe('检索工作区', () => {
 
     await waitFor(() =>
       expect(retrieveKnowledge).toHaveBeenLastCalledWith({
-        ***REMOVED***Id: '***REMOVED***-1',
+        kbId: 'kb-1',
         query: '护士长职责',
         topK: 50,
         minScore: 0,
@@ -236,7 +236,7 @@ describe('检索工作区', () => {
   });
 
   it('带 query 深链自动检索并打开只读图谱抽屉', async () => {
-    renderRetrieval('/knowledge-bases/***REMOVED***-1/workspace?query=%E6%8A%A4%E5%A3%AB%E9%95%BF%E8%81%8C%E8%B4%A3');
+    renderRetrieval('/knowledge-bases/kb-1/workspace?query=%E6%8A%A4%E5%A3%AB%E9%95%BF%E8%81%8C%E8%B4%A3');
 
     expect(await screen.findByText(/负责排班与质量检查/)).toBeTruthy();
     expect(retrieveKnowledge).toHaveBeenCalledWith(

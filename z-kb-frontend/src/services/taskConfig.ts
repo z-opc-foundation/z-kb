@@ -43,7 +43,7 @@ export interface TaskConfigItemPayload {
   boundaryNote?: string;
 }
 
-const BASE = '/***REMOVED***/v1/taskConfig';
+const BASE = '/kb/v1/taskConfig';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -75,20 +75,20 @@ export function publishTaskConfig(items: TaskConfigItemPayload[]) {
   );
 }
 
-export function get***REMOVED***TaskConfig(***REMOVED***Id: string) {
+export function getKbTaskConfig(kbId: string) {
   return call(() =>
-    request<TaskConfigPanelRecord>(`${BASE}/***REMOVED***/query?***REMOVED***Id=${encodeURIComponent(***REMOVED***Id)}`, {
+    request<TaskConfigPanelRecord>(`${BASE}/kb/query?kbId=${encodeURIComponent(kbId)}`, {
       method: 'get',
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function publish***REMOVED***TaskConfig(***REMOVED***Id: string, items: TaskConfigItemPayload[]) {
+export function publishKbTaskConfig(kbId: string, items: TaskConfigItemPayload[]) {
   return call(() =>
-    request<TaskConfigPanelRecord>(`${BASE}/***REMOVED***/publish`, {
+    request<TaskConfigPanelRecord>(`${BASE}/kb/publish`, {
       method: 'post',
-      data: { ***REMOVED***Id, items },
+      data: { kbId, items },
       headers: tenantHeaders(),
     }),
   );

@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.protocol.response;
+package com.zifang.z.kb.protocol.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * 计数响应 —— {@code GET /api/***REMOVED***/documents/{workspace}/count}。
+ * 计数响应 —— {@code GET /api/kb/documents/{workspace}/count}。
  */
 @Schema(description = "计数响应")
 public class CountResponse {

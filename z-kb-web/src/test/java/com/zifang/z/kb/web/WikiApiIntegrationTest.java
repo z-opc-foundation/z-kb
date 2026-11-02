@@ -1,16 +1,16 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zifang.z.***REMOVED***.api.compilation.CompilationService;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadFile;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBase;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseType;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.compilation.CompilationService;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadFile;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBase;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseType;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +38,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Wiki 域 v1 REST 集成测试：规则生成、Agent 产物幂等写入与血缘。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-wiki-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-wiki-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/wiki-api-***REMOVED***.json",
-        "***REMOVED***.material.storage.root=target/test-***REMOVED***/wiki-api-original",
-        "***REMOVED***.material.repo.root=target/test-***REMOVED***/wiki-api-repo",
+        "kb.storage.path=target/test-kb/wiki-api-kb.json",
+        "kb.material.storage.root=target/test-kb/wiki-api-original",
+        "kb.material.repo.root=target/test-kb/wiki-api-repo",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -74,13 +74,13 @@ class WikiApiIntegrationTest {
     @Test
     @DisplayName("规则生成：建页/幂等/换版升版/列表检索/详情要点/血缘图谱")
     void ruleGenerationAndLineage() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***("Wiki 规则库");
-        String materialId = registerText(***REMOVED***Id, "Wiki 接口物料",
+        String kbId = createKb("Wiki 规则库");
+        String materialId = registerText(kbId, "Wiki 接口物料",
                 "# 检索增强\n\n检索增强依赖向量索引。\n\n## 图谱\n\n知识库需要图谱。");
 
-        MvcResult generated = mvc.perform(post("/api/***REMOVED***/v1/wiki/generate")
+        MvcResult generated = mvc.perform(post("/api/kb/v1/wiki/generate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "materialIds", List.of(materialId))))
+                        .content(json(Map.of("kbId", kbId, "materialIds", List.of(materialId))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -97,17 +97,17 @@ class WikiApiIntegrationTest {
         String wikiId = data(generated).path("items").get(0).path("wikiId").asText();
         assertFalse(wikiId.isEmpty());
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/generate")
+        mvc.perform(post("/api/kb/v1/wiki/generate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "materialIds", List.of(materialId))))
+                        .content(json(Map.of("kbId", kbId, "materialIds", List.of(materialId))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.items[0].wikiId").value(wikiId))
                 .andExpect(jsonPath("$.data.items[0].versionNo").value(1));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/list")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/wiki/list")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -119,23 +119,23 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data[0].sourceCount").value(1))
                 .andExpect(jsonPath("$.data[0].status").value("READY"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/list")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/wiki/list")
+                        .param("kbId", kbId)
                         .param("keyword", "向量索引")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/list")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/wiki/list")
+                        .param("kbId", kbId)
                         .param("keyword", "不存在的关键词")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", wikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -152,7 +152,7 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.graphNodeCount").value(0))
                 .andExpect(jsonPath("$.data.note").value(NOTE));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/listByMaterial")
+        mvc.perform(get("/api/kb/v1/wiki/listByMaterial")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -160,16 +160,16 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].wikiId").value(wikiId));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/listByMaterial")
+        mvc.perform(get("/api/kb/v1/wiki/listByMaterial")
                         .param("materialId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(0));
 
-        compilationService.run(materialId, null, ***REMOVED***Caller.of(TENANT, ACTOR));
+        compilationService.run(materialId, null, KbCaller.of(TENANT, ACTOR));
 
-        MvcResult detail = mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        MvcResult detail = mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", wikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -178,7 +178,7 @@ class WikiApiIntegrationTest {
         int graphNodeCount = data(detail).path("graphNodeCount").asInt();
         assertTrue(graphNodeCount >= 2, "详情应带图谱节点数：" + graphNodeCount);
 
-        MvcResult lineage = mvc.perform(get("/api/***REMOVED***/v1/wiki/lineage")
+        MvcResult lineage = mvc.perform(get("/api/kb/v1/wiki/lineage")
                         .param("wikiId", wikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -209,8 +209,8 @@ class WikiApiIntegrationTest {
         assertTrue(hasConceptNode, "血缘缺少图谱概念节点");
         assertTrue(hasSourcedFrom, "血缘缺少 SOURCED_FROM 关系");
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/lineage")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/wiki/lineage")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -219,21 +219,21 @@ class WikiApiIntegrationTest {
 
         byte[] revised = ("# 检索增强\n\n检索增强还依赖重排序。\n\n## 图谱\n\n图谱由节点和边组成。")
                 .getBytes(StandardCharsets.UTF_8);
-        MaterialUploadItem revisedItem = materialService.revise(***REMOVED***Id, materialId,
+        MaterialUploadItem revisedItem = materialService.revise(kbId, materialId,
                 new MaterialUploadFile("revised.md", revised.length, revised), null,
-                ***REMOVED***Caller.of(TENANT, ACTOR));
+                KbCaller.of(TENANT, ACTOR));
         assertTrue(revisedItem.isSuccess(), revisedItem.getMessage());
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/generate")
+        mvc.perform(post("/api/kb/v1/wiki/generate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "materialIds", List.of(materialId))))
+                        .content(json(Map.of("kbId", kbId, "materialIds", List.of(materialId))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.items[0].wikiId").value(wikiId))
                 .andExpect(jsonPath("$.data.items[0].versionNo").value(2));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", wikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -246,10 +246,10 @@ class WikiApiIntegrationTest {
     @Test
     @DisplayName("Agent 产物：多页幂等写入、目录版本、块覆盖与过期页物理删除")
     void agentDocWriteAndQuery() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***("Wiki Agent 库");
-        String materialId = registerText(***REMOVED***Id, "Agent 编译物料", "# 简介\n\nAgent 编译正文。");
+        String kbId = createKb("Wiki Agent 库");
+        String materialId = registerText(kbId, "Agent 编译物料", "# 简介\n\nAgent 编译正文。");
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/queryGenerated")
+        mvc.perform(get("/api/kb/v1/wiki/queryGenerated")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -258,7 +258,7 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
 
         Map<String, Object> param = new LinkedHashMap<>();
-        param.put("***REMOVED***Id", ***REMOVED***Id);
+        param.put("kbId", kbId);
         param.put("materialId", materialId);
         param.put("indexMd", "- [简介](intro)\n- [图谱](graph)");
         param.put("generator", "AGENT");
@@ -266,7 +266,7 @@ class WikiApiIntegrationTest {
                 page("intro", "简介", "简介摘要", "## 简介\n\n简介正文。", List.of("c1", "c2")),
                 page("graph", "图谱", null, "图谱页面正文。", List.of("c3"))));
 
-        MvcResult saved = mvc.perform(post("/api/***REMOVED***/v1/wiki/saveGenerated")
+        MvcResult saved = mvc.perform(post("/api/kb/v1/wiki/saveGenerated")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(param))
                         .header("X-Tenant-Code", TENANT)
@@ -288,7 +288,7 @@ class WikiApiIntegrationTest {
         String introWikiId = savedData.path("pages").get(0).path("wikiId").asText();
         String graphWikiId = savedData.path("pages").get(1).path("wikiId").asText();
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/queryGenerated")
+        mvc.perform(get("/api/kb/v1/wiki/queryGenerated")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -298,7 +298,7 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.indexMd").value("- [简介](intro)\n- [图谱](graph)"))
                 .andExpect(jsonPath("$.data.pages.length()").value(2));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/saveGenerated")
+        mvc.perform(post("/api/kb/v1/wiki/saveGenerated")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(param))
                         .header("X-Tenant-Code", TENANT)
@@ -309,14 +309,14 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.pages[0].wikiId").value(introWikiId));
 
         Map<String, Object> changed = new LinkedHashMap<>();
-        changed.put("***REMOVED***Id", ***REMOVED***Id);
+        changed.put("kbId", kbId);
         changed.put("materialId", materialId);
         changed.put("indexMd", "- [简介](intro)");
         changed.put("generator", "AGENT");
         changed.put("pages", List.of(
                 page("intro", "简介", null, "## 简介\n\n简介正文已更新。", List.of("c1"))));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/saveGenerated")
+        mvc.perform(post("/api/kb/v1/wiki/saveGenerated")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(changed))
                         .header("X-Tenant-Code", TENANT)
@@ -327,7 +327,7 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.pages[0].versionNo").value(2))
                 .andExpect(jsonPath("$.data.pages[0].wikiId").value(introWikiId));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/queryGenerated")
+        mvc.perform(get("/api/kb/v1/wiki/queryGenerated")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -335,14 +335,14 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.pageCount").value(1))
                 .andExpect(jsonPath("$.data.pages[0].slug").value("intro"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", graphWikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Wiki 页面不存在"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", introWikiId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -351,10 +351,10 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.points[0].text").value("简介正文已更新。"));
 
         Map<String, Object> empty = new LinkedHashMap<>();
-        empty.put("***REMOVED***Id", ***REMOVED***Id);
+        empty.put("kbId", kbId);
         empty.put("materialId", materialId);
         empty.put("pages", List.of());
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/saveGenerated")
+        mvc.perform(post("/api/kb/v1/wiki/saveGenerated")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(empty))
                         .header("X-Tenant-Code", TENANT)
@@ -366,12 +366,12 @@ class WikiApiIntegrationTest {
     @Test
     @DisplayName("编译入口同步返回终态任务句柄；参数错误 400、不存在 404")
     void compileHandleAndErrorMapping() throws Exception {
-        String ***REMOVED***Id = create***REMOVED***("Wiki 编译库");
-        String materialId = registerText(***REMOVED***Id, "编译任务物料", "# 编译\n\n编译正文。");
+        String kbId = createKb("Wiki 编译库");
+        String materialId = registerText(kbId, "编译任务物料", "# 编译\n\n编译正文。");
 
-        MvcResult compiled = mvc.perform(post("/api/***REMOVED***/v1/wiki/compile")
+        MvcResult compiled = mvc.perform(post("/api/kb/v1/wiki/compile")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "materialId", materialId)))
+                        .content(json(Map.of("kbId", kbId, "materialId", materialId)))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isOk())
@@ -384,7 +384,7 @@ class WikiApiIntegrationTest {
         assertFalse(taskId.isEmpty());
         assertFalse(task.path("bizKey").asText().isEmpty());
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/listByMaterial")
+        mvc.perform(get("/api/kb/v1/wiki/listByMaterial")
                         .param("materialId", materialId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -392,48 +392,48 @@ class WikiApiIntegrationTest {
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].wikiId").value(taskId));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/compile")
+        mvc.perform(post("/api/kb/v1/wiki/compile")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id, "materialId", " ")))
+                        .content(json(Map.of("kbId", kbId, "materialId", " ")))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Wiki 参数不合法"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/generate")
+        mvc.perform(post("/api/kb/v1/wiki/generate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", " ", "materialIds", List.of(materialId))))
+                        .content(json(Map.of("kbId", " ", "materialIds", List.of(materialId))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/generate")
+        mvc.perform(post("/api/kb/v1/wiki/generate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", "missing-" + UUID.randomUUID(),
+                        .content(json(Map.of("kbId", "missing-" + UUID.randomUUID(),
                                 "materialIds", List.of(materialId))))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/list")
-                        .param("***REMOVED***Id", " ")
+        mvc.perform(get("/api/kb/v1/wiki/list")
+                        .param("kbId", " ")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("知识库参数不合法"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/wiki/detail")
+        mvc.perform(get("/api/kb/v1/wiki/detail")
                         .param("wikiId", "missing-" + UUID.randomUUID())
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Wiki 页面不存在"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/wiki/compile")
+        mvc.perform(post("/api/kb/v1/wiki/compile")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(Map.of("***REMOVED***Id", ***REMOVED***Id,
+                        .content(json(Map.of("kbId", kbId,
                                 "materialId", "missing-" + UUID.randomUUID())))
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", ACTOR))
@@ -463,19 +463,19 @@ class WikiApiIntegrationTest {
         return objectMapper.readTree(new String(bytes, StandardCharsets.UTF_8)).path("data");
     }
 
-    private String create***REMOVED***(String name) {
-        KnowledgeBase ***REMOVED*** = new KnowledgeBase();
-        ***REMOVED***.setName(name);
-        ***REMOVED***.setCode("wiki_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
-        ***REMOVED***.setType(KnowledgeBaseType.FILE);
-        KnowledgeBaseView view = resourceService.create(***REMOVED***, ***REMOVED***Caller.of(TENANT, ACTOR));
-        assertFalse(view.get***REMOVED***Id().isEmpty());
-        return view.get***REMOVED***Id();
+    private String createKb(String name) {
+        KnowledgeBase kb = new KnowledgeBase();
+        kb.setName(name);
+        kb.setCode("wiki_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12));
+        kb.setType(KnowledgeBaseType.FILE);
+        KnowledgeBaseView view = resourceService.create(kb, KbCaller.of(TENANT, ACTOR));
+        assertFalse(view.getKbId().isEmpty());
+        return view.getKbId();
     }
 
-    private String registerText(String ***REMOVED***Id, String title, String content) {
-        MaterialUploadItem item = materialService.registerText(***REMOVED***Id, title, null, content,
-                ***REMOVED***Caller.of(TENANT, ACTOR));
+    private String registerText(String kbId, String title, String content) {
+        MaterialUploadItem item = materialService.registerText(kbId, title, null, content,
+                KbCaller.of(TENANT, ACTOR));
         assertTrue(item.isSuccess(), item.getMessage());
         return item.getMaterialId();
     }

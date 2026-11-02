@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.time.Instant;
 
@@ -8,7 +8,7 @@ import java.time.Instant;
 public class KnowledgeBaseAcl {
 
     private String aclId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String tenantCode;
     private String principalId;
     private PrincipalType principalType = PrincipalType.USER;
@@ -25,12 +25,12 @@ public class KnowledgeBaseAcl {
         this.aclId = aclId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTenantCode() {

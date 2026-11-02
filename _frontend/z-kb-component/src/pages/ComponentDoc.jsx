@@ -7,9 +7,9 @@ import docMarkdown from '../DOC.md?raw'
  * 为什么用 `?raw`：vite 编译期把 DOC.md 内联成字符串，零额外请求；
  * 文档随包发布，宿主不用管文件怎么放。
  *
- * 为什么是 .jsx 而不是 .tsx：本仓的 TS 源码在 src/***REMOVED***/pages/ 下（那边不改），
+ * 为什么是 .jsx 而不是 .tsx：本仓的 TS 源码在 src/kb/pages/ 下（那边不改），
  * 薄包装放 .jsx 就不需要动任何 .tsx 文件。
  */
 export default function ComponentDocPage() {
-    return <ComponentDoc markdown={docMarkdown} title="组件文档 — z-***REMOVED***" />
+    return <ComponentDoc markdown={docMarkdown} title="组件文档 — z-kb" />
 }

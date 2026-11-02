@@ -1,25 +1,25 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.material.MaterialAttachment;
-import com.zifang.z.***REMOVED***.api.material.MaterialBatchItem;
-import com.zifang.z.***REMOVED***.api.material.MaterialDetail;
-import com.zifang.z.***REMOVED***.api.material.MaterialDownload;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadFile;
-import com.zifang.z.***REMOVED***.api.material.MaterialUploadItem;
-import com.zifang.z.***REMOVED***.api.material.MaterialView;
-import com.zifang.z.***REMOVED***.api.material.ParsedDraftView;
-import com.zifang.z.***REMOVED***.api.resource.PageResult;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialCategoryUpdateRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialDraftSaveRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialIdsRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialPageRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialReparseRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialTextRegisterRequest;
-import com.zifang.z.***REMOVED***.web.api.v1.dto.MaterialUrlRegisterRequest;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.material.MaterialAttachment;
+import com.zifang.z.kb.api.material.MaterialBatchItem;
+import com.zifang.z.kb.api.material.MaterialDetail;
+import com.zifang.z.kb.api.material.MaterialDownload;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.MaterialUploadFile;
+import com.zifang.z.kb.api.material.MaterialUploadItem;
+import com.zifang.z.kb.api.material.MaterialView;
+import com.zifang.z.kb.api.material.ParsedDraftView;
+import com.zifang.z.kb.api.resource.PageResult;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.api.v1.dto.MaterialCategoryUpdateRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialDraftSaveRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialIdsRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialPageRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialReparseRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialTextRegisterRequest;
+import com.zifang.z.kb.web.api.v1.dto.MaterialUrlRegisterRequest;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,30 +45,30 @@ import java.util.List;
  */
 @Tag(name = "物料")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/material")
+@RequestMapping("/api/kb/v1/material")
 public class MaterialController {
 
     private final MaterialService materialService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
-    public MaterialController(MaterialService materialService, ***REMOVED***CallerResolver callerResolver) {
+    public MaterialController(MaterialService materialService, KbCallerResolver callerResolver) {
         this.materialService = materialService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "物料分页列表")
     @PostMapping("/page")
-    public ***REMOVED***Result<PageResult<MaterialView>> page(
+    public KbResult<PageResult<MaterialView>> page(
             @RequestBody(required = false) MaterialPageRequest body, HttpServletRequest request) {
         MaterialPageRequest query = body == null ? new MaterialPageRequest() : body;
-        return ***REMOVED***Result.ok(materialService.page(query.get***REMOVED***Id(), query.toQuery(),
+        return KbResult.ok(materialService.page(query.getKbId(), query.toQuery(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "上传并登记物料")
     @PostMapping("/upload")
-    public ***REMOVED***Result<List<MaterialUploadItem>> upload(
-            @RequestParam String ***REMOVED***Id,
+    public KbResult<List<MaterialUploadItem>> upload(
+            @RequestParam String kbId,
             @RequestParam(required = false) String categoryId,
             @RequestParam("files") MultipartFile[] files,
             HttpServletRequest request) {
@@ -76,40 +76,40 @@ public class MaterialController {
         for (MultipartFile file : files) {
             items.add(toUploadFile(file));
         }
-        return ***REMOVED***Result.ok(materialService.upload(***REMOVED***Id, categoryId, items,
+        return KbResult.ok(materialService.upload(kbId, categoryId, items,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "物料详情")
     @GetMapping("/queryDetailById")
-    public ***REMOVED***Result<MaterialDetail> queryDetailById(@RequestParam String materialId,
+    public KbResult<MaterialDetail> queryDetailById(@RequestParam String materialId,
                                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.detail(materialId, callerResolver.resolve(request)));
+        return KbResult.ok(materialService.detail(materialId, callerResolver.resolve(request)));
     }
 
     @Operation(summary = "最近登记资料")
     @GetMapping("/listRecent")
-    public ***REMOVED***Result<List<MaterialView>> listRecent(
-            @RequestParam String ***REMOVED***Id,
+    public KbResult<List<MaterialView>> listRecent(
+            @RequestParam String kbId,
             @RequestParam(required = false, defaultValue = "5") int limit,
             HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.listRecent(***REMOVED***Id, limit,
+        return KbResult.ok(materialService.listRecent(kbId, limit,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "批量调整分类")
     @PostMapping("/updateCategory")
-    public ***REMOVED***Result<List<MaterialBatchItem>> updateCategory(
+    public KbResult<List<MaterialBatchItem>> updateCategory(
             @RequestBody MaterialCategoryUpdateRequest body, HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.updateCategory(body.get***REMOVED***Id(), body.getMaterialIds(),
+        return KbResult.ok(materialService.updateCategory(body.getKbId(), body.getMaterialIds(),
                 body.getCategoryId(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "批量删除物料")
     @PostMapping("/remove")
-    public ***REMOVED***Result<List<MaterialBatchItem>> remove(@RequestBody MaterialIdsRequest body,
+    public KbResult<List<MaterialBatchItem>> remove(@RequestBody MaterialIdsRequest body,
                                                     HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.remove(body.get***REMOVED***Id(), body.getMaterialIds(),
+        return KbResult.ok(materialService.remove(body.getKbId(), body.getMaterialIds(),
                 callerResolver.resolve(request)));
     }
 
@@ -132,89 +132,89 @@ public class MaterialController {
 
     @Operation(summary = "上传新版本")
     @PostMapping("/revise")
-    public ***REMOVED***Result<MaterialUploadItem> revise(
-            @RequestParam String ***REMOVED***Id,
+    public KbResult<MaterialUploadItem> revise(
+            @RequestParam String kbId,
             @RequestParam String materialId,
             @RequestParam(required = false) String sourceVersion,
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.revise(***REMOVED***Id, materialId, toUploadFile(file),
+        return KbResult.ok(materialService.revise(kbId, materialId, toUploadFile(file),
                 sourceVersion, callerResolver.resolve(request)));
     }
 
     @Operation(summary = "重新解析物料")
     @PostMapping("/reparse")
-    public ***REMOVED***Result<ParsedDraftView> reparse(@RequestBody MaterialReparseRequest body,
+    public KbResult<ParsedDraftView> reparse(@RequestBody MaterialReparseRequest body,
                                              HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.reparse(body.getMaterialId(), body.getVersionId(),
+        return KbResult.ok(materialService.reparse(body.getMaterialId(), body.getVersionId(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "批量恢复物料")
     @PostMapping("/restore")
-    public ***REMOVED***Result<List<MaterialBatchItem>> restore(@RequestBody MaterialIdsRequest body,
+    public KbResult<List<MaterialBatchItem>> restore(@RequestBody MaterialIdsRequest body,
                                                      HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.restore(body.get***REMOVED***Id(), body.getMaterialIds(),
+        return KbResult.ok(materialService.restore(body.getKbId(), body.getMaterialIds(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "回收站分页")
     @PostMapping("/pageDeleted")
-    public ***REMOVED***Result<PageResult<MaterialView>> pageDeleted(
+    public KbResult<PageResult<MaterialView>> pageDeleted(
             @RequestBody MaterialPageRequest body, HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.pageDeleted(body.get***REMOVED***Id(), body.getKeyword(),
+        return KbResult.ok(materialService.pageDeleted(body.getKbId(), body.getKeyword(),
                 body.getCurrent(), body.getSize(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "彻底删除物料")
     @PostMapping("/purge")
-    public ***REMOVED***Result<List<MaterialBatchItem>> purge(@RequestBody MaterialIdsRequest body,
+    public KbResult<List<MaterialBatchItem>> purge(@RequestBody MaterialIdsRequest body,
                                                    HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.purge(body.get***REMOVED***Id(), body.getMaterialIds(),
+        return KbResult.ok(materialService.purge(body.getKbId(), body.getMaterialIds(),
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "解析稿列表")
     @GetMapping("/listDrafts")
-    public ***REMOVED***Result<List<ParsedDraftView>> listDrafts(
+    public KbResult<List<ParsedDraftView>> listDrafts(
             @RequestParam String materialId,
             @RequestParam(required = false) String versionId,
             HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.listDrafts(materialId, versionId,
+        return KbResult.ok(materialService.listDrafts(materialId, versionId,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "保存解析稿正文")
     @PostMapping("/saveDraftText")
-    public ***REMOVED***Result<ParsedDraftView> saveDraftText(@RequestBody MaterialDraftSaveRequest body,
+    public KbResult<ParsedDraftView> saveDraftText(@RequestBody MaterialDraftSaveRequest body,
                                                    HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.saveDraftText(body.getMaterialId(), body.getVersionId(),
+        return KbResult.ok(materialService.saveDraftText(body.getMaterialId(), body.getVersionId(),
                 body.getTextContent(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "上传会话附件")
     @PostMapping("/attachment")
-    public ***REMOVED***Result<MaterialAttachment> attachment(
-            @RequestParam(required = false) String ***REMOVED***Id,
+    public KbResult<MaterialAttachment> attachment(
+            @RequestParam(required = false) String kbId,
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request) throws IOException {
-        return ***REMOVED***Result.ok(materialService.uploadAttachment(***REMOVED***Id, file.getOriginalFilename(),
+        return KbResult.ok(materialService.uploadAttachment(kbId, file.getOriginalFilename(),
                 file.getBytes(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "文本登记为资料")
     @PostMapping("/registerText")
-    public ***REMOVED***Result<MaterialUploadItem> registerText(
+    public KbResult<MaterialUploadItem> registerText(
             @RequestBody MaterialTextRegisterRequest body, HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.registerText(body.get***REMOVED***Id(), body.getTitle(),
+        return KbResult.ok(materialService.registerText(body.getKbId(), body.getTitle(),
                 body.getCategoryId(), body.getContent(), callerResolver.resolve(request)));
     }
 
     @Operation(summary = "按附件地址登记资料")
     @PostMapping("/registerFromUrl")
-    public ***REMOVED***Result<MaterialUploadItem> registerFromUrl(
+    public KbResult<MaterialUploadItem> registerFromUrl(
             @RequestBody MaterialUrlRegisterRequest body, HttpServletRequest request) {
-        return ***REMOVED***Result.ok(materialService.registerFromUrl(body.get***REMOVED***Id(), body.getTitle(),
+        return KbResult.ok(materialService.registerFromUrl(body.getKbId(), body.getTitle(),
                 body.getFileName(), body.getCategoryId(), body.getUrl(),
                 callerResolver.resolve(request)));
     }
@@ -224,7 +224,7 @@ public class MaterialController {
             return new MaterialUploadFile(file.getOriginalFilename(), file.getSize(),
                     file.getBytes());
         } catch (IOException e) {
-            throw new ***REMOVED***Exception("MATERIAL_FILE_EMPTY", "读取上传文件失败：" + e.getMessage(), e);
+            throw new KBException("MATERIAL_FILE_EMPTY", "读取上传文件失败：" + e.getMessage(), e);
         }
     }
 }

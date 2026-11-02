@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.core.chunker;
+package com.zifang.z.kb.core.chunker;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Document;
-import com.zifang.z.***REMOVED***.api.TokenEstimator;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Document;
+import com.zifang.z.kb.api.TokenEstimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -343,11 +343,11 @@ describe('shared 数据归一化', () => {
           finishedAt: '2026-10-20T10:00:00',
           durationMs: 1000,
         },
-        '***REMOVED***-1',
+        'kb-1',
       ),
     ).toEqual({
       runId: 'run-1',
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       status: 'COMPLETED',
       resultUsable: true,
       finishedAt: '2026-10-20T10:00:00',
@@ -358,7 +358,7 @@ describe('shared 数据归一化', () => {
       runId: 'run-2',
       status: null,
       resultUsable: null,
-      ***REMOVED***Id: undefined,
+      kbId: undefined,
     });
   });
 });

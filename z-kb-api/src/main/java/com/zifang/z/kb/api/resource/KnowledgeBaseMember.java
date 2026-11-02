@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.api.resource;
+package com.zifang.z.kb.api.resource;
 
 import java.time.Instant;
 
 /**
  * 知识库成员视图（对齐参考实现 KnowledgeBaseMemberResponse）。
  *
- * <p>姓名/工号/部门来自 {@link ***REMOVED***PrincipalDirectory}，目录不可用时留空。</p>
+ * <p>姓名/工号/部门来自 {@link KbPrincipalDirectory}，目录不可用时留空。</p>
  */
 public class KnowledgeBaseMember {
 

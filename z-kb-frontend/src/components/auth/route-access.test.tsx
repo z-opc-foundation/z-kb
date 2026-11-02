@@ -71,7 +71,7 @@ afterEach(() => {
 describe('路由菜单校验', () => {
   it('权限加载中显示占位', () => {
     vi.mocked(fetchAuthContext).mockReturnValue(new Promise(() => {}));
-    renderAccess('menu.***REMOVED***');
+    renderAccess('menu.kb');
 
     expect(screen.getByRole('status', { name: '权限加载中' })).toBeInTheDocument();
     expect(screen.queryByText('受保护内容')).toBeNull();
@@ -79,10 +79,10 @@ describe('路由菜单校验', () => {
 
   it('强制期未授权时展示无权限说明并可返回首页', async () => {
     vi.mocked(fetchAuthContext).mockResolvedValue(context({ menuCodes: [] }));
-    const { container } = renderAccess('menu.***REMOVED***');
+    const { container } = renderAccess('menu.kb');
 
     expect(await screen.findByText('没有访问权限')).toBeInTheDocument();
-    expect(screen.getByText(/「menu.***REMOVED***」的菜单授权/)).toBeInTheDocument();
+    expect(screen.getByText(/「menu.kb」的菜单授权/)).toBeInTheDocument();
     expect(screen.queryByText('受保护内容')).toBeNull();
     expect(container.querySelector('.sidebar')).toBeInTheDocument();
 
@@ -102,9 +102,9 @@ describe('路由菜单校验', () => {
 
   it('已授权时渲染页面内容', async () => {
     vi.mocked(fetchAuthContext).mockResolvedValue(
-      context({ menuCodes: ['menu.***REMOVED***'] }),
+      context({ menuCodes: ['menu.kb'] }),
     );
-    renderAccess('menu.***REMOVED***');
+    renderAccess('menu.kb');
 
     expect(await screen.findByText('受保护内容')).toBeInTheDocument();
     expect(screen.queryByText('没有访问权限')).toBeNull();

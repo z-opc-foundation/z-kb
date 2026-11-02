@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.web;
+package com.zifang.z.kb.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -24,15 +24,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 资源域 v1 REST 集成测试：真起 Spring 容器 + H2，按参考实现的路径与信封钉契约。
  */
-@SpringBootTest(classes = ***REMOVED***ApiTestApplication.class, properties = {
-        "spring.datasource.url=jdbc:h2:mem:***REMOVED***-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
+@SpringBootTest(classes = KbApiTestApplication.class, properties = {
+        "spring.datasource.url=jdbc:h2:mem:kb-api;MODE=MySQL;DB_CLOSE_DELAY=-1",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "***REMOVED***.vector.storage-type=in-memory",
-        "***REMOVED***.graph.engine=json",
-        "***REMOVED***.graph.path=target/test-***REMOVED***/graph",
-        "***REMOVED***.storage.path=target/test-***REMOVED***/api-***REMOVED***.json",
+        "kb.vector.storage-type=in-memory",
+        "kb.graph.engine=json",
+        "kb.graph.path=target/test-kb/graph",
+        "kb.storage.path=target/test-kb/api-kb.json",
         "spring.main.banner-mode=off"
 })
 @AutoConfigureMockMvc
@@ -57,7 +57,7 @@ class KnowledgeBaseApiIntegrationTest {
         body.put("code", code);
         body.put("type", "FILE");
         body.put("description", "集成测试");
-        MvcResult result = mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/add")
+        MvcResult result = mvc.perform(post("/api/kb/v1/knowledgeBase/add")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,13 +77,13 @@ class KnowledgeBaseApiIntegrationTest {
         String code = uniqueCode();
         Map<String, Object> created = create(code);
         Map<String, Object> data = (Map<String, Object>) created.get("data");
-        assertEquals("***REMOVED***ADMIN", data.get("role"));
+        assertEquals("KB_ADMIN", data.get("role"));
         assertEquals("ACTIVE", data.get("status"));
         assertEquals(Boolean.TRUE, data.get("canManage"));
 
-        String ***REMOVED***Id = (String) data.get("***REMOVED***Id");
+        String kbId = (String) data.get("kbId");
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/page")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/page")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,25 +93,25 @@ class KnowledgeBaseApiIntegrationTest {
                 .andExpect(jsonPath("$.data.total").value(1))
                 .andExpect(jsonPath("$.data.records[0].code").value(code));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/page")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/page")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.total").value(0));
 
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/queryDetailById")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/knowledgeBase/queryDetailById")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.***REMOVED***Id").value(***REMOVED***Id));
+                .andExpect(jsonPath("$.data.kbId").value(kbId));
     }
 
     @Test
     @DisplayName("错误：未知库 404，信封 success=false、code=404 且 data 键仍在")
     void notFoundUsesErrorEnvelope() throws Exception {
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/queryDetailById")
-                        .param("***REMOVED***Id", "not-exists")
+        mvc.perform(get("/api/kb/v1/knowledgeBase/queryDetailById")
+                        .param("kbId", "not-exists")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID))
                 .andExpect(status().isNotFound())
@@ -126,13 +126,13 @@ class KnowledgeBaseApiIntegrationTest {
     void configDraftPublishFlow() throws Exception {
         String code = uniqueCode();
         Map<String, Object> created = create(code);
-        String ***REMOVED***Id = (String) ((Map<String, Object>) created.get("data")).get("***REMOVED***Id");
+        String kbId = (String) ((Map<String, Object>) created.get("data")).get("kbId");
 
         Map<String, Object> draft = new LinkedHashMap<>();
-        draft.put("***REMOVED***Id", ***REMOVED***Id);
+        draft.put("kbId", kbId);
         draft.put("presetVersion", "default");
         draft.put("parserPolicy", Map.of("ocr", true));
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/saveConfigDraft")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/saveConfigDraft")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,34 +141,34 @@ class KnowledgeBaseApiIntegrationTest {
                 .andExpect(jsonPath("$.data.versionNo").value(2))
                 .andExpect(jsonPath("$.data.status").value("DRAFT"));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/validateConfigDraft")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/validateConfigDraft")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\"}"))
+                        .content("{\"kbId\":\"" + kbId + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.valid").value(true))
                 .andExpect(jsonPath("$.data.changedCount").value(1));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/publishConfig")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/publishConfig")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"confirm\":false}"))
+                        .content("{\"kbId\":\"" + kbId + "\",\"confirm\":false}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400));
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/publishConfig")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/publishConfig")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"confirm\":true,\"remark\":\"上线\"}"))
+                        .content("{\"kbId\":\"" + kbId + "\",\"confirm\":true,\"remark\":\"上线\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("CURRENT"))
                 .andExpect(jsonPath("$.data.versionNo").value(2));
 
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/queryConfig")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/knowledgeBase/queryConfig")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID))
                 .andExpect(status().isOk())
@@ -181,34 +181,34 @@ class KnowledgeBaseApiIntegrationTest {
     void memberGrantAndEffective() throws Exception {
         String code = uniqueCode();
         Map<String, Object> created = create(code);
-        String ***REMOVED***Id = (String) ((Map<String, Object>) created.get("data")).get("***REMOVED***Id");
+        String kbId = (String) ((Map<String, Object>) created.get("data")).get("kbId");
 
-        mvc.perform(post("/api/***REMOVED***/v1/knowledgeBase/member/grant")
+        mvc.perform(post("/api/kb/v1/knowledgeBase/member/grant")
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"***REMOVED***Id\":\"" + ***REMOVED***Id + "\",\"principalId\":\"u-reader\",\"role\":\"READER\"}"))
+                        .content("{\"kbId\":\"" + kbId + "\",\"principalId\":\"u-reader\",\"role\":\"READER\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.role").value("READER"));
 
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/member/list")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/knowledgeBase/member/list")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", OWNER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].owner").value(true));
 
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/member/effective")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/knowledgeBase/member/effective")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", "u-reader"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.role").value("READER"))
-                .andExpect(jsonPath("$.data.canManage***REMOVED***").value(false));
+                .andExpect(jsonPath("$.data.canManageKb").value(false));
 
-        mvc.perform(get("/api/***REMOVED***/v1/knowledgeBase/member/effective")
-                        .param("***REMOVED***Id", ***REMOVED***Id)
+        mvc.perform(get("/api/kb/v1/knowledgeBase/member/effective")
+                        .param("kbId", kbId)
                         .header("X-Tenant-Code", TENANT)
                         .header("X-Actor-Id", "u-nobody"))
                 .andExpect(status().isForbidden())

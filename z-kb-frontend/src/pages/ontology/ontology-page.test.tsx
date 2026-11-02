@@ -331,7 +331,7 @@ describe('本体图谱页', () => {
     const { container } = renderPage();
     await flush(300);
 
-    fireEvent.click(screen.getByRole('chec***REMOVED***ox'));
+    fireEvent.click(screen.getByRole('checkbox'));
     await flush(50);
     expect(screen.getByRole('button', { name: '实例层' })).toBeEnabled();
 

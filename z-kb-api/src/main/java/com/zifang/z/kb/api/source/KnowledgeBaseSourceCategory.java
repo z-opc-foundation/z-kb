@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 /**
  * 接入源分类，仅用于列表分组；真正决定连通方式的是供应商。

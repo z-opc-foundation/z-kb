@@ -11,9 +11,9 @@ import type { MaterialWorkspaceProps } from './material-workspace-model';
 
 export default function MaterialWorkspace(props: MaterialWorkspaceProps) {
   const ctrl = useMaterialWorkspace(props);
-  const sourceSync = useSourceSyncDrawer(props.***REMOVED***Id);
+  const sourceSync = useSourceSyncDrawer(props.kbId);
   const { width, containerRef, startResize, resetWidth } = useSplitWidth({
-    storageKey: '***REMOVED***.materialTreeWidth',
+    storageKey: 'kb.materialTreeWidth',
     defaultWidth: 225,
     minWidth: 180,
     maxWidth: 420,

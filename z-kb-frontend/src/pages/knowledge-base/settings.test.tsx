@@ -19,23 +19,23 @@ vi.mock('@/services/member', () => ({
 }));
 
 vi.mock('./source-config-panel', () => ({
-  default: ({ ***REMOVED***Id, canManage }: { ***REMOVED***Id: string; canManage: boolean }) => (
+  default: ({ kbId, canManage }: { kbId: string; canManage: boolean }) => (
     <div data-testid="source-config-panel">
-      接入源 {***REMOVED***Id} · {canManage ? '可管理' : '只读'}
+      接入源 {kbId} · {canManage ? '可管理' : '只读'}
     </div>
   ),
 }));
 
 vi.mock('./task-config-panel', () => ({
-  default: ({ ***REMOVED***Id }: { ***REMOVED***Id: string }) => (
-    <div data-testid="task-config-panel">任务配置 {***REMOVED***Id}</div>
+  default: ({ kbId }: { kbId: string }) => (
+    <div data-testid="task-config-panel">任务配置 {kbId}</div>
   ),
 }));
 
 vi.mock('./components/member-panel', () => ({
-  default: ({ ***REMOVED***Id, canManage }: { ***REMOVED***Id: string; canManage: boolean }) => (
+  default: ({ kbId, canManage }: { kbId: string; canManage: boolean }) => (
     <div data-testid="member-panel">
-      成员 {***REMOVED***Id} · {canManage ? '可管理' : '只读'}
+      成员 {kbId} · {canManage ? '可管理' : '只读'}
     </div>
   ),
 }));
@@ -50,11 +50,11 @@ import {
 import { getEffectiveAccess } from '@/services/member';
 import KnowledgeBaseSettingsPage from './settings';
 
-const ACTIVE_***REMOVED***: KnowledgeBaseRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: '***REMOVED***_demo',
+const ACTIVE_KB: KnowledgeBaseRecord = {
+  kbId: 'kb-1',
+  tenantCode: 'kb_demo',
   name: '护理知识库',
-  code: '***REMOVED***_nursing',
+  code: 'kb_nursing',
   type: 'FILE',
   status: 'ACTIVE',
   description: '护理制度与流程',
@@ -67,30 +67,30 @@ const ACTIVE_***REMOVED***: KnowledgeBaseRecord = {
   canManage: true,
 };
 
-const ARCHIVED_***REMOVED***: KnowledgeBaseRecord = {
-  ...ACTIVE_***REMOVED***,
+const ARCHIVED_KB: KnowledgeBaseRecord = {
+  ...ACTIVE_KB,
   status: 'ARCHIVED',
   archivedAt: '2026-10-02T10:00:00',
 };
 
 const EFFECTIVE: KnowledgeBaseEffectiveRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   actorId: 7,
-  role: '***REMOVED***ADMIN',
+  role: 'KB_ADMIN',
   owner: true,
   canEnter: true,
-  canManage***REMOVED***: true,
+  canManageKb: true,
   canManageDoc: true,
   canReview: true,
   actions: ['material.write', 'compilation.run'],
 };
 
-function renderSettings(route = '/knowledge-bases/***REMOVED***-1/settings') {
+function renderSettings(route = '/knowledge-bases/kb-1/settings') {
   return renderAt(
     <Routes>
       <Route path="/knowledge-bases" element={<div>知识库列表页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id" element={<div>知识库详情页</div>} />
-      <Route path="/knowledge-bases/:***REMOVED***Id/settings" element={<KnowledgeBaseSettingsPage />} />
+      <Route path="/knowledge-bases/:kbId" element={<div>知识库详情页</div>} />
+      <Route path="/knowledge-bases/:kbId/settings" element={<KnowledgeBaseSettingsPage />} />
     </Routes>,
     { route },
   );
@@ -98,7 +98,7 @@ function renderSettings(route = '/knowledge-bases/***REMOVED***-1/settings') {
 
 describe('知识库设置页', () => {
   beforeEach(() => {
-    vi.mocked(getKnowledgeBase).mockResolvedValue(ACTIVE_***REMOVED***);
+    vi.mocked(getKnowledgeBase).mockResolvedValue(ACTIVE_KB);
     vi.mocked(getEffectiveAccess).mockResolvedValue(EFFECTIVE);
     vi.mocked(updateKnowledgeBase).mockResolvedValue(true);
     vi.mocked(archiveKnowledgeBase).mockResolvedValue(true);
@@ -116,11 +116,11 @@ describe('知识库设置页', () => {
     expect(screen.getByText('正在加载设置…')).toBeTruthy();
     expect(await screen.findByRole('heading', { name: '基本信息' })).toBeTruthy();
 
-    expect(getKnowledgeBase).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(getEffectiveAccess).toHaveBeenCalledWith('***REMOVED***-1');
-    expect(screen.getByText('***REMOVED***_nursing')).toBeTruthy();
+    expect(getKnowledgeBase).toHaveBeenCalledWith('kb-1');
+    expect(getEffectiveAccess).toHaveBeenCalledWith('kb-1');
+    expect(screen.getByText('kb_nursing')).toBeTruthy();
     expect(screen.getByText('bge-m3')).toBeTruthy();
-    expect(screen.getByText('***REMOVED***_demo')).toBeTruthy();
+    expect(screen.getByText('kb_demo')).toBeTruthy();
     expect(screen.getAllByText(/演示租户/).length).toBeGreaterThan(0);
 
     fireEvent.change(screen.getByLabelText(/知识库名称/), {
@@ -133,7 +133,7 @@ describe('知识库设置页', () => {
 
     await waitFor(() =>
       expect(updateKnowledgeBase).toHaveBeenCalledWith({
-        ***REMOVED***Id: '***REMOVED***-1',
+        kbId: 'kb-1',
         name: '护理知识库（新）',
         description: '新的描述',
       }),
@@ -153,14 +153,14 @@ describe('知识库设置页', () => {
   });
 
   it('权限与版本分区渲染成员面板、当前判定与版本入口', async () => {
-    renderSettings('/knowledge-bases/***REMOVED***-1/settings?section=access');
+    renderSettings('/knowledge-bases/kb-1/settings?section=access');
     await screen.findByText('成员与角色');
 
     const panel = screen.getByTestId('member-panel');
-    expect(panel.textContent).toContain('成员 ***REMOVED***-1');
+    expect(panel.textContent).toContain('成员 kb-1');
     expect(panel.textContent).toContain('可管理');
-    expect(screen.getByText('我的角色：角色:***REMOVED***ADMIN')).toBeTruthy();
-    expect(screen.getAllByText('角色:***REMOVED***ADMIN').length).toBeGreaterThan(0);
+    expect(screen.getByText('我的角色：角色:KB_ADMIN')).toBeTruthy();
+    expect(screen.getAllByText('角色:KB_ADMIN').length).toBeGreaterThan(0);
     expect(screen.getByText('material.write')).toBeTruthy();
     expect(screen.getByText('compilation.run')).toBeTruthy();
     expect(screen.getByText('true')).toBeTruthy();
@@ -168,28 +168,28 @@ describe('知识库设置页', () => {
   });
 
   it('接入源与任务配置分区挂载对应面板', async () => {
-    renderSettings('/knowledge-bases/***REMOVED***-1/settings?section=source');
+    renderSettings('/knowledge-bases/kb-1/settings?section=source');
     expect(await screen.findByTestId('source-config-panel')).toBeTruthy();
-    expect(screen.getByTestId('source-config-panel').textContent).toContain('接入源 ***REMOVED***-1');
+    expect(screen.getByTestId('source-config-panel').textContent).toContain('接入源 kb-1');
 
     fireEvent.click(screen.getByRole('button', { name: /任务配置/ }));
     expect(await screen.findByTestId('task-config-panel')).toBeTruthy();
-    expect(screen.getByTestId('task-config-panel').textContent).toContain('任务配置 ***REMOVED***-1');
+    expect(screen.getByTestId('task-config-panel').textContent).toContain('任务配置 kb-1');
   });
 
   it('危险区：运行中可归档，归档后恢复与删除；删除需输入编码', async () => {
     vi.mocked(getKnowledgeBase)
-      .mockResolvedValueOnce(ACTIVE_***REMOVED***)
-      .mockResolvedValue(ARCHIVED_***REMOVED***);
+      .mockResolvedValueOnce(ACTIVE_KB)
+      .mockResolvedValue(ARCHIVED_KB);
 
-    renderSettings('/knowledge-bases/***REMOVED***-1/settings?section=danger');
+    renderSettings('/knowledge-bases/kb-1/settings?section=danger');
     await screen.findByRole('heading', { name: '危险区' });
     expect(screen.getByText('归档知识库')).toBeTruthy();
     expect(screen.getByRole('button', { name: '删除知识库' })).toBeDisabled();
     expect(screen.getByText('运行中的库不能直接删除')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '归档' }));
-    await waitFor(() => expect(archiveKnowledgeBase).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(archiveKnowledgeBase).toHaveBeenCalledWith('kb-1'));
     expect(await screen.findByText('恢复知识库')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '删除知识库' }));
@@ -197,24 +197,24 @@ describe('知识库设置页', () => {
     const confirm = screen.getByRole('button', { name: '确认删除' });
     expect(confirm).toBeDisabled();
 
-    fireEvent.change(screen.getByPlaceholderText('***REMOVED***_nursing'), {
-      target: { value: '***REMOVED***_wrong' },
+    fireEvent.change(screen.getByPlaceholderText('kb_nursing'), {
+      target: { value: 'kb_wrong' },
     });
     expect(screen.getByRole('button', { name: '确认删除' })).toBeDisabled();
 
-    fireEvent.change(screen.getByPlaceholderText('***REMOVED***_nursing'), {
-      target: { value: '***REMOVED***_nursing' },
+    fireEvent.change(screen.getByPlaceholderText('kb_nursing'), {
+      target: { value: 'kb_nursing' },
     });
     fireEvent.click(screen.getByRole('button', { name: '确认删除' }));
 
-    await waitFor(() => expect(removeKnowledgeBase).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(removeKnowledgeBase).toHaveBeenCalledWith('kb-1'));
     expect(await screen.findByText('知识库列表页')).toBeTruthy();
     expect(dialog).toBeTruthy();
   });
 
   it('知识库不存在时展示不可打开提示', async () => {
     vi.mocked(getKnowledgeBase).mockResolvedValue(undefined);
-    renderSettings('/knowledge-bases/***REMOVED***-missing/settings');
+    renderSettings('/knowledge-bases/kb-missing/settings');
     expect(await screen.findByText('无法打开设置')).toBeTruthy();
   });
 });

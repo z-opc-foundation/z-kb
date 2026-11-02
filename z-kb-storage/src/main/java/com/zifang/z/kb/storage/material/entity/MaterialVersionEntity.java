@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.material.entity;
+package com.zifang.z.kb.storage.material.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 物料版本（***REMOVED***_material_version）。版本不可变，内容变化追加新版本。
+ * 物料版本（kb_material_version）。版本不可变，内容变化追加新版本。
  */
-@TableName("***REMOVED***_material_version")
+@TableName("kb_material_version")
 public class MaterialVersionEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String versionId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialId;
     private Integer versionNo;
     private String fingerprint;
@@ -58,12 +58,12 @@ public class MaterialVersionEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialId() {

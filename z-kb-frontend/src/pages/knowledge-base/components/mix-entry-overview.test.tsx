@@ -12,7 +12,7 @@ vi.mock('@/pages/ai/agent-ask', () => ({
 
 const MATERIAL: MaterialRecord = {
   materialId: 'mat-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialType: 'DOCUMENT',
   title: '排班管理制度',
   sourceType: 'UPLOAD',
@@ -61,7 +61,7 @@ const DETAIL: MaterialDetailRecord = {
 function renderOverview(overrides: Partial<Parameters<typeof MixEntryOverview>[0]> = {}) {
   return render(
     <MixEntryOverview
-      ***REMOVED***Id="***REMOVED***-1"
+      kbId="kb-1"
       entry={ENTRY}
       detail={DETAIL}
       detailLoading={false}
@@ -102,7 +102,7 @@ describe('混合库条目概览', () => {
     expect(screen.getByText('条目 ID')).toBeTruthy();
     expect(screen.getByText('mat-1')).toBeTruthy();
     expect(screen.getByText('文档（document）')).toBeTruthy();
-    expect(screen.getByText('1.0 ***REMOVED***')).toBeTruthy();
+    expect(screen.getByText('1.0 KB')).toBeTruthy();
     expect(screen.getByText('v1 · ACTIVE')).toBeTruthy();
     expect(screen.getByText('actorId 1')).toBeTruthy();
     expect(screen.getByText('2026-10-01 10:00')).toBeTruthy();

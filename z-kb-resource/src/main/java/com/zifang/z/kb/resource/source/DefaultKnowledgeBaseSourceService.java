@@ -1,40 +1,40 @@
-package com.zifang.z.***REMOVED***.resource.source;
+package com.zifang.z.kb.resource.source;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zifang.util.json.JsonCursor;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseView;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceAccess;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceCatalogDocsParam;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceCatalogParam;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceCatalogView;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceCategory;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceDocListView;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceParam;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceProvider;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceSaveParam;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceService;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceTestParam;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceTestView;
-import com.zifang.z.***REMOVED***.api.source.KnowledgeBaseSourceView;
-import com.zifang.z.***REMOVED***.core.source.SourcePolicyJson;
-import com.zifang.z.***REMOVED***.core.source.YuqueSelection;
-import com.zifang.z.***REMOVED***.core.source.git.GitApiClient;
-import com.zifang.z.***REMOVED***.core.source.git.GitApiException;
-import com.zifang.z.***REMOVED***.core.source.git.GitAuth;
-import com.zifang.z.***REMOVED***.core.source.git.GitRepoUrl;
-import com.zifang.z.***REMOVED***.api.source.LocalDirScanner;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiClient;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueApiException;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueBook;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueDoc;
-import com.zifang.z.***REMOVED***.core.source.yuque.YuqueGroup;
-import com.zifang.z.***REMOVED***.resource.***REMOVED***AuditService;
-import com.zifang.z.***REMOVED***.storage.resource.entity.KnowledgeBaseProfileEntity;
-import com.zifang.z.***REMOVED***.storage.resource.mapper.KnowledgeBaseProfileMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.resource.KnowledgeBaseView;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceAccess;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceCatalogDocsParam;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceCatalogParam;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceCatalogView;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceCategory;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceDocListView;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceParam;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceProvider;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceSaveParam;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceService;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceTestParam;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceTestView;
+import com.zifang.z.kb.api.source.KnowledgeBaseSourceView;
+import com.zifang.z.kb.core.source.SourcePolicyJson;
+import com.zifang.z.kb.core.source.YuqueSelection;
+import com.zifang.z.kb.core.source.git.GitApiClient;
+import com.zifang.z.kb.core.source.git.GitApiException;
+import com.zifang.z.kb.core.source.git.GitAuth;
+import com.zifang.z.kb.core.source.git.GitRepoUrl;
+import com.zifang.z.kb.api.source.LocalDirScanner;
+import com.zifang.z.kb.core.source.yuque.YuqueApiClient;
+import com.zifang.z.kb.core.source.yuque.YuqueApiException;
+import com.zifang.z.kb.core.source.yuque.YuqueBook;
+import com.zifang.z.kb.core.source.yuque.YuqueDoc;
+import com.zifang.z.kb.core.source.yuque.YuqueGroup;
+import com.zifang.z.kb.resource.KbAuditService;
+import com.zifang.z.kb.storage.resource.entity.KnowledgeBaseProfileEntity;
+import com.zifang.z.kb.storage.resource.mapper.KnowledgeBaseProfileMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 知识库接入源：配置存 {@code ***REMOVED***_knowledge_base_profile.source_policy}，
+ * 知识库接入源：配置存 {@code kb_knowledge_base_profile.source_policy}，
  * 列表脱敏、保存全量覆盖、探测只读、语雀可选项按需加载。权限一律走
  * {@link KnowledgeBaseResourceService}，不读线程上下文。
  */
@@ -80,14 +80,14 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
 
     private final KnowledgeBaseProfileMapper profileMapper;
 
-    private final ***REMOVED***AuditService auditService;
+    private final KbAuditService auditService;
 
     private final YuqueApiClient yuqueApiClient;
 
     private final GitApiClient gitApiClient;
 
     public DefaultKnowledgeBaseSourceService(KnowledgeBaseResourceService resourceService,
-            KnowledgeBaseProfileMapper profileMapper, ***REMOVED***AuditService auditService,
+            KnowledgeBaseProfileMapper profileMapper, KbAuditService auditService,
             YuqueApiClient yuqueApiClient, GitApiClient gitApiClient) {
         this.resourceService = resourceService;
         this.profileMapper = profileMapper;
@@ -97,35 +97,35 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
     }
 
     @Override
-    public List<KnowledgeBaseSourceView> listSources(String ***REMOVED***Id, ***REMOVED***Caller caller) {
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id, caller);
-        return toViews(readStore(***REMOVED***, caller).getSources());
+    public List<KnowledgeBaseSourceView> listSources(String kbId, KbCaller caller) {
+        KnowledgeBaseView kb = resourceService.requireReadable(kbId, caller);
+        return toViews(readStore(kb, caller).getSources());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<KnowledgeBaseSourceView> saveSources(KnowledgeBaseSourceSaveParam param,
-            ***REMOVED***Caller caller) {
-        String ***REMOVED***Id = param == null ? null : param.get***REMOVED***Id();
-        if (!hasText(***REMOVED***Id)) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "保存接入源需要知识库标识");
+            KbCaller caller) {
+        String kbId = param == null ? null : param.getKbId();
+        if (!hasText(kbId)) {
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "保存接入源需要知识库标识");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(),
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
-        KnowledgeBaseProfileEntity profile = requireProfile(***REMOVED***, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId.trim(),
+                KnowledgeBaseAction.KB_MANAGE, caller);
+        KnowledgeBaseProfileEntity profile = requireProfile(kb, caller);
         Map<String, SourcePolicyJson.Entry> existing = indexById(
                 SourcePolicyJson.read(profile.getSourcePolicy()).getSources());
 
         List<KnowledgeBaseSourceParam> sources = param.getSources();
         if (sources.size() > MAX_SOURCES) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_LIMIT", "接入源最多 " + MAX_SOURCES + " 个");
+            throw new KBException("KB_SOURCE_LIMIT", "接入源最多 " + MAX_SOURCES + " 个");
         }
         Set<String> sourceIds = new HashSet<>();
         List<SourcePolicyJson.Entry> next = new ArrayList<>();
         for (KnowledgeBaseSourceParam source : sources) {
             SourcePolicyJson.Entry entry = toEntry(source, existing);
             if (!sourceIds.add(entry.getSourceId())) {
-                throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID",
+                throw new KBException("KB_SOURCE_CONFIG_INVALID",
                         "接入源标识重复：" + entry.getSourceId());
             }
             next.add(entry);
@@ -134,45 +134,45 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
         store.setSources(next);
         String serialized = SourcePolicyJson.write(store);
         if (serialized.length() > MAX_POLICY_LENGTH) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源配置过大，请减少数量或范围");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "接入源配置过大，请减少数量或范围");
         }
         profile.setSourcePolicy(serialized);
         profile.setUpdateBy(caller.getActorId());
         profile.setUpdateTime(Instant.now());
         profileMapper.updateById(profile);
-        auditService.record(caller, ***REMOVED***.get***REMOVED***Id(), "***REMOVED***.source.save", "SOURCE_POLICY", ***REMOVED***.get***REMOVED***Id(),
+        auditService.record(caller, kb.getKbId(), "kb.source.save", "SOURCE_POLICY", kb.getKbId(),
                 "保存接入源 " + next.size() + " 个");
         return toViews(next);
     }
 
     @Override
     public KnowledgeBaseSourceTestView testConnection(KnowledgeBaseSourceTestParam param,
-            ***REMOVED***Caller caller) {
-        String ***REMOVED***Id = param == null ? null : param.get***REMOVED***Id();
-        if (!hasText(***REMOVED***Id) || param.getSource() == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "连通性测试需要知识库与接入源");
+            KbCaller caller) {
+        String kbId = param == null ? null : param.getKbId();
+        if (!hasText(kbId) || param.getSource() == null) {
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "连通性测试需要知识库与接入源");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(),
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId.trim(),
+                KnowledgeBaseAction.KB_MANAGE, caller);
         Map<String, SourcePolicyJson.Entry> existing = indexById(
-                SourcePolicyJson.read(requireProfile(***REMOVED***, caller).getSourcePolicy()).getSources());
+                SourcePolicyJson.read(requireProfile(kb, caller).getSourcePolicy()).getSources());
         return probe(toEntry(param.getSource(), existing));
     }
 
     @Override
     public KnowledgeBaseSourceCatalogView catalog(KnowledgeBaseSourceCatalogParam param,
-            ***REMOVED***Caller caller) {
-        String ***REMOVED***Id = param == null ? null : param.get***REMOVED***Id();
-        if (!hasText(***REMOVED***Id) || param.getSource() == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "加载可选项需要知识库与接入源");
+            KbCaller caller) {
+        String kbId = param == null ? null : param.getKbId();
+        if (!hasText(kbId) || param.getSource() == null) {
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "加载可选项需要知识库与接入源");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(),
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId.trim(),
+                KnowledgeBaseAction.KB_MANAGE, caller);
         Map<String, SourcePolicyJson.Entry> existing = indexById(
-                SourcePolicyJson.read(requireProfile(***REMOVED***, caller).getSourcePolicy()).getSources());
+                SourcePolicyJson.read(requireProfile(kb, caller).getSourcePolicy()).getSources());
         SourcePolicyJson.Entry entry = toCatalogEntry(param.getSource(), existing);
         if (!KnowledgeBaseSourceProvider.YUQUE.name().equals(entry.getProvider())) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "只有语雀接入源支持加载可选项");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "只有语雀接入源支持加载可选项");
         }
         KnowledgeBaseSourceCatalogView view = new KnowledgeBaseSourceCatalogView();
         String token = resolveSecret(entry);
@@ -201,18 +201,18 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
 
     @Override
     public KnowledgeBaseSourceDocListView catalogDocs(KnowledgeBaseSourceCatalogDocsParam param,
-            ***REMOVED***Caller caller) {
-        String ***REMOVED***Id = param == null ? null : param.get***REMOVED***Id();
-        if (!hasText(***REMOVED***Id) || param.getSource() == null || !hasText(param.getBook())) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "加载文章列表需要知识库、接入源与知识库标识");
+            KbCaller caller) {
+        String kbId = param == null ? null : param.getKbId();
+        if (!hasText(kbId) || param.getSource() == null || !hasText(param.getBook())) {
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "加载文章列表需要知识库、接入源与知识库标识");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(),
-                KnowledgeBaseAction.***REMOVED***MANAGE, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId.trim(),
+                KnowledgeBaseAction.KB_MANAGE, caller);
         Map<String, SourcePolicyJson.Entry> existing = indexById(
-                SourcePolicyJson.read(requireProfile(***REMOVED***, caller).getSourcePolicy()).getSources());
+                SourcePolicyJson.read(requireProfile(kb, caller).getSourcePolicy()).getSources());
         SourcePolicyJson.Entry entry = toCatalogEntry(param.getSource(), existing);
         if (!KnowledgeBaseSourceProvider.YUQUE.name().equals(entry.getProvider())) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "只有语雀接入源支持加载文章列表");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "只有语雀接入源支持加载文章列表");
         }
         KnowledgeBaseSourceDocListView view = new KnowledgeBaseSourceDocListView();
         String token = resolveSecret(entry);
@@ -248,14 +248,14 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
     }
 
     @Override
-    public KnowledgeBaseSourceAccess requireAccess(String ***REMOVED***Id, String sourceId, ***REMOVED***Caller caller) {
-        return loadAccess(***REMOVED***Id, sourceId, KnowledgeBaseAction.***REMOVED***MANAGE, caller);
+    public KnowledgeBaseSourceAccess requireAccess(String kbId, String sourceId, KbCaller caller) {
+        return loadAccess(kbId, sourceId, KnowledgeBaseAction.KB_MANAGE, caller);
     }
 
     @Override
-    public KnowledgeBaseSourceAccess requireReadAccess(String ***REMOVED***Id, String sourceId,
-            ***REMOVED***Caller caller) {
-        return loadAccess(***REMOVED***Id, sourceId, KnowledgeBaseAction.***REMOVED***READ, caller);
+    public KnowledgeBaseSourceAccess requireReadAccess(String kbId, String sourceId,
+            KbCaller caller) {
+        return loadAccess(kbId, sourceId, KnowledgeBaseAction.KB_READ, caller);
     }
 
     // ==================== 内部工具 ====================
@@ -311,7 +311,7 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
             Map<String, SourcePolicyJson.Entry> existing) {
         KnowledgeBaseSourceProvider provider = KnowledgeBaseSourceProvider.of(source.getProvider());
         if (provider == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "未知的接入源供应商");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "未知的接入源供应商");
         }
         String sourceId = hasText(source.getSourceId()) ? source.getSourceId().trim() : "";
         SourcePolicyJson.Entry previous = sourceId.isEmpty() ? null : existing.get(sourceId);
@@ -339,17 +339,17 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
     }
 
     /** 校验库权限后装配接入源完整配置；读浏览与写同步共用同一装配逻辑，只差动作。 */
-    private KnowledgeBaseSourceAccess loadAccess(String ***REMOVED***Id, String sourceId,
-            KnowledgeBaseAction action, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id) || !hasText(sourceId)) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "缺少知识库或接入源标识");
+    private KnowledgeBaseSourceAccess loadAccess(String kbId, String sourceId,
+            KnowledgeBaseAction action, KbCaller caller) {
+        if (!hasText(kbId) || !hasText(sourceId)) {
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "缺少知识库或接入源标识");
         }
-        KnowledgeBaseView ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(), action, caller);
+        KnowledgeBaseView kb = resourceService.requireActionable(kbId.trim(), action, caller);
         SourcePolicyJson.Entry entry = indexById(
-                SourcePolicyJson.read(requireProfile(***REMOVED***, caller).getSourcePolicy()).getSources())
+                SourcePolicyJson.read(requireProfile(kb, caller).getSourcePolicy()).getSources())
                 .get(sourceId.trim());
         if (entry == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源不存在：" + sourceId);
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "接入源不存在：" + sourceId);
         }
         KnowledgeBaseSourceAccess access = new KnowledgeBaseSourceAccess();
         access.setSourceId(entry.getSourceId());
@@ -369,15 +369,15 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
     private SourcePolicyJson.Entry toEntry(KnowledgeBaseSourceParam source,
             Map<String, SourcePolicyJson.Entry> existing) {
         if (source == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源不能为空");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "接入源不能为空");
         }
         KnowledgeBaseSourceProvider provider = KnowledgeBaseSourceProvider.of(source.getProvider());
         if (provider == null) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "未知的接入源供应商");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "未知的接入源供应商");
         }
         String name = source.getName() == null ? "" : source.getName().trim();
         if (name.isEmpty() || name.length() > MAX_NAME_LENGTH) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID",
+            throw new KBException("KB_SOURCE_CONFIG_INVALID",
                     "接入源名称必填且不超过 " + MAX_NAME_LENGTH + " 字");
         }
         String sourceId = hasText(source.getSourceId()) ? source.getSourceId().trim()
@@ -386,7 +386,7 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
                 ? source.getCategory().trim().toUpperCase() : provider.getCategory().name();
         KnowledgeBaseSourceCategory resolved = KnowledgeBaseSourceCategory.of(category);
         if (resolved != provider.getCategory()) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "接入源分类与供应商不匹配");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "接入源分类与供应商不匹配");
         }
         SourcePolicyJson.Entry previous = existing.get(sourceId);
         String credentialType = normalizeCredentialType(source.getCredentialType(), provider);
@@ -424,11 +424,11 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
     private void validateYuqueSyncScope(Map<String, Object> scope) {
         List<YuqueSelection.Book> books = YuqueSelection.books(scope);
         if (books.isEmpty()) {
-            throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "语雀接入源至少选择一个知识库");
+            throw new KBException("KB_SOURCE_CONFIG_INVALID", "语雀接入源至少选择一个知识库");
         }
         for (YuqueSelection.Book book : books) {
             if (book.getBook() == null || !book.getBook().contains("/")) {
-                throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID",
+                throw new KBException("KB_SOURCE_CONFIG_INVALID",
                         "语雀知识库标识必须是「团队/知识库」：" + book.getBook());
             }
         }
@@ -454,19 +454,19 @@ public class DefaultKnowledgeBaseSourceService implements KnowledgeBaseSourceSer
                 || CREDENTIAL_BASIC.equals(type)) {
             return type;
         }
-        throw new ***REMOVED***Exception("***REMOVED***SOURCE_CONFIG_INVALID", "凭据类型只能是 NONE / TOKEN / BASIC");
+        throw new KBException("KB_SOURCE_CONFIG_INVALID", "凭据类型只能是 NONE / TOKEN / BASIC");
     }
 
-    private SourcePolicyJson.Store readStore(KnowledgeBaseView ***REMOVED***, ***REMOVED***Caller caller) {
-        return SourcePolicyJson.read(requireProfile(***REMOVED***, caller).getSourcePolicy());
+    private SourcePolicyJson.Store readStore(KnowledgeBaseView kb, KbCaller caller) {
+        return SourcePolicyJson.read(requireProfile(kb, caller).getSourcePolicy());
     }
 
-    private KnowledgeBaseProfileEntity requireProfile(KnowledgeBaseView ***REMOVED***, ***REMOVED***Caller caller) {
+    private KnowledgeBaseProfileEntity requireProfile(KnowledgeBaseView kb, KbCaller caller) {
         QueryWrapper<KnowledgeBaseProfileEntity> query = new QueryWrapper<>();
-        query.eq("tenant_code", caller.getTenantCode()).eq("***REMOVED***_id", ***REMOVED***.get***REMOVED***Id());
+        query.eq("tenant_code", caller.getTenantCode()).eq("kb_id", kb.getKbId());
         KnowledgeBaseProfileEntity profile = profileMapper.selectOne(query);
         if (profile == null) {
-            throw new ***REMOVED***Exception("***REMOVED***NOT_FOUND", "知识库配置档案不存在：" + ***REMOVED***.get***REMOVED***Id());
+            throw new KBException("KB_NOT_FOUND", "知识库配置档案不存在：" + kb.getKbId());
         }
         return profile;
     }

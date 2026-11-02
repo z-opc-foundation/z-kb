@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.concept;
+package com.zifang.z.kb.api.concept;
 
 /**
  * 概念模型视图：由编译萃取涌现，按规范化名称归一到知识库级。

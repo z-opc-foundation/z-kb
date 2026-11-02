@@ -1,22 +1,22 @@
-package com.zifang.z.***REMOVED***.web.api.v1.dto;
+package com.zifang.z.kb.web.api.v1.dto;
 
 /**
  * 按附件地址登记资料；地址取值来自上传会话附件的返回值。
  */
 public class MaterialUrlRegisterRequest {
 
-    private String ***REMOVED***Id;
+    private String kbId;
     private String title;
     private String fileName;
     private String categoryId;
     private String url;
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTitle() {

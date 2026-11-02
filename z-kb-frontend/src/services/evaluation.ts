@@ -3,7 +3,7 @@ import { getTenantCode } from '@/utils/tenant';
 
 /**
  * T-11 知识评测接口。
- * 契约：BASE /***REMOVED***/v1/evaluation，字段名不可改。
+ * 契约：BASE /kb/v1/evaluation，字段名不可改。
  */
 
 export interface EvalPageQuery {
@@ -42,9 +42,9 @@ export interface EvalEvidenceItem {
   detail?: string | null;
 }
 
-export interface Eval***REMOVED***ListRecord {
-  ***REMOVED***Id: string;
-  ***REMOVED***Name: string;
+export interface EvalKbListRecord {
+  kbId: string;
+  kbName: string;
   datasetVersion?: string | null;
   datasetStatus?: string | null;
   caseCount?: number | null;
@@ -75,8 +75,8 @@ export interface EvalDatasetMeta {
 }
 
 export interface EvalOverview {
-  ***REMOVED***Id?: string | null;
-  ***REMOVED***Name?: string | null;
+  kbId?: string | null;
+  kbName?: string | null;
   dataset?: EvalDatasetMeta | null;
   lastRun?: EvalRunBrief | null;
   baselineRun?: { runId: string; finishedAt?: string | null } | null;
@@ -111,7 +111,7 @@ export interface EvalDatasetDraftCase {
 }
 
 export interface EvalDatasetDraftPayload {
-  ***REMOVED***Id: string;
+  kbId: string;
   name: string;
   description?: string;
   cases: EvalDatasetDraftCase[];
@@ -141,7 +141,7 @@ export interface EvalStageRecord {
 
 export interface EvalRunRecord {
   runId: string;
-  ***REMOVED***Id?: string | null;
+  kbId?: string | null;
   status?: string | null;
   resultUsable?: boolean | null;
   unusableReason?: string | null;
@@ -228,7 +228,7 @@ export interface EvalTrustEvidence {
 }
 
 export interface EvalCreateRunPayload {
-  ***REMOVED***Id: string;
+  kbId: string;
   datasetVersionNo?: string;
   baselineRunId?: string;
   allowReuse: true;
@@ -251,7 +251,7 @@ export interface EvalCreateRunResult {
   reused?: boolean | null;
 }
 
-const BASE = '/***REMOVED***/v1/evaluation';
+const BASE = '/kb/v1/evaluation';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -267,7 +267,7 @@ async function read<T>(run: () => Promise<T>): Promise<T | undefined> {
 
 export function pageEvaluationKnowledgeBases(data: EvalPageQuery) {
   return read(() =>
-    request<EvalPageResult<Eval***REMOVED***ListRecord>>(`${BASE}/pageKnowledgeBase`, {
+    request<EvalPageResult<EvalKbListRecord>>(`${BASE}/pageKnowledgeBase`, {
       method: 'get',
       params: {
         current: data.current,
@@ -279,12 +279,12 @@ export function pageEvaluationKnowledgeBases(data: EvalPageQuery) {
   );
 }
 
-export function queryEvalOverview(***REMOVED***Id: string, baselineRunId?: string) {
+export function queryEvalOverview(kbId: string, baselineRunId?: string) {
   return read(() =>
     request<EvalOverview>(`${BASE}/queryOverview`, {
       method: 'get',
       params: {
-        ***REMOVED***Id,
+        kbId,
         ...(baselineRunId ? { baselineRunId } : {}),
       },
       headers: tenantHeaders(),
@@ -292,12 +292,12 @@ export function queryEvalOverview(***REMOVED***Id: string, baselineRunId?: strin
   );
 }
 
-export function queryEvalDataset(***REMOVED***Id: string, versionNo?: string) {
+export function queryEvalDataset(kbId: string, versionNo?: string) {
   return read(() =>
     request<EvalDatasetDetail | EvalDatasetCase[]>(`${BASE}/queryDataset`, {
       method: 'get',
       params: {
-        ***REMOVED***Id,
+        kbId,
         ...(versionNo ? { versionNo } : {}),
       },
       headers: tenantHeaders(),
@@ -316,7 +316,7 @@ export function saveEvalDatasetDraft(payload: EvalDatasetDraftPayload) {
 }
 
 export function publishEvalDataset(payload: {
-  ***REMOVED***Id: string;
+  kbId: string;
   expectedVersionNo: string;
 }) {
   return read(() =>
@@ -358,14 +358,14 @@ export function pageEvalCaseResults(data: EvalCasePagePayload) {
   );
 }
 
-export function listEvalBadcases(***REMOVED***Id: string, status?: string, stageCode?: string) {
+export function listEvalBadcases(kbId: string, status?: string, stageCode?: string) {
   return read(() =>
     request<
       EvalPageResult<EvalBadcaseRecord> | EvalBadcaseRecord[]
     >(`${BASE}/listBadcases`, {
       method: 'get',
       params: {
-        ***REMOVED***Id,
+        kbId,
         ...(status ? { status } : {}),
         ...(stageCode ? { stageCode } : {}),
       },

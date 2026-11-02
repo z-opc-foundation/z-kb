@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.source;
+package com.zifang.z.kb.api.source;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 本地目录扫描口径 —— z-***REMOVED*** 侧与桌面端 note 侧共用同一份排除清单。
+ * 本地目录扫描口径 —— z-kb 侧与桌面端 note 侧共用同一份排除清单。
  *
- * <p><b>为什么要有这一份。</b>z-***REMOVED*** 与桌面端 note 会指向同一批文件夹（note 的工作区
- * 可以直接配成 z-***REMOVED*** 的本地接入源）。两边各写一份排除规则必然漂移：note 漏了
- * {@code .worktrees}，索引就会把 git worktree 副本收进来；z-***REMOVED*** 漏了同一个目录，
+ * <p><b>为什么要有这一份。</b>z-kb 与桌面端 note 会指向同一批文件夹（note 的工作区
+ * 可以直接配成 z-kb 的本地接入源）。两边各写一份排除规则必然漂移：note 漏了
+ * {@code .worktrees}，索引就会把 git worktree 副本收进来；z-kb 漏了同一个目录，
  * 知识库里就会出现同一篇笔记的两份。两边的用户看到的是同一批文件，不该看到两份。
  *
  * <p><b>跨仓同源。</b>这份清单的源头在桌面端 note 仓：

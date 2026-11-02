@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 代码仓库物料在来源侧的坐标。浏览项目文件时据此还原仓库配置，不承载文件内容。
@@ -6,7 +6,7 @@ package com.zifang.z.***REMOVED***.api.material;
 public class MaterialRepoRef {
 
     private String materialId;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String title;
     private String sourceType;
     private String sourceBindingId;
@@ -20,12 +20,12 @@ public class MaterialRepoRef {
         this.materialId = materialId;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTitle() {

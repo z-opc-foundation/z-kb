@@ -1,17 +1,17 @@
-package com.zifang.z.***REMOVED***.starter.service;
+package com.zifang.z.kb.starter.service;
 
-import com.zifang.z.***REMOVED***.api.ChatMessage;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Metrics;
-import com.zifang.z.***REMOVED***.api.ChatRequest;
-import com.zifang.z.***REMOVED***.api.ChatResponse;
-import com.zifang.z.***REMOVED***.api.ChatService;
-import com.zifang.z.***REMOVED***.api.ChatSession;
-import com.zifang.z.***REMOVED***.api.SearchHit;
-import com.zifang.z.***REMOVED***.api.SearchQuery;
-import com.zifang.z.***REMOVED***.api.SearchResult;
-import com.zifang.z.***REMOVED***.api.SearchService;
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
-import com.zifang.z.***REMOVED***.starter.config.***REMOVED***Properties;
+import com.zifang.z.kb.api.ChatMessage;
+import com.zifang.z.kb.api.KbMetrics;
+import com.zifang.z.kb.api.ChatRequest;
+import com.zifang.z.kb.api.ChatResponse;
+import com.zifang.z.kb.api.ChatService;
+import com.zifang.z.kb.api.ChatSession;
+import com.zifang.z.kb.api.SearchHit;
+import com.zifang.z.kb.api.SearchQuery;
+import com.zifang.z.kb.api.SearchResult;
+import com.zifang.z.kb.api.SearchService;
+import com.zifang.z.kb.api.KnowledgeBaseService;
+import com.zifang.z.kb.starter.config.KBProperties;
 import com.zifang.util.json.JsonCursor;
 import com.zifang.util.json.JsonUtil;
 import org.slf4j.Logger;
@@ -37,21 +37,21 @@ public class DefaultChatService implements ChatService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultChatService.class);
 
-    private final KnowledgeBaseService ***REMOVED***Service;
+    private final KnowledgeBaseService kbService;
     private final SearchService searchService;
-    private final ***REMOVED***Properties.Chat config;
-    private final ***REMOVED***Metrics metrics;
+    private final KBProperties.Chat config;
+    private final KbMetrics metrics;
     private final HttpExecutor httpExecutor = HttpExecutor.getDefault();
     private final java.util.Map<String, ChatSession> sessions = new ConcurrentHashMap<>();
 
-    public DefaultChatService(KnowledgeBaseService ***REMOVED***Service, SearchService searchService, ***REMOVED***Properties.Chat config) {
-        this(***REMOVED***Service, searchService, config, null);
+    public DefaultChatService(KnowledgeBaseService kbService, SearchService searchService, KBProperties.Chat config) {
+        this(kbService, searchService, config, null);
     }
 
     /** @param metrics 可为 null：下游没带 actuator 时无埋点 */
-    public DefaultChatService(KnowledgeBaseService ***REMOVED***Service, SearchService searchService,
-                              ***REMOVED***Properties.Chat config, ***REMOVED***Metrics metrics) {
-        this.***REMOVED***Service = ***REMOVED***Service;
+    public DefaultChatService(KnowledgeBaseService kbService, SearchService searchService,
+                              KBProperties.Chat config, KbMetrics metrics) {
+        this.kbService = kbService;
         this.searchService = searchService;
         this.config = config;
         this.metrics = metrics;
@@ -141,7 +141,7 @@ public class DefaultChatService implements ChatService {
             sb.append(content).append("\n\n");
         }
         sb.append("---\n");
-        sb.append("提示：配置 ***REMOVED***.chat.endpoint 启用 LLM 生成式回答。");
+        sb.append("提示：配置 kb.chat.endpoint 启用 LLM 生成式回答。");
         return sb.toString();
     }
 

@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.entity;
+package com.zifang.z.kb.storage.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 逐题评测结果（***REMOVED***_eval_case_result）。
+ * 逐题评测结果（kb_eval_case_result）。
  */
-@TableName("***REMOVED***_eval_case_result")
+@TableName("kb_eval_case_result")
 public class EvalCaseResultEntity {
 
     @TableId(type = IdType.INPUT)

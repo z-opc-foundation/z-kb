@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.audit;
+package com.zifang.z.kb.api.audit;
 
 /**
  * 审计日志查询条件。时间范围为左闭右闭的毫秒时间戳，为空表示不限。
@@ -8,10 +8,10 @@ public class AuditLogQuery {
     /** 关键词，匹配动作编码、操作说明、目标类型与目标标识。 */
     private String keyword;
 
-    /** 日志类型：SYS / ***REMOVED***；为空表示不限。 */
+    /** 日志类型：SYS / KB；为空表示不限。 */
     private String type;
 
-    /** 业务指向键，***REMOVED*** 日志为知识库标识；为空表示不限。 */
+    /** 业务指向键，KB 日志为知识库标识；为空表示不限。 */
     private String bizRef;
 
     /** 操作人主体 ID。 */

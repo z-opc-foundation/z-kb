@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.core.extractor;
+package com.zifang.z.kb.core.extractor;
 
-import com.zifang.z.***REMOVED***.api.Chunk;
-import com.zifang.z.***REMOVED***.api.Entity;
-import com.zifang.z.***REMOVED***.api.Relation;
-import com.zifang.z.***REMOVED***.api.RelationType;
+import com.zifang.z.kb.api.Chunk;
+import com.zifang.z.kb.api.Entity;
+import com.zifang.z.kb.api.Relation;
+import com.zifang.z.kb.api.RelationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

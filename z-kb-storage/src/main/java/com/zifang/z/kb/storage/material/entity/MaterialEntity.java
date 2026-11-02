@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.material.entity;
+package com.zifang.z.kb.storage.material.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 物料主表（***REMOVED***_material）。
+ * 物料主表（kb_material）。
  */
-@TableName("***REMOVED***_material")
+@TableName("kb_material")
 public class MaterialEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String materialId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String materialType;
     private String entryType;
     private String title;
@@ -59,12 +59,12 @@ public class MaterialEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getMaterialType() {

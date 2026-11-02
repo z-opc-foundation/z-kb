@@ -192,7 +192,7 @@ export function MultiPick({
             title={option.name}
           >
             <input
-              type="chec***REMOVED***ox"
+              type="checkbox"
               checked={checked}
               onChange={() =>
                 onChange(
@@ -217,7 +217,7 @@ export function MultiPick({
 }
 
 export function useKnowledgeBaseOptions() {
-  const [***REMOVED***s, set***REMOVED***s] = useState<KnowledgeBaseRecord[]>([]);
+  const [kbs, setKbs] = useState<KnowledgeBaseRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
 
@@ -229,7 +229,7 @@ export function useKnowledgeBaseOptions() {
         return;
       }
       setLoading(false);
-      set***REMOVED***s(result?.records || []);
+      setKbs(result?.records || []);
     });
     return () => {
       alive = false;
@@ -237,13 +237,13 @@ export function useKnowledgeBaseOptions() {
   }, [tick]);
 
   return {
-    ***REMOVED***s,
+    kbs,
     loading,
     reload: () => setTick((value) => value + 1),
   };
 }
 
-export function ***REMOVED***Select({
+export function KbSelect({
   value,
   onChange,
   options,
@@ -266,9 +266,9 @@ export function ***REMOVED***Select({
       <option value="">
         {loading ? '正在加载知识库…' : '未选择知识库'}
       </option>
-      {options.map((***REMOVED***) => (
-        <option key={***REMOVED***.***REMOVED***Id} value={***REMOVED***.***REMOVED***Id}>
-          {***REMOVED***.name}（{***REMOVED***.code}）
+      {options.map((kb) => (
+        <option key={kb.kbId} value={kb.kbId}>
+          {kb.name}（{kb.code}）
         </option>
       ))}
     </select>

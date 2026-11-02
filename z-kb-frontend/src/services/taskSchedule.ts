@@ -3,7 +3,7 @@ import { getTenantCode } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
 /** 调度面板，与后端 /v1/task/schedule 对齐；读的是本进程连的那套 ZK。 */
-const BASE = '/***REMOVED***/v1/task/schedule';
+const BASE = '/kb/v1/task/schedule';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 

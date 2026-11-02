@@ -13,13 +13,13 @@ vi.mock('@/services/sso', () => ({
 
 import { createKnowledgeBase, updateKnowledgeBase } from '@/services/knowledgeBase';
 import { queryCurrentUser } from '@/services/sso';
-import ***REMOVED***FormModal from './***REMOVED***-form-modal';
+import KbFormModal from './kb-form-modal';
 
-const ***REMOVED***: KnowledgeBaseRecord = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  tenantCode: '***REMOVED***_demo',
+const KB: KnowledgeBaseRecord = {
+  kbId: 'kb-1',
+  tenantCode: 'kb_demo',
   name: '护理知识库',
-  code: '***REMOVED***_nursing',
+  code: 'kb_nursing',
   type: 'FILE',
   status: 'ACTIVE',
   description: '护理制度与流程',
@@ -35,7 +35,7 @@ const ***REMOVED***: KnowledgeBaseRecord = {
 describe('知识库表单弹窗', () => {
   beforeEach(() => {
     vi.mocked(queryCurrentUser).mockResolvedValue({ name: '张三', accountNo: 'zhangsan' });
-    vi.mocked(createKnowledgeBase).mockResolvedValue(***REMOVED***);
+    vi.mocked(createKnowledgeBase).mockResolvedValue(KB);
     vi.mocked(updateKnowledgeBase).mockResolvedValue(true);
   });
 
@@ -47,7 +47,7 @@ describe('知识库表单弹窗', () => {
   it('新建：展示登录人，提交时带上名称、类型、模型与描述', async () => {
     const onClose = vi.fn();
     const onSaved = vi.fn();
-    render(<***REMOVED***FormModal mode="create" onClose={onClose} onSaved={onSaved} />);
+    render(<KbFormModal mode="create" onClose={onClose} onSaved={onSaved} />);
 
     expect(screen.getByText('新建知识库')).toBeTruthy();
     expect(await screen.findByText('张三')).toBeTruthy();
@@ -71,7 +71,7 @@ describe('知识库表单弹窗', () => {
     await waitFor(() =>
       expect(createKnowledgeBase).toHaveBeenCalledWith({
         name: '心内科诊疗知识库',
-        code: expect.stringMatching(/^***REMOVED***_\d{8}_\d{4}_[a-z0-9]{4}$/),
+        code: expect.stringMatching(/^kb_\d{8}_\d{4}_[a-z0-9]{4}$/),
         type: 'MIX',
         description: '心内科制度与指南',
         embeddingModel: 'bge-m3',
@@ -82,7 +82,7 @@ describe('知识库表单弹窗', () => {
   });
 
   it('新建：名称少于两个字符时提示并阻止提交，修正后可提交', async () => {
-    render(<***REMOVED***FormModal mode="create" onClose={vi.fn()} onSaved={vi.fn()} />);
+    render(<KbFormModal mode="create" onClose={vi.fn()} onSaved={vi.fn()} />);
 
     const nameInput = screen.getByPlaceholderText('例如：心内科诊疗知识库');
     fireEvent.change(nameInput, { target: { value: '心' } });
@@ -100,10 +100,10 @@ describe('知识库表单弹窗', () => {
 
   it('编辑：编码与类型只读，仅提交名称与描述', async () => {
     const onSaved = vi.fn();
-    render(<***REMOVED***FormModal mode="edit" ***REMOVED***={***REMOVED***} onClose={vi.fn()} onSaved={onSaved} />);
+    render(<KbFormModal mode="edit" kb={KB} onClose={vi.fn()} onSaved={onSaved} />);
 
     expect(screen.getByText('编辑知识库 · 护理知识库')).toBeTruthy();
-    expect(screen.getByText('***REMOVED***_nursing')).toBeTruthy();
+    expect(screen.getByText('kb_nursing')).toBeTruthy();
     expect(screen.getByText('文件库')).toBeTruthy();
     expect(screen.queryByRole('combobox')).toBeNull();
     // 编辑模式不查询登录人
@@ -119,7 +119,7 @@ describe('知识库表单弹窗', () => {
 
     await waitFor(() =>
       expect(updateKnowledgeBase).toHaveBeenCalledWith({
-        ***REMOVED***Id: '***REMOVED***-1',
+        kbId: 'kb-1',
         name: '护理知识库（新）',
         description: '更新后的描述',
       }),
@@ -129,7 +129,7 @@ describe('知识库表单弹窗', () => {
 
   it('取消按钮只关闭弹窗，不触发保存', () => {
     const onClose = vi.fn();
-    render(<***REMOVED***FormModal mode="edit" ***REMOVED***={***REMOVED***} onClose={onClose} onSaved={vi.fn()} />);
+    render(<KbFormModal mode="edit" kb={KB} onClose={onClose} onSaved={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: '取消' }));
     expect(onClose).toHaveBeenCalledTimes(1);

@@ -18,8 +18,8 @@ vi.mock('@/services/knowledgeBase', () => ({
   removeKnowledgeBase: vi.fn(),
 }));
 
-vi.mock('@/services/***REMOVED***Activity', () => ({
-  fetch***REMOVED***ActivityHeatmap: vi.fn(),
+vi.mock('@/services/kbActivity', () => ({
+  fetchKbActivityHeatmap: vi.fn(),
 }));
 
 vi.mock('@/services/sso', () => ({
@@ -31,16 +31,16 @@ import {
   pageKnowledgeBase,
   removeKnowledgeBase,
 } from '@/services/knowledgeBase';
-import { fetch***REMOVED***ActivityHeatmap } from '@/services/***REMOVED***Activity';
+import { fetchKbActivityHeatmap } from '@/services/kbActivity';
 import { queryCurrentUser } from '@/services/sso';
 import KnowledgeBaseListPage from './index';
 
 function record(overrides: Partial<KnowledgeBaseRecord>): KnowledgeBaseRecord {
   return {
-    ***REMOVED***Id: '***REMOVED***-1',
-    tenantCode: '***REMOVED***_demo',
+    kbId: 'kb-1',
+    tenantCode: 'kb_demo',
     name: '护理知识库',
-    code: '***REMOVED***_nursing',
+    code: 'kb_nursing',
     type: 'FILE',
     status: 'ACTIVE',
     description: '护理制度与流程',
@@ -56,9 +56,9 @@ function record(overrides: Partial<KnowledgeBaseRecord>): KnowledgeBaseRecord {
 }
 
 const ANESTHESIA = record({
-  ***REMOVED***Id: '***REMOVED***-2',
+  kbId: 'kb-2',
   name: '麻醉知识库',
-  code: '***REMOVED***_anesthesia',
+  code: 'kb_anesthesia',
   type: 'MIX',
   status: 'ARCHIVED',
   updateTime: '2026-09-20T10:00:00',
@@ -66,7 +66,7 @@ const ANESTHESIA = record({
   embeddingModel: '',
 });
 
-const NURSING = record({ ***REMOVED***Id: '***REMOVED***-1', name: '护理知识库' });
+const NURSING = record({ kbId: 'kb-1', name: '护理知识库' });
 
 function page(records: KnowledgeBaseRecord[]) {
   return { records, total: records.length, size: 500, current: 1 };
@@ -76,8 +76,8 @@ describe('知识库列表页', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.mocked(queryCurrentUser).mockResolvedValue({ name: '张三' });
-    vi.mocked(fetch***REMOVED***ActivityHeatmap).mockResolvedValue({
-      '***REMOVED***-1': [{ date: '2026-10-01', count: 3 }],
+    vi.mocked(fetchKbActivityHeatmap).mockResolvedValue({
+      'kb-1': [{ date: '2026-10-01', count: 3 }],
     });
     vi.mocked(createKnowledgeBase).mockResolvedValue(NURSING);
     vi.mocked(removeKnowledgeBase).mockResolvedValue(true);
@@ -106,7 +106,7 @@ describe('知识库列表页', () => {
     });
 
     expect(await screen.findByText('护理知识库')).toBeTruthy();
-    const cards = container.querySelectorAll('.***REMOVED***-card');
+    const cards = container.querySelectorAll('.kb-card');
     expect(cards).toHaveLength(2);
     // 更新时间新的排前面
     expect(cards[0].textContent).toContain('护理知识库');
@@ -118,7 +118,7 @@ describe('知识库列表页', () => {
     expect(screen.getByText('默认模型')).toBeTruthy();
     expect(screen.getByText(/共 2 个知识库 · 第 1 \/ 1 页/)).toBeTruthy();
     await waitFor(() =>
-      expect(fetch***REMOVED***ActivityHeatmap).toHaveBeenCalledWith(['***REMOVED***-1', '***REMOVED***-2'], 168),
+      expect(fetchKbActivityHeatmap).toHaveBeenCalledWith(['kb-1', 'kb-2'], 168),
     );
   });
 
@@ -135,7 +135,7 @@ describe('知识库列表页', () => {
     expect(container.querySelectorAll('.list-table tbody tr')).toHaveLength(2);
 
     fireEvent.click(screen.getByRole('button', { name: /卡片/ }));
-    await waitFor(() => expect(container.querySelectorAll('.***REMOVED***-card')).toHaveLength(2));
+    await waitFor(() => expect(container.querySelectorAll('.kb-card')).toHaveLength(2));
   });
 
   it('收藏卡片后可在「我收藏的」筛选中看到，收藏写入本地存储', async () => {
@@ -145,10 +145,10 @@ describe('知识库列表页', () => {
 
     fireEvent.click(container.querySelectorAll('.fav-btn')[0]);
 
-    expect(localStorage.getItem('***REMOVED***.favorite-***REMOVED***s')).toContain('***REMOVED***-1');
+    expect(localStorage.getItem('kb.favorite-kbs')).toContain('kb-1');
     fireEvent.click(screen.getByRole('button', { name: /我收藏的/ }));
 
-    const cards = container.querySelectorAll('.***REMOVED***-card');
+    const cards = container.querySelectorAll('.kb-card');
     expect(cards).toHaveLength(1);
     expect(cards[0].textContent).toContain('护理知识库');
   });
@@ -164,7 +164,7 @@ describe('知识库列表页', () => {
     expect(await screen.findByText('没有匹配的知识库')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: '清空筛选' }));
-    await waitFor(() => expect(container.querySelectorAll('.***REMOVED***-card')).toHaveLength(1));
+    await waitFor(() => expect(container.querySelectorAll('.kb-card')).toHaveLength(1));
   });
 
   it('新建知识库：打开弹窗、提交后刷新列表', async () => {

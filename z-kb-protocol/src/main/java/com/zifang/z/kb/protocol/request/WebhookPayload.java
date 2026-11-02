@@ -1,11 +1,11 @@
-package com.zifang.z.***REMOVED***.protocol.request;
+package com.zifang.z.kb.protocol.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Webhook 推送体 —— {@code POST /api/***REMOVED***/ingest/webhook}。
+ * Webhook 推送体 —— {@code POST /api/kb/ingest/webhook}。
  *
  * <p>请求头 {@code X-Signature} / {@code X-Secret} 参与校验，不在请求体里。
  */

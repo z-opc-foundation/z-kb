@@ -3,7 +3,7 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSplitWidth } from './use-split-width';
 
-const STORAGE_KEY = '***REMOVED***.testSplitWidth';
+const STORAGE_KEY = 'kb.testSplitWidth';
 const OPTIONS = {
   storageKey: STORAGE_KEY,
   defaultWidth: 225,

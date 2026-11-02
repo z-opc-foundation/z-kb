@@ -7,7 +7,7 @@ import MetricsView from './metrics-view';
 const RUN_DETAIL: EvalRunDetail = {
   run: {
     runId: 'run-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'COMPLETED',
     resultUsable: true,
     finishedAt: '2026-10-20T10:00:00',

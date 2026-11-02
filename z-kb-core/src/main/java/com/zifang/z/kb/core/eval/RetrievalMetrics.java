@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.eval;
+package com.zifang.z.kb.core.eval;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -9,7 +9,7 @@ import java.util.Set;
  * 检索侧指标计算器。
  *
  * <p>全部指标都只依赖「标注切片 id 是否出现在有序结果里」，因此是确定性的、可重复的，
- * 不需要 LLM 参与。这是 z-***REMOVED*** 效果论证的第一层证据。
+ * 不需要 LLM 参与。这是 z-kb 效果论证的第一层证据。
  *
  * <p>指标定义（设第 i 条用例的相关切片集合为 R_i，前 K 条检索结果为 T_iK，N 为参与评分的用例数）：
  * <pre>

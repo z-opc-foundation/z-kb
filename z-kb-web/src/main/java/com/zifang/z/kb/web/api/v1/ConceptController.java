@@ -1,10 +1,10 @@
-package com.zifang.z.***REMOVED***.web.api.v1;
+package com.zifang.z.kb.web.api.v1;
 
-import com.zifang.z.***REMOVED***.api.concept.ConceptDetailView;
-import com.zifang.z.***REMOVED***.api.concept.ConceptService;
-import com.zifang.z.***REMOVED***.api.concept.ConceptView;
-import com.zifang.z.***REMOVED***.protocol.response.***REMOVED***Result;
-import com.zifang.z.***REMOVED***.web.caller.***REMOVED***CallerResolver;
+import com.zifang.z.kb.api.concept.ConceptDetailView;
+import com.zifang.z.kb.api.concept.ConceptService;
+import com.zifang.z.kb.api.concept.ConceptView;
+import com.zifang.z.kb.protocol.response.KbResult;
+import com.zifang.z.kb.web.caller.KbCallerResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,33 +20,33 @@ import java.util.List;
  */
 @Tag(name = "概念模型")
 @RestController
-@RequestMapping("/api/***REMOVED***/v1/concept")
+@RequestMapping("/api/kb/v1/concept")
 public class ConceptController {
 
     private final ConceptService conceptService;
-    private final ***REMOVED***CallerResolver callerResolver;
+    private final KbCallerResolver callerResolver;
 
-    public ConceptController(ConceptService conceptService, ***REMOVED***CallerResolver callerResolver) {
+    public ConceptController(ConceptService conceptService, KbCallerResolver callerResolver) {
         this.conceptService = conceptService;
         this.callerResolver = callerResolver;
     }
 
     @Operation(summary = "按知识库查询概念模型",
             description = "概念由编译萃取涌现，按来源资料数与提及次数倒序，单次上限 200")
-    @GetMapping("/listBy***REMOVED***")
-    public ***REMOVED***Result<List<ConceptView>> listBy***REMOVED***(@RequestParam String ***REMOVED***Id,
+    @GetMapping("/listByKb")
+    public KbResult<List<ConceptView>> listByKb(@RequestParam String kbId,
                                                 @RequestParam(required = false) String keyword,
                                                 HttpServletRequest request) {
-        return ***REMOVED***Result.ok(conceptService.listBy***REMOVED***(***REMOVED***Id, keyword,
+        return KbResult.ok(conceptService.listByKb(kbId, keyword,
                 callerResolver.resolve(request)));
     }
 
     @Operation(summary = "查询概念详情", description = "返回概念模型与来源资料提及，提及单次上限 100")
     @GetMapping("/queryById")
-    public ***REMOVED***Result<ConceptDetailView> queryById(@RequestParam String ***REMOVED***Id,
+    public KbResult<ConceptDetailView> queryById(@RequestParam String kbId,
                                                  @RequestParam String conceptId,
                                                  HttpServletRequest request) {
-        return ***REMOVED***Result.ok(conceptService.queryById(***REMOVED***Id, conceptId,
+        return KbResult.ok(conceptService.queryById(kbId, conceptId,
                 callerResolver.resolve(request)));
     }
 }

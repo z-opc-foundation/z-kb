@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.ingest.api;
+package com.zifang.z.kb.ingest.api;
 
 import java.time.Instant;
 import java.util.ArrayList;

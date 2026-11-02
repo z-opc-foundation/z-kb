@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { emit***REMOVED***Changed, ***REMOVED***CHANGED_EVENT } from './***REMOVED***-events';
+import { emitKbChanged, KB_CHANGED_EVENT } from './kb-events';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -8,18 +8,18 @@ afterEach(() => {
 describe('知识库变更广播', () => {
   it('向 window 派发约定事件', () => {
     const dispatch = vi.spyOn(window, 'dispatchEvent');
-    emit***REMOVED***Changed();
-    expect(***REMOVED***CHANGED_EVENT).toBe('***REMOVED***:***REMOVED***-changed');
+    emitKbChanged();
+    expect(KB_CHANGED_EVENT).toBe('kb:kb-changed');
     expect(dispatch).toHaveBeenCalledOnce();
     expect(dispatch.mock.calls[0][0]).toBeInstanceOf(Event);
-    expect((dispatch.mock.calls[0][0] as Event).type).toBe(***REMOVED***CHANGED_EVENT);
+    expect((dispatch.mock.calls[0][0] as Event).type).toBe(KB_CHANGED_EVENT);
   });
 
   it('监听方可以收到广播', () => {
     const listener = vi.fn();
-    window.addEventListener(***REMOVED***CHANGED_EVENT, listener);
-    emit***REMOVED***Changed();
+    window.addEventListener(KB_CHANGED_EVENT, listener);
+    emitKbChanged();
     expect(listener).toHaveBeenCalledOnce();
-    window.removeEventListener(***REMOVED***CHANGED_EVENT, listener);
+    window.removeEventListener(KB_CHANGED_EVENT, listener);
   });
 });

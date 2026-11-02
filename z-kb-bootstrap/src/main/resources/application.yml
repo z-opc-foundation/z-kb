@@ -7,7 +7,7 @@ server:
 
 spring:
   application:
-    name: z-***REMOVED***
+    name: z-kb
   profiles:
     active: dev
   jackson:
@@ -23,15 +23,15 @@ spring:
   # 接入源 / 审计）自动装配条件（@ConditionalOnBean(DataSource.class)）恒不成立 ⇒
   # 资源域 v1 的 18 个 Controller 全部不注册。
   # 这里给一份 H2 文件库（MySQL 兼容模式，与仓内集成测试同口径）：
-  # 持久化到 ~/.***REMOVED***/h2，重启不丢；想换成真 MySQL 只需覆盖 spring.datasource.* 四项。
+  # 持久化到 ~/.kb/h2，重启不丢；想换成真 MySQL 只需覆盖 spring.datasource.* 四项。
   datasource:
-    url: jdbc:h2:file:${user.home}/.***REMOVED***/h2/***REMOVED***;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:${user.home}/.kb/h2/kb;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
 
-# ==================== z-***REMOVED*** 配置 ====================
-***REMOVED***:
+# ==================== z-kb 配置 ====================
+kb:
   enabled: true
   embedding:
     # tfidf = 本地 TF-IDF 实现（自包含，离线可用）
@@ -51,7 +51,7 @@ spring:
     model:
     apiKey:
     system-prompt: |
-      你是 z-***REMOVED*** 知识库助手，基于以下参考资料回答用户问题。
+      你是 z-kb 知识库助手，基于以下参考资料回答用户问题。
       当参考资料不足时，明确告知用户。
       回答时请标注引用源编号，例如 [1] [2]。
       回答简洁准确，避免无中生有。
@@ -69,7 +69,7 @@ knife4j:
 logging:
   level:
     root: INFO
-    com.zifang.z.***REMOVED***: DEBUG
+    com.zifang.z.kb: DEBUG
     com.zifang.z.vector: INFO
     com.zifang.z.graph: INFO
   pattern:

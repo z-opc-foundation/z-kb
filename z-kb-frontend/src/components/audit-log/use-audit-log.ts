@@ -26,7 +26,7 @@ export interface AuditAppliedFilters {
   range: AuditRangeFilter;
 }
 
-/** 调用方固定的日志范围：系统页不限类型，知识库页固定 type=***REMOVED*** 且带 ***REMOVED***Id。 */
+/** 调用方固定的日志范围：系统页不限类型，知识库页固定 type=KB 且带 kbId。 */
 export interface AuditScope {
   type?: AuditLogType;
   bizRef?: string;

@@ -29,7 +29,7 @@ export function formatFileSize(size?: number): string {
     return `${size} B`;
   }
   if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(1)} ***REMOVED***`;
+    return `${(size / 1024).toFixed(1)} KB`;
   }
   if (size < 1024 * 1024 * 1024) {
     return `${(size / 1024 / 1024).toFixed(2)} MB`;

@@ -1,9 +1,9 @@
-package com.zifang.z.***REMOVED***.protocol.request;
+package com.zifang.z.kb.protocol.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * 会话内提问请求 —— {@code POST /api/***REMOVED***/chat/sessions/{id}/chat}。
+ * 会话内提问请求 —— {@code POST /api/kb/chat/sessions/{id}/chat}。
  */
 @Schema(description = "会话内提问请求")
 public class SessionChatRequest {

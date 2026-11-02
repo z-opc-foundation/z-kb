@@ -12,7 +12,7 @@ vi.mock('./material-recycle-modal', () => ({
 const DETAIL: MaterialDetailRecord = {
   material: {
     materialId: 'mat-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     materialType: 'DOCUMENT',
     title: '排班管理制度',
     sourceType: 'LOCAL',
@@ -27,7 +27,7 @@ const DETAIL: MaterialDetailRecord = {
 
 const JOB: CompilationJobRecord = {
   jobId: 'job-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialId: 'mat-1',
   materialVersionId: 'v-1',
   pipelineType: 'DOCUMENT',

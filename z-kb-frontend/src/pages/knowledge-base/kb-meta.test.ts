@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { statusMeta, TYPE_META, typeMeta } from './***REMOVED***-meta';
+import { statusMeta, TYPE_META, typeMeta } from './kb-meta';
 
 describe('知识库类型与状态元数据', () => {
   it('五种知识库类型都有中文名与图标', () => {

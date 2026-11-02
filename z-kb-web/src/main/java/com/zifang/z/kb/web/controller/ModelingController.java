@@ -1,8 +1,8 @@
-package com.zifang.z.***REMOVED***.web.controller;
+package com.zifang.z.kb.web.controller;
 
-import com.zifang.z.***REMOVED***.modeling.core.ModelingService;
-import com.zifang.z.***REMOVED***.modeling.model.CheatSheet;
-import com.zifang.z.***REMOVED***.modeling.model.ProductModel;
+import com.zifang.z.kb.modeling.core.ModelingService;
+import com.zifang.z.kb.modeling.model.CheatSheet;
+import com.zifang.z.kb.modeling.model.ProductModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 产品建模控制器 — 拆解知识库 → 生成产品小抄。
  *
- * <p>路径前缀：/api/***REMOVED***/modeling
+ * <p>路径前缀：/api/kb/modeling
  */
 @Tag(name = "产品建模")
 @RestController
-@RequestMapping("/api/***REMOVED***/modeling")
+@RequestMapping("/api/kb/modeling")
 public class ModelingController {
 
     @Autowired

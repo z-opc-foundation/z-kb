@@ -6,20 +6,20 @@ import {
   pageKnowledgeBase,
   removeKnowledgeBase,
 } from '@/services/knowledgeBase';
-import { emit***REMOVED***Changed } from '@/utils/***REMOVED***-events';
+import { emitKbChanged } from '@/utils/kb-events';
 import { getTenantInfo } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ***REMOVED***FormModal from './***REMOVED***-form-modal';
-import ***REMOVED***ActivityChart, { ACTIVITY_WEEKS } from './***REMOVED***-activity-chart';
+import KbFormModal from './kb-form-modal';
+import KbActivityChart, { ACTIVITY_WEEKS } from './kb-activity-chart';
 import { readFavorites, saveFavorites, toggleFavoriteId } from './favorites';
-import { statusMeta, typeMeta } from './***REMOVED***-meta';
+import { statusMeta, typeMeta } from './kb-meta';
 import { formatDateTime } from '@/utils/format';
 import {
-  fetch***REMOVED***ActivityHeatmap,
-  type ***REMOVED***ActivityDay,
-} from '@/services/***REMOVED***Activity';
+  fetchKbActivityHeatmap,
+  type KbActivityDay,
+} from '@/services/kbActivity';
 
 const PAGE_SIZE = 8;
 
@@ -35,35 +35,35 @@ function StatusTag({ status }: { status: string }) {
   );
 }
 
-interface ***REMOVED***DeleteModalProps {
-  ***REMOVED***: KnowledgeBaseRecord;
+interface KbDeleteModalProps {
+  kb: KnowledgeBaseRecord;
   onClose: () => void;
   onDeleted: () => void;
 }
 
-function ***REMOVED***DeleteModal({ ***REMOVED***, onClose, onDeleted }: ***REMOVED***DeleteModalProps) {
+function KbDeleteModal({ kb, onClose, onDeleted }: KbDeleteModalProps) {
   const [code, setCode] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const confirmed = code.trim() === ***REMOVED***.code;
+  const confirmed = code.trim() === kb.code;
 
   const submit = async () => {
     if (!confirmed) {
       return;
     }
     setSubmitting(true);
-    const result = await removeKnowledgeBase(***REMOVED***.***REMOVED***Id);
+    const result = await removeKnowledgeBase(kb.kbId);
     setSubmitting(false);
     if (result === undefined) {
       return;
     }
-    toast('知识库已删除', ***REMOVED***.name, 'success');
+    toast('知识库已删除', kb.name, 'success');
     onDeleted();
   };
 
   return (
     <AppModal
       icon="trash"
-      title={`删除知识库 · ${***REMOVED***.name}`}
+      title={`删除知识库 · ${kb.name}`}
       sub="危险区 · 删除不可恢复"
       width={620}
       onClose={onClose}
@@ -92,7 +92,7 @@ function ***REMOVED***DeleteModal({ ***REMOVED***, onClose, onDeleted }: ***REMO
               <b>危险动作：删除知识库</b>
               <span>
                 {' '}
-                — 请输入编码 <b className="mono">{***REMOVED***.code}</b> 以确认。
+                — 请输入编码 <b className="mono">{kb.code}</b> 以确认。
               </span>
             </div>
           </div>
@@ -108,7 +108,7 @@ function ***REMOVED***DeleteModal({ ***REMOVED***, onClose, onDeleted }: ***REMO
             <input
               className="input mono"
               value={code}
-              placeholder={***REMOVED***.code}
+              placeholder={kb.code}
               autoComplete="off"
               onChange={(event) => setCode(event.target.value)}
             />
@@ -131,8 +131,8 @@ function ***REMOVED***DeleteModal({ ***REMOVED***, onClose, onDeleted }: ***REMO
 
 type ModalState =
   | { type: 'create' }
-  | { type: 'edit'; ***REMOVED***: KnowledgeBaseRecord }
-  | { type: 'delete'; ***REMOVED***: KnowledgeBaseRecord }
+  | { type: 'edit'; kb: KnowledgeBaseRecord }
+  | { type: 'delete'; kb: KnowledgeBaseRecord }
   | null;
 
 export default function KnowledgeBaseListPage() {
@@ -146,7 +146,7 @@ export default function KnowledgeBaseListPage() {
   const [view, setView] = useState<'cards' | 'table'>('cards');
   const [page, setPage] = useState(1);
   const [favorites, setFavorites] = useState<string[]>(readFavorites);
-  const [activity, setActivity] = useState<Record<string, ***REMOVED***ActivityDay[]>>({});
+  const [activity, setActivity] = useState<Record<string, KbActivityDay[]>>({});
   const [activityLoadedKey, setActivityLoadedKey] = useState('');
   const [activityFailedKey, setActivityFailedKey] = useState('');
   const [modal, setModal] = useState<ModalState>(null);
@@ -160,7 +160,7 @@ export default function KnowledgeBaseListPage() {
         { rethrow: true },
       );
       setRecords(result?.records || []);
-      emit***REMOVED***Changed();
+      emitKbChanged();
     } catch (error) {
       setLoadError((error as Error).message || '服务器错误');
     } finally {
@@ -188,7 +188,7 @@ export default function KnowledgeBaseListPage() {
         );
         return byTime !== 0
           ? byTime
-          : String(b.***REMOVED***Id).localeCompare(String(a.***REMOVED***Id));
+          : String(b.kbId).localeCompare(String(a.kbId));
       }),
     [records],
   );
@@ -199,7 +199,7 @@ export default function KnowledgeBaseListPage() {
       active: sorted.filter((item) => item.status === 'ACTIVE').length,
       archived: sorted.filter((item) => item.status === 'ARCHIVED').length,
       managed: sorted.filter((item) => item.canManage).length,
-      favorite: sorted.filter((item) => favorites.includes(item.***REMOVED***Id)).length,
+      favorite: sorted.filter((item) => favorites.includes(item.kbId)).length,
     }),
     [favorites, sorted],
   );
@@ -209,7 +209,7 @@ export default function KnowledgeBaseListPage() {
     if (filter === 'managed') {
       list = list.filter((item) => item.canManage);
     } else if (filter === 'favorite') {
-      list = list.filter((item) => favorites.includes(item.***REMOVED***Id));
+      list = list.filter((item) => favorites.includes(item.kbId));
     } else if (filter !== 'all') {
       list = list.filter((item) => item.status === filter);
     }
@@ -239,14 +239,14 @@ export default function KnowledgeBaseListPage() {
     currentPage * PAGE_SIZE,
   );
 
-  const visibleKey = pageRecords.map((item) => item.***REMOVED***Id).join(',');
+  const visibleKey = pageRecords.map((item) => item.kbId).join(',');
 
   useEffect(() => {
     if (!visibleKey) {
       return;
     }
     let cancelled = false;
-    fetch***REMOVED***ActivityHeatmap(visibleKey.split(','), ACTIVITY_WEEKS * 7)
+    fetchKbActivityHeatmap(visibleKey.split(','), ACTIVITY_WEEKS * 7)
       .then((data) => {
         if (cancelled || !data) {
           return;
@@ -269,34 +269,34 @@ export default function KnowledgeBaseListPage() {
     };
   }, [visibleKey]);
 
-  const toggleFavorite = (***REMOVED***Id: string) => {
-    const next = toggleFavoriteId(favorites, ***REMOVED***Id);
+  const toggleFavorite = (kbId: string) => {
+    const next = toggleFavoriteId(favorites, kbId);
     setFavorites(next);
-    toast(next.includes(***REMOVED***Id) ? '已收藏' : '已取消收藏', undefined, 'info');
+    toast(next.includes(kbId) ? '已收藏' : '已取消收藏', undefined, 'info');
   };
 
-  const openDetail = (***REMOVED***: KnowledgeBaseRecord) => {
-    navigate(`/knowledge-bases/${encodeURIComponent(***REMOVED***.***REMOVED***Id)}`);
+  const openDetail = (kb: KnowledgeBaseRecord) => {
+    navigate(`/knowledge-bases/${encodeURIComponent(kb.kbId)}`);
   };
 
-  const renderCard = (***REMOVED***: KnowledgeBaseRecord) => {
-    const favorited = favorites.includes(***REMOVED***.***REMOVED***Id);
+  const renderCard = (kb: KnowledgeBaseRecord) => {
+    const favorited = favorites.includes(kb.kbId);
     return (
       <article
-        key={***REMOVED***.***REMOVED***Id}
-        className="***REMOVED***-card"
-        onClick={() => openDetail(***REMOVED***)}
+        key={kb.kbId}
+        className="kb-card"
+        onClick={() => openDetail(kb)}
         style={{ cursor: 'pointer' }}
       >
-        <div className="***REMOVED***-card-top">
-          <div className="***REMOVED***-icon">
-            <Icon name={typeMeta(***REMOVED***.type).icon} size={21} />
+        <div className="kb-card-top">
+          <div className="kb-icon">
+            <Icon name={typeMeta(kb.type).icon} size={21} />
           </div>
-          <div className="***REMOVED***-title">
+          <div className="kb-title">
             <h3>
-              <span title={***REMOVED***.name}>{***REMOVED***.name}</span>
+              <span title={kb.name}>{kb.name}</span>
             </h3>
-            <span className="code">{***REMOVED***.code}</span>
+            <span className="code">{kb.code}</span>
           </div>
           <button
             className={`fav-btn ${favorited ? 'on' : ''}`}
@@ -305,42 +305,42 @@ export default function KnowledgeBaseListPage() {
             aria-pressed={favorited}
             onClick={(event) => {
               event.stopPropagation();
-              toggleFavorite(***REMOVED***.***REMOVED***Id);
+              toggleFavorite(kb.kbId);
             }}
           >
             <Icon name="star" size={15} />
           </button>
         </div>
-        <div className="***REMOVED***-tags">
-          <span className={`tag ${***REMOVED***.canManage ? 'violet' : 'gray'}`}>
-            {***REMOVED***.canManage ? '可管理' : '只读'}
+        <div className="kb-tags">
+          <span className={`tag ${kb.canManage ? 'violet' : 'gray'}`}>
+            {kb.canManage ? '可管理' : '只读'}
           </span>
           <span className="tag cyan mono">
-            {***REMOVED***.embeddingModel || '默认模型'}
+            {kb.embeddingModel || '默认模型'}
           </span>
-          <StatusTag status={***REMOVED***.status} />
+          <StatusTag status={kb.status} />
         </div>
-        <div className="***REMOVED***-progress">
+        <div className="kb-progress">
           <div className="top">
             <span>最近更新</span>
-            <b>{formatDateTime(***REMOVED***.updateTime)}</b>
+            <b>{formatDateTime(kb.updateTime)}</b>
           </div>
         </div>
-        <div className="***REMOVED***-foot">
-          <***REMOVED***ActivityChart
-            days={activity[***REMOVED***.***REMOVED***Id]}
+        <div className="kb-foot">
+          <KbActivityChart
+            days={activity[kb.kbId]}
             pending={activityLoadedKey !== visibleKey}
             unavailable={activityFailedKey === visibleKey}
           />
-          <div className="***REMOVED***-foot-actions">
-            {***REMOVED***.canManage ? (
+          <div className="kb-foot-actions">
+            {kb.canManage ? (
               <button
                 type="button"
-                className="***REMOVED***-set"
+                className="kb-set"
                 title="打开设置"
                 onClick={(event) => {
                   event.stopPropagation();
-                  navigate(`/knowledge-bases/${***REMOVED***.***REMOVED***Id}/settings`);
+                  navigate(`/knowledge-bases/${kb.kbId}/settings`);
                 }}
               >
                 <Icon name="settings" size={12} />
@@ -354,7 +354,7 @@ export default function KnowledgeBaseListPage() {
   };
 
   const pager = (
-    <div className="***REMOVED***-list-pager">
+    <div className="kb-list-pager">
       <span className="note">
         共 {filtered.length} 个知识库 · 第 {currentPage} / {pages} 页 ·{' '}
         {tenant.name}（{tenant.code}）· 按最近更新排序
@@ -411,53 +411,53 @@ export default function KnowledgeBaseListPage() {
             </tr>
           </thead>
           <tbody>
-            {pageRecords.map((***REMOVED***) => {
-              const meta = statusMeta(***REMOVED***.status);
-              const favorited = favorites.includes(***REMOVED***.***REMOVED***Id);
+            {pageRecords.map((kb) => {
+              const meta = statusMeta(kb.status);
+              const favorited = favorites.includes(kb.kbId);
               return (
                 <tr
-                  key={***REMOVED***.***REMOVED***Id}
+                  key={kb.kbId}
                   className="c-pointer"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => openDetail(***REMOVED***)}
+                  onClick={() => openDetail(kb)}
                 >
                   <td>
                     <div className="name-cell">
                       <div className="file-tile">
-                        <Icon name={typeMeta(***REMOVED***.type).icon} size={14} />
+                        <Icon name={typeMeta(kb.type).icon} size={14} />
                       </div>
                       <div className="nc">
-                        <b>{***REMOVED***.name}</b>
-                        <small className="mono">{***REMOVED***.code}</small>
+                        <b>{kb.name}</b>
+                        <small className="mono">{kb.code}</small>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <span className="tag gray">{typeMeta(***REMOVED***.type).label}</span>
+                    <span className="tag gray">{typeMeta(kb.type).label}</span>
                   </td>
                   <td>
                     <span className={`tag ${meta.tag} sm`}>{meta.label}</span>
                   </td>
-                  <td className="mono-sm">{***REMOVED***.embeddingModel || '—'}</td>
-                  <td>{***REMOVED***.canManage ? '可管理' : '只读'}</td>
-                  <td className="mono-sm">{formatDateTime(***REMOVED***.updateTime)}</td>
+                  <td className="mono-sm">{kb.embeddingModel || '—'}</td>
+                  <td>{kb.canManage ? '可管理' : '只读'}</td>
+                  <td className="mono-sm">{formatDateTime(kb.updateTime)}</td>
                   <td className="col-activity">
-                    <***REMOVED***ActivityChart
-                      days={activity[***REMOVED***.***REMOVED***Id]}
+                    <KbActivityChart
+                      days={activity[kb.kbId]}
                       pending={activityLoadedKey !== visibleKey}
                       unavailable={activityFailedKey === visibleKey}
                     />
                   </td>
                   <td>
                     <div className="row-actions">
-                      {***REMOVED***.canManage ? (
+                      {kb.canManage ? (
                         <button
                           className="icon-btn"
                           type="button"
                           title="设置"
                           onClick={(event) => {
                             event.stopPropagation();
-                            navigate(`/knowledge-bases/${***REMOVED***.***REMOVED***Id}/settings`);
+                            navigate(`/knowledge-bases/${kb.kbId}/settings`);
                           }}
                         >
                           <Icon name="settings" size={13} />
@@ -470,7 +470,7 @@ export default function KnowledgeBaseListPage() {
                         aria-pressed={favorited}
                         onClick={(event) => {
                           event.stopPropagation();
-                          toggleFavorite(***REMOVED***.***REMOVED***Id);
+                          toggleFavorite(kb.kbId);
                         }}
                       >
                         <Icon name="star" size={13} />
@@ -563,13 +563,13 @@ export default function KnowledgeBaseListPage() {
       </div>
     );
   } else if (view === 'cards') {
-    results = <div className="***REMOVED***-grid">{pageRecords.map(renderCard)}</div>;
+    results = <div className="kb-grid">{pageRecords.map(renderCard)}</div>;
   } else {
     results = renderTable();
   }
 
   return (
-    <div className="view ***REMOVED***-list-view">
+    <div className="view kb-list-view">
       <div className="panel">
         <div className="panel-body" style={{ padding: '12px 14px' }}>
           <div className="filter-bar">
@@ -620,7 +620,7 @@ export default function KnowledgeBaseListPage() {
                 表格
               </button>
             </div>
-            <Can code="***REMOVED***.create">
+            <Can code="kb.create">
               <button
                 className="btn sm primary"
                 type="button"
@@ -634,11 +634,11 @@ export default function KnowledgeBaseListPage() {
         </div>
       </div>
 
-      <div className={`***REMOVED***-list-results ${view}`}>{results}</div>
+      <div className={`kb-list-results ${view}`}>{results}</div>
       {filtered.length > 0 && view !== 'table' ? pager : null}
 
       {modal && modal.type === 'create' ? (
-        <***REMOVED***FormModal
+        <KbFormModal
           mode="create"
           onClose={() => setModal(null)}
           onSaved={() => {
@@ -648,9 +648,9 @@ export default function KnowledgeBaseListPage() {
         />
       ) : null}
       {modal && modal.type === 'edit' ? (
-        <***REMOVED***FormModal
+        <KbFormModal
           mode="edit"
-          ***REMOVED***={modal.***REMOVED***}
+          kb={modal.kb}
           onClose={() => setModal(null)}
           onSaved={() => {
             setModal(null);
@@ -659,8 +659,8 @@ export default function KnowledgeBaseListPage() {
         />
       ) : null}
       {modal && modal.type === 'delete' ? (
-        <***REMOVED***DeleteModal
-          ***REMOVED***={modal.***REMOVED***}
+        <KbDeleteModal
+          kb={modal.kb}
           onClose={() => setModal(null)}
           onDeleted={() => {
             setModal(null);

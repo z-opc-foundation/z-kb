@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.resource.entity;
+package com.zifang.z.kb.storage.resource.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 知识库当前配置档案（***REMOVED***_knowledge_base_profile）。
+ * 知识库当前配置档案（kb_knowledge_base_profile）。
  *
  * <p>策略字段存 JSON 文本；类型与 {@link KnowledgeBaseProfileVersionEntity} 保持一致。</p>
  */
-@TableName("***REMOVED***_knowledge_base_profile")
+@TableName("kb_knowledge_base_profile")
 public class KnowledgeBaseProfileEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String tenantCode;
     private String type;
     private String presetVersion;
@@ -43,12 +43,12 @@ public class KnowledgeBaseProfileEntity {
         this.id = id;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getTenantCode() {

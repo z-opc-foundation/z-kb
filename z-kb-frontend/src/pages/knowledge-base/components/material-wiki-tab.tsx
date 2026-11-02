@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
-  ***REMOVED***Id: string;
+  kbId: string;
   materialId: string;
 }
 
@@ -13,7 +13,7 @@ const WIKI_STATUS: Record<string, { label: string; tag: string }> = {
   FAILED: { label: '生成失败', tag: 'red' },
 };
 
-export default function MaterialWikiTab({ ***REMOVED***Id, materialId }: Props) {
+export default function MaterialWikiTab({ kbId, materialId }: Props) {
   const navigate = useNavigate();
   const [pages, setPages] = useState<WikiPageRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function MaterialWikiTab({ ***REMOVED***Id, materialId }: Props) 
 
   const openWiki = (wikiId: string) => {
     navigate(
-      `/knowledge-bases/${encodeURIComponent(***REMOVED***Id)}/workspace?view=wiki&wikiId=${encodeURIComponent(wikiId)}`,
+      `/knowledge-bases/${encodeURIComponent(kbId)}/workspace?view=wiki&wikiId=${encodeURIComponent(wikiId)}`,
     );
   };
 

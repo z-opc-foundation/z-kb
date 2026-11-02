@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.storage.evaluation.mapper;
+package com.zifang.z.kb.storage.evaluation.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zifang.z.***REMOVED***.storage.evaluation.entity.***REMOVED***SnapshotItemEntity;
+import com.zifang.z.kb.storage.evaluation.entity.KbSnapshotItemEntity;
 
-public interface ***REMOVED***SnapshotItemMapper extends BaseMapper<***REMOVED***SnapshotItemEntity> {
+public interface KbSnapshotItemMapper extends BaseMapper<KbSnapshotItemEntity> {
 }

@@ -1,19 +1,19 @@
-package com.zifang.z.***REMOVED***.protocol;
+package com.zifang.z.kb.protocol;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zifang.util.json.JsonUtil;
-import com.zifang.z.***REMOVED***.protocol.request.CreateSessionRequest;
-import com.zifang.z.***REMOVED***.protocol.request.ImportMarkdownRequest;
-import com.zifang.z.***REMOVED***.protocol.request.SessionChatRequest;
-import com.zifang.z.***REMOVED***.protocol.request.WebhookPayload;
-import com.zifang.z.***REMOVED***.protocol.response.CountResponse;
-import com.zifang.z.***REMOVED***.protocol.response.DataSourceSummary;
-import com.zifang.z.***REMOVED***.protocol.response.ErrorResponse;
-import com.zifang.z.***REMOVED***.protocol.response.IngestItemSummary;
-import com.zifang.z.***REMOVED***.protocol.response.IngestSummary;
-import com.zifang.z.***REMOVED***.protocol.response.ListSourcesResponse;
-import com.zifang.z.***REMOVED***.protocol.response.SourceTypeSummary;
-import com.zifang.z.***REMOVED***.protocol.response.WebhookAck;
+import com.zifang.z.kb.protocol.request.CreateSessionRequest;
+import com.zifang.z.kb.protocol.request.ImportMarkdownRequest;
+import com.zifang.z.kb.protocol.request.SessionChatRequest;
+import com.zifang.z.kb.protocol.request.WebhookPayload;
+import com.zifang.z.kb.protocol.response.CountResponse;
+import com.zifang.z.kb.protocol.response.DataSourceSummary;
+import com.zifang.z.kb.protocol.response.ErrorResponse;
+import com.zifang.z.kb.protocol.response.IngestItemSummary;
+import com.zifang.z.kb.protocol.response.IngestSummary;
+import com.zifang.z.kb.protocol.response.ListSourcesResponse;
+import com.zifang.z.kb.protocol.response.SourceTypeSummary;
+import com.zifang.z.kb.protocol.response.WebhookAck;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 协议层契约测试 —— 钉住每个 DTO 对外的 JSON 键集合。
  *
  * <p><b>这些期望值不是"当前该长什么样"，而是"改造前裸 Map 字面量里放的是哪几个键"</b>。
- * 改造前 z-***REMOVED***-web 的 controller 用 {@code Map<String,Object>} 手工 put/get，
+ * 改造前 z-kb-web 的 controller 用 {@code Map<String,Object>} 手工 put/get，
  * 键名散在各处、没有类型检查；现在搬到 DTO 里，就必须由测试把那份键集合原样继承下来。
  * 少一个键、多一个键、改一个键 —— 任何一种都会让本测试变红。
  */
@@ -51,7 +51,7 @@ class ProtocolContractTest {
     }
 
     /**
-     * 汇总类 DTO 的键集合走 JsonUtil 取 —— 这才是 {@code /api/***REMOVED***/ingest/*} 的实际出站路径
+     * 汇总类 DTO 的键集合走 JsonUtil 取 —— 这才是 {@code /api/kb/ingest/*} 的实际出站路径
      * （controller 显式 toJson）。拿 ObjectMapper 去量它量的就不是线上那条路了：
      * IngestItemSummary.error 的"null 时不输出"由 z-util 的 {@code @JsonSerialize(nonNull)}
      * 决定，Jackson 那侧已经不再有这个语义。

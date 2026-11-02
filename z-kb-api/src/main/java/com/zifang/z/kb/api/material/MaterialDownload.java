@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 原件下载内容。服务层不依赖 Web 类型，由控制器负责响应头与流。

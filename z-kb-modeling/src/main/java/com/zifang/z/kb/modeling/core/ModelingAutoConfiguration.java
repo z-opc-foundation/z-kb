@@ -1,6 +1,6 @@
-package com.zifang.z.***REMOVED***.modeling.core;
+package com.zifang.z.kb.modeling.core;
 
-import com.zifang.z.***REMOVED***.api.KnowledgeBaseService;
+import com.zifang.z.kb.api.KnowledgeBaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,8 +17,8 @@ public class ModelingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ModelingService modelingService(KnowledgeBaseService ***REMOVED***Service) {
+    public ModelingService modelingService(KnowledgeBaseService kbService) {
         log.info("ModelingService 初始化");
-        return new ModelingService(***REMOVED***Service);
+        return new ModelingService(kbService);
     }
 }

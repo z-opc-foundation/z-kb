@@ -33,7 +33,7 @@ export interface ConceptDetailRecord {
   mentions: ConceptMentionRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/concept';
+const BASE = '/kb/v1/concept';
 
 const tenantHeaders = () => ({ 'X-Tenant-Code': getTenantCode() });
 
@@ -46,21 +46,21 @@ async function call<T>(run: () => Promise<T>): Promise<T | undefined> {
   }
 }
 
-export function listConceptsBy***REMOVED***(***REMOVED***Id: string, keyword?: string) {
+export function listConceptsByKb(kbId: string, keyword?: string) {
   return call(() =>
-    request<ConceptRecord[]>(`${BASE}/listBy***REMOVED***`, {
+    request<ConceptRecord[]>(`${BASE}/listByKb`, {
       method: 'get',
-      params: { ***REMOVED***Id, keyword: keyword || undefined },
+      params: { kbId, keyword: keyword || undefined },
       headers: tenantHeaders(),
     }),
   );
 }
 
-export function getConcept(***REMOVED***Id: string, conceptId: string) {
+export function getConcept(kbId: string, conceptId: string) {
   return call(() =>
     request<ConceptDetailRecord>(`${BASE}/queryById`, {
       method: 'get',
-      params: { ***REMOVED***Id, conceptId },
+      params: { kbId, conceptId },
       headers: tenantHeaders(),
     }),
   );

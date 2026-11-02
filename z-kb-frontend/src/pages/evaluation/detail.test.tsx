@@ -26,7 +26,7 @@ import {
 } from '@/services/evaluation';
 import { Route, Routes } from 'react-router-dom';
 import { renderAt } from '@/test/render';
-import EvaluationWor***REMOVED***enchPage from './detail';
+import EvaluationWorkbenchPage from './detail';
 
 vi.mock('@/services/evaluation', () => ({
   pageEvaluationKnowledgeBases: vi.fn(),
@@ -53,11 +53,11 @@ const badcasesMock = vi.mocked(listEvalBadcases);
 const trustMock = vi.mocked(queryEvalTrustEvidence);
 const updateMock = vi.mocked(updateEvalBadcase);
 
-const BASE_ROUTE = '/knowledge-bases/***REMOVED***-1/evaluation';
+const BASE_ROUTE = '/knowledge-bases/kb-1/evaluation';
 
 const OVERVIEW: EvalOverview = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   dataset: {
     versionNo: 'v3',
     status: 'PUBLISHED',
@@ -90,7 +90,7 @@ const OVERVIEW: EvalOverview = {
 const RUN_DETAIL: EvalRunDetail = {
   run: {
     runId: 'run-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'COMPLETED',
     resultUsable: true,
     datasetVersionNo: 'v3',
@@ -240,10 +240,10 @@ function renderDetail(route: string) {
   return renderAt(
     <Routes>
       <Route
-        path="/knowledge-bases/:***REMOVED***Id/evaluation"
-        element={<EvaluationWor***REMOVED***enchPage />}
+        path="/knowledge-bases/:kbId/evaluation"
+        element={<EvaluationWorkbenchPage />}
       />
-      <Route path="/evaluations" element={<EvaluationWor***REMOVED***enchPage />} />
+      <Route path="/evaluations" element={<EvaluationWorkbenchPage />} />
     </Routes>,
     { route },
   );
@@ -253,11 +253,11 @@ afterEach(() => {
   cleanup();
 });
 
-describe('EvaluationWor***REMOVED***enchPage', () => {
+describe('EvaluationWorkbenchPage', () => {
   it('默认展示本次结果并加载概览与跑批', async () => {
     renderDetail(BASE_ROUTE);
     expect(await screen.findByText('护理知识库')).toBeInTheDocument();
-    expect(overviewMock).toHaveBeenCalledWith('***REMOVED***-1', undefined);
+    expect(overviewMock).toHaveBeenCalledWith('kb-1', undefined);
     await waitFor(() => expect(runMock).toHaveBeenCalledWith('run-1'));
     expect(screen.getByRole('button', { name: /本次结果/ })).toHaveClass('active');
     expect(screen.getByRole('button', { name: /指标总览/ })).toBeInTheDocument();
@@ -302,7 +302,7 @@ describe('EvaluationWor***REMOVED***enchPage', () => {
 
     fireEvent.click(screen.getAllByRole('button', { name: /坏例与回归/ })[0]);
     expect(await screen.findByText('坏例台账')).toBeInTheDocument();
-    expect(badcasesMock).toHaveBeenCalledWith('***REMOVED***-1', undefined);
+    expect(badcasesMock).toHaveBeenCalledWith('kb-1', undefined);
     expect(await screen.findByText('发热患者如何分级？')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /测评跑批/ }));
@@ -322,7 +322,7 @@ describe('EvaluationWor***REMOVED***enchPage', () => {
 
     await waitFor(() => expect(createMock).toHaveBeenCalledTimes(1));
     expect(createMock).toHaveBeenCalledWith({
-      ***REMOVED***Id: '***REMOVED***-1',
+      kbId: 'kb-1',
       datasetVersionNo: 'v3',
       allowReuse: true,
     });
@@ -335,7 +335,7 @@ describe('EvaluationWor***REMOVED***enchPage', () => {
     await screen.findByText('答案准确率');
 
     fireEvent.click(screen.getByRole('button', { name: /编辑 QA 集合/ }));
-    await waitFor(() => expect(datasetMock).toHaveBeenCalledWith('***REMOVED***-1'));
+    await waitFor(() => expect(datasetMock).toHaveBeenCalledWith('kb-1'));
     expect(await screen.findByText('题目列表')).toBeInTheDocument();
     expect(screen.getByText('按体温分级')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '关闭' }));
@@ -350,11 +350,11 @@ describe('EvaluationWor***REMOVED***enchPage', () => {
   it('URL 指定 runId 与基线时按参数查询', async () => {
     renderDetail(`${BASE_ROUTE}?view=result&runId=run-9&baselineRunId=run-0`);
     await waitFor(() => expect(runMock).toHaveBeenCalledWith('run-9'));
-    expect(overviewMock).toHaveBeenCalledWith('***REMOVED***-1', 'run-0');
+    expect(overviewMock).toHaveBeenCalledWith('kb-1', 'run-0');
     expect(screen.getAllByText('run-9').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('缺少 ***REMOVED***Id 时展示深链错误', () => {
+  it('缺少 kbId 时展示深链错误', () => {
     renderDetail('/evaluations');
     expect(screen.getByText('缺少知识库标识')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '返回评测库' })).toBeInTheDocument();
@@ -385,7 +385,7 @@ describe('EvaluationWor***REMOVED***enchPage', () => {
   it('深链打开坏例抽屉', async () => {
     renderDetail(`${BASE_ROUTE}?view=cases&caseId=case-1&status=OPEN`);
     expect(await screen.findByText('坏例明细')).toBeInTheDocument();
-    expect(badcasesMock).toHaveBeenCalledWith('***REMOVED***-1', 'OPEN');
+    expect(badcasesMock).toHaveBeenCalledWith('kb-1', 'OPEN');
     const dialog = screen.getByRole('dialog');
     expect(
       await within(dialog).findByText('按体温分级处理。'),

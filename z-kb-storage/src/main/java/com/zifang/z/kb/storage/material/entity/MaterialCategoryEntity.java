@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.material.entity;
+package com.zifang.z.kb.storage.material.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.Instant;
 
 /**
- * 库内资料分类（***REMOVED***_category）。接入源同步节点与普通分类同表，按 node_kind 区分。
+ * 库内资料分类（kb_category）。接入源同步节点与普通分类同表，按 node_kind 区分。
  */
-@TableName("***REMOVED***_category")
+@TableName("kb_category")
 public class MaterialCategoryEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
     private String categoryId;
     private String tenantCode;
-    private String ***REMOVED***Id;
+    private String kbId;
     private String parentId;
     private String name;
     private Integer sortNo;
@@ -52,12 +52,12 @@ public class MaterialCategoryEntity {
         this.tenantCode = tenantCode;
     }
 
-    public String get***REMOVED***Id() {
-        return ***REMOVED***Id;
+    public String getKbId() {
+        return kbId;
     }
 
-    public void set***REMOVED***Id(String ***REMOVED***Id) {
-        this.***REMOVED***Id = ***REMOVED***Id;
+    public void setKbId(String kbId) {
+        this.kbId = kbId;
     }
 
     public String getParentId() {

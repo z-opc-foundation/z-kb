@@ -5,8 +5,8 @@ import type { EvalOverview, EvalRunRecord } from '@/services/evaluation';
 import RunsView from './runs-view';
 
 const OVERVIEW: EvalOverview = {
-  ***REMOVED***Id: '***REMOVED***-1',
-  ***REMOVED***Name: '护理知识库',
+  kbId: 'kb-1',
+  kbName: '护理知识库',
   dataset: { versionNo: 'v3', status: 'PUBLISHED', caseCount: 12 },
   lastRun: {
     runId: 'run-1',
@@ -19,7 +19,7 @@ const OVERVIEW: EvalOverview = {
 const RUNS: EvalRunRecord[] = [
   {
     runId: 'run-1',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'COMPLETED',
     resultUsable: true,
     datasetVersionNo: 'v3',
@@ -32,7 +32,7 @@ const RUNS: EvalRunRecord[] = [
   },
   {
     runId: 'run-0',
-    ***REMOVED***Id: '***REMOVED***-1',
+    kbId: 'kb-1',
     status: 'FAILED',
     resultUsable: false,
     datasetVersionNo: 'v2',

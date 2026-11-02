@@ -8,7 +8,7 @@ vi.mock('@/services/identity', () => ({
 }));
 
 const members: OrgMember[] = [
-  { staffId: 11, name: '张三', jobNumber: 'A001', roleCodes: ['***REMOVED***_admin'] },
+  { staffId: 11, name: '张三', jobNumber: 'A001', roleCodes: ['kb_admin'] },
   { staffId: 12, name: '李四', jobNumber: 'A002', roleCodes: [] },
 ];
 

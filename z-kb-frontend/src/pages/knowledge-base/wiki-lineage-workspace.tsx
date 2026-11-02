@@ -1,5 +1,5 @@
 import Icon from '@/components/icon';
-import { ConceptRecord, listConceptsBy***REMOVED*** } from '@/services/concept';
+import { ConceptRecord, listConceptsByKb } from '@/services/concept';
 import {
   getWikiLineage,
   listWikiPages,
@@ -18,7 +18,7 @@ import {
 import ConceptDetailModal from './components/concept-detail-modal';
 
 interface Props {
-  ***REMOVED***Id: string;
+  kbId: string;
   initialWikiId?: string;
   focusConceptId?: string;
   onOpenMaterial?: (materialId: string) => void;
@@ -398,14 +398,14 @@ function conceptStatusMeta(status: string) {
 }
 
 export default function WikiLineageWorkspace({
-  ***REMOVED***Id,
+  kbId,
   initialWikiId,
   focusConceptId,
   onOpenMaterial,
   onCountChange,
 }: Props) {
-  const [scope, setScope] = useState<'***REMOVED***' | 'wiki'>(
-    initialWikiId ? 'wiki' : '***REMOVED***',
+  const [scope, setScope] = useState<'kb' | 'wiki'>(
+    initialWikiId ? 'wiki' : 'kb',
   );
   const [wikiId, setWikiId] = useState(initialWikiId || '');
   const [pages, setPages] = useState<WikiPageRecord[]>([]);
@@ -466,32 +466,32 @@ export default function WikiLineageWorkspace({
   } | null>(null);
 
   const loadPages = useCallback(async () => {
-    const result = await listWikiPages(***REMOVED***Id, undefined, 100);
+    const result = await listWikiPages(kbId, undefined, 100);
     if (result) {
       setPages(result);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const loadConcepts = useCallback(async () => {
-    const result = await listConceptsBy***REMOVED***(***REMOVED***Id);
+    const result = await listConceptsByKb(kbId);
     if (result) {
       setConcepts(result);
     }
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const loadLineage = useCallback(async () => {
     setLoading(true);
     const result =
       scope === 'wiki' && wikiId
         ? await getWikiLineage({ wikiId })
-        : await getWikiLineage({ ***REMOVED***Id });
+        : await getWikiLineage({ kbId });
     setLoading(false);
     if (!result) {
       return;
     }
     setLineage(result);
     setSelectedNode(result.nodes[0]?.nodeId || '');
-  }, [scope, wikiId, ***REMOVED***Id]);
+  }, [scope, wikiId, kbId]);
 
   useEffect(() => {
     void loadPages();
@@ -979,9 +979,9 @@ export default function WikiLineageWorkspace({
       <div className="left">
         <div className="subtabs" style={{ marginBottom: 0 }}>
           <button
-            className={`btn sm ${scope === '***REMOVED***' ? 'primary-soft' : 'ghost'}`}
+            className={`btn sm ${scope === 'kb' ? 'primary-soft' : 'ghost'}`}
             type="button"
-            onClick={() => setScope('***REMOVED***')}
+            onClick={() => setScope('kb')}
           >
             <Icon name="layers" size={13} />
             库内全部
@@ -1383,7 +1383,7 @@ export default function WikiLineageWorkspace({
       </div>
       {detailConceptId ? (
         <ConceptDetailModal
-          ***REMOVED***Id={***REMOVED***Id}
+          kbId={kbId}
           conceptId={detailConceptId}
           onClose={() => setDetailConceptId('')}
           onOpenMaterial={

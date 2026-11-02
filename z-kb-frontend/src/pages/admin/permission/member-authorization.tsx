@@ -351,7 +351,7 @@ export default function MemberAuthorization({
         )}
       </section>
 
-      <section className="panel perm-wor***REMOVED***ench">
+      <section className="panel perm-workbench">
         {catalogLoading ? (
           <div className="perm-loading" role="status">
             <span className="spinner" />

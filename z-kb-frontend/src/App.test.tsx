@@ -9,7 +9,7 @@ import { fetchAuthContext } from '@/services/identity';
 import AppShell from '@/components/app-shell';
 import AppModal from '@/components/app-modal';
 import Icon from '@/components/icon';
-import { ***REMOVED***CHANGED_EVENT } from '@/utils/***REMOVED***-events';
+import { KB_CHANGED_EVENT } from '@/utils/kb-events';
 import { DEFAULT_TENANT_CODE } from '@/utils/tenant';
 import { toast } from '@/utils/toast';
 
@@ -62,7 +62,7 @@ function renderShell(path: string) {
     <AuthProvider>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
-          <Route path="/knowledge-bases/:***REMOVED***Id/*" element={<AppShell>测试内容</AppShell>} />
+          <Route path="/knowledge-bases/:kbId/*" element={<AppShell>测试内容</AppShell>} />
           <Route path="*" element={<AppShell>测试内容</AppShell>} />
         </Routes>
         <LocationIndicator />
@@ -103,11 +103,11 @@ describe('路由注册与默认落地', () => {
       '/index',
       '/welcome',
       '/knowledge-bases',
-      '/knowledge-bases/:***REMOVED***Id',
-      '/knowledge-bases/:***REMOVED***Id/settings',
-      '/knowledge-bases/:***REMOVED***Id/versions',
+      '/knowledge-bases/:kbId',
+      '/knowledge-bases/:kbId/settings',
+      '/knowledge-bases/:kbId/versions',
       '/evaluations',
-      '/knowledge-bases/:***REMOVED***Id/evaluation',
+      '/knowledge-bases/:kbId/evaluation',
       '/ai/agents',
       '/ai/skills',
       '/ai/tools',
@@ -123,7 +123,7 @@ describe('路由注册与默认落地', () => {
       '/ontology',
       '/ontology-modeling',
       '/ontology-graph',
-      '/knowledge-bases/:***REMOVED***Id/:tab',
+      '/knowledge-bases/:kbId/:tab',
     ]);
   });
 
@@ -163,7 +163,7 @@ describe('路由注册与默认落地', () => {
 });
 
 describe('Demo 外壳回归', () => {
-  it.each(['/evaluations', '/evaluations/', '/knowledge-bases/***REMOVED***-1/evaluation/'])(
+  it.each(['/evaluations', '/evaluations/', '/knowledge-bases/kb-1/evaluation/'])(
     '%s 正确高亮评测入口', async (path) => {
       const { container } = renderShell(path);
       expect(await screen.findByRole('link', { name: '知识评测' })).toHaveClass('active');
@@ -181,15 +181,15 @@ describe('Demo 外壳回归', () => {
   it('共用一次知识库变更订阅，刷新库名并清理监听', async () => {
     const addListener = vi.spyOn(window, 'addEventListener');
     const removeListener = vi.spyOn(window, 'removeEventListener');
-    const { unmount } = renderShell('/knowledge-bases/***REMOVED***-1');
+    const { unmount } = renderShell('/knowledge-bases/kb-1');
     await waitFor(() => expect(getKnowledgeBase).toHaveBeenCalledOnce());
-    const subscriptions = addListener.mock.calls.filter(([name]) => name === ***REMOVED***CHANGED_EVENT);
+    const subscriptions = addListener.mock.calls.filter(([name]) => name === KB_CHANGED_EVENT);
     expect(subscriptions).toHaveLength(1);
-    act(() => window.dispatchEvent(new Event(***REMOVED***CHANGED_EVENT)));
+    act(() => window.dispatchEvent(new Event(KB_CHANGED_EVENT)));
     await waitFor(() => expect(getKnowledgeBase).toHaveBeenCalledTimes(2));
     expect(pageKnowledgeBase).not.toHaveBeenCalled();
     unmount();
-    expect(removeListener).toHaveBeenCalledWith(***REMOVED***CHANGED_EVENT, subscriptions[0][1]);
+    expect(removeListener).toHaveBeenCalledWith(KB_CHANGED_EVENT, subscriptions[0][1]);
   });
 
   it('命令搜索支持快捷键、筛选和页面导航', async () => {

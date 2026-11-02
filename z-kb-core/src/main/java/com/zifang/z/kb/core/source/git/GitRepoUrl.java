@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.core.source.git;
+package com.zifang.z.kb.core.source.git;
 
 /**
  * 从 HTTPS 仓库地址拆出「站点根地址 + 项目路径」，用于拼 GitLab REST 端点。

@@ -1,7 +1,7 @@
-package com.zifang.z.***REMOVED***.resource;
+package com.zifang.z.kb.resource;
 
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseRole;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseRole;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,26 +21,26 @@ public final class KnowledgeBaseRoleActions {
             new EnumMap<>(KnowledgeBaseRole.class);
 
     static {
-        ROLE_ACTIONS.put(KnowledgeBaseRole.***REMOVED***ADMIN, EnumSet.of(
-                KnowledgeBaseAction.***REMOVED***READ, KnowledgeBaseAction.***REMOVED***MANAGE,
+        ROLE_ACTIONS.put(KnowledgeBaseRole.KB_ADMIN, EnumSet.of(
+                KnowledgeBaseAction.KB_READ, KnowledgeBaseAction.KB_MANAGE,
                 KnowledgeBaseAction.MEMBER_MANAGE, KnowledgeBaseAction.MATERIAL_WRITE,
                 KnowledgeBaseAction.MATERIAL_REVIEW, KnowledgeBaseAction.COMPILATION_RUN,
                 KnowledgeBaseAction.WIKI_READ, KnowledgeBaseAction.RETRIEVAL_QUERY,
                 KnowledgeBaseAction.LINEAGE_READ));
         ROLE_ACTIONS.put(KnowledgeBaseRole.EDITOR, EnumSet.of(
-                KnowledgeBaseAction.***REMOVED***READ, KnowledgeBaseAction.MATERIAL_WRITE,
+                KnowledgeBaseAction.KB_READ, KnowledgeBaseAction.MATERIAL_WRITE,
                 KnowledgeBaseAction.MATERIAL_REVIEW, KnowledgeBaseAction.COMPILATION_RUN,
                 KnowledgeBaseAction.WIKI_READ, KnowledgeBaseAction.RETRIEVAL_QUERY,
                 KnowledgeBaseAction.LINEAGE_READ));
         ROLE_ACTIONS.put(KnowledgeBaseRole.CONTRIBUTOR, EnumSet.of(
-                KnowledgeBaseAction.***REMOVED***READ, KnowledgeBaseAction.MATERIAL_WRITE,
+                KnowledgeBaseAction.KB_READ, KnowledgeBaseAction.MATERIAL_WRITE,
                 KnowledgeBaseAction.WIKI_READ, KnowledgeBaseAction.RETRIEVAL_QUERY));
         ROLE_ACTIONS.put(KnowledgeBaseRole.REVIEWER, EnumSet.of(
-                KnowledgeBaseAction.***REMOVED***READ, KnowledgeBaseAction.MATERIAL_REVIEW,
+                KnowledgeBaseAction.KB_READ, KnowledgeBaseAction.MATERIAL_REVIEW,
                 KnowledgeBaseAction.WIKI_READ, KnowledgeBaseAction.RETRIEVAL_QUERY,
                 KnowledgeBaseAction.LINEAGE_READ));
         ROLE_ACTIONS.put(KnowledgeBaseRole.READER, EnumSet.of(
-                KnowledgeBaseAction.***REMOVED***READ, KnowledgeBaseAction.WIKI_READ,
+                KnowledgeBaseAction.KB_READ, KnowledgeBaseAction.WIKI_READ,
                 KnowledgeBaseAction.RETRIEVAL_QUERY));
     }
 

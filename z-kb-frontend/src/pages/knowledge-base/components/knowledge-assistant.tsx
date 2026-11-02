@@ -3,7 +3,7 @@ import { MarkdownLite } from '@/pages/ai/markdown';
 import { AiRuntimeTag } from '@/pages/ai/shared';
 import '@/pages/ai/ai.less';
 import { getAiRuntimeStatus, type AiRuntimeStatus } from '@/services/ai';
-import type { ***REMOVED***Overview } from '@/services/overview';
+import type { KbOverview } from '@/services/overview';
 import { useEffect, useRef, useState } from 'react';
 import { useKnowledgeAssistantChat } from '../hooks/use-knowledge-assistant-chat';
 import { formatShortDateTime } from '@/utils/format';
@@ -11,7 +11,7 @@ import { formatShortDateTime } from '@/utils/format';
 const QUICK_QUESTIONS = ['这个库讲了什么', '有哪些证据可以引用'];
 
 /** 资料缺口汇总走本地规则，不消耗模型配额，数字与库统计同源。 */
-function shortageSummary(stats: ***REMOVED***Overview | null): string {
+function shortageSummary(stats: KbOverview | null): string {
   if (!stats) {
     return '库状态还在读取，稍等再问一次。';
   }
@@ -39,7 +39,7 @@ function shortageSummary(stats: ***REMOVED***Overview | null): string {
 }
 
 export function KnowledgeAssistant({
-  ***REMOVED***Id,
+  kbId,
   stats,
   canWrite,
   pageContext,
@@ -47,9 +47,9 @@ export function KnowledgeAssistant({
   onGoTasks,
   onRefresh,
 }: {
-  ***REMOVED***Id: string;
-  ***REMOVED***Name: string;
-  stats: ***REMOVED***Overview | null;
+  kbId: string;
+  kbName: string;
+  stats: KbOverview | null;
   canWrite: boolean;
   pageContext?: Record<string, string>;
   onUpload: () => void;
@@ -57,7 +57,7 @@ export function KnowledgeAssistant({
   onRefresh: () => void;
 }) {
   const { turns, streaming, ask, answerLocally, stop } =
-    useKnowledgeAssistantChat(***REMOVED***Id, pageContext);
+    useKnowledgeAssistantChat(kbId, pageContext);
   const [draft, setDraft] = useState('');
   const [runtime, setRuntime] = useState<AiRuntimeStatus | undefined>(undefined);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -179,7 +179,7 @@ export function KnowledgeAssistant({
   const recent = (stats?.recentMaterials || []).slice(0, 3);
 
   return (
-    <aside className="wb-ai ***REMOVED***-workspace-ai">
+    <aside className="wb-ai kb-workspace-ai">
       <div className="wb-ai-head">
         <div className="wb-ai-orb">
           <Icon name="sparkles" size={15} />

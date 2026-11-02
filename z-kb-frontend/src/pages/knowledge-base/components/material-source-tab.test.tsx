@@ -17,7 +17,7 @@ vi.mock('./material-repo-browser', () => ({
 
 const MATERIAL: MaterialRecord = {
   materialId: 'mat-1',
-  ***REMOVED***Id: '***REMOVED***-1',
+  kbId: 'kb-1',
   materialType: 'DOCUMENT',
   title: '排班管理制度',
   sourceType: 'UPLOAD',
@@ -88,7 +88,7 @@ describe('MaterialSourceTab', () => {
   it('代码仓库资料的原文走项目浏览，而不是单文件原件', () => {
     render(
       <MaterialSourceTab
-        material={{ ...MATERIAL, sourceType: 'CODE_GIT', title: 'z-opc/z-***REMOVED***' }}
+        material={{ ...MATERIAL, sourceType: 'CODE_GIT', title: 'z-opc/z-kb' }}
         draft={DRAFT}
         canEdit={false}
         saving={false}

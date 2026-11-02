@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.storage.compilation.mapper;
+package com.zifang.z.kb.storage.compilation.mapper;
 
 import java.time.Instant;
 

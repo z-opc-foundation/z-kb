@@ -24,7 +24,7 @@ export interface RetrievalHitRecord {
 }
 
 export interface RetrievalResultRecord {
-  ***REMOVED***Id: string;
+  kbId: string;
   query: string;
   mode: string;
   embeddingModel: string;
@@ -38,10 +38,10 @@ export interface RetrievalResultRecord {
   hits: RetrievalHitRecord[];
 }
 
-const BASE = '/***REMOVED***/v1/knowledgeBase';
+const BASE = '/kb/v1/knowledgeBase';
 
 export async function retrieveKnowledge(params: {
-  ***REMOVED***Id: string;
+  kbId: string;
   query: string;
   topK: number;
   minScore: number;
@@ -51,7 +51,7 @@ export async function retrieveKnowledge(params: {
     return await request<RetrievalResultRecord>(`${BASE}/retrieve`, {
       method: 'post',
       data: {
-        ***REMOVED***Id: params.***REMOVED***Id,
+        kbId: params.kbId,
         query: params.query,
         topK: params.topK,
         minScore: params.minScore,

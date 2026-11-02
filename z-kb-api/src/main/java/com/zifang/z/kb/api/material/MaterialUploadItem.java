@@ -1,4 +1,4 @@
-package com.zifang.z.***REMOVED***.api.material;
+package com.zifang.z.kb.api.material;
 
 /**
  * 单文件登记结果。提交成功只代表登记成功，不代表解析/编译完成。

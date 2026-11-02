@@ -20,12 +20,12 @@ function record(patch: Partial<AuditLogRecord>): AuditLogRecord {
   return {
     id: String(seq),
     tenantCode: 'tenant-a',
-    type: '***REMOVED***',
+    type: 'KB',
     actorId: 9,
-    action: '***REMOVED***CREATE',
+    action: 'KB_CREATE',
     actionDesc: '新建知识库',
     targetMethod: 'add',
-    requestUri: '/v1/***REMOVED***/add',
+    requestUri: '/v1/kb/add',
     success: 1,
     durationMs: 10,
     createTime: '2026-10-30T10:00:00',
@@ -46,10 +46,10 @@ describe('useAuditStats', () => {
   it('聚合结果、耗时、Top 动作与操作人，并按 14 天补齐趋势', async () => {
     vi.mocked(pageAuditLogs).mockResolvedValue({
       records: [
-        record({ action: '***REMOVED***CREATE', actionDesc: '新建知识库', actorId: 9, durationMs: 10 }),
-        record({ action: '***REMOVED***CREATE', actionDesc: '新建知识库', actorId: 9, durationMs: 30 }),
+        record({ action: 'KB_CREATE', actionDesc: '新建知识库', actorId: 9, durationMs: 10 }),
+        record({ action: 'KB_CREATE', actionDesc: '新建知识库', actorId: 9, durationMs: 30 }),
         record({
-          action: '***REMOVED***REMOVE',
+          action: 'KB_REMOVE',
           actionDesc: '删除知识库',
           actorId: 8,
           type: 'SYS',
@@ -77,7 +77,7 @@ describe('useAuditStats', () => {
     expect(stats?.actorCount).toBe(2);
     expect(stats?.byAction[0]).toEqual({ key: '新建知识库', count: 2 });
     expect(stats?.byActor[0]).toEqual({ key: '9', count: 2 });
-    expect(stats?.byType).toEqual({ sys: 1, ***REMOVED***: 2 });
+    expect(stats?.byType).toEqual({ sys: 1, kb: 2 });
     expect(stats?.byDay).toHaveLength(14);
     expect(pageAuditLogs).toHaveBeenCalledWith(
       expect.objectContaining({ current: 1, size: 200 }),
@@ -94,14 +94,14 @@ describe('useAuditStats', () => {
       .mockResolvedValueOnce({ records: pageRecords(2), total: 450, size: 200, current: 2 })
       .mockResolvedValueOnce({ records: pageRecords(3, 50), total: 450, size: 200, current: 3 });
 
-    const { result } = renderHook(() => useAuditStats({ type: '***REMOVED***', bizRef: '***REMOVED***-1' }, filters, true));
+    const { result } = renderHook(() => useAuditStats({ type: 'KB', bizRef: 'kb-1' }, filters, true));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.stats?.total).toBe(450);
     expect(result.current.stats?.scanned).toBe(450);
     expect(pageAuditLogs).toHaveBeenCalledTimes(3);
     expect(pageAuditLogs).toHaveBeenLastCalledWith(
-      expect.objectContaining({ type: '***REMOVED***', bizRef: '***REMOVED***-1', current: 3, size: 200 }),
+      expect.objectContaining({ type: 'KB', bizRef: 'kb-1', current: 3, size: 200 }),
     );
   });
 

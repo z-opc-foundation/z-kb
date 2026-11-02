@@ -88,7 +88,7 @@ const TOOL_PROFILES: ToolProfile[] = [
     spread: 1.6,
   },
   {
-    code: '***REMOVED***_knowledge_search',
+    code: 'kb_knowledge_search',
     name: '知识库检索（远端）',
     weight: 26,
     failRate: 0.048,
@@ -111,7 +111,7 @@ const AGENT_PROFILES: AgentProfile[] = [
   { code: 'agent_fb_qa_assistant', name: '知识库问答助手', weight: 55 },
   { code: 'agent_fb_wiki_compiler', name: 'Wiki 编译员', weight: 24 },
   { code: 'agent_fb_wiki_reviewer', name: 'Wiki 质量评审员', weight: 14 },
-  { code: 'agent_fb_***REMOVED***_operator', name: '知识库接口操作', weight: 7 },
+  { code: 'agent_fb_kb_operator', name: '知识库接口操作', weight: 7 },
 ];
 
 const QUERIES = [
@@ -125,7 +125,7 @@ const QUERIES = [
   '交接班记录模板',
 ];
 
-const ***REMOVED***IDS = ['***REMOVED***_thoracic_001', '***REMOVED***_guideline_002', '***REMOVED***_ops_003'];
+const KB_IDS = ['kb_thoracic_001', 'kb_guideline_002', 'kb_ops_003'];
 
 const RANGE_CONFIG: Record<
   MonitorRange,
@@ -178,7 +178,7 @@ function pickAgent(toolCode: string, rng: () => number): AgentProfile {
   if (toolCode === 'current_time') {
     return qa;
   }
-  if (toolCode === '***REMOVED***_knowledge_search') {
+  if (toolCode === 'kb_knowledge_search') {
     return pickWeighted([qa, operator], rng);
   }
   return pickWeighted(AGENT_PROFILES, rng);
@@ -194,17 +194,17 @@ function buildCall(
   rng: () => number,
 ): CallEvent {
   const query = pick(QUERIES, rng);
-  const ***REMOVED***Id = pick(***REMOVED***IDS, rng);
+  const kbId = pick(KB_IDS, rng);
   let args: Record<string, unknown> = {};
   let resultSummary = '';
   if (profile.code === 'current_time') {
     args = { timezone: 'Asia/Shanghai' };
     resultSummary = `${formatDayTime(at)} +08:00`;
-  } else if (profile.code === '***REMOVED***_knowledge_search') {
-    args = { ***REMOVED***Id, query };
+  } else if (profile.code === 'kb_knowledge_search') {
+    args = { kbId, query };
     resultSummary = `命中 ${1 + Math.floor(rng() * 5)} 条 · tookMs ${Math.round(durationMs * 0.92)}`;
   } else {
-    args = { ***REMOVED***Id, query, topK: 5 };
+    args = { kbId, query, topK: 5 };
     resultSummary = `命中 ${1 + Math.floor(rng() * 6)} 条 · 扫描 ${600 + Math.floor(rng() * 1400)} 个片段`;
   }
   if (status !== 'success') {
@@ -216,7 +216,7 @@ function buildCall(
       : status === 'failed'
         ? profile.code === 'current_time'
           ? '时间服务不可用'
-          : profile.code === '***REMOVED***_knowledge_search'
+          : profile.code === 'kb_knowledge_search'
             ? '远端检索服务异常'
             : '无权限访问知识库'
         : undefined;
@@ -226,9 +226,9 @@ function buildCall(
       : status === 'failed'
         ? profile.code === 'current_time'
           ? '时间服务不可用（HTTP 503）'
-          : profile.code === '***REMOVED***_knowledge_search'
+          : profile.code === 'kb_knowledge_search'
             ? '调用 galaxy 远端工具失败：HTTP 502 Bad Gateway'
-            : `检索失败：当前租户无权访问知识库 ${***REMOVED***Id}（***REMOVED***_acl 拒绝）`
+            : `检索失败：当前租户无权访问知识库 ${kbId}（kb_acl 拒绝）`
         : undefined;
 
   return {

@@ -1,46 +1,46 @@
-package com.zifang.z.***REMOVED***.resource.ops;
+package com.zifang.z.kb.resource.ops;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zifang.z.***REMOVED***.api.***REMOVED***Exception;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactStatus;
-import com.zifang.z.***REMOVED***.api.compilation.ArtifactType;
-import com.zifang.z.***REMOVED***.api.compilation.RetrievalState;
-import com.zifang.z.***REMOVED***.api.compilation.TaskRunStatus;
-import com.zifang.z.***REMOVED***.api.material.MaterialCompileSource;
-import com.zifang.z.***REMOVED***.api.material.MaterialService;
-import com.zifang.z.***REMOVED***.api.material.ParsedDraftStatus;
-import com.zifang.z.***REMOVED***.api.resource.***REMOVED***Caller;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseAction;
-import com.zifang.z.***REMOVED***.api.resource.KnowledgeBaseResourceService;
-import com.zifang.z.***REMOVED***.api.wiki.WikiAgentSaveParam;
-import com.zifang.z.***REMOVED***.api.wiki.WikiCompileParam;
-import com.zifang.z.***REMOVED***.api.wiki.WikiCompileTaskView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiGenerateItemView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiGenerateResultView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiGeneratedDocView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiLineageEdgeView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiLineageNodeView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiLineageView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiPageDetailView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiPageView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiPointView;
-import com.zifang.z.***REMOVED***.api.wiki.WikiService;
-import com.zifang.z.***REMOVED***.api.wiki.WikiSourceView;
-import com.zifang.z.***REMOVED***.core.wiki.WikiPageBuilder;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.entity.ArtifactVersionEntity;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactMapper;
-import com.zifang.z.***REMOVED***.storage.compilation.mapper.ArtifactVersionMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphEdgeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.entity.GraphNodeEntity;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphEdgeMapper;
-import com.zifang.z.***REMOVED***.storage.extraction.mapper.GraphNodeMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.entity.WikiDocEntity;
-import com.zifang.z.***REMOVED***.storage.wiki.entity.WikiPageEntity;
-import com.zifang.z.***REMOVED***.storage.wiki.entity.WikiPageSourceEntity;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiDocMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiPageMapper;
-import com.zifang.z.***REMOVED***.storage.wiki.mapper.WikiPageSourceMapper;
+import com.zifang.z.kb.api.KBException;
+import com.zifang.z.kb.api.compilation.ArtifactStatus;
+import com.zifang.z.kb.api.compilation.ArtifactType;
+import com.zifang.z.kb.api.compilation.RetrievalState;
+import com.zifang.z.kb.api.compilation.TaskRunStatus;
+import com.zifang.z.kb.api.material.MaterialCompileSource;
+import com.zifang.z.kb.api.material.MaterialService;
+import com.zifang.z.kb.api.material.ParsedDraftStatus;
+import com.zifang.z.kb.api.resource.KbCaller;
+import com.zifang.z.kb.api.resource.KnowledgeBaseAction;
+import com.zifang.z.kb.api.resource.KnowledgeBaseResourceService;
+import com.zifang.z.kb.api.wiki.WikiAgentSaveParam;
+import com.zifang.z.kb.api.wiki.WikiCompileParam;
+import com.zifang.z.kb.api.wiki.WikiCompileTaskView;
+import com.zifang.z.kb.api.wiki.WikiGenerateItemView;
+import com.zifang.z.kb.api.wiki.WikiGenerateResultView;
+import com.zifang.z.kb.api.wiki.WikiGeneratedDocView;
+import com.zifang.z.kb.api.wiki.WikiLineageEdgeView;
+import com.zifang.z.kb.api.wiki.WikiLineageNodeView;
+import com.zifang.z.kb.api.wiki.WikiLineageView;
+import com.zifang.z.kb.api.wiki.WikiPageDetailView;
+import com.zifang.z.kb.api.wiki.WikiPageView;
+import com.zifang.z.kb.api.wiki.WikiPointView;
+import com.zifang.z.kb.api.wiki.WikiService;
+import com.zifang.z.kb.api.wiki.WikiSourceView;
+import com.zifang.z.kb.core.wiki.WikiPageBuilder;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactEntity;
+import com.zifang.z.kb.storage.compilation.entity.ArtifactVersionEntity;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactMapper;
+import com.zifang.z.kb.storage.compilation.mapper.ArtifactVersionMapper;
+import com.zifang.z.kb.storage.extraction.entity.GraphEdgeEntity;
+import com.zifang.z.kb.storage.extraction.entity.GraphNodeEntity;
+import com.zifang.z.kb.storage.extraction.mapper.GraphEdgeMapper;
+import com.zifang.z.kb.storage.extraction.mapper.GraphNodeMapper;
+import com.zifang.z.kb.storage.wiki.entity.WikiDocEntity;
+import com.zifang.z.kb.storage.wiki.entity.WikiPageEntity;
+import com.zifang.z.kb.storage.wiki.entity.WikiPageSourceEntity;
+import com.zifang.z.kb.storage.wiki.mapper.WikiDocMapper;
+import com.zifang.z.kb.storage.wiki.mapper.WikiPageMapper;
+import com.zifang.z.kb.storage.wiki.mapper.WikiPageSourceMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -56,7 +56,7 @@ import java.util.UUID;
  * Wiki 域默认实现：规则生成按物料版本确定性切分要点，Agent 产物按页面标识幂等落库，
  * 血缘由来源记录与本地规则图谱拼装。
  *
- * <p>z-***REMOVED*** 没有独立任务内核，编译入口在请求内同步完成并返回终态。</p>
+ * <p>z-kb 没有独立任务内核，编译入口在请求内同步完成并返回终态。</p>
  */
 public class DefaultWikiService implements WikiService {
 
@@ -134,12 +134,12 @@ public class DefaultWikiService implements WikiService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WikiGenerateResultView generate(String ***REMOVED***Id, List<String> materialIds, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id) || materialIds == null || materialIds.isEmpty()) {
+    public WikiGenerateResultView generate(String kbId, List<String> materialIds, KbCaller caller) {
+        if (!hasText(kbId) || materialIds == null || materialIds.isEmpty()) {
             throw paramInvalid();
         }
-        String ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id.trim(), KnowledgeBaseAction.MATERIAL_WRITE,
-                caller).get***REMOVED***Id();
+        String kb = resourceService.requireActionable(kbId.trim(), KnowledgeBaseAction.MATERIAL_WRITE,
+                caller).getKbId();
         LinkedHashSet<String> uniqueIds = new LinkedHashSet<>();
         for (String materialId : materialIds) {
             if (hasText(materialId)) {
@@ -158,13 +158,13 @@ public class DefaultWikiService implements WikiService {
             try {
                 MaterialCompileSource source = materialService.loadCompileSource(materialId, null,
                         caller);
-                if (!***REMOVED***.equals(source.get***REMOVED***Id())) {
+                if (!kb.equals(source.getKbId())) {
                     throw paramInvalid();
                 }
                 generateOne(source, caller, item);
                 item.setStatus(STATUS_READY);
                 success++;
-            } catch (***REMOVED***Exception e) {
+            } catch (KBException e) {
                 item.setStatus(STATUS_FAILED);
                 item.setFailureSummary(e.getMessage());
             } catch (RuntimeException e) {
@@ -183,18 +183,18 @@ public class DefaultWikiService implements WikiService {
     }
 
     /** 从物料编译源切分要点并生成单个 Wiki：无页面则新建，内容哈希变化则升版本更新，最后刷新来源记录。 */
-    private WikiPageEntity generateOne(MaterialCompileSource source, ***REMOVED***Caller caller,
+    private WikiPageEntity generateOne(MaterialCompileSource source, KbCaller caller,
                                        WikiGenerateItemView item) {
         if (!ParsedDraftStatus.READY.name().equals(source.getDraftStatus())
                 || !hasText(source.getTextContent())) {
-            throw new ***REMOVED***Exception("WIKI_SOURCE_NOT_READY", "物料尚未解析成功，不能生成 Wiki");
+            throw new KBException("WIKI_SOURCE_NOT_READY", "物料尚未解析成功，不能生成 Wiki");
         }
         String tenant = caller.getTenantCode();
         String title = WikiPageBuilder.stripExtension(source.getTitle());
         List<WikiPointView> points = WikiPageBuilder.splitPoints(source.getTextContent(), title);
         String content = WikiPageBuilder.buildContent(points);
         String hash = WikiPageBuilder.sha256(source.getVersionId() + "|" + content);
-        String artifactId = upsertArtifact(tenant, source.get***REMOVED***Id(), source.getMaterialId(),
+        String artifactId = upsertArtifact(tenant, source.getKbId(), source.getMaterialId(),
                 source.getVersionId(), source.getTitle() + " · Wiki", content, caller);
 
         WikiPageEntity page = findRulePage(tenant, source.getMaterialId());
@@ -204,7 +204,7 @@ public class DefaultWikiService implements WikiService {
             page.setId(UUID.randomUUID().toString());
             page.setWikiId(UUID.randomUUID().toString());
             page.setTenantCode(tenant);
-            page.set***REMOVED***Id(source.get***REMOVED***Id());
+            page.setKbId(source.getKbId());
             page.setMaterialId(source.getMaterialId());
             page.setMaterialVersionId(source.getVersionId());
             page.setArtifactId(artifactId);
@@ -250,20 +250,20 @@ public class DefaultWikiService implements WikiService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WikiGeneratedDocView saveGenerated(WikiAgentSaveParam param, ***REMOVED***Caller caller) {
-        if (param == null || !hasText(param.get***REMOVED***Id()) || !hasText(param.getMaterialId())
+    public WikiGeneratedDocView saveGenerated(WikiAgentSaveParam param, KbCaller caller) {
+        if (param == null || !hasText(param.getKbId()) || !hasText(param.getMaterialId())
                 || param.getPages().isEmpty() || param.getPages().size() > MAX_AGENT_PAGES) {
             throw paramInvalid();
         }
         String tenant = caller.getTenantCode();
-        String ***REMOVED***Id = param.get***REMOVED***Id().trim();
+        String kbId = param.getKbId().trim();
         String materialId = param.getMaterialId().trim();
-        String ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id, KnowledgeBaseAction.MATERIAL_WRITE,
-                caller).get***REMOVED***Id();
+        String kb = resourceService.requireActionable(kbId, KnowledgeBaseAction.MATERIAL_WRITE,
+                caller).getKbId();
         MaterialCompileSource source = materialService.loadCompileSource(materialId,
                 hasText(param.getMaterialVersionId()) ? param.getMaterialVersionId().trim() : null,
                 caller);
-        if (!***REMOVED***.equals(source.get***REMOVED***Id())) {
+        if (!kb.equals(source.getKbId())) {
             throw paramInvalid();
         }
         String versionId = hasText(param.getMaterialVersionId())
@@ -291,7 +291,7 @@ public class DefaultWikiService implements WikiService {
         for (WikiAgentSaveParam.Page page : unique.values()) {
             artifactContent.append(page.getSlug()).append('|').append(page.getContent()).append('\n');
         }
-        String artifactId = upsertArtifact(tenant, ***REMOVED***, materialId, versionId,
+        String artifactId = upsertArtifact(tenant, kb, materialId, versionId,
                 source.getTitle() + " · Wiki", artifactContent.toString(), caller);
         LinkedHashMap<String, WikiPageEntity> existing = new LinkedHashMap<>();
         for (WikiPageEntity row : listSlugPages(tenant, materialId)) {
@@ -314,7 +314,7 @@ public class DefaultWikiService implements WikiService {
                 row.setId(UUID.randomUUID().toString());
                 row.setWikiId(UUID.randomUUID().toString());
                 row.setTenantCode(tenant);
-                row.set***REMOVED***Id(***REMOVED***);
+                row.setKbId(kb);
                 row.setMaterialId(materialId);
                 row.setMaterialVersionId(versionId);
                 row.setArtifactId(artifactId);
@@ -389,7 +389,7 @@ public class DefaultWikiService implements WikiService {
             doc = new WikiDocEntity();
             doc.setId(UUID.randomUUID().toString());
             doc.setTenantCode(tenant);
-            doc.set***REMOVED***Id(***REMOVED***);
+            doc.setKbId(kb);
             doc.setMaterialId(materialId);
             doc.setMaterialVersionId(versionId);
             doc.setIndexMd(indexMd);
@@ -436,17 +436,17 @@ public class DefaultWikiService implements WikiService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WikiCompileTaskView compile(WikiCompileParam param, ***REMOVED***Caller caller) {
-        if (param == null || !hasText(param.get***REMOVED***Id()) || !hasText(param.getMaterialId())) {
+    public WikiCompileTaskView compile(WikiCompileParam param, KbCaller caller) {
+        if (param == null || !hasText(param.getKbId()) || !hasText(param.getMaterialId())) {
             throw paramInvalid();
         }
-        String ***REMOVED***Id = param.get***REMOVED***Id().trim();
+        String kbId = param.getKbId().trim();
         String materialId = param.getMaterialId().trim();
-        String ***REMOVED*** = resourceService.requireActionable(***REMOVED***Id, KnowledgeBaseAction.MATERIAL_WRITE,
-                caller).get***REMOVED***Id();
+        String kb = resourceService.requireActionable(kbId, KnowledgeBaseAction.MATERIAL_WRITE,
+                caller).getKbId();
         MaterialCompileSource source = materialService.loadCompileSource(materialId,
                 hasText(param.getVersionId()) ? param.getVersionId().trim() : null, caller);
-        if (!***REMOVED***.equals(source.get***REMOVED***Id())) {
+        if (!kb.equals(source.getKbId())) {
             throw paramInvalid();
         }
         String versionId = hasText(param.getVersionId())
@@ -465,14 +465,14 @@ public class DefaultWikiService implements WikiService {
     }
 
     @Override
-    public WikiGeneratedDocView queryGenerated(String materialId, ***REMOVED***Caller caller) {
+    public WikiGeneratedDocView queryGenerated(String materialId, KbCaller caller) {
         if (!hasText(materialId)) {
-            throw new ***REMOVED***Exception("MATERIAL_PARAM_INVALID", "物料参数不合法");
+            throw new KBException("MATERIAL_PARAM_INVALID", "物料参数不合法");
         }
         String tenant = caller.getTenantCode();
         String trimmed = materialId.trim();
         MaterialCompileSource source = materialService.loadCompileSource(trimmed, null, caller);
-        resourceService.requireReadable(source.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(source.getKbId(), caller);
         WikiDocEntity doc = latestDoc(tenant, trimmed);
         if (doc == null) {
             return null;
@@ -501,16 +501,16 @@ public class DefaultWikiService implements WikiService {
     }
 
     @Override
-    public List<WikiPageView> list(String ***REMOVED***Id, String keyword, int limit, ***REMOVED***Caller caller) {
-        if (!hasText(***REMOVED***Id)) {
-            throw new ***REMOVED***Exception("***REMOVED***PARAM_INVALID", "知识库参数不合法");
+    public List<WikiPageView> list(String kbId, String keyword, int limit, KbCaller caller) {
+        if (!hasText(kbId)) {
+            throw new KBException("KB_PARAM_INVALID", "知识库参数不合法");
         }
-        String ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id.trim(), caller).get***REMOVED***Id();
+        String kb = resourceService.requireReadable(kbId.trim(), caller).getKbId();
         String tenant = caller.getTenantCode();
         int size = limit <= 0 ? DEFAULT_LIST : Math.min(limit, MAX_LIST);
         QueryWrapper<WikiPageEntity> query = new QueryWrapper<WikiPageEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***)
+                .eq("kb_id", kb)
                 .eq("is_deleted", 0)
                 .ne("status", STATUS_DELETED)
                 .orderByDesc("update_time")
@@ -528,10 +528,10 @@ public class DefaultWikiService implements WikiService {
     }
 
     @Override
-    public WikiPageDetailView detail(String wikiId, ***REMOVED***Caller caller) {
+    public WikiPageDetailView detail(String wikiId, KbCaller caller) {
         String tenant = caller.getTenantCode();
         WikiPageEntity page = requirePage(tenant, wikiId);
-        resourceService.requireReadable(page.get***REMOVED***Id(), caller);
+        resourceService.requireReadable(page.getKbId(), caller);
         List<WikiSourceView> sources = loadSources(tenant, page.getWikiId());
 
         WikiPageDetailView detail = new WikiPageDetailView();
@@ -546,9 +546,9 @@ public class DefaultWikiService implements WikiService {
     }
 
     @Override
-    public List<WikiPageView> listByMaterial(String materialId, ***REMOVED***Caller caller) {
+    public List<WikiPageView> listByMaterial(String materialId, KbCaller caller) {
         if (!hasText(materialId)) {
-            throw new ***REMOVED***Exception("MATERIAL_PARAM_INVALID", "物料参数不合法");
+            throw new KBException("MATERIAL_PARAM_INVALID", "物料参数不合法");
         }
         String tenant = caller.getTenantCode();
         QueryWrapper<WikiPageEntity> query = new QueryWrapper<WikiPageEntity>()
@@ -561,7 +561,7 @@ public class DefaultWikiService implements WikiService {
         if (pages.isEmpty()) {
             return result;
         }
-        resourceService.requireReadable(pages.get(0).get***REMOVED***Id(), caller);
+        resourceService.requireReadable(pages.get(0).getKbId(), caller);
         for (WikiPageEntity page : pages) {
             result.add(toPageView(tenant, page));
         }
@@ -569,22 +569,22 @@ public class DefaultWikiService implements WikiService {
     }
 
     @Override
-    public WikiLineageView lineage(String ***REMOVED***Id, String wikiId, ***REMOVED***Caller caller) {
+    public WikiLineageView lineage(String kbId, String wikiId, KbCaller caller) {
         String tenant = caller.getTenantCode();
         List<WikiPageEntity> pages = new ArrayList<>();
         WikiLineageView info = new WikiLineageView();
         if (hasText(wikiId)) {
             WikiPageEntity page = requirePage(tenant, wikiId);
-            resourceService.requireReadable(page.get***REMOVED***Id(), caller);
+            resourceService.requireReadable(page.getKbId(), caller);
             pages.add(page);
             info.setWikiId(page.getWikiId());
             info.setTitle(page.getTitle());
         } else {
-            if (!hasText(***REMOVED***Id)) {
+            if (!hasText(kbId)) {
                 throw paramInvalid();
             }
-            String ***REMOVED*** = resourceService.requireReadable(***REMOVED***Id.trim(), caller).get***REMOVED***Id();
-            pages.addAll(listAllPages(tenant, ***REMOVED***));
+            String kb = resourceService.requireReadable(kbId.trim(), caller).getKbId();
+            pages.addAll(listAllPages(tenant, kb));
             info.setTitle("库内 Wiki 血缘");
         }
 
@@ -649,8 +649,8 @@ public class DefaultWikiService implements WikiService {
     }
 
     /** 登记或刷新 WIKI_DOC 产物：内容变化追加产物版本，供追溯。 */
-    private String upsertArtifact(String tenant, String ***REMOVED***Id, String materialId, String versionId,
-                                  String title, String content, ***REMOVED***Caller caller) {
+    private String upsertArtifact(String tenant, String kbId, String materialId, String versionId,
+                                  String title, String content, KbCaller caller) {
         Instant now = Instant.now();
         ArtifactEntity artifact = artifactMapper.selectOne(new QueryWrapper<ArtifactEntity>()
                 .eq("tenant_code", tenant)
@@ -665,7 +665,7 @@ public class DefaultWikiService implements WikiService {
             artifact.setId(UUID.randomUUID().toString());
             artifact.setArtifactId(UUID.randomUUID().toString());
             artifact.setTenantCode(tenant);
-            artifact.set***REMOVED***Id(***REMOVED***Id);
+            artifact.setKbId(kbId);
             artifact.setMaterialId(materialId);
             artifact.setMaterialVersionId(versionId);
             artifact.setArtifactType(ArtifactType.WIKI_DOC.name());
@@ -723,7 +723,7 @@ public class DefaultWikiService implements WikiService {
 
     /** 按物料 ID 新增或更新 Wiki 来源记录，记录物料版本与来源版本号。 */
     private void upsertSource(String tenant, String wikiId, MaterialCompileSource source,
-                              ***REMOVED***Caller caller, Instant now) {
+                              KbCaller caller, Instant now) {
         WikiPageSourceEntity existing = sourceMapper.selectOne(
                 new QueryWrapper<WikiPageSourceEntity>()
                         .eq("tenant_code", tenant)
@@ -776,10 +776,10 @@ public class DefaultWikiService implements WikiService {
                 .orderByAsc("id"));
     }
 
-    private List<WikiPageEntity> listAllPages(String tenant, String ***REMOVED***Id) {
+    private List<WikiPageEntity> listAllPages(String tenant, String kbId) {
         return pageMapper.selectList(new QueryWrapper<WikiPageEntity>()
                 .eq("tenant_code", tenant)
-                .eq("***REMOVED***_id", ***REMOVED***Id)
+                .eq("kb_id", kbId)
                 .eq("is_deleted", 0)
                 .ne("status", STATUS_DELETED)
                 .orderByAsc("id"));
@@ -814,7 +814,7 @@ public class DefaultWikiService implements WikiService {
                 .eq("is_deleted", 0)
                 .last("LIMIT 1"));
         if (page == null || STATUS_DELETED.equals(page.getStatus())) {
-            throw new ***REMOVED***Exception("WIKI_PAGE_NOT_FOUND", "Wiki 页面不存在");
+            throw new KBException("WIKI_PAGE_NOT_FOUND", "Wiki 页面不存在");
         }
         return page;
     }
@@ -822,7 +822,7 @@ public class DefaultWikiService implements WikiService {
     private WikiPageView toPageView(String tenant, WikiPageEntity page) {
         WikiPageView view = new WikiPageView();
         view.setWikiId(page.getWikiId());
-        view.set***REMOVED***Id(page.get***REMOVED***Id());
+        view.setKbId(page.getKbId());
         view.setMaterialId(page.getMaterialId());
         view.setMaterialVersionId(page.getMaterialVersionId());
         view.setTitle(page.getTitle());
@@ -893,7 +893,7 @@ public class DefaultWikiService implements WikiService {
         return value != null && !value.trim().isEmpty();
     }
 
-    private static ***REMOVED***Exception paramInvalid() {
-        return new ***REMOVED***Exception("WIKI_PARAM_INVALID", "Wiki 参数不合法");
+    private static KBException paramInvalid() {
+        return new KBException("WIKI_PARAM_INVALID", "Wiki 参数不合法");
     }
 }

@@ -16,13 +16,13 @@ import { formatDateTime } from '@/utils/format';
 import { toast } from '@/utils/toast';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
-interface ***REMOVED***MemberPanelProps {
-  ***REMOVED***Id: string;
+interface KbMemberPanelProps {
+  kbId: string;
   canManage: boolean;
 }
 
 function avatarClass(role: string): string {
-  if (role === '***REMOVED***ADMIN') {
+  if (role === 'KB_ADMIN') {
     return 'violet';
   }
   if (role === 'EDITOR') {
@@ -38,7 +38,7 @@ function displayName(member: { name?: string; principalId: number }): string {
   return member.name || `主体 #${member.principalId}`;
 }
 
-export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }: ***REMOVED***MemberPanelProps) {
+export default function KbMemberPanel({ kbId, canManage }: KbMemberPanelProps) {
   const [members, setMembers] = useState<KnowledgeBaseMemberRecord[]>([]);
   const [effective, setEffective] = useState<KnowledgeBaseEffectiveRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,13 +60,13 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
     let alive = true;
     setLoading(true);
     void (async () => {
-      const access = await getEffectiveAccess(***REMOVED***Id);
+      const access = await getEffectiveAccess(kbId);
       if (!alive) {
         return;
       }
       setEffective(access || null);
       if (canManage) {
-        const list = await listMembers(***REMOVED***Id);
+        const list = await listMembers(kbId);
         if (!alive) {
           return;
         }
@@ -77,12 +77,12 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
     return () => {
       alive = false;
     };
-  }, [***REMOVED***Id, canManage]);
+  }, [kbId, canManage]);
 
   const reload = useCallback(async () => {
-    const list = await listMembers(***REMOVED***Id);
+    const list = await listMembers(kbId);
     setMembers(list || []);
-  }, [***REMOVED***Id]);
+  }, [kbId]);
 
   const filtered = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -106,14 +106,14 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
     setCandidateRole('READER');
     setAddOpen(true);
     setCandidateBusy(true);
-    const list = await searchMemberCandidates(***REMOVED***Id, '');
+    const list = await searchMemberCandidates(kbId, '');
     setCandidates(list || []);
     setCandidateBusy(false);
   };
 
   const runCandidateSearch = async () => {
     setCandidateBusy(true);
-    const list = await searchMemberCandidates(***REMOVED***Id, candidateKeyword.trim());
+    const list = await searchMemberCandidates(kbId, candidateKeyword.trim());
     setCandidates(list || []);
     setCandidateId(null);
     setCandidateBusy(false);
@@ -125,7 +125,7 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
       return;
     }
     setBusy(true);
-    const result = await grantMember(***REMOVED***Id, candidateId, candidateRole);
+    const result = await grantMember(kbId, candidateId, candidateRole);
     setBusy(false);
     if (result === undefined) {
       return;
@@ -140,7 +140,7 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
       return;
     }
     setBusy(true);
-    const result = await grantMember(***REMOVED***Id, member.principalId, role);
+    const result = await grantMember(kbId, member.principalId, role);
     setBusy(false);
     if (result === undefined) {
       await reload();
@@ -155,7 +155,7 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
       return;
     }
     setBusy(true);
-    const result = await revokeMember(***REMOVED***Id, removeTarget.principalId);
+    const result = await revokeMember(kbId, removeTarget.principalId);
     setBusy(false);
     if (result === undefined) {
       return;
@@ -181,7 +181,7 @@ export default function ***REMOVED***MemberPanel({ ***REMOVED***Id, canManage }:
   }
 
   return (
-    <div className="***REMOVED***-member-panel">
+    <div className="kb-member-panel">
       <div className="table-toolbar">
         <div className="left">
           <div className="input-icon">
