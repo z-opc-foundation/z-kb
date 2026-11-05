@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS kb_task_config (
     task_code VARCHAR(32) NOT NULL,
     task_name VARCHAR(128) NOT NULL,
     config_version VARCHAR(32) NOT NULL,
-    executor_config VARCHAR(4000) NOT NULL,
+    executor_config TEXT NOT NULL,
     published_at DATETIME(3) NULL,
     published_by VARCHAR(64) NULL,
     is_deleted INT NOT NULL DEFAULT 0,

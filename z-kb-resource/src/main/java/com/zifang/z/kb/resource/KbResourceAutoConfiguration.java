@@ -167,7 +167,7 @@ public class KbResourceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MaterialService materialService(
+    public MaterialService kbMaterialService(
             MaterialMapper materialMapper,
             MaterialVersionMapper versionMapper,
             ParsedDraftMapper draftMapper,
