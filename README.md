@@ -16,7 +16,7 @@ z-vector 向量库与图谱存储，`HybridSearcher` 做五模式检索，`Defau
 |------|-----|
 | **仓库** | `z-kb` |
 | **Maven 坐标** | `io.github.yuku123:z-kb:1.1.0`（直接 `<version>`，非 `${revision}`；flatten-maven-plugin 1.5.0 `oss` 模式常开） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.2.0`（`<relativePath/>` 留空）；父链自带第三方地板与兄弟仓权威表（`z-boot-dependencies` / `z-boot-fleet` 两个文件夹随 2026-10-08 火车制拓扑退役） |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.2.1`（`<relativePath/>` 留空）；父链自带第三方地板与兄弟仓权威表（`z-boot-dependencies` / `z-boot-fleet` 两个文件夹随 2026-10-08 火车制拓扑退役） |
 | **Maven Central** | 最新**已发布**仍是 `1.0.7`（2026-10-06 发布）：`z-kb` 及 api/core/vector/graph/storage/protocol/spring-boot-starter/ingest/modeling/resource/web 共 12 支坐标；11 个 jar 模块 pom/jar/**sources**/**javadoc** 四件齐全（根 `z-kb` 为 pom 打包，只要 pom + 签名）。`z-kb-resource`（资源域）是仓内新增模块，尚无 Central 发布版本。历史：`1.0.5`/`1.0.6` 的 `z-kb-protocol` 缺 sources/javadoc（该模块当时无源码，已在 `1.0.7` 实现）；`z-kb-bootstrap` 中央只有 `1.0.1`。**`1.1.0`（2026-10-22）仓内版本号与公告已就位，但尚未发到中央** —— 发中央属「对外发布」的人工保留项，详见 [`_doc/006_release/02-1.1.0-breaking-change.md`](_doc/006_release/02-1.1.0-breaking-change.md) |
 | **默认端口** | `8889`（`z-kb-bootstrap/src/main/resources/application.yml`，context-path `/`）；starter 嵌入时随宿主应用端口 |
 | **运行口径** | Java 17（产物 class-file 61）· Spring Boot 3.3.13（父链下发；2026-10-30 起各模块 POM 的 `2.7.12` 字面量已全部清掉，版本一律由父链 DM 下发） |
@@ -108,7 +108,7 @@ workspace（`team_a` 这类）编码后一字不变，存量文件继续原地�
 
 ```
 z-kb/
-├── pom.xml                      # 聚合 POM：继承 z-boot-parent:1.2.0，自家 11 坐标 DM 钉 ${project.version}
+├── pom.xml                      # 聚合 POM：继承 z-boot-parent:1.2.1，自家 11 坐标 DM 钉 ${project.version}
 ├── z-kb-api/                    # SPI 接口 + 领域模型（ChatService / SearchService / KnowledgeBaseService /
 │                                #   EmbeddingProvider / ChunkVectorStore / KnowledgeGraphStore / DocumentRepository /
 │                                #   资源域契约（KnowledgeBaseResourceService / MemberAdmin / ConfigService）/
@@ -149,7 +149,7 @@ reactor 实际参与构建的是 11 个模块（`z-kb-bootstrap` 被注释排除
 | 层级 | 技术 |
 |------|------|
 | 语言 / 运行时 | Java 17（地板 `java.version=17`；实测产物 class-file **61**，Java 8 时代的 52 已不再适用） |
-| 框架 | Spring Boot 3.3.13 + Spring Framework 6.1.21（经 `z-boot-parent:1.2.0` 下发；2026-10-30 起各模块 POM 不再字面写 `2.7.12`） |
+| 框架 | Spring Boot 3.3.13 + Spring Framework 6.1.21（经 `z-boot-parent:1.2.1` 下发；2026-10-30 起各模块 POM 不再字面写 `2.7.12`） |
 | 兄弟仓依赖 | `z-vector-api/core`、`z-vector-storage`（1.1.0 新增：`PersistentVectorStore` 所在坐标，父链 DM 不管这一格 ⇒ 本仓自己钉 1.0.5）、`z-graph-api/core`、`z-util-core/ch/http` —— 均无字面版本，由 `z-boot-parent` 的兄弟仓权威表下发（repo1 实测面值：z-vector 1.0.5 / z-graph 1.0.8 / z-util 1.0.14）。本仓 POM 中**没有** z-llm 依赖 |
 | 本仓刻意覆盖 | Jackson 2.15.4（地板 2.18.6）、`swagger-annotations-jakarta` 2.2.22（OpenAPI 契约注解；必须 ≥2.2.6，否则 `Schema.RequiredMode` 不存在）、log4j-api 2.22.1、mysql-connector-j 8.0.33、mybatis-spring 3.0.4（Spring 6.1 下 `@MapperScan` 要求 ≥3.0.3，2.1.2 会报 `factoryBeanObjectType` 类型错） |
 | 其它父链不供 | H2 2.2.224、jsoup 1.18.1、slf4j 2.0.13、junit-jupiter 5.10.2（test）；`hanlp.version=1.8.6` 属性已定义但仓内零引用（`HanLpTokenizer` 是仓内正则/词典自实现，不依赖 HanLP 库） |
@@ -166,8 +166,8 @@ reactor 实际参与构建的是 11 个模块（`z-kb-bootstrap` 被注释排除
 mvn clean install -DskipTests
 ```
 
-版本口径由 `z-boot-parent:1.2.0` → 地板 + fleet 供给，构建机需能解析
-`io.github.yuku123:z-boot-parent:1.2.0`（repo1 或本地仓）。
+版本口径由 `z-boot-parent:1.2.1` → 地板 + fleet 供给，构建机需能解析
+`io.github.yuku123:z-boot-parent:1.2.1`（repo1 或本地仓）。
 
 ### 嵌入宿主应用（Spring Boot Starter）
 
